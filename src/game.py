@@ -1,7 +1,7 @@
 import random, array
 from math import *
 import main
-from allegro import *
+from land import *
 import block
 from isometric import *
 import render
@@ -11,9 +11,8 @@ from allefant import *
 
 class Game:
     def __init__(self):
-        d = al_get_current_display()
-        self.viewport = Viewport(al_get_display_width(d) / 2,
-            al_get_display_height(d) / 2)
+        self.viewport = Viewport(land_display_width() / 2,
+            land_display_height() / 2)
 
         self.level = level.start
 

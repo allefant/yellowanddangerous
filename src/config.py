@@ -1,13 +1,15 @@
-from allegro import *
+from land import *
 class Controls: pass
 controls = Controls()
-controls.left = [ALLEGRO_KEY_LEFT, ALLEGRO_KEY_A]
-controls.right = [ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_D]
-controls.up = [ALLEGRO_KEY_UP, ALLEGRO_KEY_W]
-controls.down = [ALLEGRO_KEY_DOWN, ALLEGRO_KEY_S]
-controls.jump = [ALLEGRO_KEY_LCTRL, ALLEGRO_KEY_RCTRL]
+controls.left = [LandKeyLeft, ord("a")]
+controls.right = [LandKeyRight, ord("d")]
+controls.up = [LandKeyUp, ord("w")]
+controls.down = [LandKeyDown, ord("s")]
+controls.jump = [LandKeyLeftControl, LandKeyRightControl]
 
-def check_controls(a, event, down):
+def check_controls(a):
     for c in controls.__dict__:
-        if event.keyboard.keycode in getattr(controls, c):
-            setattr(a, c, down)
+        down = False
+        for k in getattr(controls, c):
+            if land_key(k): down = True
+        setattr(a, c, down)
