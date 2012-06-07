@@ -1,6 +1,6 @@
-start = 1
+global int level_start = 1
 
-room1 = r"""
+static char const *room1 = """
 .           .           .           .           .           .           .
  - - - - -  .           .           .           .           .           .
 .           .           .     ♥     .           .           .           .
@@ -14,13 +14,13 @@ room1 = r"""
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint1 = "Cursor keys\nor WASD to move\nR to restart."
+static char const *hint1 = "Cursor keys\nor WASD to move\nR to restart."
 
-room2 = r"""
+static char const *room2 = """
 .           .           .           .    ə      .           .           .
 .           .           .           .    _      .           .           .
 .           .           .           .           .           .           .
-.    _      .    \      .           .           .           .           .
+.    _      .    |      .           .           .           .           .
 .           .           .           .           .           .           .
 .    _      .           .           .           .           .           .
 .           .           .           .           .           .           .
@@ -30,25 +30,25 @@ room2 = r"""
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint2 = "While moving, press\ncontrol to jump\nR to restart."
+static char const *hint2 = "While moving, press\ncontrol to jump\nR to restart."
 
-room3 = r"""
+static char const *room3 = """
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-._ _ _ _ _  .\ \ \ \ \  .           .\ \ \ \ \  .           .    \ \ \  .
-.           .OOO        e         + .  /      + .         + .    \ \ \+ .
-._ _ _ _ _{ .OOO        .      S    .         { .           .    \ \ \  .
-.} } } } }  .           .           .} } } } }  .           .\ \ \ \ \  .
+._ _ _ _ _  .| | | | |  .           .| | | | |  .           .    | | |  .
+.           .OOO        e         + .  /      + .         + .    | | |+ .
+._ _ _ _ _{ .OOO        .      S    .         { .           .    | | |  .
+.} } } } }  .           .           .} } } } }  .           .| | | | |  .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint3 = "To pull, press jump\nthen move backwards."
+static char const *hint3 = "To pull, press jump\nthen move backwards."
 
-room4 = r"""
+static char const *room4 = """
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
@@ -62,9 +62,9 @@ room4 = r"""
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint4 = "Lab repairs."
+static char const *hint4 = "Lab repairs."
 
-room5 = r"""
+static char const *room5 = """
 .           .           .           .           .           .           .
 .- - - -    .       ♥   . ♥         .           .           .           .
 .           .        t  .           .           .           .           .
@@ -78,9 +78,9 @@ e  ~ ~   ~  .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint5 = "Now what."
+static char const *hint5 = "Now what."
 
-room6 = r"""
+static char const *room6 = """
 .  ə        .           .           .           .           .           .
 .  _ _ _    .     ***   .           .           .           .           .
 .           .     * *   .      x    .           .           .           .
@@ -94,9 +94,9 @@ room6 = r"""
 .           .     ***   .           .           .           .           .
 .  ə        .           .           .           .           .           .
 """
-hint6 = "To lift, stand still,\nthen press jump key,\nthen push."
+static char const *hint6 = "To lift, stand still,\nthen press jump key,\nthen push."
 
-room7 = r"""
+static char const *room7 = """
 .           .           .           .           .           .           .
 .      x    .           .           .           .           .           .
 .~ ~ ~ ~ ~  .         S .           .           .           .           .
@@ -110,9 +110,9 @@ room7 = r"""
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint7 = "Yellow and Dangerous.\n\nA mere figment of your imagination?"
+static char const *hint7 = "Yellow and Dangerous.\n\nA mere figment of your imagination?"
 
-room8 = r"""
+static char const *room8 = """
 .    ə      .           .           .           .           .           .
 .- - - - -  .           .           .           .        t  .           .
 .           . !!!!  !!! . !       ! . !       ! .           .           .
@@ -126,13 +126,13 @@ e- - - x'-  .     S   ! .           .           .           .           .
 .           . !!!!!!!!! . !       ! . !       ! .           .           .
 .           .           .           .           .           .           .
 """
-hint8 = "Yellow and...\nhelpful?"
+static char const *hint8 = "Yellow and...\nhelpful?"
 
-room9 = r"""
+static char const *room9 = """
 .           .           .           .           .           .           .
 . +_ _ _ +x ./6      75 .           .           .           .           .
 . +      ++ .           .           .           .           .         x .
-._ _ _ _ _  ./ \ \ \    .           . x    \    .           .        ++ .
+._ _ _ _ _  ./ | | |    .           . x    |    .           .        ++ .
 .           .  A  S  ♥♥ .        ♥♥ .        ♥♥ .+          .           .
 e_ _ _ _ ++ .        8  .           .           .+          .           .
 .        +x .      3  4 .           .           .+          .           .
@@ -142,9 +142,9 @@ e_ _ _ _ ++ .        8  .           .           .+          .           .
 .  +x  +x   .  1   2  ! .         ! .           .           . x         .
 .           .           .           .           .           .           . 
 """
-hint9 = "\nYellow and Annoying!"
+static char const *hint9 = "\nYellow and Annoying!"
 
-room10 = r"""
+static char const *room10 = """
 .           .           .           .           .           .           .
 .           .  ß'ß'ß'ß' .  '        .           .           .           .
 .           .         ' .  ß      ♥ .    ' '    .           .           .
@@ -158,9 +158,9 @@ room10 = r"""
 .S          .'          . '         .  'ß'      .  s        .           .
 .           .           .    ' 'ə   .           .           .           .
 """
-hint10 = "Which way is up?"
+static char const *hint10 = "Which way is up?"
 
-room11 = r"""
+static char const *room11 = """
 .           .           .           .           .           .           .
 .      _ _  .      # #  .           .      #    .           .           .
 .           .           .           .           .           .           .
@@ -174,9 +174,9 @@ room11 = r"""
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 """
-hint11 = "Seriously?"
+static char const *hint11 = "Seriously?"
 
-room12 = r"""
+static char const *room12 = """
 .           .           .           .           .           .           .
 .    -   -  .           .           .    T   T  .           .           .
 .           .     !   ! .     !   ! .           .           .           .
@@ -190,9 +190,9 @@ room12 = r"""
 .           . !   !   ! . !   !   ! .           .           .  =   =  S .
 .    x   ə  .           .           .           .           .           .
 """
-hint12 = "Finally at the top!\n(Of the trees.)"
+static char const *hint12 = "Finally at the top!\n(Of the trees.)"
 
-room13 = r"""
+static char const *room13 = """
 .ə e ə e    .           .           .           .           .           .
 ə e ə e ə e .           .           .           .           .           .
 .e ə e ə e  .           .           .           .           .           .
@@ -206,9 +206,9 @@ room13 = r"""
 . 1ə e2ə.e  .           . O         .           .           .           .
   ə e........           .           .           .           .           .
 """
-hint13 = "Thanks a lot for playing!\nThanks Richard for Pyweek!\nMaking this was great fun :)"
+static char const *hint13 = "Thanks a lot for playing!\nThanks Richard for Pyweek!\nMaking this was great fun :)"
 
-room0 = r"""
+static char const *room0 = """
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
@@ -223,53 +223,24 @@ room0 = r"""
 .           .           .           .           .           .           .
 """
 
-this_was_a_stupid_idea = """
- 
-                     _
-           _       _| |_       _
-         _| |    _| |_| |_    | |_
-       _| |_|  _| |_|/|_| |_  |_| |_
-     _| |_| |_| |_| |_| |_| |_| |_| |_
-   _| |_|/|_| |_|/|_/.\_|\|_| |_|\|_| |_
-  | |_| |_| |_| |_/ \_/ \_| |_| |_| |_| |
-  |_|/|_| |_| |_/.\_/ \_/.\_|\|_| |_|\|_|
-  | |_| |_| |_/ \_/ \_/ \_/ \_| |_| |_| |
-  |_| |_|/|_/.\_/ \_/.\_/ \_/.\_|\|_| |_|
-  | |_| |_/ \_/ \_/ \_/ \_/ \_/ \_| |_| |
-  |_|/|_/.\_/ \_/.\_/ \_/.\_/ \_/.\_|\|_|
-  | |_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_| |
-  |_/.\_/ \_/.\_/ \_/.\_/ \_/.\_/ \_/.\_|
-  / \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \
-  \_/ \_/.\_/ \_/ \_/ \_/.\_/ \_/.\_/ \_/ 
-    \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
-      \_/ \_/.\_/ \_/.\_/ \_/.\_/ \_/ 
-        \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
-          \_/ \_/.\_/ \_/.\_/ \_/ 
-            \_/ \_/ \_/ \_/ \_/ 
-              \_/ \_/.\_/ \_/ 
-                \_/ \_/ \_/ 
-                  \_/ \_/ 
-                    \_/ 
+static char const *hint0 = ""
 
-                     _
-                   _/ \_
-                 _/ \_/ \_
-               _/ \_/ \_/ \_
-             _/ \_/ \_/ \_/ \_
-           _/ \_/ \_/ \_/ \_/ \_
-         _/ \_/ \_/ \_/ \_/ \_/ \_
-       _/ \_/ \_/ \_/ \_/ \_/ \_/ \_
-     _/ \_/ \_/ \_/ \_/ \_/♥\_/ \_/ \_
-   _/ \_/ \_/ \_/ \_/S\_/ ♥♥♥ \_/ \_/ \_
-  / \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \
-  \_/ \_/ \_/ \_/ \_/ \_/ \_/♥\_/ \_/ \_/ 
-    \_/ \_/ \_/ \_/ \_/ \_/ ♥♥♥ \_/ \_/ 
-      \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
-        \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
-          \_/ \_/ \_/ \_/ \_/ \_/ 
-            \_/ \_/ \_/ \_/ \_/ 
-              \_/ \_/!\_/ \_/ 
-                \_/ \Tt \_/ 
-                  \_/ \_/ 
-                    \_/ 
-"""
+char const *def level_get_data(int i):
+***scramble
+levels = "    char const *data[] = {"
+for i in range(14):
+    levels += "room" + str(i) + ", "
+levels += "}\n"
+parse(levels)
+***
+    return data[i]
+
+char const *def level_get_hint(int i):
+***scramble
+hints = "    char const *hints[] = {"
+for i in range(14):
+    hints += "hint" + str(i) + ", "
+hints += "}\n"
+parse(hints)
+***
+    return hints[i]

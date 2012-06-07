@@ -1,200 +1,198 @@
-#!/usr/bin/env python3
-import sys, os, glob
-import random
-from math import *
-from ctypes import *
+import common
+import render, config
 
-from land import *
-
-import render, game, config, debug
-
-data_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..")).encode("utf8")
-
-class Allegro:
+global char *main_data_path
     
-    def __init__(self):
-        self.FPS = 60
+def all_init(All *self):
+    self->FPS = 60
 
-        self.display = None
-        self.font = None
+    self->font = None
 
-        self.ftpos = 0
-        self.frame_times = [0.0] * self.FPS
-        self.direct_speed_measure = self.FPS
-        
-        self.game = None
-        
-        self.mouse_down = False
-        self.mx = 0
-        self.my = 0
-        
-        self.show_fps = False
-        self.running = False
+    self->ftpos = 0
+    self->direct_speed_measure = self->FPS
+    
+    self->mouse_down = False
+    self->mx = 0
+    self->my = 0
+    
+    self->show_fps = False
+    self->running = False
 
-    def sound(self, name, vol):
-        land_sound_play(getattr(render.Render, name), vol, 0, 1)
+def sound(LandSound *s, float vol):
+    land_sound_play(s, vol, 0, 1)
 
 def add_time():
-    a.frame_times[a.ftpos] = land_get_time()
-    a.ftpos += 1
-    if a.ftpos >= a.FPS:
-        a.ftpos = 0
+    All *a = global_a
+    a->frame_times[a->ftpos] = land_get_time()
+    a->ftpos += 1
+    if a->ftpos >= a->FPS:
+        a->ftpos = 0
 
-def get_fps():
-    prev = a.FPS - 1
-    min_dt = 1
-    max_dt = 1 / 1000000
-    av = 0
-    for i in range(a.FPS):
-        if i != a.ftpos:
-            dt = a.frame_times[i] - a.frame_times[prev]
+def get_fps(double *average, *minmax):
+    All *a = global_a
+    int prev = a->FPS - 1
+    double min_dt = 1
+    double max_dt = 1 / 1000000.0
+    double av = 0
+    for int i in range(a->FPS):
+        if i != a->ftpos:
+            double dt = a->frame_times[i] - a->frame_times[prev]
             if dt < min_dt and dt > 0:
                 min_dt = dt
             if dt > max_dt:
                 max_dt = dt
             av += dt
         prev = i
-    av /= a.FPS - 1
-    average = ceil(1 / av)
-    d = 1 / min_dt - 1 / max_dt
-    minmax = floor(d / 2)
-    return average, minmax
+    av /= (double)a->FPS - 1
+    *average = ceil(1 / av)
+    double d = 1 / min_dt - 1 / max_dt
+    *minmax = floor(d / 2)
 
 def redraw():
-    w = land_display_width()
-    h = land_display_height()
-    fh = land_font_height(a.font)
+    All *a = global_a
+    float w = land_display_width()
+    #float h = land_display_height()
+    #float fh = land_font_height(a->font)
 
-    render.render(a.game)
+    render(game)
 
-    if a.show_fps:
-        f1, f2 = get_fps()
+    if a->show_fps:
+        double f1, f2
+        get_fps(&f1, &f2)
         land_text_pos(w, 0)
-        land_font_set(a.font)
-        land_color(*a.text)
-        land_print_right(b"%s", ("FPS: %4d +- %-4d" % (f1, f2)).encode("utf8"))
-        land_print_right(b"%s", ("%4d / sec" % int(1.0 / a.direct_speed_measure)).encode("utf8"))
+        land_font_set(a->font)
+        land_color(a->text.r, a->text.g, a->text.b, a->text.a)
+        land_print_right("FPS: %4d +- %-4d", (int)f1, (int)f2)
+        land_print_right("%4d / sec", (int)(1.0 / a->direct_speed_measure))
 
 def init():
-    land_display_title(b"Yellow and Dangerous")
-    a.font = land_font_load(data_path + b"/data/Muli-Regular.ttf", 10)
+    All *a = global_a
+    all_init(a)
+    land_display_title("Yellow and Dangerous")
+    LandBuffer *b = land_buffer_new()
+    land_buffer_cat(b, main_data_path)
+    land_buffer_cat(b, "/data/Muli-Regular.ttf")
+    char *path = land_buffer_finish(b)
+    a->font = land_font_load(path, 10)
+    land_free(path)
 
-    a.up = False
-    a.down = False
-    a.left = False
-    a.right = False
-    a.jump = False
+    a->up = False
+    a->down = False
+    a->left = False
+    a->right = False
+    a->jump = False
 
-    a.text = 0, 0, 0, 1
+    a->text = (LandColor){0, 0, 0, 1}
 
-    a.game = game.Game()
-    game.game = a.game
-    game.game.a = a
+    config_controls_read()
 
-    a.show_fps = False
+    game = game_new()
 
-    a.running = True
+    a->show_fps = False
 
-    a.cheatpos = 0
+    a->running = True
+
+    a->cheatpos = 0
 
 def update():
-    if a.running:
-        a.game.tick()
+    All *a = global_a
+    config_check_controls(a)
 
-    config.check_controls(a)
+    if a->running:
+        game_tick(game)
 
-def runner_init(self):
+
+def runner_init(LandRunner *self):
     init()
 
-def runner_update(self):
+static def cheat(char unichar):
+    All *a = global_a
+    char const *cheatcode = "iddqd"
+    if unichar == cheatcode[a->cheatpos]:
+        a->cheatpos += 1
+        if a->cheatpos == (int)strlen(cheatcode):
+            game->level += 1
+            a->cheatpos = 0
+            game_reset(game)
+    else:
+        a->cheatpos = 0
+
+def runner_update(LandRunner *self):
+    All *a = global_a
+
     update()
 
     if land_closebutton():
         land_quit()
 
-    def cheat(unichar):
-        cheatcode = "iddqd"
-        if unichar == cheatcode[a.cheatpos]:
-            a.cheatpos += 1
-            if a.cheatpos == len(cheatcode):
-                a.game.level += 1
-                a.cheatpos = 0
-                a.game.reset()
-        else:
-            a.cheatpos = 0
-
     if not land_keybuffer_empty():
-        k = c_int(0)
-        u = c_int(0)
-        land_keybuffer_next(byref(k), byref(u))
-        k = k.value
-        u = u.value
-        cheat(chr(u))
+        int k, u
+        land_keybuffer_next(&k, &u)
+        cheat(u)
 
         if k == LandKeyEscape:
             land_quit()
         elif k == LandKeyFunction + 1:
-            a.show_fps = not a.show_fps
+            a->show_fps = not a->show_fps
         elif k == LandKeyFunction + 2:
-            debug.no_mask = not debug.no_mask
+            debug_no_mask = not debug_no_mask
         elif k == LandKeyFunction + 3:
-            debug.bounding_boxes = not debug.bounding_boxes
-        elif k == ord(" "):
+            debug_bounding_boxes = not debug_bounding_boxes
+        elif k == ' ':
             pass
         elif k == LandKeyEnter:
-            if not a.running:
-                a.running = True
-                a.game = game.Game()
-                a.game.start_time = al_get_time()
-        elif k == ord("r"):
-            a.game.reset()
-        elif k == ord("m"):
-            land_stream_set_playing(render.Render.music,
-                not land_stream_is_playing(render.Render.music))
+            if not a->running:
+                a->running = True
+                game = game_new()
+                game->start_time = land_get_time()
+        elif k == 'r':
+            game_reset(game)
+        #elif k == 'm':
+        #    land_stream_set_playing(render_music,
+        #        not land_stream_is_playing(render_music))
 
-    a.mouse_down = land_mouse_button(0)
-    a.mx = land_mouse_x()
-    a.my = land_mouse_y()
+    a->mouse_down = land_mouse_button(0)
+    a->mx = land_mouse_x()
+    a->my = land_mouse_y()
 
-def runner_redraw(self):
+def runner_redraw(LandRunner *self):
+    All *a = global_a
 
-    t = -land_get_time()
+    double t = -land_get_time()
     add_time()
            
     redraw()
 
     t += land_get_time()
-    a.direct_speed_measure  = t
+    a->direct_speed_measure  = t
 
-def main():
-    global a
-    a = Allegro()
-    game.a = a
-    render.a = a
+int def my_main():
+    All *a
+    land_alloc(a)
     
-    w, h = 960, 600
-    done = False
-    need_redraw = True
-    a.show_help = True
+    int w = 960
+    int h = 600
+    a->show_help = True
+
+    main_data_path = land_strdup(".")
 
     land_init()
     land_set_display_parameters(w, h, LAND_OPENGL)
-    game_runner = land_runner_new(b"Yellow and Dangerous",
-        CFUNCTYPE(None, LP_LandRunner)(runner_init),
+    LandRunner *game_runner = land_runner_new("Yellow and Dangerous",
+        runner_init,
         None,
-        CFUNCTYPE(None, LP_LandRunner)(runner_update),
-        CFUNCTYPE(None, LP_LandRunner)(runner_redraw),
+        runner_update,
+        runner_redraw,
         None,
         None)
-    a.w = w
-    a.h = h
+    a->w = w
+    a->h = h
 
     land_runner_register(game_runner)
     land_set_initial_runner(game_runner)
     land_mainloop()
 
-def start():
-    land_use_main(main)
+    return 0
 
-if __name__ == "__main_":
-    start()
+land_use_main(my_main)
+

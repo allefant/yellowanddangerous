@@ -1,51 +1,48 @@
-from math import *
+import common
 
 class Viewport:
+    float x, y
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    
-    def project(self, x, y, z):
-        s = 1 / sqrt(2)
-        t = sqrt(3)
-        sx = self.x + x * s - z * s
-        sy = self.y + (x * s - y * t + z * s) * 0.5
-        return sx, sy
+Viewport *def viewport_new(float x, y):
+    Viewport *self
+    land_alloc(self)
+    self->x = x
+    self->y = y
+    return self
 
-    def unproject_xz(sx, sy):
-        s = sqrt(2)
+def project(Viewport *self, float x, y, z, *sx, *sy):
+    float s = 1 / sqrt(2)
+    float t = sqrt(3)
+    *sx = self->x + x * s - z * s
+    *sy = self->y + (x * s - y * t + z * s) * 0.5
 
-        sx -= self.x
-        sy -= self.y
+def unproject_xz(Viewport *self, float sx, sy, *x, *z):
+    float s = sqrt(2)
 
-        z = (sy - sx * 0.5) * s
-        x = (sx * 0.5 + sy) * s
+    sx -= self->x
+    sy -= self->y
 
-        return x, z
+    *z = (sy - sx * 0.5) * s
+    *x = (sx * 0.5 + sy) * s
 
-    def unproject_xy(sx, sy):
-        s = sqrt(2)
-        t = 1 / sqrt(3)
+def unproject_xy(Viewport *self, float sx, sy, *x, *y):
+    float s = sqrt(2)
+    float t = 1 / sqrt(3)
 
-        sx -= self.x
-        sy -= self.y
+    sx -= self->x
+    sy -= self->y
 
-        x = sx * s
-        y = sx * t - 2 * sy * t
+    *x = sx * s
+    *y = sx * t - 2 * sy * t
 
-        return x, y
+def unproject_yz(Viewport *self, float sx, sy, *y, *z):
+    float s = sqrt(2)
+    float t = 1 / sqrt(3)
 
-    def unproject_xy(sx, sy):
-        s = sqrt(2)
-        t = 1 / sqrt(3)
+    sx -= self->x
+    sy -= self->y
 
-        sx -= self.x
-        sy -= self.y
-
-        y = sx * t - 2 * sy * t
-        z = -sx * s
-
-        return y, z
+    *y = sx * t - 2 * sy * t
+    *z = -sx * s
 
 

@@ -1,4 +1,5 @@
-no_mask = False
-#no_mask = True
-bounding_boxes = False
-#bounding_boxes = True
+import common
+
+global bool debug_no_mask = False
+global bool debug_bounding_boxes = False
+

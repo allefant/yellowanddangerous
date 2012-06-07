@@ -1,250 +1,219 @@
-import random, array
-from math import *
-import main
-from land import *
-import block
-from isometric import *
-import render
-import level, cube
-from player import *
-from allefant import *
+import common
+import block, isometric, level, render, player, cube, allefant, level
 
 class Game:
-    def __init__(self):
-        self.viewport = Viewport(land_display_width() / 2,
-            land_display_height() / 2)
+    int level
+    Blocks *blocks
+    float waypoints[10][3]
+    int waypoints_count
+    Viewport *viewport
+    char const *state
+    int ticks
+    int state_tick
+    Player *player
+    Allefant *player2
 
-        self.level = level.start
+    double start_time
 
-        render.Render.setup()
+global Game *game
+    
+Game *def game_new():
+    Game *self; land_alloc(self)
+    self->viewport = viewport_new(land_display_width() / 2,
+        land_display_height() / 2)
 
-        self.blocks = block.Blocks()
+    self->level = level_start
 
-        self.reset()
+    render_setup()
 
-    def reset(self):
-        self.state = "play"
-        self.ticks = 0
-        self.state_tick = 0
-        self.waypoints = {}
-        self.read_level(getattr(level, "room{}".format(self.level)))
+    self->blocks = blocks_new()
 
-    def read_level(self, level):
-        self.blocks.reset()
-        
-        e = 0
-        s = 96 / sqrt(2)
-        S = -4.25
+    game_reset(self)
 
-        rows = level.splitlines()[1:]
-        for y in range(6):
-            for z in range(12):
-                for x in range(12):
-                    c = rows[z][x + 12 * y]
+    return self
 
-                    rx = x - 1
-                    ry = max(0, y - 1)
-                    rz = z - 1
-                    xp = (rx + S) * s
-                    yp = ry * (s + e)
-                    zp = (rz + S) * s
-                  
-                    self.make_block(c, xp, yp, zp)
-                
-    def make_block(self, c, xp, yp, zp):
-        r = render.Render
+def game_reset(Game *self):
+    self->state = "play"
+    self->ticks = 0
+    self->state_tick = 0
+    self->waypoints_count = 0
+    game_read_level(self, level_get_data(self->level))
 
-        def make(t):
-            if t.dynamic:
-                b = Block(self.blocks, xp + 0.1, yp, zp + 0.1, t)
-            else:
-                b = Block(self.blocks, xp, yp, zp, t)
-            return b
+def game_read_level(Game *self, char const *level):
+    blocks_reset(self->blocks)
+    
+    float e = 0
+    float s = 96 / sqrt(2)
+    float S = -4.25
 
-        if c == "_":
-            b = make(r.BlockBottom2)
-            b.y -= b.ys
-            b.add()
-        if c == "-":
-            b = make(r.BlockBottom3)
-            b.y -= b.ys
-            b.add()
-        if c == "~":
-            b = make(r.BlockBottomLeft3)
-            b.y -= b.ys
-            b.add()
-        if c == "*":
-            make(r.Cube2).add()
-        if c == "+":
-            b = make(r.Cube2)
-            b.y -= b.ys
-            b.add()
-        if c == "#":
-            make(r.Block).add()
-        if c == ":":
-            b = make(r.BlockBottom)
-            b.y -= b.ys
-            b.add()
-        if c == "'":
-            b = make(r.BlockSmall3)
-            b.y -= b.ys
-            b.add()
-        if c == "/":
-            make(r.BlockLeft2).add()
-        if c == "\\":
-            make(r.BlockRight2).add()
-        if c == "]":
-            make(r.BlockRight).add()
-        if c == "[":
-            make(r.BlockLeft).add()
-        if c == "}":
-            make(r.BlockRight4).add()
-        if c == "{":
-            make(r.BlockLeft4).add()
-        if c == 'S':
-            self.player = Player(self.blocks, xp, yp, zp, r.Scientist)
-            self.player.add()
-        if c == '♥':
-            cube.Cube(self.blocks, xp, yp, zp, r.Cube3).add()
-        if c == "=":
-            make(r.Bridge).add()
-        if c == "$":
-            make(r.Bridge2).add()
-        if c == 'x':
-            b = make(r.Plate)
-            b.y -= b.ys
-            b.add()
-        if c == 'O':
-            make(r.Barrel).add()
-        if c == 'T':
-            make(r.TreeBottom).add()
-        if c == 't':
-            make(r.TreeTop).add()
-        if c == '!':
-            make(r.Trunk).add()
-        if c == 'e':
-            b = make(r.ExitLeft)
-            b.y -= b.ys
-            b.add()
-        if c == 'ə':
-            b = make(r.ExitRight)
-            b.y -= b.ys
-            b.add()
-        if c == 'A':
-            self.player2 = Allefant(self.blocks, xp, yp, zp, r.Allefant)
-            self.player2.add()
-            self.waypoints[0] = xp, yp, zp
-        if c in "123456789":
-            self.waypoints[int(c)] = xp, yp, zp
+    int data[12 * 12 * 6]
 
-    def was_a_stupid_idea(self):
-        e = 0.1
-        s = 96 / sqrt(2)
-        S = -4.25
+    int pos = 0
+    int rowpos = 0
+    char const *row = level + 1
+    while *row:
+        int c = land_utf8_char_const(&row)
+        if rowpos < 12 * 6:
+            data[pos++] = c
+        if c == '\n':
+            rowpos = 0
+        else:
+            rowpos++
 
-        j = 0
-        height = 0
-        for row in level.room1.splitlines():
-            x = S * s
-            i = 0
-            for i, c in enumerate(row):
+    for int y in range(6):
+        for int z in range(12):
+            for int x in range(12):
+                int c = data[z * 12 * 6 + x + 12 * y]
 
-                i2 = (i - 21)
-                j2 = (j - 6)
-                x = i2 / 4 + j2 / 2
-                y = 0
-                z = j2 / 2 - i2 / 4
-                
-                if x - floor(x) > 0.1 or z - floor(z) > 0.1:
-                    if height == 0: continue
-                    if c in " _\\/": continue
-                    rx = round((x - floor(x)) * 4)
-                    rz = round((z - floor(z)) * 4)
-                    x = floor(x)
-                    z = floor(z)
-                    if rx == 1 and rz == 3:
-                        y += 2
-                    if rx == 2 and rz == 2:
-                        y += 1
-                    if rx == 3 and rz == 1:
-                        y += 3
-
-                if x < 0:
-                    z -= x
-                    y += -x - 1
-                    x = 0
-
-                if z < 0:
-                    x -= z
-                    y += -z - 1
-                    z = 0
-
-                xp = (x + S) * s
-                yp = y * (s - e)
-                zp = (z + S) * s
+                float rx = x - 1
+                float ry = max(0, y - 1)
+                float rz = z - 1
+                float xp = (rx + S) * s
+                float yp = ry * (s + e)
+                float zp = (rz + S) * s
               
-                self.make_block(c, xp, yp, zp)
-                
+                game_make_block(self, c, xp, yp, zp)
 
-            j += 1
-            if j == 28:
-                j = 6
-                height += 1
+static Block *def make(Game *self, float xp, yp, zp, BlockType *t):
+    Block *b
+    if t->dynamic:
+        b = block_new(self->blocks, xp + 0.1, yp, zp + 0.1, t)
+    else:
+        b = block_new(self->blocks, xp, yp, zp, t)
 
-        #block.blocks_static.sort(key = lambda b: -b.y)
-
-    def level_done(self):
-        if self.state == "play":
-            self.state = "done"
-            self.state_tick = self.ticks
-            self.a.sound("teleport", 1)
-
-    def tick(self):
-        r = render.Render
-
-        if self.state in ["done", "died"]:
-            if self.ticks > self.state_tick + 30:
-                if self.state == "done": self.level += 1
-                self.reset()
-
-        plates_count = 0
-        plates_on_before = 0
-
-        if hasattr(self, "player"):
-
-            if self.state == "play":
-                if self.player.dead or self.player.y < -960:
-                    self.a.sound("oh_no", 1)
-                    self.state = "died"
-
-
-        for b in self.blocks.static:
-            if b.block_type == r.Plate:
-                if b.frame == 1:
-                    plates_on_before += 1
-                b.frame = 0
-                plates_count += 1
+    block_add(b)
+    return b
             
-        for b in self.blocks.dynamic:
-            b.tick()
+def game_make_block(Game *self, int c, float xp, yp, zp):
+    char s[10];
+    s[land_utf8_encode(c, s)] = 0
+    Block *b
+    if c == '_':
+        b = make(self, xp, yp, zp, Render_BlockBottom2)
+        b->y -= b->ys
+    if c == '-':
+        b = make(self, xp, yp, zp, Render_BlockBottom3)
+        b->y -= b->ys
+    if c == '~':
+        b = make(self, xp, yp, zp, Render_BlockBottomLeft3)
+        b->y -= b->ys
+    if c == '*':
+        make(self, xp, yp, zp, Render_Cube2)
+    if c == '+':
+        b = make(self, xp, yp, zp, Render_Cube2)
+        b->y -= b->ys
+    if c == '#':
+        make(self, xp, yp, zp, Render_Block)
+    if c == ':':
+        b = make(self, xp, yp, zp, Render_BlockBottom)
+        b->y -= b->ys
+    if c == '\'':
+        b = make(self, xp, yp, zp, Render_BlockSmall3)
+        b->y -= b->ys
+    if c == '/':
+        make(self, xp, yp, zp, Render_BlockLeft2)
+    if c == '|':
+        make(self, xp, yp, zp, Render_BlockRight2)
+    #if c == ']':
+    #    make(self, xp, yp, zp, Render_BlockRight)
+    if c == '[':
+        make(self, xp, yp, zp, Render_BlockLeft)
+    if c == '}':
+        make(self, xp, yp, zp, Render_BlockRight4)
+    if c == '{':
+        make(self, xp, yp, zp, Render_BlockLeft4)
+    if c == 'S':
+        self->player = player_new(self->blocks, xp, yp, zp, Render_Scientist)
+        block_add(&self->player->super)
+    if c == L'♥':
+        b = (void *)cube_new(self->blocks, xp, yp, zp, Render_Cube3)
+        block_add(b)
+    if c == '=':
+        make(self, xp, yp, zp, Render_Bridge)
+    if c == '$':
+        make(self, xp, yp, zp, Render_Bridge2)
+    if c == 'x':
+        b = make(self, xp, yp, zp, Render_Plate)
+        b->y -= b->ys
+    if c == 'O':
+        make(self, xp, yp, zp, Render_Barrel)
+    if c == 'T':
+        make(self, xp, yp, zp, Render_TreeBottom)
+    if c == 't':
+        make(self, xp, yp, zp, Render_TreeTop)
+    if c == '!':
+        make(self, xp, yp, zp, Render_Trunk)
+    if c == 'e':
+        b = make(self, xp, yp, zp, Render_ExitLeft)
+        b->y -= b->ys
+    if c == L'ə':
+        b = make(self, xp, yp, zp, Render_ExitRight)
+        b->y -= b->ys
+    if c == 'A':
+        self->player2 = allefant_new(self->blocks, xp, yp, zp, Render_Allefant)
+        self->waypoints[0][0] = xp
+        self->waypoints[0][1] = yp
+        self->waypoints[0][2] = zp
+        block_add(&self->player2->super)
+        self->waypoints_count = max(self->waypoints_count, 1)
+    if c >= '1' and c <= '9':
+        int i = c - '0';
+        self->waypoints[i][0] = xp
+        self->waypoints[i][1] = yp
+        self->waypoints[i][2] = zp
+        self->waypoints_count = max(self->waypoints_count, i + 1)
 
-        plates_on = 0
-        for b in self.blocks.static:
-            if b.block_type == r.Plate:
-                if b.frame == 1:
-                    plates_on += 1
-            elif b.block_type in [r.ExitLeft, r.ExitRight]:
-                b.frame = 0
+def game_level_done(Game *self):
+    if strcmp(self->state, "play") == 0:
+        self->state = "done"
+        self->state_tick = self->ticks
+        sound(Render_teleport, 1)
 
-        if plates_on > plates_on_before:
-            a.sound("on", 1)
+def game_tick(Game *self):
 
-        if plates_on < plates_on_before:
-            a.sound("off", 1)
+    if strcmp(self->state, "done") == 0 or  strcmp(self->state, "died") == 0:
+        if self->ticks > self->state_tick + 30:
+            if strcmp(self->state, "done") == 0: self->level += 1
+            game_reset(self)
 
-        if plates_count == plates_on:
-            for b in self.blocks.static:
-                if b.block_type in [r.ExitLeft, r.ExitRight]:
-                    b.frame = 1
+    int plates_count = 0
+    int plates_on_before = 0
 
-        self.ticks += 1
+    if self->player:
+
+        if strcmp(self->state, "play") == 0:
+            if self->player->dead or self->player->super.y < -960:
+                sound(Render_oh_no, 1)
+                self->state = "died"
+
+
+    for Block *b in LandArray *self->blocks->fixed:
+        if b->block_type == Render_Plate:
+            if b->frame == 1:
+                plates_on_before += 1
+            b->frame = 0
+            plates_count += 1
+        
+    for Block *b in LandArray *self->blocks->dynamic:
+        b->block_type->tick(b)
+
+    int plates_on = 0
+    for Block *b in LandArray *self->blocks->fixed:
+        if b->block_type == Render_Plate:
+            if b->frame == 1:
+                plates_on += 1
+        elif b->block_type == Render_ExitLeft or b->block_type == Render_ExitRight:
+            b->frame = 0
+
+    if plates_on > plates_on_before:
+        sound(Render_on, 1)
+
+    if plates_on < plates_on_before:
+        sound(Render_off, 1)
+
+    if plates_count == plates_on:
+        for Block *b in LandArray *self->blocks->fixed:
+            if b->block_type == Render_ExitLeft or b->block_type == Render_ExitRight:
+                b->frame = 1
+
+    self->ticks += 1
