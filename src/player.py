@@ -28,6 +28,11 @@ Player *def player_new(Blocks *blocks, float x, y, z, BlockType *kind):
     self->dead = False
     return self
 
+def player_destroy(Block *super):
+    Player *self = (void *)super
+    land_array_destroy(self->stack)
+    block_destroy(super)
+
 def player_try_pull(Player *self, float px, pz):
     float ox = self->super.x
     float oz = self->super.z

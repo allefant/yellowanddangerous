@@ -94,6 +94,11 @@ def init():
 
     a->cheatpos = 0
 
+def done():
+    All *a = global_a
+    game_del(game)
+    land_font_destroy(a->font)
+
 def update():
     All *a = global_a
     config_check_controls(a)
@@ -104,6 +109,9 @@ def update():
 
 def runner_init(LandRunner *self):
     init()
+
+def runner_done(LandRunner *self):
+    done()
 
 static def cheat(char unichar):
     All *a = global_a
@@ -177,20 +185,24 @@ int def my_main():
     main_data_path = land_strdup(".")
 
     land_init()
-    land_set_display_parameters(w, h, LAND_OPENGL)
+    #land_set_display_parameters(w, h, LAND_OPENGL)
+    land_set_display_parameters(w, h, 0)
     LandRunner *game_runner = land_runner_new("Yellow and Dangerous",
         runner_init,
         None,
         runner_update,
         runner_redraw,
         None,
-        None)
+        runner_done)
     a->w = w
     a->h = h
 
     land_runner_register(game_runner)
     land_set_initial_runner(game_runner)
     land_mainloop()
+
+    land_free(main_data_path)
+    land_free(a)
 
     return 0
 

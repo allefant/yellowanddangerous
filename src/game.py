@@ -32,6 +32,12 @@ Game *def game_new():
 
     return self
 
+def game_del(Game *self):
+    blocks_destroy(self->blocks)
+    render_teardown()
+    land_free(self->viewport)
+    land_free(self)
+
 def game_reset(Game *self):
     self->state = "play"
     self->ticks = 0

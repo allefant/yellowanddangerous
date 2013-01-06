@@ -29,9 +29,7 @@ static BlockType *def render_load(char const *name, float x, y, z, bool dynamic,
 
     land_array_sort_alphabetical(frames)
 
-    int n = land_array_count(frames)
-    for int i in range(n):
-        char *s = land_array_get_nth(frames, i)
+    for char *s in LandArray *frames:
         LandImage *pic = land_image_load(s)
         if not pic:
             print("Could not load %s", s)
@@ -39,7 +37,7 @@ static BlockType *def render_load(char const *name, float x, y, z, bool dynamic,
             if not bt:
                 float ss = 96 / sqrt(2)
                 bt = blocktype_new(ss * x, ss * y, ss * z,
-                    block_tick, block_touch)
+                    block_tick, block_touch, block_destroy)
                 bt->dynamic = dynamic
                 bt->lift = lift
                 bt->transparent = transparent
@@ -47,6 +45,8 @@ static BlockType *def render_load(char const *name, float x, y, z, bool dynamic,
                 bt->x = -land_image_width(pic) / 2
                 bt->y = -land_image_height(pic) / 2
             land_array_add(bt->bitmaps, pic)
+        land_free(s)
+    land_array_destroy(frames)
     return bt
 
 ***scramble
@@ -158,9 +158,23 @@ for name, vname in sdefs:
 
     Render_Scientist->tick = player_tick
     Render_Scientist->touch = player_touch
+    Render_Scientist->destroy = player_destroy
     Render_Allefant->tick = allefant_tick
     Render_Allefant->touch = allefant_touch
     Render_Cube3->touch = cube_touch
+
+def render_teardown():
+***scramble
+for name, x, y, z, dynamic, lift, transparent in defs:
+    parse('    blocktype_destroy(Render_{})\n'.format(name))
+
+for name, vname in sdefs:
+    parse('    land_sound_destroy({})\n'.format(vname))
+***
+
+    land_font_destroy(r.font)
+    land_stream_destroy(r.music)
+    land_free(r.path)
 
 def render(Game *g):
     render_setup()

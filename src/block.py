@@ -8,8 +8,20 @@ class Blocks:
     bool rebuild_static_cache
     bool rebuild_dynamic_cache
 
+def blocks_list_destroy(LandArray **list):
+    if *list:
+        for Block *b in LandArray **list:
+            b->block_type->destroy(b)
+        land_array_destroy(*list)
+        *list = None
+
+def blocks_clear(Blocks *self):
+    blocks_list_destroy(&self->fixed)
+    blocks_list_destroy(&self->dynamic)
+    blocks_list_destroy(&self->transparent)
+
 def blocks_reset(Blocks *self):
-    # FIXME: free everything
+    blocks_clear(self)
     self->fixed = land_array_new()
     self->dynamic = land_array_new()
     self->transparent = land_array_new()
@@ -19,6 +31,10 @@ def blocks_reset(Blocks *self):
 Blocks *def blocks_new():
     Blocks *b; land_alloc(b)
     return b
+
+def blocks_destroy(Blocks *self):
+    blocks_clear(self)
+    land_free(self)
 
 #def blocks_pick(Blocks *self, float xp, yp, Viewport *viewport):
 #    for block in self->static + self->dynamic:
@@ -37,10 +53,12 @@ class BlockType:
 
     void (*tick)(Block *)
     void (*touch)(Block *, Block *, float, float, float)
+    void (*destroy)(Block *)
 
 BlockType *def blocktype_new(float xs, ys, zs,
         void (*tick)(Block *),
-        void (*touch)(Block *, Block *, float, float, float)):
+        void (*touch)(Block *, Block *, float, float, float),
+        void (*destroy)(Block *)):
     BlockType *self
     land_alloc(self)
     self->xs = xs
@@ -51,7 +69,14 @@ BlockType *def blocktype_new(float xs, ys, zs,
     self->transparent = False
     self->tick = tick
     self->touch = touch
+    self->destroy = destroy
     return self
+
+def blocktype_destroy(BlockType *self):
+    for LandImage *pic in LandArray *self->bitmaps:
+        land_image_destroy(pic)
+    land_array_destroy(self->bitmaps)
+    land_free(self)
 
 static int tag = 0
 class Block:
@@ -97,7 +122,10 @@ Block *def block_new(Blocks *blocks, float x, y, z, BlockType *block_type):
     land_alloc(self)
     block_init(self, blocks, x, y, z, block_type)
     return self
-     
+
+def block_destroy(Block *self):
+    land_array_destroy(self->cache)
+    land_free(self)
 
 def block_add(Block *self):
     self->bid = 1 + land_array_count(self->blocks->fixed) +\
