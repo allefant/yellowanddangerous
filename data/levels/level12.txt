@@ -1,0 +1,18 @@
+hint Jump!
+make 10 9 4 25
+make 4 5 0 13
+make 4 21 0 13
+make 4 29 0 13
+make 4 37 0 13
+make 4 5 0 21
+make 4 21 0 21
+make 3 29 0 21
+make 4 37 0 21
+make 18 45 3 21
+move 0 20 0
+frame 1
+make 4 5 0 29
+make 4 21 0 29
+make 4 29 0 29
+make 4 37 0 29
+make 24 29 4 21

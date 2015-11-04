@@ -196,7 +196,7 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
     if dy < 0:
         if c->block_type == Render_Plate:
             c->frame = 1
-        elif c->block_type == Render_ExitLeft or c->block_type ==  Render_ExitRight:
+        elif c->block_type == Render_ExitLeft or c->block_type == Render_ExitRight:
             if c->frame == 1:
                 game_level_done(game)
     if dx != 0 or dz != 0:

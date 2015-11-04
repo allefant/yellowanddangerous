@@ -1,0 +1,25 @@
+hint pushin' 'round
+make 10 29 4 25
+make 13 25 8 9
+make 4 5 0 5
+make 4 13 0 5
+make 4 21 0 5
+make 4 29 0 5
+make 4 37 0 5
+make 4 5 0 13
+make 4 37 0 13
+make 4 5 0 21
+make 4 37 0 21
+make 18 45 3 21
+move 0 20 0
+make 5 13 0 25
+make 5 21 0 25
+make 12 29 3 25
+move 0 60 0
+make 4 5 0 29
+make 4 37 0 29
+make 4 5 0 37
+make 4 13 0 37
+make 4 21 0 37
+make 4 29 0 37
+make 4 37 0 37

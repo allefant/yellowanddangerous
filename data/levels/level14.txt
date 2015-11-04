@@ -1,0 +1,88 @@
+hint Yellow and...|helpful?
+make 20 13 4 13
+make 10 25 4 21
+make 6 21 4 29
+make 6 33 4 29
+make 13 33 8 17
+make 13 33 12 17
+make 19 21 3 1
+move 0 20 0
+make 4 5 0 5
+make 4 13 0 5
+make 4 21 0 5
+make 4 29 0 5
+make 4 37 0 5
+make 4 5 0 13
+make 4 13 0 13
+make 4 21 0 13
+make 12 29 3 13
+move 0 60 0
+make 23 33 0 13
+make 4 37 0 13
+make 5 29 0 17
+make 18 1 3 21
+move 0 20 0
+make 4 5 0 21
+make 4 13 0 21
+make 4 21 0 21
+make 12 29 3 21
+move 0 60 0
+make 23 33 0 21
+make 4 37 0 21
+make 5 29 0 25
+make 4 5 0 29
+make 4 13 0 29
+make 4 21 0 29
+make 12 29 3 29
+move 0 60 0
+make 23 33 0 29
+make 4 37 0 29
+make 5 29 0 33
+make 4 5 0 37
+make 4 13 0 37
+make 4 21 0 37
+make 4 29 0 37
+make 4 37 0 37
+make 17 9 4 9
+make 17 13 4 9
+make 17 17 4 9
+make 17 21 4 9
+make 17 33 4 9
+make 17 37 4 9
+make 17 41 4 9
+make 17 9 4 13
+make 25 13 4 13
+make 17 41 4 13
+make 17 9 4 17
+make 17 41 4 17
+make 17 41 4 21
+make 17 41 4 25
+make 17 9 4 29
+make 25 13 4 29
+frame 1
+make 25 29 4 29
+frame 2
+make 17 41 4 29
+make 17 9 4 33
+make 17 41 4 33
+make 17 9 4 37
+make 17 41 4 37
+make 17 9 4 41
+make 17 13 4 41
+make 17 17 4 41
+make 17 21 4 41
+make 17 25 4 41
+make 17 29 4 41
+make 17 33 4 41
+make 17 37 4 41
+make 17 41 4 41
+make 17 9 8 9
+make 17 41 8 9
+make 17 9 8 41
+make 17 41 8 41
+make 17 9 12 9
+make 17 41 12 9
+make 17 9 12 41
+make 17 41 12 41
+make 16 37 16 5
+make 16 5 16 37

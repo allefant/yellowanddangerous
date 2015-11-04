@@ -302,7 +302,7 @@ int def block_is_inside(Block *self, float xp, yp, Viewport *viewport):
 
     #
     #      0
-    #    /   \
+    #    /   .
     #  1       3
     #  | \   / |
     #  4   2   6
@@ -310,10 +310,12 @@ int def block_is_inside(Block *self, float xp, yp, Viewport *viewport):
     #      5
         
     if not is_left(v, xp, yp, 0, 1): return 0
-    if not is_left(v, xp, yp, 1, 4): return 0
+    if self.ys:
+        if not is_left(v, xp, yp, 1, 4): return 0
     if not is_left(v, xp, yp, 4, 5): return 0
     if not is_left(v, xp, yp, 5, 6): return 0
-    if not is_left(v, xp, yp, 6, 3): return 0
+    if self.ys:
+        if not is_left(v, xp, yp, 6, 3): return 0
     if not is_left(v, xp, yp, 3, 0): return 0
     if is_left(v, xp, yp, 1, 2) and is_left(v, xp, yp, 2, 3): return 1
     if is_left(v, xp, yp, 2, 5): return 3

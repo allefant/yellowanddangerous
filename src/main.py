@@ -88,6 +88,8 @@ def init():
     config_controls_read()
 
     game = game_new()
+    save_count()
+    game_reset()
 
     a->show_fps = False
 
@@ -104,8 +106,7 @@ def update():
     All *a = global_a
     config_check_controls(a)
 
-    if a->running:
-        game_tick(game)
+    game_tick(game)
 
 def runner_init(LandRunner *self):
     init()
@@ -121,7 +122,7 @@ static def cheat(char unichar):
         if a->cheatpos == (int)strlen(cheatcode):
             game->level += 1
             a->cheatpos = 0
-            game_reset(game)
+            game_reset()
     else:
         a->cheatpos = 0
 
@@ -146,6 +147,13 @@ def runner_update(LandRunner *self):
             save_level()
         elif k == LandKeyFunction + 3:
             load_level()
+        elif k == LandKeyFunction + 4:
+            blocks_reset(game->blocks)
+            game->player = None
+            game->player2 = None
+            game->level = game->levels + 1
+            save_level()
+            load_level()
         elif k == LandKeyFunction + 5:
             debug_no_mask = not debug_no_mask
         elif k == LandKeyFunction + 6:
@@ -155,16 +163,16 @@ def runner_update(LandRunner *self):
         elif k == LandKeyEnter:
             if not a->running:
                 a->running = True
-                game = game_new()
-                game->start_time = land_get_time()
         elif k == 'r':
-            game_reset(game)
+            game_reset()
             a.running = False
         elif k == 'q':
-            game_reset(game)
+            game->level -= 1
+            game_reset()
             a.running = False
         elif k == 'e':
-            game_reset(game)
+            game->level += 1
+            game_reset()
             a.running = False
         #elif k == 'm':
         #    land_stream_set_playing(render_music,

@@ -1,0 +1,14 @@
+hint no way
+make 10 25 4 29
+make 13 25 4 33
+make 13 25 4 37
+make 13 25 8 37
+make 3 21 0 13
+make 3 21 0 21
+make 3 21 0 29
+make 3 21 0 37
+make 9 21 4 13
+make 19 21 11 1
+move 0 20 0
+frame 1
+make 3 21 8 5

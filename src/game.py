@@ -32,8 +32,6 @@ Game *def game_new():
 
     self->blocks = blocks_new()
 
-    game_reset(self)
-
     return self
 
 def game_del(Game *self):
@@ -42,160 +40,12 @@ def game_del(Game *self):
     land_free(self->viewport)
     land_free(self)
 
-def game_reset(Game *self):
-    self.player = None
-    self->state = "play"
-    self->ticks = 0
-    self->state_tick = 0
-    self->waypoints_count = 0
-    game_read_level(self, level_get_data(), self->level)
-
-def game_read_level(Game *self, char const *rooms, int level):
-    level--
-
-    blocks_reset(self->blocks)
-    
-    float e = 0
-    float s = 96 / sqrt(2)
-    float S = -4.25
-
-    int data[12 * 12 * 6]
-    memset(data, 0, sizeof data)
-
-    int rowpos = 0
-    int rows = 0
-    bool empty = True
-    char const *hint
-    char const *row = rooms
-    while *row:
-        int c = land_utf8_char_const(&row)
-        if c == '\n':
-            rowpos = 0
-            if not empty:
-                rows++
-            empty = True
-            if rows == 13 * level + 12:
-                hint = row
-            continue
-        else:
-            rowpos++
-            empty = False
-        self.levels = rows / 13
-        if rows / 13 == level:
-            int levelrow = rows - level * 13
-            if rowpos - 1 < 12 * 6 and levelrow < 12:
-                data[levelrow * 12 * 6 + rowpos - 1] = c
-
-    for int y in range(6):
-        for int z in range(12):
-            for int x in range(12):
-                int c = data[z * 12 * 6 + x + 12 * y]
-
-                float rx = x - 1
-                float ry = max(0, y - 1)
-                float rz = z - 1
-                float xp = (rx + S) * s
-                float yp = ry * (s + e)
-                float zp = (rz + S) * s
-              
-                game_make_block(self, c, xp, yp, zp)
-
-    char const *end = strchr(hint, '\n')
-    char *r = land_substring(hint, 0, end - hint)
-    land_replace_all(&r, "|", "\n")
-    strcpy(self.hint, r)
-    land_free(r)
-
-static Block *def make(Game *self, float xp, yp, zp, BlockType *t):
-    Block *b
-    if t and t->dynamic:
-        b = block_new(self->blocks, xp + 0.1, yp, zp + 0.1, t)
-    else:
-        b = block_new(self->blocks, xp, yp, zp, t)
-
-    block_add(b)
-    return b
-            
-def game_make_block(Game *self, int c, float xp, yp, zp):
-    char s[10];
-    s[land_utf8_encode(c, s)] = 0
-    Block *b
-    if c == '_':
-        b = make(self, xp, yp, zp, Render_BlockBottom2)
-        b->y -= b->ys
-    if c == '-':
-        b = make(self, xp, yp, zp, Render_BlockBottom3)
-        b->y -= b->ys
-    if c == '~':
-        b = make(self, xp, yp, zp, Render_BlockBottomLeft3)
-        b->y -= b->ys
-    if c == '*':
-        make(self, xp, yp, zp, Render_Cube2)
-    if c == '+':
-        b = make(self, xp, yp, zp, Render_Cube2)
-        b->y -= b->ys
-    if c == '#':
-        make(self, xp, yp, zp, Render_Block)
-    if c == ':':
-        b = make(self, xp, yp, zp, Render_BlockBottom)
-        b->y -= b->ys
-    if c == '\'':
-        b = make(self, xp, yp, zp, Render_BlockSmall3)
-        b->y -= b->ys
-    if c == '/':
-        make(self, xp, yp, zp, Render_BlockLeft2)
-    if c == '|':
-        make(self, xp, yp, zp, Render_BlockRight2)
-    #if c == ']':
-    #    make(self, xp, yp, zp, Render_BlockRight)
-    if c == '[':
-        make(self, xp, yp, zp, Render_BlockLeft)
-    if c == '}':
-        make(self, xp, yp, zp, Render_BlockRight4)
-    if c == '{':
-        make(self, xp, yp, zp, Render_BlockLeft4)
-    if c == 'S':
-        self->player = player_new(self->blocks, xp, yp, zp, Render_Scientist)
-        block_add(&self->player->super)
-    if c == L'♥':
-        b = (void *)cube_new(self->blocks, xp, yp, zp, Render_Cube3)
-        block_add(b)
-    if c == '=':
-        make(self, xp, yp, zp, Render_Bridge)
-    if c == '$':
-        make(self, xp, yp, zp, Render_Bridge2)
-    if c == 'x':
-        b = make(self, xp, yp, zp, Render_Plate)
-        b->y -= b->ys
-    if c == 'O':
-        make(self, xp, yp, zp, Render_Barrel)
-    if c == 'T':
-        make(self, xp, yp, zp, Render_TreeBottom)
-    if c == 't':
-        make(self, xp, yp, zp, Render_TreeTop)
-    if c == 'C':
-        make(self, xp, yp, zp, Render_CherryTree)
-    if c == '!':
-        make(self, xp, yp, zp, Render_Trunk)
-    if c == 'e':
-        b = make(self, xp, yp, zp, Render_ExitLeft)
-        b->y -= b->ys
-    if c == L'ə':
-        b = make(self, xp, yp, zp, Render_ExitRight)
-        b->y -= b->ys
-    if c == 'A':
-        self->player2 = allefant_new(self->blocks, xp, yp, zp, Render_Allefant)
-        self->waypoints[0][0] = xp
-        self->waypoints[0][1] = yp
-        self->waypoints[0][2] = zp
-        block_add(&self->player2->super)
-        self->waypoints_count = max(self->waypoints_count, 1)
-    if c >= '1' and c <= '9':
-        int i = c - '0';
-        self->waypoints[i][0] = xp
-        self->waypoints[i][1] = yp
-        self->waypoints[i][2] = zp
-        self->waypoints_count = max(self->waypoints_count, i + 1)
+def game_reset:
+    if game.level > game.levels:
+        game.level = 1
+    if game.level < 1:
+        game.level = game.levels
+    load_level()
 
 def game_level_done(Game *self):
     if strcmp(self->state, "play") == 0:
@@ -204,11 +54,12 @@ def game_level_done(Game *self):
         sound(Render_teleport, 1)
 
 def game_tick(Game *self):
+    All *a = global_a
 
     if strcmp(self->state, "done") == 0 or  strcmp(self->state, "died") == 0:
         if self->ticks > self->state_tick + 30:
             if strcmp(self->state, "done") == 0: self->level += 1
-            game_reset(self)
+            game_reset()
 
     if land_was_resized():
         viewport_update(self.viewport)
@@ -216,7 +67,6 @@ def game_tick(Game *self):
     for int ti in range(11):
         if not land_touch_down(ti):
             continue
-        All *a = global_a
 
         double rr = land_display_width() / 8 * 0.8
         double rx = rr
@@ -298,10 +148,15 @@ def game_tick(Game *self):
             block_change_type(p, -1)
         if land_key_pressed('d'):
             block_change_type(p, 1)
+        if land_key_pressed('f'):
+            p.frame++
+            if p.frame >= land_array_count(p.block_type->bitmaps):
+                p.frame = 0
         if land_key_pressed(LandKeyDelete):
             block_del(p)
             block_destroy(p)
-    else:
+
+    if a.running and not game.picked:
         for Block *b in LandArray *self->blocks->dynamic:
             b->block_type->tick(b)
 

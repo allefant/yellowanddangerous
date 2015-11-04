@@ -1,0 +1,20 @@
+hint Touch the jump circle while|moving to jump.
+make 10 29 4 25
+make 4 13 0 13
+make 4 21 0 13
+make 4 29 0 13
+make 4 37 0 13
+make 4 13 0 21
+make 4 21 0 21
+make 4 29 0 21
+make 4 37 0 21
+make 4 13 0 29
+make 4 21 0 29
+make 4 29 0 29
+make 4 37 0 29
+make 3 13 4 13
+make 18 9 7 21
+move 0 20 0
+frame 1
+make 3 13 4 21
+make 3 13 4 29

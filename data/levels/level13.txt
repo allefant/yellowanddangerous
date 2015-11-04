@@ -1,0 +1,30 @@
+hint Yellow and Dangerous.||A mere figment of your imagination?
+make 10 41 4 9
+make 20 37 4 21
+make 13 13 8 37
+make 12 29 3 5
+move 0 60 0
+make 5 5 0 9
+make 5 13 0 9
+make 5 21 0 9
+make 5 29 0 9
+make 5 37 0 9
+make 23 13 0 13
+make 23 13 0 17
+make 5 5 0 21
+make 5 13 0 21
+make 5 21 0 21
+make 5 29 0 21
+make 19 37 3 21
+move 0 20 0
+make 23 29 0 25
+make 23 29 0 29
+make 5 5 0 33
+make 5 13 0 33
+make 5 21 0 33
+make 5 29 0 33
+make 5 37 0 33
+make 23 13 0 37
+make 25 1 4 21
+frame 1
+make 25 37 4 21

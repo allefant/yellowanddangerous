@@ -94,6 +94,7 @@ load("BlockRight4", 2, 2, 1, transparent = True)
 load("BlockLeft4", 1, 2, 2, transparent = True)
 load("BlockSmall3", 1, 1, 1)
 load("CherryTree", 2, 5, 2)
+load("Waypoint", 1, 0, 1)
 
 loads("step")
 loads("push")
@@ -228,7 +229,7 @@ def render(Game *g):
     land_color(0, 0, 0, 1)
     land_font_set(r.font)
 
-    if g->level == 13:
+    if g->level == g->levels:
         
         land_text_pos(0, 0)
         land_print("%s", "Congratulations! I'm surprised someone made it here :)")
@@ -279,7 +280,7 @@ def render_block(Block *self, Viewport *viewport):
 
         #
         #      0
-        #    /   \ 
+        #    /   . 
         #  1       3
         #  | \   / |
         #  4   2   6

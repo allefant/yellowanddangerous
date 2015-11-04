@@ -3,10 +3,13 @@ import game
 
 def save_level:
     char name[1024]
-    sprintf(name, "level%02d.txt", game->level)
+    sprintf(name, "data/levels/level%02d.txt", game->level)
     Blocks *blocks = game->blocks
     LandFile *f = land_file_new(name, "w")
-    land_file_print(f, "hint %s", game->hint)
+    char *st = land_strdup(game->hint)
+    land_replace_all(&st, "\n", "|")
+    land_file_print(f, "hint %s", st)
+    land_free(st)
     float s = 24 / sqrt(2)
     LandArray *arrays[] = {blocks.transparent, blocks.dynamic, blocks.fixed}
     for int i in range(3):
@@ -25,12 +28,14 @@ def save_level:
             zi = z * 100 - zi * 100
             if xi or yi or zi:
                 land_file_print(f, "move %d %d %d", xi, yi, zi)
+            if block.frame != 0:
+                land_file_print(f, "frame %d", block.frame)
             
     land_file_destroy(f)
     
 def load_level:
     char name[1024]
-    sprintf(name, "level%02d.txt", game->level)
+    sprintf(name, "data/levels/level%02d.txt", game->level)
 
     Game *self = game
     self.player = None
@@ -62,15 +67,45 @@ def load_level:
             if bt == Render_Scientist:
                 self.player = player_new(self->blocks, x, y, z, bt)
                 block = &self.player->super
+            elif bt == Render_Allefant:
+                self.player2 = allefant_new(self->blocks, x, y, z, bt)
+                block = &self.player2->super
             else:
                 block = block_new(blocks, x, y, z, bt)
+
             block_add(block)
         if land_starts_with(row, "move "):
             sscanf(row, "move %d %d %d", &xi, &yi, &zi)
             block.x += xi * s / 100.0
             block.y += yi * s / 100.0
             block.z += zi * s / 100.0
+        if land_starts_with(row, "frame "):
+            sscanf(row, "frame %d", &xi)
+            block.frame = xi
         if land_starts_with(row, "hint "):
-            land_string_copy(game->hint, row + 5, 1024)
+            char *st = land_strdup(row + 5)
+            land_replace_all(&st, "|", "\n")
+            land_string_copy(game->hint, st, 1024)
+            land_free(st)
+
         land_free(row)
     land_array_destroy(rows)
+
+    for Block *b in LandArray *blocks.fixed:
+        if b.block_type == Render_Waypoint:
+            self.waypoints[b.frame][0] = b.x
+            self.waypoints[b.frame][1] = b.y
+            self.waypoints[b.frame][2] = b.z
+            if b.frame >= self.waypoints_count:
+                self.waypoints_count = b.frame + 1
+
+def save_count:
+    char name[1024]
+    game->levels = 0
+    while True:
+        sprintf(name, "data/levels/level%02d.txt", game->levels + 1)
+        FILE *f = fopen(name, "r")
+        if not f:
+            break
+        fclose(f)
+        game->levels++
