@@ -1,5 +1,6 @@
 import common
 import render, config
+import save
 
 global char *main_data_path
     
@@ -90,7 +91,7 @@ def init():
 
     a->show_fps = False
 
-    a->running = True
+    #a->running = True
 
     a->cheatpos = 0
 
@@ -105,7 +106,6 @@ def update():
 
     if a->running:
         game_tick(game)
-
 
 def runner_init(LandRunner *self):
     init()
@@ -143,8 +143,12 @@ def runner_update(LandRunner *self):
         elif k == LandKeyFunction + 1:
             a->show_fps = not a->show_fps
         elif k == LandKeyFunction + 2:
-            debug_no_mask = not debug_no_mask
+            save_level()
         elif k == LandKeyFunction + 3:
+            load_level()
+        elif k == LandKeyFunction + 5:
+            debug_no_mask = not debug_no_mask
+        elif k == LandKeyFunction + 6:
             debug_bounding_boxes = not debug_bounding_boxes
         elif k == ' ':
             pass
@@ -155,6 +159,13 @@ def runner_update(LandRunner *self):
                 game->start_time = land_get_time()
         elif k == 'r':
             game_reset(game)
+            a.running = False
+        elif k == 'q':
+            game_reset(game)
+            a.running = False
+        elif k == 'e':
+            game_reset(game)
+            a.running = False
         #elif k == 'm':
         #    land_stream_set_playing(render_music,
         #        not land_stream_is_playing(render_music))
@@ -182,11 +193,16 @@ int def my_main():
     int h = 600
     a->show_help = True
 
-    main_data_path = land_strdup(".")
-
     land_init()
+
+    main_data_path = land_strdup(".")
+    
     #land_set_display_parameters(w, h, LAND_OPENGL)
-    land_set_display_parameters(w, h, 0)
+    *** "ifdef" ANDROID
+    land_set_display_parameters(w, h, LAND_FULLSCREEN | LAND_DEPTH)
+    *** "else"
+    land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE)
+    *** "endif"
     LandRunner *game_runner = land_runner_new("Yellow and Dangerous",
         runner_init,
         None,

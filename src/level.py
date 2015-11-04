@@ -1,6 +1,58 @@
 global int level_start = 1
 
-static char const *room1 = """
+static char const *rooms = """
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+ - - - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+ - - - - - e.           .           .           .           .           .
+.           .   S       .           .           .           .           .
+ - - - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+.           .           .           .           .           .           .
+Touch the D-Pad to move.
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+   - - -    .           .           .           .           .           .
+.           .           .           .           .           .           .
+   -   - - e.           .           .           .           .           .
+.           .   S       .           .           .           .           .
+   - - -    .           .           .           .           .           .
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+.           .           .           .           .           .           .
+Don't fall off!
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+ - - - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+ - - - - - e.           .           .           .           .           .
+.           . x ♥   S   .           .           .           .           .
+ - - - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+.           .           .           .           .           .           .
+Push the block!
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+   - - - -  .           .  _        .           .           .           .
+.           .           .           .           .           .           .
+   - - - -  .           . e_        .           .           .           .
+.           .      S    .           .           .           .           .
+   - - - -  .           .  _        .           .           .           .
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+.           .           .           .           .           .           .
+Touch the jump circle while|moving to jump.
 .           .           .           .           .           .           .
  - - - - -  .           .           .           .           .           .
 .           .           .     ♥     .           .           .           .
@@ -13,10 +65,7 @@ static char const *room1 = """
  - - - - -  .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint1 = "Cursor keys\nor WASD to move\nR to restart."
-
-static char const *room2 = """
+pushin' 'round
 .           .           .           .    ə      .           .           .
 .           .           .           .    _      .           .           .
 .           .           .           .           .           .           .
@@ -29,10 +78,20 @@ static char const *room2 = """
 .    _      .     ♥     .     ♥     .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint2 = "While moving, press\ncontrol to jump\nR to restart."
-
-static char const *room3 = """
+no way
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+   - - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+   - - - - e.           .           .           .           .           .
+.           .  ♥ x  S   .           .           .           .           .
+   - - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+.           .           .           .           .           .           .
+To pull, press jump|then move backwards.
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
@@ -45,10 +104,7 @@ static char const *room3 = """
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint3 = "To pull, press jump\nthen move backwards."
-
-static char const *room4 = """
+Pull the barrels.
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
@@ -61,10 +117,7 @@ static char const *room4 = """
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint4 = "Lab repairs."
-
-static char const *room5 = """
+Lab repairs.
 .           .           .           .           .           .           .
 .- - - -    .       ♥   . ♥         .           .           .           .
 .           .        t  .           .           .           .           .
@@ -77,10 +130,7 @@ e  ~ ~   ~  .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint5 = "Now what."
-
-static char const *room6 = """
+Now what.
 .  ə        .           .           .           .           .           .
 .  _ _ _    .     ***   .           .           .           .           .
 .           .     * *   .      x    .           .           .           .
@@ -93,10 +143,20 @@ static char const *room6 = """
 .  _ _ _    .     * *   .      x    .           .           .           .
 .           .     ***   .           .           .           .           .
 .  ə        .           .           .           .           .           .
-"""
-static char const *hint6 = "To lift, stand still,\nthen press jump key,\nthen push."
-
-static char const *room7 = """
+To lift, stand still,|then press jump key,|then push.
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+ -   - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+ -   - _ - e.      C    .           .           .           .           .
+.           . S         .           .           .           .           .
+ -   - - -  .           .           .           .           .           .
+.           .           .           .           .           .           .
+            .           .           .           .           .           .
+.           .           .           .           .           .           .
+.           .           .           .           .           .           .
+Jump!
 .           .           .           .           .           .           .
 .      x    .           .           .           .           .           .
 .~ ~ ~ ~ ~  .         S .           .           .           .           .
@@ -109,10 +169,7 @@ static char const *room7 = """
 .  '        .           .  ♥        .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint7 = "Yellow and Dangerous.\n\nA mere figment of your imagination?"
-
-static char const *room8 = """
+Yellow and Dangerous.||A mere figment of your imagination?
 .    ə      .           .           .           .           .           .
 .- - - - -  .           .           .           .        t  .           .
 .           . !!!!  !!! . !       ! . !       ! .           .           .
@@ -125,10 +182,7 @@ e- - - x'-  .     S   ! .           .           .           .           .
 .- - - - -  . !       ! .           .           .t          .           .
 .           . !!!!!!!!! . !       ! . !       ! .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint8 = "Yellow and...\nhelpful?"
-
-static char const *room9 = """
+Yellow and...|helpful?
 .           .           .           .           .           .           .
 . +_ _ _ +x ./6      75 .           .           .           .           .
 . +      ++ .           .           .           .           .         x .
@@ -141,10 +195,7 @@ e_ _ _ _ ++ .        8  .           .           .+          .           .
 ._ ++_ ++_  ./          .           ./       T  .           .           .
 .  +x  +x   .  1   2  ! .         ! .           .           . x         .
 .           .           .           .           .           .           . 
-"""
-static char const *hint9 = "\nYellow and Annoying!"
-
-static char const *room10 = """
+|Yellow and Annoying!
 .           .           .           .           .           .           .
 .           .  ß'ß'ß'ß' .  '        .           .           .           .
 .           .         ' .  ß      ♥ .    ' '    .           .           .
@@ -157,10 +208,7 @@ static char const *room10 = """
 .           .           .           .  s ß      .  '        .           .
 .S          .'          . '         .  'ß'      .  s        .           .
 .           .           .    ' 'ə   .           .           .           .
-"""
-static char const *hint10 = "Which way is up?"
-
-static char const *room11 = """
+Which way is up?
 .           .           .           .           .           .           .
 .      _ _  .      # #  .           .      #    .           .           .
 .           .           .           .           .           .           .
@@ -173,10 +221,7 @@ static char const *room11 = """
 ._ _S_ e    .#          .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
-"""
-static char const *hint11 = "Seriously?"
-
-static char const *room12 = """
+Seriously?
 .           .           .           .           .           .           .
 .    -   -  .           .           .    T   T  .           .           .
 .           .     !   ! .     !   ! .           .           .           .
@@ -189,10 +234,7 @@ static char const *room12 = """
 .-   -  e- e.           .           .T   T   T  .           .           .
 .           . !   !   ! . !   !   ! .           .           .  =   =  S .
 .    x   ə  .           .           .           .           .           .
-"""
-static char const *hint12 = "Finally at the top!\n(Of the trees.)"
-
-static char const *room13 = """
+Finally at the top!|(Of the trees.)
 .ə e ə e    .           .           .           .           .           .
 ə e ə e ə e .           .           .           .           .           .
 .e ə e ə e  .           .           .           .           .           .
@@ -205,10 +247,7 @@ static char const *room13 = """
 ə e ə e ə e .           .        O  .           .           .           .
 . 1ə e2ə.e  .           . O         .           .           .           .
   ə e........           .           .           .           .           .
-"""
-static char const *hint13 = "Thanks a lot for playing!\nThanks Richard for Pyweek!\nMaking this was great fun :)"
-
-static char const *room0 = """
+Thanks a lot for playing!|Thanks Richard for Pyweek!|Making this was great fun :)
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
 .           .           .           .           .           .           .
@@ -223,24 +262,6 @@ static char const *room0 = """
 .           .           .           .           .           .           .
 """
 
-static char const *hint0 = ""
+char const *def level_get_data:
+    return rooms
 
-char const *def level_get_data(int i):
-***scramble
-levels = "    char const *data[] = {"
-for i in range(14):
-    levels += "room" + str(i) + ", "
-levels += "}\n"
-parse(levels)
-***
-    return data[i]
-
-char const *def level_get_hint(int i):
-***scramble
-hints = "    char const *hints[] = {"
-for i in range(14):
-    hints += "hint" + str(i) + ", "
-hints += "}\n"
-parse(hints)
-***
-    return hints[i]

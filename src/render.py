@@ -10,43 +10,51 @@ class Render:
 
 Render r
 
-static int filter(char const *name, bool is_dir, void *data):
-    if is_dir: return 0
-    return 1
+#static int filter(char const *name, bool is_dir, void *data):
+#    if is_dir: return 0
+#    return 1
 
 static BlockType *def render_load(char const *name, float x, y, z, bool dynamic, lift, transparent):
-    LandArray *frames
+    BlockType *bt = None
+    float ss = 96 / sqrt(2)
+    bt = blocktype_new(ss * x, ss * y, ss * z,
+        block_tick, block_touch, block_destroy)
+    bt->dynamic = dynamic
+    bt->lift = lift
+    bt->transparent = transparent
+
+    #LandArray *frames
     LandBuffer *b = land_buffer_new()
     land_buffer_cat(b, r.path)
     land_buffer_cat(b, name)
     char *path = land_buffer_finish(b)
-    frames = land_filelist(path, filter, LAND_FULL_PATH, None)
-    land_free(path)
+    # doesn't work on Android
+    #frames = land_filelist(path, filter, LAND_FULL_PATH, None)
 
-    if not frames:
-        print("Could not find %s%s", path, name)
-    BlockType *bt = None
+    #if not frames:
+    #    print("Could not find %s%s", path, name)
 
-    land_array_sort_alphabetical(frames)
+    #land_array_sort_alphabetical(frames)
 
-    for char *s in LandArray *frames:
+    #for char *s in LandArray *frames:
+    int fi = 1
+    while True:
+        char s[1024]
+        sprintf(s, "%s/%04d.png", path, fi)
+        fi++
         LandImage *pic = land_image_load(s)
-        if not pic:
+        if not pic or not (pic.flags & LAND_LOADED):
             print("Could not load %s", s)
+            break
         else:
-            if not bt:
-                float ss = 96 / sqrt(2)
-                bt = blocktype_new(ss * x, ss * y, ss * z,
-                    block_tick, block_touch, block_destroy)
-                bt->dynamic = dynamic
-                bt->lift = lift
-                bt->transparent = transparent
+            if not bt.bitmaps:
                 bt->bitmaps = land_array_new()
-                bt->x = -land_image_width(pic) / 2
-                bt->y = -land_image_height(pic) / 2
+                bt->x = -land_image_width(pic) / 4
+                bt->y = -land_image_height(pic) / 4
             land_array_add(bt->bitmaps, pic)
-        land_free(s)
-    land_array_destroy(frames)
+        #land_free(s)
+    land_free(path)
+    #land_array_destroy(frames)
     return bt
 
 ***scramble
@@ -85,6 +93,7 @@ load("Allefant", 1.3, 1.8, 1.3, dynamic = True)
 load("BlockRight4", 2, 2, 1, transparent = True)
 load("BlockLeft4", 1, 2, 2, transparent = True)
 load("BlockSmall3", 1, 1, 1)
+load("CherryTree", 2, 5, 2)
 
 loads("step")
 loads("push")
@@ -147,14 +156,20 @@ def render_setup():
     land_free(musicpath)
     land_stream_volume(r.music, 0.75)
 
+    block_types = land_array_new()
 ***scramble
 for name, x, y, z, dynamic, lift, transparent in defs:
     parse('    Render_{} = render_load("{}", {}, {}, {}, {}, {}, {})\n'.format(
         name, name, x, y, z, dynamic, lift, transparent))
+    parse('    land_array_add(block_types, Render_{})\n'.format(name))
 
 for name, vname in sdefs:
     parse('    {} = render_loads("{}")\n'.format(vname, name))
 ***
+
+    int i = 0
+    for BlockType *bt in LandArray *block_types:
+        bt.btid = i++
 
     Render_Scientist->tick = player_tick
     Render_Scientist->touch = player_touch
@@ -177,17 +192,38 @@ for name, vname in sdefs:
     land_free(r.path)
 
 def render(Game *g):
-    render_setup()
-
     float w = land_display_width()
     float h = land_display_height()
     float fh = land_font_height(r.font)
+    #float z = g.viewport->zoom
 
     land_clear_depth(1)
     land_clear(r.background_color.r, r.background_color.g,
         r.background_color.b, r.background_color.a)
 
     render_blocks(g->blocks, g->viewport)
+
+    land_reset_transform()
+
+    land_color(0.5, 0.4, 0, 0.5)
+    float rr = w / 8 * 0.8
+    float rx = rr
+    float ry = h - rr
+    float xy[2 * 34]
+    xy[0] = rx
+    xy[1] = ry
+    for int i in range(1, 34):
+        double c = cos((i - 1.5) * pi / 16)
+        double s = sin((i - 1.5) * pi / 16)
+        float r2 = rr
+        if i % 4 == 0 or i % 4 == 3:
+            r2 *= 0.75
+        xy[i * 2 + 0] = rx + c * r2
+        xy[i * 2 + 1] = ry + s * r2
+    land_filled_polygon(34, xy)
+    rx = w - rr
+    rr *= 0.75
+    land_filled_circle(rx - rr, ry - rr, rx + rr, ry + rr)
 
     land_color(0, 0, 0, 1)
     land_font_set(r.font)
@@ -199,17 +235,17 @@ def render(Game *g):
     else:
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
-        land_print("Level %d/12", g->level)
+        land_print("Level %d/%d", g->level, g->levels)
 
     if g->ticks < 300:
         
-        land_text_pos(720, fh)
+        land_text_pos(w * 3 / 4, fh)
         land_print_center("%s", "Yellow and Dangerous")
         land_print_center("%s", "by Allefant")
 
-    float y = 600 - 3 * fh
+    float y = h - 3 * fh
     land_text_pos(0, y)
-    land_print_wordwrap(w, h, "%s", level_get_hint(g->level))
+    land_print_wordwrap(w, h, "%s", g->hint)
     
 def render_block(Block *self, Viewport *viewport):
     BlockType *bt = self->block_type
@@ -221,9 +257,13 @@ def render_block(Block *self, Viewport *viewport):
         &x, &y)
     x += bt->x
     y += bt->y
-    land_image_draw(land_array_get_nth(self->block_type->bitmaps, self->frame), x, y)
 
-    if debug_bounding_boxes:
+    if self.block_type->bitmaps:
+    
+        land_image_draw_scaled(land_array_get_nth(
+            self->block_type->bitmaps, self->frame), x, y, 0.5, 0.5)
+
+    if debug_bounding_boxes or self == game->picked:
         float x2 = self->x + self->xs
         float y2 = self->y + self->ys
         float z2 = self->z + self->zs
@@ -239,7 +279,7 @@ def render_block(Block *self, Viewport *viewport):
 
         #
         #      0
-        #    /   \
+        #    /   \ 
         #  1       3
         #  | \   / |
         #  4   2   6
@@ -263,6 +303,10 @@ def render_blocks(Blocks *blocks, Viewport *viewport):
     # all.
     # For dynamic blocks the cache has to be rebuilt whenever any of them moves
     # however.
+
+    float z = viewport.zoom
+    land_reset_transform()
+    land_scale(z, z)
 
     int n1 = land_array_count(blocks->fixed)
     int n2 = land_array_count(blocks->dynamic)
@@ -315,7 +359,8 @@ def render_blocks(Blocks *blocks, Viewport *viewport):
                 y1 -= 30
                 x2 += 60
                 y2 += 60
-                land_clip((int)(x1), (int)(y1), (int)(x2) + 1, (int)(y2) + 1)
+                land_clip((int)(x1 * z), (int)(y1 * z),
+                    (int)(x2 * z) + 1, (int)(y2 * z) + 1)
 
             render_block(already, viewport)
 

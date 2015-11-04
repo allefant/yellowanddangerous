@@ -34,14 +34,25 @@ Blocks *def blocks_new():
 
 def blocks_destroy(Blocks *self):
     blocks_clear(self)
-    land_free(self)
+    land_free(self) 
 
-#def blocks_pick(Blocks *self, float xp, yp, Viewport *viewport):
-#    for block in self->static + self->dynamic:
-#        side = block_is_inside(xp, yp, viewport)
-#        if side:
-#            return side, block
-#    return 0, None
+def blocks_pick(Blocks *self, float xp, yp, Viewport *viewport) -> Block *:
+    Block *best = None
+    xp /= viewport.zoom
+    yp /= viewport.zoom
+    LandArray *arrays[] = {self.transparent, self.dynamic, self.fixed}
+    for int i in range(3):
+        LandArray *array = arrays[i]
+        for Block *block in LandArray *array:
+            int side = block_is_inside(block, xp, yp, viewport)
+            if side:
+                if best:
+                    if block_sort_order(block, best, viewport) > 0:
+                        best = block
+                else:
+                    best = block
+  
+    return best
 
 class BlockType:
     float xs, ys, zs
@@ -50,10 +61,13 @@ class BlockType:
     bool transparent
     LandArray *bitmaps
     float x, y, z
+    int btid
 
     void (*tick)(Block *)
     void (*touch)(Block *, Block *, float, float, float)
     void (*destroy)(Block *)
+
+global LandArray *block_types
 
 BlockType *def blocktype_new(float xs, ys, zs,
         void (*tick)(Block *),
@@ -73,9 +87,10 @@ BlockType *def blocktype_new(float xs, ys, zs,
     return self
 
 def blocktype_destroy(BlockType *self):
-    for LandImage *pic in LandArray *self->bitmaps:
-        land_image_destroy(pic)
-    land_array_destroy(self->bitmaps)
+    if self.bitmaps:
+        for LandImage *pic in LandArray *self->bitmaps:
+            land_image_destroy(pic)
+        land_array_destroy(self->bitmaps)
     land_free(self)
 
 static int tag = 0
@@ -101,9 +116,10 @@ def block_init(Block *self, Blocks *blocks, float x, y, z, BlockType *block_type
     self->y = y
     self->z = z
     self->block_type = block_type
-    self->xs = block_type->xs
-    self->ys = block_type->ys
-    self->zs = block_type->zs
+    if block_type:
+        self->xs = block_type->xs
+        self->ys = block_type->ys
+        self->zs = block_type->zs
     self->r = 1
     self->g = 1
     self->b = 1
@@ -130,12 +146,42 @@ def block_destroy(Block *self):
 def block_add(Block *self):
     self->bid = 1 + land_array_count(self->blocks->fixed) +\
         land_array_count(self->blocks->dynamic)
-    if self->block_type->dynamic:
+    if self.block_type and self->block_type->dynamic:
         land_array_add(self->blocks->dynamic, self)
-    elif self->block_type->transparent:
+    elif self.block_type and self->block_type->transparent:
         land_array_add(self->blocks->transparent, self)
     else:
         land_array_add(self->blocks->fixed, self)
+
+def block_change_type(Block *self, int d):
+    int n = land_array_count(block_types)
+    int btid = self.block_type.btid + d
+    if btid >= n:
+        btid -= n
+    if btid < 0:
+        btid += n
+    block_del(self)
+    block_init(self, self.blocks, self.x, self.y, self.z,
+        land_array_get_nth(block_types, btid))
+    block_add(self)
+
+def block_del(Block *self):
+    LandArray *array
+    if self.block_type and self->block_type->dynamic:
+        array = self->blocks->dynamic
+    elif self.block_type and self->block_type->transparent:
+        array = self->blocks->transparent
+    else:
+        array = self->blocks->fixed
+
+    int i = land_array_find(array, self)
+    if i < 0:
+        return
+    land_array_swap(array, i, -1)
+    land_array_pop(array)
+
+    self->blocks->rebuild_static_cache = True
+    self->blocks->rebuild_dynamic_cache = True
 
 bool def block_overlaps(Block *self, *other):
     return (other->x + other->xs > self->x and
@@ -233,7 +279,7 @@ static bool def is_left(float *v, xp, yp, int i1, i2):
     float c = ax * by - ay * bx
     return c < 0
 
-bool def block_is_inside(Block *self, float xp, yp, Viewport *viewport):
+int def block_is_inside(Block *self, float xp, yp, Viewport *viewport):
     """
     0 no
     1 top
@@ -262,8 +308,6 @@ bool def block_is_inside(Block *self, float xp, yp, Viewport *viewport):
     #  4   2   6
     #    \ | /
     #      5
-
-    
         
     if not is_left(v, xp, yp, 0, 1): return 0
     if not is_left(v, xp, yp, 1, 4): return 0
