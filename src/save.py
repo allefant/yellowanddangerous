@@ -43,6 +43,10 @@ def load_level:
     self.ticks = 0
     self.state_tick = 0
     self.waypoints_count = 0
+    self.picked = None
+    self.lever_left = 0
+    self.lever_right = 0
+    self.lever_dir = 1
 
     Blocks *blocks = game->blocks
     blocks_reset(blocks)
@@ -64,14 +68,7 @@ def load_level:
 
             BlockType *bt = land_array_get_nth(block_types, t)
 
-            if bt == Render_Scientist:
-                self.player = player_new(self->blocks, x, y, z, bt)
-                block = &self.player->super
-            elif bt == Render_Allefant:
-                self.player2 = allefant_new(self->blocks, x, y, z, bt)
-                block = &self.player2->super
-            else:
-                block = block_new(blocks, x, y, z, bt)
+            block = block_new(blocks, x, y, z, bt)
 
             block_add(block)
         if land_starts_with(row, "move "):

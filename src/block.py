@@ -1,5 +1,7 @@
 import common
 import isometric
+static import render
+static import land.util2d
 
 class Blocks:
     LandArray *fixed
@@ -59,6 +61,7 @@ class BlockType:
     bool dynamic
     bool lift
     bool transparent
+    bool fixed
     LandArray *bitmaps
     float x, y, z
     int btid
@@ -66,13 +69,17 @@ class BlockType:
     void (*tick)(Block *)
     void (*touch)(Block *, Block *, float, float, float)
     void (*destroy)(Block *)
+    Block *(*allocate)(void)
+    void (*post_init)(Block *)
 
 global LandArray *block_types
 
 BlockType *def blocktype_new(float xs, ys, zs,
         void (*tick)(Block *),
         void (*touch)(Block *, Block *, float, float, float),
-        void (*destroy)(Block *)):
+        void (*destroy)(Block *),
+        Block *(*allocate)(void),
+        void (*post_init)(Block *)):
     BlockType *self
     land_alloc(self)
     self->xs = xs
@@ -84,6 +91,8 @@ BlockType *def blocktype_new(float xs, ys, zs,
     self->tick = tick
     self->touch = touch
     self->destroy = destroy
+    self->allocate = allocate
+    self->post_init = post_init
     return self
 
 def blocktype_destroy(BlockType *self):
@@ -107,6 +116,8 @@ class Block:
     int recursion_prevention
     bool no_fall
     int bid
+
+    bool pushed_something
 
     LandArray *cache
     
@@ -134,14 +145,22 @@ def block_init(Block *self, Blocks *blocks, float x, y, z, BlockType *block_type
     self->cache = land_array_new()
 
 Block *def block_new(Blocks *blocks, float x, y, z, BlockType *block_type):
-    Block *self
-    land_alloc(self)
+    Block *self = block_type.allocate()
     block_init(self, blocks, x, y, z, block_type)
+    self->block_type->post_init(self)
     return self
 
 def block_destroy(Block *self):
     land_array_destroy(self->cache)
     land_free(self)
+
+def block_allocate() -> Block *:
+    Block *self
+    land_alloc(self)
+    return self
+
+def block_post_init(Block *self):
+    return
 
 def block_add(Block *self):
     self->bid = 1 + land_array_count(self->blocks->fixed) +\
@@ -153,17 +172,22 @@ def block_add(Block *self):
     else:
         land_array_add(self->blocks->fixed, self)
 
-def block_change_type(Block *self, int d):
+def block_change_type(Block *self, int d) -> Block *:
     int n = land_array_count(block_types)
     int btid = self.block_type.btid + d
     if btid >= n:
         btid -= n
     if btid < 0:
         btid += n
+    BlockType *bt = land_array_get_nth(block_types, btid)
+    Blocks *blocks = self.blocks
+    float x = self.x
+    float y = self.y
+    float z = self.z
     block_del(self)
-    block_init(self, self.blocks, self.x, self.y, self.z,
-        land_array_get_nth(block_types, btid))
+    self = block_new(blocks, x, y, z, bt)
     block_add(self)
+    return self
 
 def block_del(Block *self):
     LandArray *array
@@ -183,13 +207,47 @@ def block_del(Block *self):
     self->blocks->rebuild_static_cache = True
     self->blocks->rebuild_dynamic_cache = True
 
+    self->block_type->destroy(self)
+
 bool def block_overlaps(Block *self, *other):
-    return (other->x + other->xs > self->x and
+    if (other->x + other->xs > self->x and
         self->x + self->xs > other->x and
         other->y + other->ys > self->y and
         self->y + self->ys > other->y and
         other->z + other->zs > self->z and
-        self->z + self->zs > other->z)
+        self->z + self->zs > other->z):
+
+        if other.block_type == Render_RampLeft:
+            #   __   b +y
+            #  |  | /|
+            #  |_0|/ |
+            #     /  |
+            #  +z/__0|-z
+            #    a
+            float az = other.z + other.zs
+            float ay = other.y
+            float bz = other.z
+            float by = other.y + other.ys
+            if land_cross2d(self.z - az, self.y - ay, bz - az, by - ay
+                    ) > 0:
+                return False
+        if other.block_type == Render_RampRight:
+            #   __   b +y
+            #  |  | /|
+            #  |_0|/ |
+            #     /  |
+            #  +x/__0|-x
+            #    a
+            float ax = other.x + other.xs
+            float ay = other.y
+            float bx = other.x
+            float by = other.y + other.ys
+            if land_cross2d(self.x - ax, self.y - ay, bx - ax, by - ay
+                    ) > 0:
+                return False
+        return True
+    return False
+            
 
 LandArray *def block_colliders(Block *self):
     int n1, n2, n3
@@ -212,18 +270,45 @@ bool def block_move(Block *self, float dx, dy, dz):
     self->recursion_prevention = tag
     return block_push(self, dx, dy, dz)
 
+def move_on_top(Block *self, float dx, dy, dz):
+    float on_top_y = self.y
+    self.y += 1
+    LandArray *top = block_colliders(self)
+    self.y = on_top_y
+    for Block *c in LandArray *top:
+        if c->block_type->dynamic:
+            if c->recursion_prevention != tag:
+                c->recursion_prevention = tag
+                block_push(c, dx, dy, dz)
+    land_array_destroy(top)
+
+def block_distance(Block *self, *other) -> float:
+    float dx = self.x - other.x
+    float dy = self.y - other.y
+    float dz = self.z - other.z
+    return sqrt(dx * dx + dy * dy + dz * dz)
+
 bool def block_push(Block *self, float dx, dy, dz):
     bool r
 
     float ox = self->x
     float oy = self->y
     float oz = self->z
+
+    bool first_after_push = True
+    bool first_ramp_up = True
+
+    label retry
+
     self->x += dx
     self->y += dy
     self->z += dz
 
     LandArray *cs = block_colliders(self)
+
     if land_array_count(cs):
+
+        bool retry_after_push = False
         
         self->x = ox
         self->y = oy
@@ -232,30 +317,50 @@ bool def block_push(Block *self, float dx, dy, dz):
         for Block *c in LandArray *cs:
 
             self->block_type->touch(self, c, dx, dy, dz)
-            
+
+            # don't get stuck at the very top pixel
             if self->y <= c->y + c->ys and self->y > c->y + c->ys - 1:
                 self->y = c->y + c->ys
                 continue
 
-            if c->block_type->dynamic:
+            if c->block_type->dynamic and not c->block_type->fixed:
                 if c->recursion_prevention != tag:
                     c->recursion_prevention = tag
-                    block_push(c, dx, dy, dz)
+                    if block_push(c, dx, dy, dz):
+                        self.pushed_something = True
+                        retry_after_push = True
 
         r = False
+        land_array_destroy(cs)
+
+        if first_after_push and retry_after_push:
+            first_after_push = False
+            goto retry
+        elif first_ramp_up and dy == 0:
+            first_ramp_up = False
+            self.y += 1
+            goto retry
         
     else:
+
+        move_on_top(self, dx, dy, dz)
+        
         self->blocks->rebuild_dynamic_cache = True
         r = True
 
-    land_array_destroy(cs)
+        land_array_destroy(cs)
     return r
 
+def block_recursion_tag -> int:
+    tag += 1
+    return tag
+
 bool def block_pull(Block *self, float dx, dy, dz):
-   
+    bool first_ramp_up = True
     float ox = self->x
     float oy = self->y
     float oz = self->z
+    label retry
     self->x += dx
     self->y += dy
     self->z += dz
@@ -264,9 +369,18 @@ bool def block_pull(Block *self, float dx, dy, dz):
         self->x = ox
         self->y = oy
         self->z = oz
+        land_array_destroy(cs)
+
+        if first_ramp_up:
+            first_ramp_up = False
+            self.y += 1
+            goto retry
+        
         return False
 
     land_array_destroy(cs)
+
+    move_on_top(self, dx, dy, dz)
 
     self->blocks->rebuild_dynamic_cache = True
     return True
@@ -378,7 +492,13 @@ static float def sgn(float a, x):
 def block_tick(Block *self):
     if not self->block_type->dynamic: return
 
-    if not self->no_fall: self->dy -= 1
+    if not self.no_fall and not self.block_type->fixed: self->dy -= 1
+
+    if self.block_type == Render_Platform:
+        if game->lever_on or game->platform_moving:
+            self.dx += game->lever_dir
+            game->platform_moving = True
+
     float ax = fabs(self->dx)
     float ay = fabs(self->dy)
     float az = fabs(self->dz)
@@ -393,8 +513,20 @@ def block_tick(Block *self):
                 if sy < 0: self->ground = True
             else:
                 self->ground = False
-        if (sx or sz) and not block_move(self, sx, 0, sz):
-            pass
+        if sx or sz:
+            if block_move(self, sx, 0, sz):
+                if self.block_type == Render_Platform:
+                    game->lever_on = False
+            else:
+                if self.block_type == Render_Platform:
+                    if sx * game->lever_dir > 0:
+                        game->lever_dir = -game->lever_dir
+                        if not game->lever_on:
+                            game->platform_moving = False
+                            if game->lever_left:
+                                game->lever_left->frame = 0
+                            if game->lever_right:
+                                game->lever_right->frame = 0
 
         ax -= 1
         ay -= 1

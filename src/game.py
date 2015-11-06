@@ -13,6 +13,12 @@ class Game:
     Player *player
     Allefant *player2
 
+    Block *lever_left
+    Block *lever_right
+    bool lever_on
+    bool platform_moving
+    int lever_dir
+
     Block *picked
 
     double start_time
@@ -52,6 +58,10 @@ def game_level_done(Game *self):
         self->state = "done"
         self->state_tick = self->ticks
         sound(Render_teleport, 1)
+
+static def recalc:
+    game.blocks.rebuild_static_cache = True
+    game.blocks.rebuild_dynamic_cache = True
 
 def game_tick(Game *self):
     All *a = global_a
@@ -105,9 +115,6 @@ def game_tick(Game *self):
         float mx = land_mouse_x()
         float my = land_mouse_y()
         game.picked = blocks_pick(game.blocks, mx, my, game.viewport)
-        if not game.picked:
-            game.blocks.rebuild_static_cache = True
-            game.blocks.rebuild_dynamic_cache = True
 
     if self->player:
 
@@ -126,35 +133,64 @@ def game_tick(Game *self):
     float s = 96 / sqrt(2)
 
     if land_key_pressed(LandKeyInsert):
-        game.picked = block_new(self.blocks, -0.25 * s, -s, -0.25 * s, Render_BlockBottom3)
+        Block *l = game.picked
+        if l:
+            game.picked = block_new(self.blocks, l.x, l.y, l.z,
+                l.block_type)
+        else:
+            game.picked = block_new(self.blocks, -0.25 * s, -s / 2, -0.25 * s,
+                Render_BlockBottom3)
         block_add(game.picked)
 
     if game.picked:
         Block *p = game.picked
 
         if land_key_pressed(LandKeyLeft):
-            p.x -= s
+            p.x -= s / 2
+            recalc()
         if land_key_pressed(LandKeyRight):
-            p.x += s
+            p.x += s / 2
+            recalc()
         if land_key_pressed(LandKeyUp):
-            p.z -= s
+            p.z -= s / 2
+            recalc()
         if land_key_pressed(LandKeyDown):
-            p.z += s
+            p.z += s / 2
+            recalc()
         if land_key_pressed('w'):
             p.y += s / 2
+            recalc()
         if land_key_pressed('s'):
             p.y -= s / 2
+            recalc()
+        if land_key_pressed('x'):
+            if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
+                p.y += p.ys
+            else:
+                p.y -= p.ys
+        if land_key_pressed('c'):
+            if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
+                p.x = floor(p.x / s + 0.25) * s - s / 4
+                p.y = 0
+                p.z = floor(p.z / s + 0.25) * s - s / 4
+                p.x += (s - p.xs) / 2
+                p.z += (s - p.zs) / 2
+            else:
+                p.x = floor(p.x / s + 0.25) * s - s / 4
+                p.y = 0
+                p.z = floor(p.z / s + 0.25) * s - s / 4
         if land_key_pressed('a'):
-            block_change_type(p, -1)
+            game.picked = p = block_change_type(p, -1)
         if land_key_pressed('d'):
-            block_change_type(p, 1)
+            game.picked = p = block_change_type(p, 1)
         if land_key_pressed('f'):
             p.frame++
             if p.frame >= land_array_count(p.block_type->bitmaps):
                 p.frame = 0
         if land_key_pressed(LandKeyDelete):
             block_del(p)
-            block_destroy(p)
+            game.picked = None
+        
 
     if a.running and not game.picked:
         for Block *b in LandArray *self->blocks->dynamic:

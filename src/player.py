@@ -13,10 +13,15 @@ class Player:
     bool pushing
     bool dead
 
-Player *def player_new(Blocks *blocks, float x, y, z, BlockType *kind):
+    bool lever
+
+def player_allocate -> Block *:
     Player *self
     land_alloc(self)
-    block_init((void *)self, blocks, x, y, z, kind)
+    return &self.super
+
+def player_init(Block *super):
+    Player *self = (void *)super
     self->step = 0
     self->direction = 0
     self->want_direction = 0
@@ -26,9 +31,10 @@ Player *def player_new(Blocks *blocks, float x, y, z, BlockType *kind):
     self->stack = land_array_new()
     self->pushing = False
     self->dead = False
-    return self
+    game->player = self
 
 def player_destroy(Block *super):
+    game->player = None
     Player *self = (void *)super
     land_array_destroy(self->stack)
     block_destroy(super)
@@ -43,8 +49,11 @@ def player_try_pull(Player *self, float px, pz):
     self->super.x = ox
     self->super.z = oz
 
+    int tag = block_recursion_tag()
     for Block *p in LandArray *pulls:
         if not p->block_type->dynamic: continue
+        if p->block_type->fixed: continue
+        p.recursion_prevention = tag
         if block_pull(p, px, 0, pz):
             self->super.dx = 0
             self->super.dz = 0
@@ -68,7 +77,7 @@ def player_grab(Player *self):
 
     land_array_clear(self->stack)
 
-    float max_y = 0
+    float max_y = -9000
     for Block *b in LandArray *grabs:
         if not b->block_type->lift: continue
         if b->y >= max_y: max_y = b->y
@@ -78,7 +87,10 @@ def player_grab(Player *self):
         if b->y == max_y:
             land_array_add(self->stack, b)
 
+    land_array_destroy(grabs)
+
 def player_lift(Player *self):
+    block_recursion_tag()
 
     for Block *p in LandArray *self->stack:
 
@@ -89,6 +101,7 @@ def player_lift(Player *self):
                 p->dy = 0
 
 def player_tick(Block *super):
+
     Player *self = (void *)super
 
     All *a = global_a
@@ -147,6 +160,8 @@ def player_tick(Block *super):
         if self->step != 8 and self->step != 24:
             self->step += 1
             self->step &= 31
+        else:
+            self.lever = False
 
         if super->ground and a->jump:
             self->pull = True
@@ -173,6 +188,12 @@ def player_tick(Block *super):
 
     float px = super->dx
     float pz = super->dz
+
+    if super.pushed_something:
+        super.pushed_something = False
+        super.dx *= 0.7
+        super.dz *= 0.7
+
     block_tick(super)
 
     if self->pull:
@@ -199,6 +220,23 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
         elif c->block_type == Render_ExitLeft or c->block_type == Render_ExitRight:
             if c->frame == 1:
                 game_level_done(game)
+    if not self.lever:
+        if dx < 0 and c.block_type == Render_LeverLeft:
+            self.lever = True
+            c.frame++
+            if c.frame == 2 or game->platform_moving:
+                c.frame = 0
+            if c.frame == 1:
+                game->lever_left = c
+                game->lever_on = True
+        if dz < 0 and c.block_type == Render_LeverRight:
+            self.lever = True
+            c.frame++
+            if c.frame == 2 or game->platform_moving:
+                c.frame = 0
+            if c.frame == 1 or game->platform_moving:
+                game->lever_right = c
+                game->lever_on = True
     if dx != 0 or dz != 0:
         if c->block_type->dynamic:
             self->pushing = True

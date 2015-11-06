@@ -153,11 +153,13 @@ def runner_update(LandRunner *self):
             game->player2 = None
             game->level = game->levels + 1
             save_level()
+            save_count()
             load_level()
         elif k == LandKeyFunction + 5:
             debug_no_mask = not debug_no_mask
         elif k == LandKeyFunction + 6:
-            debug_bounding_boxes = not debug_bounding_boxes
+            debug_bounding_boxes++
+            debug_bounding_boxes %= 2
         elif k == ' ':
             pass
         elif k == LandKeyEnter:

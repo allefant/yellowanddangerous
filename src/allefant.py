@@ -13,23 +13,29 @@ class Allefant:
     float ax, az
     int travel
 
-Allefant *def allefant_new(Blocks *blocks, float x, y, z, BlockType *block_type):
+def allefant_allocate -> Block *:
     Allefant *self
     land_alloc(self)
-    block_init((void *)self, blocks, x, y, z, block_type)
+    return &self.super
+
+def allefant_init(Block *super):
+    Allefant *self = (void *)super
     self->step = 0
     self->direction = 0
     self->want_direction = 0
     self->rotstep = 0
     self->waypoint = 1
     self->wait = 60 * 2
-    self->tx = x
-    self->tz = z
+    self->tx = super.x
+    self->tz = super.y
     self->ax = 0
     self->az = 0
     self->travel = 0
+    game->player2 = self
 
-    return self
+def allefant_destroy(Block *super):
+    game->player2 = None
+    block_destroy(super)
 
 def allefant_tick(Block *super):
     Allefant *self = (void *)super

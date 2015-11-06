@@ -1,19 +1,20 @@
 hint To pull, press jump|then move backwards.
 make 13 13 4 25
 make 10 33 4 25
-make 4 13 0 13
-make 4 21 0 13
-make 4 29 0 13
-make 4 37 0 13
-make 4 13 0 21
-make 4 21 0 21
-make 4 29 0 21
-make 4 37 0 21
-make 18 45 3 21
-move 0 20 0
-make 4 13 0 29
-make 4 21 0 29
-make 4 29 0 29
-make 4 37 0 29
+make 4 13 2 13
+make 4 21 2 13
+make 4 29 2 13
+make 4 37 2 13
+make 4 13 2 21
 make 12 21 3 25
 move 0 60 0
+make 4 29 2 21
+make 4 37 2 21
+make 18 45 3 21
+move 0 20 0
+make 4 13 2 29
+make 4 21 2 29
+make 4 29 2 29
+make 4 37 2 29
+make 5 21 2 21
+make 23 25 2 25

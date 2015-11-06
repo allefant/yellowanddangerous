@@ -6,12 +6,12 @@ make 6 33 16 29
 make 6 33 20 21
 make 6 33 20 25
 make 6 33 20 29
-make 5 9 0 17
-make 4 29 0 17
+make 5 9 2 17
+make 4 29 2 17
 make 3 37 0 17
-make 5 9 0 21
+make 5 9 2 21
 make 19 5 3 25
 move 0 20 0
 frame 1
-make 4 29 0 25
+make 4 29 2 25
 make 3 37 0 25

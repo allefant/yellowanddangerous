@@ -1,5 +1,6 @@
 import common
 import game, isometric, main, debug
+import vent
 
 class Render:
     bool was_setup
@@ -14,14 +15,17 @@ Render r
 #    if is_dir: return 0
 #    return 1
 
-static BlockType *def render_load(char const *name, float x, y, z, bool dynamic, lift, transparent):
+static BlockType *def render_load(char const *name, float x, y, z,
+        bool dynamic, lift, transparent, fixed):
     BlockType *bt = None
     float ss = 96 / sqrt(2)
     bt = blocktype_new(ss * x, ss * y, ss * z,
-        block_tick, block_touch, block_destroy)
+        block_tick, block_touch, block_destroy, block_allocate,
+        block_post_init)
     bt->dynamic = dynamic
     bt->lift = lift
     bt->transparent = transparent
+    bt.fixed = fixed
 
     #LandArray *frames
     LandBuffer *b = land_buffer_new()
@@ -59,8 +63,8 @@ static BlockType *def render_load(char const *name, float x, y, z, bool dynamic,
 
 ***scramble
 defs = []
-def load(name, x, y, z, dynamic = False, lift = False, transparent = False):
-    defs.append((name, x, y, z, dynamic, lift, transparent))
+def load(name, x, y, z, dynamic = False, lift = False, transparent = False, fixed = False):
+    defs.append((name, x, y, z, dynamic, lift, transparent, fixed))
     parse("global BlockType *Render_" + name + "\n")
 
 sdefs = []
@@ -73,8 +77,8 @@ load("Block", 2, 2, 2)
 load("BlockBottom", 2, 0.5, 2)
 load("BlockLeft", 1, 2, 2)
 load("BlockBottom2", 2, 1, 2)
-load("BlockBottom3", 2, 1, 2)
-load("BlockBottomLeft3", 2, 1, 1)
+load("BlockBottom3", 2, 0.5, 2)
+load("BlockBottomLeft3", 2, 0.5, 1)
 load("Bridge", 2, 0.25, 0.5, dynamic = True, lift = True)
 load("Bridge2", 0.5, 0.25, 2, dynamic = True, lift = True)
 load("BlockLeft2", 1, 2, 2)
@@ -85,16 +89,29 @@ load("Plate", 1, 0.1, 1)
 load("Cube3", 0.667, 0.667, 0.667, dynamic = True, lift = True)
 load("Barrel", 0.8, 1.2, 0.8, dynamic = True)
 load("TreeBottom", 2, 2, 2)
-load("TreeTop", 2, 1.5, 2)
+load("TreeTop", 2, 2, 2)
 load("Trunk", 0.2, 1.0, 0.2)
 load("ExitLeft", 1, 0.2, 2)
 load("ExitRight", 2, 0.2, 1)
 load("Allefant", 1.3, 1.8, 1.3, dynamic = True)
 load("BlockRight4", 2, 2, 1, transparent = True)
 load("BlockLeft4", 1, 2, 2, transparent = True)
-load("BlockSmall3", 1, 1, 1)
-load("CherryTree", 2, 5, 2)
-load("Waypoint", 1, 0, 1)
+load("BlockSmall3", 1, 0.5, 1)
+load("CherryTree", 3, 5, 3)
+load("Waypoint", 0.5, 0, 0.5)
+load("Crate", 0.95, 2, 0.95, dynamic = True)
+load("BlockLeft3", 0.5, 1, 2)
+load("BlockRight3", 2, 1, 0.5)
+load("Plant", 0.5, 0.5, 0.5, dynamic = True, lift = True)
+load("Platform", 2, 0.5, 2, dynamic = True, fixed = True)
+load("LeverLeft", 0.5, 2, 1)
+load("LeverRight", 1, 2, 0.5)
+load("Statue", 2, 2, 2)
+load("RampLeft", 1, 0.5, 2)
+load("RampRight", 2, 0.5, 1)
+load("VentLeft", 0.5, 2, 1, dynamic = True, fixed = True)
+load("VentRight", 1, 2, 0.5, dynamic = True, fixed = True)
+load("BlockSmall", 1, 0.5, 1)
 
 loads("step")
 loads("push")
@@ -159,9 +176,9 @@ def render_setup():
 
     block_types = land_array_new()
 ***scramble
-for name, x, y, z, dynamic, lift, transparent in defs:
-    parse('    Render_{} = render_load("{}", {}, {}, {}, {}, {}, {})\n'.format(
-        name, name, x, y, z, dynamic, lift, transparent))
+for name, x, y, z, dynamic, lift, transparent, fixed in defs:
+    parse('    Render_{} = render_load("{}", {}, {}, {}, {}, {}, {}, {})\n'.format(
+        name, name, x, y, z, dynamic, lift, transparent, fixed))
     parse('    land_array_add(block_types, Render_{})\n'.format(name))
 
 for name, vname in sdefs:
@@ -175,13 +192,23 @@ for name, vname in sdefs:
     Render_Scientist->tick = player_tick
     Render_Scientist->touch = player_touch
     Render_Scientist->destroy = player_destroy
+    Render_Scientist->allocate = player_allocate
+    Render_Scientist->post_init = player_init
     Render_Allefant->tick = allefant_tick
     Render_Allefant->touch = allefant_touch
+    Render_Allefant->allocate = allefant_allocate
+    Render_Allefant->post_init = allefant_init
+    Render_Allefant->destroy = allefant_destroy
     Render_Cube3->touch = cube_touch
+    Render_Barrel->touch = cube_touch
+    Render_VentLeft->tick = vent_tick
+    Render_VentLeft->allocate = vent_allocate
+    Render_VentRight->tick = vent_tick
+    Render_VentRight->allocate = vent_allocate
 
 def render_teardown():
 ***scramble
-for name, x, y, z, dynamic, lift, transparent in defs:
+for name, x, y, z, dynamic, lift, transparent, fixed in defs:
     parse('    blocktype_destroy(Render_{})\n'.format(name))
 
 for name, vname in sdefs:
@@ -223,7 +250,7 @@ def render(Game *g):
         xy[i * 2 + 1] = ry + s * r2
     land_filled_polygon(34, xy)
     rx = w - rr
-    rr *= 0.75
+    rr *= 0.6
     land_filled_circle(rx - rr, ry - rr, rx + rr, ry + rr)
 
     land_color(0, 0, 0, 1)
@@ -247,7 +274,7 @@ def render(Game *g):
     float y = h - 3 * fh
     land_text_pos(0, y)
     land_print_wordwrap(w, h, "%s", g->hint)
-    
+
 def render_block(Block *self, Viewport *viewport):
     BlockType *bt = self->block_type
     float x, y
@@ -260,16 +287,27 @@ def render_block(Block *self, Viewport *viewport):
     y += bt->y
 
     if self.block_type->bitmaps:
-    
-        land_image_draw_scaled(land_array_get_nth(
-            self->block_type->bitmaps, self->frame), x, y, 0.5, 0.5)
+        float cr = 1
+        float cg = 1
+        float cb = 1
+        float scale = 24 / sqrt(2)
+        float height = floor(self.y / scale + 4)
+        if height >= 0:
+            cb -= height / 64.0
+            cg -= height / 128.0
+        else:
+            cb += height / 64
+            cr += height / 64
+        land_image_draw_scaled_tinted(land_array_get_nth(
+            self->block_type->bitmaps, self->frame), x, y, 0.5, 0.5,
+                cr, cg, cb, 1)
 
     if debug_bounding_boxes or self == game->picked:
         float x2 = self->x + self->xs
         float y2 = self->y + self->ys
         float z2 = self->z + self->zs
 
-        float v[14]
+        float v[22]
         project(viewport, self->x, y2, self->z, v + 0, v + 1)
         project(viewport, self->x, y2, z2, v + 2, v + 3)
         project(viewport, x2, y2, z2, v + 4, v + 5)
@@ -294,6 +332,18 @@ def render_block(Block *self, Viewport *viewport):
         land_line(v[10], v[11], v[12], v[13])
         land_line(v[12], v[13], v[6], v[7])
         land_line(v[6], v[7], v[0], v[1])
+
+        if self == game->picked:
+            project(viewport, self.x, 0, self.z, v + 14, v + 15)
+            project(viewport, self.x, 0, z2, v + 16, v + 17)
+            project(viewport, x2, 0, z2, v + 18, v + 19)
+            project(viewport, x2, 0, self.z, v + 20, v + 21)
+            land_color(1, 0, 0, 1)
+            land_line(v[14], v[15], v[16], v[17])
+            land_line(v[16], v[17], v[18], v[19])
+            land_line(v[18], v[19], v[20], v[21])
+            land_line(v[20], v[21], v[14], v[15])
+            
 
 def render_blocks(Blocks *blocks, Viewport *viewport):
 
