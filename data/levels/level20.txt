@@ -1,0 +1,58 @@
+hint Touch the D-Pad to move.
+make 10 39 6 25
+frame 2
+make 26 17 4 25
+make 26 17 4 29
+make 26 17 4 21
+make 26 13 4 21
+make 26 13 4 25
+make 26 13 4 29
+make 26 21 4 21
+make 26 21 4 25
+make 26 21 4 29
+make 26 13 4 33
+make 26 17 4 33
+make 26 21 4 33
+make 26 25 4 21
+make 26 25 4 25
+make 26 25 4 29
+make 26 25 4 33
+make 29 15 12 27
+make 29 23 12 21
+make 29 17 12 33
+make 4 21 2 13
+make 4 13 2 21
+make 4 21 2 29
+make 4 39 4 21
+make 4 13 2 13
+make 4 13 2 29
+make 4 39 4 29
+make 28 39 2 19
+make 4 21 2 21
+make 28 13 4 17
+make 28 13 8 17
+make 28 21 4 17
+make 28 21 4 37
+make 28 13 8 37
+make 28 13 4 37
+make 28 21 8 17
+make 28 21 8 37
+make 28 39 2 37
+make 27 35 4 39
+make 27 35 8 39
+make 4 4 4 29
+move 96 0 0
+make 4 4 4 21
+move 96 0 0
+make 4 4 4 12
+move 96 0 99
+make 4 29 2 29
+make 4 29 2 21
+make 4 29 2 13
+make 28 29 4 17
+make 28 29 8 17
+make 28 29 8 37
+make 28 29 4 37
+make 18 0 5 21
+move 95 20 0
+frame 1
