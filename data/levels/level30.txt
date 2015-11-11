@@ -1,0 +1,79 @@
+hint Touch the D-Pad to move.
+make 14 21 4 17
+make 14 21 4 21
+make 14 21 4 13
+make 14 25 4 25
+make 14 29 4 21
+make 14 21 4 25
+make 14 29 4 17
+make 14 25 4 13
+make 14 29 4 13
+make 14 25 4 21
+make 14 33 4 17
+make 14 29 4 25
+make 14 25 4 17
+make 14 33 4 21
+make 14 33 4 13
+make 30 29 2 21
+make 30 29 2 13
+make 30 21 2 21
+make 30 21 2 13
+make 10 39 5 7
+make 14 33 4 25
+make 4 37 3 29
+make 4 13 3 21
+make 4 29 3 29
+make 4 37 3 21
+make 12 -9 3 29
+move 0 60 0
+make 4 37 3 5
+make 4 29 3 5
+make 12 -3 3 23
+move 0 60 0
+make 4 21 3 5
+make 4 21 3 29
+make 4 13 3 29
+make 4 13 3 5
+make 11 17 0 17
+make 5 13 3 13
+make 12 3 3 23
+move 0 60 0
+make 11 13 0 17
+make 12 3 3 17
+move 0 60 0
+make 12 -3 3 17
+move 0 60 0
+make 12 -9 3 17
+move 0 60 0
+make 12 -9 3 23
+move 0 60 0
+make 12 -9 3 11
+move 0 60 0
+make 12 -3 3 11
+move 0 60 0
+make 12 3 3 11
+move 0 60 0
+make 12 9 3 11
+move 0 60 0
+make 12 9 3 17
+move 0 60 0
+make 12 9 3 23
+move 0 60 0
+make 12 9 3 31
+move 0 60 0
+make 12 3 3 29
+move 0 60 0
+make 12 -3 3 29
+move 0 60 0
+make 17 -4 1 16
+make 17 -4 1 22
+make 17 -4 1 28
+make 17 2 1 28
+make 17 8 1 28
+make 17 8 1 22
+make 17 8 1 16
+make 17 2 1 16
+make 17 2 1 22
+make 5 37 3 13
+make 11 37 0 17
+make 11 41 0 17
