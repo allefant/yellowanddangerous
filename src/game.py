@@ -1,8 +1,9 @@
 import common
 import block, isometric, level, render, player, cube, allefant, level
+import save
 
 class Game:
-    int level, levels
+    int level
     Blocks *blocks
     float waypoints[10][3]
     int waypoints_count
@@ -16,23 +17,25 @@ class Game:
     Block *lever_left
     Block *lever_right
     bool lever_on
-    bool platform_moving
-    int lever_dir
 
     Block *picked
 
     double start_time
 
     char hint[1024]
+    bool pristine
+
+    int gox, goz
+    int ex, ez
 
 global Game *game
-
+global int game_starting_level = 1
   
 Game *def game_new():
     Game *self; land_alloc(self)
     self->viewport = viewport_new()
 
-    self->level = level_start
+    self->level = 0
 
     render_setup()
 
@@ -46,33 +49,71 @@ def game_del(Game *self):
     land_free(self->viewport)
     land_free(self)
 
-def game_reset:
-    if game.level > game.levels:
-        game.level = 1
-    if game.level < 1:
-        game.level = game.levels
-    load_level()
-
-def game_level_done(Game *self):
-    if strcmp(self->state, "play") == 0:
+def game_level_done(Game *self, int gox, goz):
+    if land_equals(self->state, "play") :
         self->state = "done"
         self->state_tick = self->ticks
+        save_level(False)
+        self->gox = gox
+        self->goz = goz
+        if self->player:
+            self->ex = self->player->super.x
+            self->ez = self->player->super.z
+        self->level += gox + goz * 7
         sound(Render_teleport, 1)
 
 static def recalc:
     game.blocks.rebuild_static_cache = True
     game.blocks.rebuild_dynamic_cache = True
 
+def game_key(Game *self, int k):
+    All *a = global_a
+    if k == LandKeyFunction + 2:
+        if game->pristine:
+            save_level(True)
+    elif k == LandKeyFunction + 3:
+        load_level(True)
+        a.running = False
+    elif k == LandKeyFunction + 4:
+        blocks_reset(game->blocks)
+        game->player = None
+        game->player2 = None
+    elif k == LandKeyFunction + 5:
+        debug_no_mask = not debug_no_mask
+    elif k == LandKeyFunction + 6:
+        debug_bounding_boxes++
+        debug_bounding_boxes %= 2
+    elif k == LandKeyFunction + 7:
+        a.editor = not a.editor
+    elif k == ' ':
+        pass
+    elif k == LandKeyEnter:
+        if not a->running:
+            a->running = True
+    elif k == 'q':
+        game->level -= 1
+        if game->level < 1:
+            game->level = 49
+        load_level(True)
+        a.running = False
+    elif k == 'e':
+        game->level += 1
+        if game->level > 49:
+            game->level = 1
+        load_level(True)
+        a.running = False
+    elif k == 't':
+        a.text_input = True
+        a.cursor = 0
+
 def game_tick(Game *self):
     All *a = global_a
 
-    if strcmp(self->state, "done") == 0 or  strcmp(self->state, "died") == 0:
+    if land_equals(self->state, "done") or land_equals(self->state, "died"):
         if self->ticks > self->state_tick + 30:
-            if strcmp(self->state, "done") == 0: self->level += 1
-            game_reset()
-
-    if land_was_resized():
-        viewport_update(self.viewport)
+            load_level(False)
+            if self->player:
+                player_find_entrance(&self->player->super)
 
     for int ti in range(11):
         if not land_touch_down(ti):
@@ -86,6 +127,7 @@ def game_tick(Game *self):
         double dx = mx - rx
         double dy = my - ry
 
+        # move control
         if dx * dx + dy * dy < rr * rr:
             if dx * dx + dy * dy > rr * rr / 16:
                 double ang = atan2(dy, dx)
@@ -102,11 +144,18 @@ def game_tick(Game *self):
                 if i == 5 or i == 6 or i == 7:
                     a.up = True
 
+        # jump control
         rx = land_display_width() - rr
         dx = mx - rx
         dy = my - ry
         if dx * dx + dy * dy < rr * rr:
             a.jump = True
+
+        # pause control
+        rx = land_display_width() - rr
+        ry = rr
+        if mx > rx and my < ry:
+            main_switch_to_title()
 
     int plates_count = 0
     int plates_on_before = 0
@@ -115,6 +164,8 @@ def game_tick(Game *self):
         float mx = land_mouse_x()
         float my = land_mouse_y()
         game.picked = blocks_pick(game.blocks, mx, my, game.viewport)
+        #if game.picked:
+        #    print("%f %f %f", game.picked->x, game.picked->y, game.picked->z)   
 
     if self->player:
 
@@ -130,7 +181,7 @@ def game_tick(Game *self):
             b->frame = 0
             plates_count += 1
 
-    float s = 96 / sqrt(2)
+    double s = 24
 
     if land_key_pressed(LandKeyInsert):
         Block *l = game.picked
@@ -138,30 +189,34 @@ def game_tick(Game *self):
             game.picked = block_new(self.blocks, l.x, l.y, l.z,
                 l.block_type)
         else:
-            game.picked = block_new(self.blocks, -0.25 * s, -s / 2, -0.25 * s,
+            game.picked = block_new(self.blocks, -s, -s * 2, -s,
                 Render_BlockBottom3)
         block_add(game.picked)
 
     if game.picked:
         Block *p = game.picked
 
+        double s2 = s * 2
+        if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
+            s2 = s
+
         if land_key_pressed(LandKeyLeft):
-            p.x -= s / 2
+            p.x -= s2
             recalc()
         if land_key_pressed(LandKeyRight):
-            p.x += s / 2
+            p.x += s2
             recalc()
         if land_key_pressed(LandKeyUp):
-            p.z -= s / 2
+            p.z -= s2
             recalc()
         if land_key_pressed(LandKeyDown):
-            p.z += s / 2
+            p.z += s2
             recalc()
         if land_key_pressed('w'):
-            p.y += s / 2
+            p.y += s2
             recalc()
         if land_key_pressed('s'):
-            p.y -= s / 2
+            p.y -= s2
             recalc()
         if land_key_pressed('x'):
             if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
@@ -170,15 +225,15 @@ def game_tick(Game *self):
                 p.y -= p.ys
         if land_key_pressed('c'):
             if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
-                p.x = floor(p.x / s + 0.25) * s - s / 4
-                p.y = 0
-                p.z = floor(p.z / s + 0.25) * s - s / 4
+                p.x = floor(p.x / s) * s
+                p.y = floor(p.y / s) * s
+                p.z = floor(p.z / s) * s
                 p.x += (s - p.xs) / 2
                 p.z += (s - p.zs) / 2
             else:
-                p.x = floor(p.x / s + 0.25) * s - s / 4
-                p.y = 0
-                p.z = floor(p.z / s + 0.25) * s - s / 4
+                p.x = floor(p.x / s + 0.1) * s
+                p.y = floor(p.y / s + 0.1) * s
+                p.z = floor(p.z / s + 0.1) * s
         if land_key_pressed('a'):
             game.picked = p = block_change_type(p, -1)
         if land_key_pressed('d'):
@@ -190,29 +245,30 @@ def game_tick(Game *self):
         if land_key_pressed(LandKeyDelete):
             block_del(p)
             game.picked = None
-        
 
     if a.running and not game.picked:
         for Block *b in LandArray *self->blocks->dynamic:
             b->block_type->tick(b)
 
-    int plates_on = 0
-    for Block *b in LandArray *self->blocks->fixed:
-        if b->block_type == Render_Plate:
-            if b->frame == 1:
-                plates_on += 1
-        elif b->block_type == Render_ExitLeft or b->block_type == Render_ExitRight:
-            b->frame = 0
-
-    if plates_on > plates_on_before:
-        sound(Render_on, 1)
-
-    if plates_on < plates_on_before:
-        sound(Render_off, 1)
-
-    if plates_count == plates_on:
+        int plates_on = 0
         for Block *b in LandArray *self->blocks->fixed:
-            if b->block_type == Render_ExitLeft or b->block_type == Render_ExitRight:
-                b->frame = 1
+            if b->block_type == Render_Plate:
+                if b->frame == 1:
+                    plates_on += 1
+            elif b->block_type == Render_ExitLeft or b->block_type == Render_ExitRight:
+                if b.frame == 1:
+                    b.frame = 0
+
+        if plates_on > plates_on_before:
+            sound(Render_on, 1)
+
+        if plates_on < plates_on_before:
+            sound(Render_off, 1)
+
+        if plates_count == plates_on:
+            for Block *b in LandArray *self->blocks->fixed:
+                if b->block_type == Render_ExitLeft or b->block_type == Render_ExitRight:
+                    if b.frame == 0:
+                        b.frame = 1
 
     self->ticks += 1

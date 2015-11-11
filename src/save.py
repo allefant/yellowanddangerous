@@ -1,16 +1,50 @@
 import block
 import game
 
-def save_level:
+def save_info:
+    if game->level == 0:
+        return
+    char *path = land_get_save_file("com.yellowdanger", "info.txt")
+    LandFile *f = land_file_new(path, "w")
+    land_file_print(f, "room %d", game->level)
+    land_file_destroy(f)
+    land_free(path)
+
+def load_info:
+    char *path = land_get_save_file("com.yellowdanger", "info.txt")
+    LandBuffer *f = land_buffer_read_from_file(path)
+    if f:
+        LandArray *rows = land_buffer_split(f, '\n')
+        land_buffer_destroy(f)
+        for LandBuffer *rowb in LandArray *rows:
+            char *row = land_buffer_finish(rowb)
+            if land_starts_with(row, "room "):
+                sscanf(row, "room %d", &game->level)
+            land_free(row)
+        land_array_destroy(rows)
+        
+    land_free(path)
+
+def save_level(bool editor):
+    if game->level == 0:
+        return
     char name[1024]
-    sprintf(name, "data/levels/level%02d.txt", game->level)
+    if editor:
+        sprintf(name, "data/levels/level%02d.txt", game->level)
+    else:
+        sprintf(name, "save%02d.txt", game->level)
+        char *path = land_get_save_file("com.yellowdanger", name)
+        strcpy(name, path)
+        land_free(path)
+        save_info()
+        
     Blocks *blocks = game->blocks
     LandFile *f = land_file_new(name, "w")
     char *st = land_strdup(game->hint)
     land_replace_all(&st, "\n", "|")
     land_file_print(f, "hint %s", st)
     land_free(st)
-    float s = 24 / sqrt(2)
+    float s = 24
     LandArray *arrays[] = {blocks.transparent, blocks.dynamic, blocks.fixed}
     for int i in range(3):
         LandArray *array = arrays[i]
@@ -33,11 +67,23 @@ def save_level:
             
     land_file_destroy(f)
     
-def load_level:
+def load_level(bool editor):
     char name[1024]
-    sprintf(name, "data/levels/level%02d.txt", game->level)
-
     Game *self = game
+    self.pristine = False
+
+    LandBuffer *f = None
+    if not editor:
+        sprintf(name, "save%02d.txt", game->level)
+        char *path = land_get_save_file("com.yellowdanger", name)
+        strcpy(name, path)
+        land_free(path)
+        f = land_buffer_read_from_file(name)
+    if not f:
+        sprintf(name, "data/levels/level%02d.txt", game->level)
+        f = land_buffer_read_from_file(name)
+        self.pristine = True
+
     self.player = None
     self.state = "play"
     self.ticks = 0
@@ -46,15 +92,17 @@ def load_level:
     self.picked = None
     self.lever_left = 0
     self.lever_right = 0
-    self.lever_dir = 1
+    self.lever_on = False
 
     Blocks *blocks = game->blocks
     blocks_reset(blocks)
 
-    LandBuffer *f = land_buffer_read_from_file(name)
+    if not f:
+        return
+
     LandArray *rows = land_buffer_split(f, '\n')
     land_buffer_destroy(f)
-    float s = 24 / sqrt(2)
+    float s = 24
     int t, xi, yi, zi
     Block *block
     for LandBuffer *rowb in LandArray *rows:
@@ -67,6 +115,9 @@ def load_level:
             float z = (zi - 22) * s
 
             BlockType *bt = land_array_get_nth(block_types, t)
+
+            #if bt == Render_ExitLeft or bt == Render_ExitRight:
+            #    y -= 0.15 * s
 
             block = block_new(blocks, x, y, z, bt)
 
@@ -96,13 +147,17 @@ def load_level:
             if b.frame >= self.waypoints_count:
                 self.waypoints_count = b.frame + 1
 
-def save_count:
+def save_reset_room(int i):
     char name[1024]
-    game->levels = 0
-    while True:
-        sprintf(name, "data/levels/level%02d.txt", game->levels + 1)
-        FILE *f = fopen(name, "r")
-        if not f:
-            break
-        fclose(f)
-        game->levels++
+    sprintf(name, "save%02d.txt", i)
+    char *path = land_get_save_file("com.yellowdanger", name)
+    if not land_file_remove(path):
+        print("Cannot remove %s.", path)
+    land_free(path)
+
+def save_new:
+    for int i in range(1, 50):
+        save_reset_room(i)
+    char *path = land_get_save_file("com.yellowdanger", "info.txt")
+    land_file_remove(path)
+    land_free(path)

@@ -1,10 +1,22 @@
 import common
 import render, config
 import save
+import title
 
 global char *main_data_path
+
+def main_switch_to_game:
+    All *a = global_a
+    a.title = False
+    load_level(False)
+
+def main_switch_to_title:
+    All *a = global_a
+    a.title = True
+    save_level(False)
     
 def all_init(All *self):
+    self.title = True
     self->FPS = 60
 
     self->font = None
@@ -17,7 +29,7 @@ def all_init(All *self):
     self->my = 0
     
     self->show_fps = False
-    self->running = False
+    self->running = True
 
 def sound(LandSound *s, float vol):
     land_sound_play(s, vol, 0, 1)
@@ -55,7 +67,10 @@ def redraw():
     #float h = land_display_height()
     #float fh = land_font_height(a->font)
 
-    render(game)
+    if a.title:
+        title_render()
+    else:
+        render(game)
 
     if a->show_fps:
         double f1, f2
@@ -75,6 +90,7 @@ def init():
     land_buffer_cat(b, "/data/Muli-Regular.ttf")
     char *path = land_buffer_finish(b)
     a->font = land_font_load(path, 10)
+    a->big = land_font_load(path, 60)
     land_free(path)
 
     a->up = False
@@ -88,12 +104,8 @@ def init():
     config_controls_read()
 
     game = game_new()
-    save_count()
-    game_reset()
 
     a->show_fps = False
-
-    #a->running = True
 
     a->cheatpos = 0
 
@@ -103,10 +115,16 @@ def done():
     land_font_destroy(a->font)
 
 def update():
+    if land_was_resized():
+        viewport_update(game->viewport)
+
     All *a = global_a
     config_check_controls(a)
 
-    game_tick(game)
+    if a.title:
+        title_tick()
+    else:
+        game_tick(game)
 
 def runner_init(LandRunner *self):
     init()
@@ -122,7 +140,7 @@ static def cheat(char unichar):
         if a->cheatpos == (int)strlen(cheatcode):
             game->level += 1
             a->cheatpos = 0
-            game_reset()
+            load_level(False)
     else:
         a->cheatpos = 0
 
@@ -131,7 +149,14 @@ def runner_update(LandRunner *self):
 
     update()
 
-    if land_closebutton():
+    # The game loads fast enough we can just completely quit it -
+    # I personally prefer that a lot to keep it running in the back
+    # even if it doesn't use much power.
+    # Also, don't have to worry about optimizing the background mode,
+    # like e.g. reduce timer frequency and stuff. Plus, this is good
+    # in case there is a memory leak.
+    if land_closebutton() or land_was_halted():
+        save_level(False)
         land_quit()
 
     if not land_keybuffer_empty():
@@ -140,42 +165,21 @@ def runner_update(LandRunner *self):
         cheat(u)
 
         if k == LandKeyEscape:
+            save_level(False)
             land_quit()
         elif k == LandKeyFunction + 1:
             a->show_fps = not a->show_fps
-        elif k == LandKeyFunction + 2:
-            save_level()
-        elif k == LandKeyFunction + 3:
-            load_level()
-        elif k == LandKeyFunction + 4:
-            blocks_reset(game->blocks)
-            game->player = None
-            game->player2 = None
-            game->level = game->levels + 1
-            save_level()
-            save_count()
-            load_level()
-        elif k == LandKeyFunction + 5:
-            debug_no_mask = not debug_no_mask
-        elif k == LandKeyFunction + 6:
-            debug_bounding_boxes++
-            debug_bounding_boxes %= 2
-        elif k == ' ':
-            pass
-        elif k == LandKeyEnter:
-            if not a->running:
-                a->running = True
-        elif k == 'r':
-            game_reset()
-            a.running = False
-        elif k == 'q':
-            game->level -= 1
-            game_reset()
-            a.running = False
-        elif k == 'e':
-            game->level += 1
-            game_reset()
-            a.running = False
+        else:
+            if a.text_input:
+                if u == '|':
+                    u = '\n'
+                if u == 13:
+                    u = 0
+                    a.text_input = False
+                game->hint[a.cursor++] = u
+            elif not a.title:
+                game_key(game, k)
+
         #elif k == 'm':
         #    land_stream_set_playing(render_music,
         #        not land_stream_is_playing(render_music))

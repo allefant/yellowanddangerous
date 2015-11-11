@@ -43,8 +43,8 @@ def player_try_pull(Player *self, float px, pz):
     float ox = self->super.x
     float oz = self->super.z
     
-    self->super.x -= px * 3
-    self->super.z -= pz * 3
+    self->super.x -= px * 3 * sqrt(2)
+    self->super.z -= pz * 3 * sqrt(2)
     LandArray *pulls = block_colliders((void *)self)
     self->super.x = ox
     self->super.z = oz
@@ -68,8 +68,8 @@ def player_grab(Player *self):
     float px = sin((self->want_direction + 1) * pi / 4)
     float pz = cos((self->want_direction + 1) * pi / 4)
 
-    self->super.x += px * 3
-    self->super.z += pz * 3
+    self->super.x += px * 3 * sqrt(2)
+    self->super.z += pz * 3 * sqrt(2)
     LandArray *grabs = block_colliders(&self->super)
 
     self->super.x = ox
@@ -141,11 +141,11 @@ def player_tick(Block *super):
                     self->want_direction &= 7
                     
             elif a->jump:
-                self->super.dy += 20
+                self->super.dy += 20 * sqrt(2)
                 sound(Render_uhg, 1)
 
-        x *= 2
-        z *= 2
+        x *= 2 * sqrt(2)
+        z *= 2 * sqrt(2)
 
         super->dx += x
         super->dz += z
@@ -214,29 +214,58 @@ def player_tick(Block *super):
 
 def player_touch(Block *super, Block *c, float dx, dy, dz):
     Player *self = (void *)super
+    if c->block_type == Render_Gremlin:
+        self.dead = True
     if dy < 0:
         if c->block_type == Render_Plate:
             c->frame = 1
-        elif c->block_type == Render_ExitLeft or c->block_type == Render_ExitRight:
-            if c->frame == 1:
-                game_level_done(game)
+        elif c->block_type == Render_ExitLeft:
+            if c.frame != 0:
+                game_level_done(game, c.x > 0 ? 1 : -1, 0)
+        elif c->block_type == Render_ExitRight:
+            if c.frame != 0:
+                game_level_done(game, 0, c.z > 0 ? 7 : -7)
     if not self.lever:
         if dx < 0 and c.block_type == Render_LeverLeft:
-            self.lever = True
-            c.frame++
-            if c.frame == 2 or game->platform_moving:
-                c.frame = 0
-            if c.frame == 1:
+            if c.frame == 0:
+                self.lever = True
+                c.frame = 1
                 game->lever_left = c
                 game->lever_on = True
         if dz < 0 and c.block_type == Render_LeverRight:
-            self.lever = True
-            c.frame++
-            if c.frame == 2 or game->platform_moving:
-                c.frame = 0
-            if c.frame == 1 or game->platform_moving:
+            if c.frame == 0:
+                self.lever = True
+                c.frame = 1
                 game->lever_right = c
                 game->lever_on = True
     if dx != 0 or dz != 0:
         if c->block_type->dynamic:
             self->pushing = True
+
+def player_find_entrance(Block *super):
+    int mind = 0
+    Block *e = None
+    for Block *b in LandArray *super->blocks->fixed:
+        if game->gox and b->block_type == Render_ExitLeft:
+            if game->gox * b->x < 0:
+                int d = fabs(game->ez - b->z)
+                if e == None or d < mind:
+                    mind = d
+                    e = b
+        if game->goz and b->block_type == Render_ExitRight:
+            if game->goz * b->z < 0:
+                int d = fabs(game->ex - b->x)
+                if e == None or d < mind:
+                    mind = d
+                    e = b
+    if e:
+        super.x = e.x + e.xs / 2 + game->gox * (e.xs / 2 + super.xs / 2) - super.xs / 2
+        super.y = e.y + e.ys
+        super.z = e.z + e.zs / 2 + game->goz * (e.zs / 2 + super.zs / 2) - super.zs / 2
+
+    LandArray *a = block_colliders(super)
+    for Block *c in LandArray *a:
+        if super.y < c.y + c.ys:
+            super.y = c.y + c.ys
+            
+    land_array_destroy(a)

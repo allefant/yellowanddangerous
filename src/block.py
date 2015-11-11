@@ -57,13 +57,15 @@ def blocks_pick(Blocks *self, float xp, yp, Viewport *viewport) -> Block *:
     return best
 
 class BlockType:
+    char *name
     float xs, ys, zs
     bool dynamic
     bool lift
     bool transparent
     bool fixed
+    bool invisible
     LandArray *bitmaps
-    float x, y, z
+    #float x, y, z
     int btid
 
     void (*tick)(Block *)
@@ -74,7 +76,7 @@ class BlockType:
 
 global LandArray *block_types
 
-BlockType *def blocktype_new(float xs, ys, zs,
+BlockType *def blocktype_new(char const *name, float xs, ys, zs,
         void (*tick)(Block *),
         void (*touch)(Block *, Block *, float, float, float),
         void (*destroy)(Block *),
@@ -82,6 +84,7 @@ BlockType *def blocktype_new(float xs, ys, zs,
         void (*post_init)(Block *)):
     BlockType *self
     land_alloc(self)
+    self->name = land_strdup(name)
     self->xs = xs
     self->ys = ys
     self->zs = zs
@@ -247,7 +250,6 @@ bool def block_overlaps(Block *self, *other):
                 return False
         return True
     return False
-            
 
 LandArray *def block_colliders(Block *self):
     int n1, n2, n3
@@ -288,7 +290,7 @@ def block_distance(Block *self, *other) -> float:
     float dz = self.z - other.z
     return sqrt(dx * dx + dy * dy + dz * dz)
 
-bool def block_push(Block *self, float dx, dy, dz):
+bool def block_push(Block *self, float odx, ody, odz):
     bool r
 
     float ox = self->x
@@ -297,12 +299,20 @@ bool def block_push(Block *self, float dx, dy, dz):
 
     bool first_after_push = True
     bool first_ramp_up = True
+    int first_single_dir = 2
 
     label retry
+
+    float dx = first_single_dir != 0 ? odx : 0
+    float dy = ody
+    float dz = first_single_dir != 1 ? odz : 0
 
     self->x += dx
     self->y += dy
     self->z += dz
+
+    if self.y < -1000:
+        self.y = -1000
 
     LandArray *cs = block_colliders(self)
 
@@ -323,7 +333,23 @@ bool def block_push(Block *self, float dx, dy, dz):
                 self->y = c->y + c->ys
                 continue
 
-            if c->block_type->dynamic and not c->block_type->fixed:
+            # doing this in general is too dangerous of getting stuck
+            if self->block_type == Render_Cart:
+                if self->x + self->xs < c->x and self.x + self->xs > c->x - 1:
+                    self.x = c->x - self->xs
+
+                if self->z > c->z + c->zs and self.z < c->z + c->zs + 1:
+                    self.z = c->z + c->zs
+
+                if self->z + self->zs < c->z and self.z + self->zs > c->z - 1:
+                    self.z = c->z - self->zs
+
+                if self->x > c->x + c->xs and self.x < c->x + c->xs + 1:
+                    self.x = c->x + c->xs
+
+            # prevent "pushing" something that's actually on top
+            if c->y < self->y + self->ys and\
+                    c->block_type->dynamic and not c->block_type->fixed:
                 if c->recursion_prevention != tag:
                     c->recursion_prevention = tag
                     if block_push(c, dx, dy, dz):
@@ -340,9 +366,11 @@ bool def block_push(Block *self, float dx, dy, dz):
             first_ramp_up = False
             self.y += 1
             goto retry
+        elif first_single_dir > 0:
+            first_single_dir--
+            goto retry
         
     else:
-
         move_on_top(self, dx, dy, dz)
         
         self->blocks->rebuild_dynamic_cache = True
@@ -492,12 +520,8 @@ static float def sgn(float a, x):
 def block_tick(Block *self):
     if not self->block_type->dynamic: return
 
-    if not self.no_fall and not self.block_type->fixed: self->dy -= 1
-
-    if self.block_type == Render_Platform:
-        if game->lever_on or game->platform_moving:
-            self.dx += game->lever_dir
-            game->platform_moving = True
+    if not self.no_fall and not self.block_type->fixed:
+        self->dy -= sqrt(2)
 
     float ax = fabs(self->dx)
     float ay = fabs(self->dy)
@@ -510,23 +534,12 @@ def block_tick(Block *self):
         if sy:
             if not block_move(self, 0, sy, 0):
                 self->dy = 0
-                if sy < 0: self->ground = True
+                if sy < 0:
+                    self->ground = True
             else:
                 self->ground = False
         if sx or sz:
-            if block_move(self, sx, 0, sz):
-                if self.block_type == Render_Platform:
-                    game->lever_on = False
-            else:
-                if self.block_type == Render_Platform:
-                    if sx * game->lever_dir > 0:
-                        game->lever_dir = -game->lever_dir
-                        if not game->lever_on:
-                            game->platform_moving = False
-                            if game->lever_left:
-                                game->lever_left->frame = 0
-                            if game->lever_right:
-                                game->lever_right->frame = 0
+            block_move(self, sx, 0, sz):
 
         ax -= 1
         ay -= 1

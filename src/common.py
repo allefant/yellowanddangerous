@@ -4,6 +4,7 @@ class All:
     int FPS
     int w, h
     LandFont *font
+    LandFont *big
     bool up, down, left, right, jump
 
     int ftpos
@@ -19,6 +20,12 @@ class All:
     int cheatpos
 
     LandColor text
+
+    bool title
+
+    bool editor
+    bool text_input
+    int cursor
 
 def print(char const *str, ...):
     va_list args

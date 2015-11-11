@@ -39,6 +39,7 @@ def allefant_destroy(Block *super):
 
 def allefant_tick(Block *super):
     Allefant *self = (void *)super
+    float speed = 1.4
 
     if self->wait > 0:
         if self->step != 8 and self->step != 24:
@@ -50,18 +51,17 @@ def allefant_tick(Block *super):
             if self->waypoint >= game->waypoints_count:
                 self->waypoint = 0
 
-            if self->waypoint < game->waypoints_count:
-                self->tx = game->waypoints[self->waypoint][0]
-                self->tz = game->waypoints[self->waypoint][2]
-                self->waypoint += 1
-                self->travel = 0
+            self->tx = game->waypoints[self->waypoint][0]
+            self->tz = game->waypoints[self->waypoint][2]
+            self->waypoint += 1
+            self->travel = 0
                 
     else:
 
         float x = self->tx - super->x
         float z = self->tz - super->z
         float d = pow(x * x + z * z, 0.5)
-        if d > 1:
+        if d > 3:
             self->ax = x / d
             self->az = z / d
             
@@ -70,20 +70,20 @@ def allefant_tick(Block *super):
             angle = (int)((angle - floor(angle)) * 8 + 0.5) & 7
             self->want_direction = angle
 
-            if self->travel == 0:
-                self->travel = d
+            if self->travel <= 0:
+                self->travel = d / speed
         else:
             self->wait = 60 * 2
 
-        super->dx += self->ax
-        super->dz += self->az
+        super->dx += self->ax * speed
+        super->dz += self->az * speed
 
         self->step += 1
         self->step &= 31
 
         self->travel -= 1
 
-        if self->travel < 0:
+        if self->travel <= 0:
             self->wait = 60 * 4
 
     if self->want_direction != self->direction:
@@ -107,4 +107,6 @@ def allefant_touch(Block *super, Block *c, float dx, dy, dz):
         if c->block_type == Render_Plate:
             c->frame = 1
     if c->block_type == Render_Scientist:
-        ((Player *)c)->dead = True
+        # we can ride on top
+        if c->y < super.y + super.ys - 1:
+            ((Player *)c)->dead = True
