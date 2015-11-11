@@ -9,6 +9,5 @@ make 3 21 0 29
 make 3 21 0 37
 make 9 21 4 13
 make 19 21 11 1
-move 0 20 0
 frame 1
 make 3 21 8 5

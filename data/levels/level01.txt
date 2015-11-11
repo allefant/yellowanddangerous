@@ -10,11 +10,10 @@ make 4 13 2 21
 make 4 21 2 21
 make 4 29 2 21
 make 4 37 2 21
-make 18 45 3 21
-move 0 20 0
-frame 1
+make 4 37 2 29
 make 4 5 2 29
 make 4 13 2 29
 make 4 21 2 29
 make 4 29 2 29
-make 4 37 2 29
+make 18 45 3 21
+frame 1

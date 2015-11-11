@@ -16,7 +16,6 @@ make 5 13 2 21
 make 5 21 2 21
 make 5 29 2 21
 make 19 37 3 21
-move 0 20 0
 make 23 29 2 25
 make 23 29 2 29
 make 5 5 2 33

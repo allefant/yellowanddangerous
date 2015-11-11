@@ -22,7 +22,6 @@ make 23 9 6 41
 make 23 21 6 45
 make 23 29 6 45
 make 19 33 7 45
-move 0 20 0
 make 23 21 10 9
 make 23 29 10 9
 make 23 21 10 33

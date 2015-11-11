@@ -1,40 +1,37 @@
 hint Blowing in the wind
-make 10 41 4 17
+make 10 39 4 15
 frame 2
 make 37 33 4 11
-frame 2
 make 37 29 4 11
 frame 2
 make 37 25 4 11
-frame 2
 make 37 21 4 11
 frame 2
 make 37 17 4 11
-frame 2
+frame 1
 make 37 13 4 11
-frame 2
-make 13 13 4 41
-move 61 0 0
+frame 1
+make 13 21 4 41
+move 47 0 0
 make 36 11 4 33
-frame 2
 make 36 11 4 29
 frame 2
 make 36 11 4 25
 frame 2
 make 36 11 4 21
-frame 2
-make 36 11 4 17
-frame 2
-make 36 11 4 12
-move 0 0 99
-frame 2
-make 36 11 4 37
-frame 2
-make 36 11 4 41
 frame 3
+make 36 11 4 17
+frame 1
+make 36 11 4 13
+frame 1
+make 36 11 4 37
+frame 1
+make 36 11 4 41
+frame 1
+make 30 37 2 37
 make 4 29 2 13
 make 4 37 2 13
-make 4 29 2 37
+make 25 12 10 42
 make 4 21 2 37
 make 4 13 2 29
 make 4 13 2 21
@@ -66,4 +63,11 @@ frame 8
 make 4 13 2 37
 make 25 12 10 38
 frame 9
-make 25 12 10 42
+make 4 29 2 37
+make 32 33 4 35
+make 18 47 3 37
+make 12 41 3 9
+move 0 60 0
+make 38 33 1 21
+make 38 45 1 21
+make 38 34 1 45

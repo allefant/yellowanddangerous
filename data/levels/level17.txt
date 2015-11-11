@@ -19,7 +19,6 @@ make 3 5 0 37
 make 3 13 0 37
 make 3 21 0 37
 make 18 29 3 37
-move 0 20 0
 make 0 29 4 5
 make 0 37 4 5
 make 0 5 4 29

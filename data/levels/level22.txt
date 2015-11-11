@@ -1,26 +1,16 @@
 hint Touch the D-Pad to move.
 make 10 31 4 23
-move 58 0 77
 frame 62
-make 30 4 2 13
-move 96 0 0
-make 13 7 4 7
-move 57 0 76
-make 31 2 4 25
-move 89 0 0
-make 4 4 2 21
-move 96 0 0
-make 32 33 4 2
-move 0 0 89
-make 4 29 2 4
-move 0 0 96
+make 30 5 2 13
+make 13 5 4 5
+make 31 3 4 25
+make 4 5 2 21
+make 32 33 4 3
+make 4 29 2 5
 make 4 29 2 21
-make 4 4 2 4
-move 96 0 96
+make 4 5 2 5
 make 27 37 0 13
-make 27 2 0 13
-move 92 0 0
+make 27 3 0 13
 make 12 31 3 29
 move 0 60 0
 make 19 5 3 1
-move 57 20 75

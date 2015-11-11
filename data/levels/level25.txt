@@ -1,29 +1,17 @@
 hint Touch the D-Pad to move.
 make 10 41 4 25
-make 29 0 4 21
-move 98 0 0
-make 29 -2 4 25
-move 98 0 0
-make 29 2 4 27
-move 92 0 0
-make 29 8 4 27
-move 96 0 0
-make 29 12 4 23
-move 95 0 0
-make 29 16 4 25
-move 97 0 0
-make 29 22 4 27
-move 97 0 0
-make 29 40 4 21
-move 97 0 0
-make 29 30 4 25
-move 97 0 0
-make 29 32 4 23
-move 97 0 0
-make 15 -4 -4 21
-move 96 0 0
-make 15 4 -4 21
-move 96 0 0
+make 29 1 4 21
+make 29 -1 4 25
+make 29 3 4 27
+make 29 9 4 27
+make 29 13 4 23
+make 29 17 4 25
+make 29 23 4 27
+make 29 41 4 21
+make 29 31 4 25
+make 29 33 4 23
+make 15 -3 -4 21
+make 15 5 -4 21
 make 15 13 -4 21
 make 15 21 -4 21
 make 15 29 -4 21
@@ -31,8 +19,6 @@ make 15 37 -4 21
 make 16 13 6 13
 make 24 35 4 9
 make 15 37 -4 13
-make 19 13 13 8
-move 0 20 98
+make 19 13 13 9
 frame 1
-make 15 13 -2 12
-move 0 0 98
+make 15 13 -2 13

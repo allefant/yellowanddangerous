@@ -14,18 +14,14 @@ make 4 37 2 21
 make 12 45 3 21
 move 0 60 0
 make 19 37 3 33
-move 0 20 0
 make 4 5 2 37
 make 4 21 2 37
 make 18 33 3 37
-move 0 20 0
 make 4 37 2 37
 make 18 45 3 37
-move 0 20 0
 make 12 21 3 45
 move 0 60 0
 make 19 37 3 45
-move 0 20 0
 make 17 25 4 9
 make 17 41 4 9
 make 17 9 4 25

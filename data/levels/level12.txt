@@ -1,6 +1,5 @@
 hint Jump!
-make 10 6 4 25
-move 99 0 0
+make 10 7 4 25
 make 4 3 2 13
 make 4 19 2 13
 make 4 27 2 9
@@ -10,7 +9,6 @@ make 4 19 2 21
 make 3 27 0 21
 make 4 39 2 21
 make 18 47 3 21
-move 0 20 0
 frame 1
 make 4 3 2 29
 make 4 19 2 29
@@ -28,5 +26,4 @@ make 23 35 2 13
 make 23 35 2 9
 make 23 35 2 29
 make 23 35 2 33
-make 5 2 2 9
-move 99 0 0
+make 5 3 2 9
