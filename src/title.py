@@ -18,27 +18,54 @@ def get_line(float y) -> int:
     y /= 64
 
     return y
-    
+
+def title_com(int com):
+    if com == 1:
+        settings = True
+
 def title_tick:
     float w = land_display_width()
     float h = land_display_height()
     double s = w / 960
     h /= s
 
+    All *a = global_a
+
     if land_key_pressed(LandKeyEnter):
         main_switch_to_game()
+
+    if land_key_pressed(LandKeyBack):
+        if settings:
+            settings = False
+            save_info()
+        elif restart:
+            main_switch_to_game()
+            restart = False
+        else:
+            load_info()
+            main_switch_to_game()
 
     for int ti in range(11):
         if land_touch_down(ti) and land_touch_delta(ti):
             int i = get_line(land_touch_y(ti))
             if settings:
-                if i == 4:
+                if i == 0:
+                    a.dpad++
+                    if a.dpad == 4:
+                        a.dpad = 0
+                elif i == 2:
+                    a.music = volget(land_touch_x(ti))
+                    song_volume()
+                elif i == 3:
+                    a.sound = volget(land_touch_x(ti))
+                    sound(Render_on, 1)
+                elif i == 4:
                     settings = False
+                    save_info()
             elif restart:
                 if i == 3:
                     # start new game
                     save_new()
-                    game->level = game_starting_level
                     main_switch_to_game()
                     restart = False
                 elif i == 4:
@@ -59,7 +86,36 @@ def title_tick:
                     load_info()
                     main_switch_to_game()
                 if i == 4:
+                    load_info()
                     settings = True
+
+static int volx = 0
+static def drawvol(int v, float x, y):
+    volx = x
+    y += 16
+    float s = 48
+    for int i in range(7):
+        float ix = x + i * s
+        float iy = y
+        land_color(1, 1, 1, 1)
+        if i <= v:
+            if v == 0:
+                land_color(0, 0, 0, 1)
+            land_filled_rectangle(ix, iy, ix + s * 0.8, iy + s)
+        else:
+            float cx = ix + s * 0.4
+            float cy = iy + s * 0.5
+            land_filled_circle(cx - 4, cy - 4, cx + 4, cy + 4)
+
+static def volget(float mx) -> int:
+    float w = land_display_width()
+    double s = w / 960
+    float sx = 48
+    mx /= s
+    int i = (mx - volx) / sx
+    if i < 0: i = 0
+    if i > 6: i = 6
+    return i
 
 def title_render:
     All *a = global_a
@@ -75,7 +131,7 @@ def title_render:
     float th = land_line_height()
     float yw = land_text_get_width("Yellow ")
 
-    land_color(1, 1, 0.9, 1)
+    land_color(.9, .9, 0.7, 1)
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2
     land_filled_rectangle(tx + yw, 0, 960, h)
 
@@ -88,13 +144,23 @@ def title_render:
             land_color(1, 0.9, 0, 1)
             land_text_pos(x, y)
             land_write("Yellow ")
-            land_color(1, 0.75, 0.75, 1)
+            land_color(1, 1, 1, 1)
+            if (land_get_ticks() / 60) % 14 >= 7:
+                if land_get_ticks() % 8 >= 4:
+                    land_color(1, 1, 0, 1)
             land_print("and Dangerous")
         if settings:
-            if i == 2:
+            if i == 0:
+                if a.dpad == 0: land_print("DPad left")
+                if a.dpad == 1: land_print("DPad right")
+                if a.dpad == 2: land_print("DPad left big")
+                if a.dpad == 3: land_print("DPad right big")
+            elif i == 2:
                 land_print("Music")
+                drawvol(a.music, x + yw + 6 * 32, y)
             elif i == 3:
                 land_print("Sound")
+                drawvol(a.sound, x + yw + 6 * 32, y)
             elif i == 4:
                 land_print("Back")
         elif restart:
@@ -116,10 +182,36 @@ def title_render:
                 land_print("Settings")
 
     land_font_set(a.font)
-
+    
     if not block1:
-        block1 = block_new(game->blocks, 120, 0, 840, Render_Ginko)
+        block1 = block_new(game->blocks, 120, 0, 720, Render_Gremlin)
     if not block2:
-        block2 = block_new(game->blocks, -660, 0, 0, Render_Statue)
-    render_block(block1, game->viewport)
+        block2 = block_new(game->blocks, -660, 0, -60, Render_Allefant)
+
+    float speed = 60 * 7 / 2.0
+    for int i in range(7):
+        float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed
+        block1.y = 60 * fabs(sin(ang * 3.5))
+        block1.x = 0 + cos(ang) * 120
+        block1.z = 600 + sin(ang) * 120
+        block1.frame = ((land_get_ticks() / 30 + i) % 4) * 4
+        if ((land_get_ticks() / 60) % 14 >= 7) and i == 0:
+            a.tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1)
+            a.tint.a = 0.5
+            a.tint.r *= a.tint.a
+            a.tint.g *= a.tint.a
+            a.tint.b *= a.tint.a
+        else:
+            a.tint = land_color_premul(1, 1, 1, .2)
+        render_block(block1, game->viewport)
+
+    a.tint = land_color_premul(1, 1, 1, .2)
+
+    block2.frame = 8 + ((16 * land_get_ticks() / 60) % 8)
     render_block(block2, game->viewport)
+
+    a.tint.a = 0
+
+    land_font_set(a.font)
+    land_text_pos(w / s, h - land_line_height())
+    land_print_right("Version 1.1")

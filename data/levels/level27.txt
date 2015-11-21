@@ -1,13 +1,24 @@
-hint Touch the D-Pad to move.
-make 10 27 4 27
-make 26 17 4 25
-make 29 17 12 25
-make 4 21 2 21
-make 4 13 2 21
-make 4 13 4 13
+hint To pull, press jump|then move backwards.
+title Laboratory
+make 13 14 4 34
+make 10 33 4 25
+make 4 13 2 13
 make 4 21 2 13
 make 4 29 2 13
+make 4 37 2 13
+make 4 13 2 21
+make 12 21 3 25
+move 0 60 0
 make 4 29 2 21
-make 4 29 2 29
-make 4 21 2 29
+make 4 37 2 21
+make 18 9 3 13
+frame 2
 make 4 13 2 29
+make 4 21 2 29
+make 4 29 2 29
+make 4 37 2 29
+make 5 21 2 21
+make 23 25 2 25
+make 19 29 3 37
+make 11 25 2 37
+make 11 37 2 37

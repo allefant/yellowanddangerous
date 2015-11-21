@@ -1,5 +1,6 @@
 import common
 import isometric
+import block_type
 static import render
 static import land.util2d
 
@@ -55,55 +56,6 @@ def blocks_pick(Blocks *self, float xp, yp, Viewport *viewport) -> Block *:
                     best = block
   
     return best
-
-class BlockType:
-    char *name
-    float xs, ys, zs
-    bool dynamic
-    bool lift
-    bool transparent
-    bool fixed
-    bool invisible
-    LandArray *bitmaps
-    #float x, y, z
-    int btid
-
-    void (*tick)(Block *)
-    void (*touch)(Block *, Block *, float, float, float)
-    void (*destroy)(Block *)
-    Block *(*allocate)(void)
-    void (*post_init)(Block *)
-
-global LandArray *block_types
-
-BlockType *def blocktype_new(char const *name, float xs, ys, zs,
-        void (*tick)(Block *),
-        void (*touch)(Block *, Block *, float, float, float),
-        void (*destroy)(Block *),
-        Block *(*allocate)(void),
-        void (*post_init)(Block *)):
-    BlockType *self
-    land_alloc(self)
-    self->name = land_strdup(name)
-    self->xs = xs
-    self->ys = ys
-    self->zs = zs
-    self->dynamic = False
-    self->lift = False
-    self->transparent = False
-    self->tick = tick
-    self->touch = touch
-    self->destroy = destroy
-    self->allocate = allocate
-    self->post_init = post_init
-    return self
-
-def blocktype_destroy(BlockType *self):
-    if self.bitmaps:
-        for LandImage *pic in LandArray *self->bitmaps:
-            land_image_destroy(pic)
-        land_array_destroy(self->bitmaps)
-    land_free(self)
 
 static int tag = 0
 class Block:
@@ -311,8 +263,8 @@ bool def block_push(Block *self, float odx, ody, odz):
     self->y += dy
     self->z += dz
 
-    if self.y < -1000:
-        self.y = -1000
+    if self.y < -9000:
+        self.y = -9000
 
     LandArray *cs = block_colliders(self)
 
@@ -555,3 +507,16 @@ def block_tick(Block *self):
 
 def block_touch(Block *self, *c, float dx, dy, dz):
     pass
+
+def blocks_preload(Blocks *self):
+    int n1, n2, n3
+    n1 = land_array_count(self->fixed)
+    n2 = land_array_count(self->dynamic)
+    n3 = land_array_count(self->transparent)
+    for int i in range(n1 + n2 + n3):
+        Block *other
+        if i < n1: other = land_array_get_nth(self->fixed, i)
+        elif i - n1 < n2: other = land_array_get_nth(self->dynamic, i - n1)
+        elif i - n1 - n2 < n3: other = land_array_get_nth(self->transparent, i - n1 - n2)
+        BlockType *bt = other.block_type
+        blocktype_preload(bt)

@@ -1,0 +1,44 @@
+hint Finally at the top!|(Of the trees.)
+title Laboratory
+make 7 41 20 15
+make 13 25 20 21
+make 13 21 20 25
+make 7 41 20 31
+make 6 15 20 41
+make 6 31 20 41
+make 10 41 20 41
+make 4 21 2 5
+make 4 37 2 5
+make 4 5 2 21
+make 4 21 2 21
+make 4 37 2 21
+make 12 45 3 21
+move 0 60 0
+make 15 37 12 37
+make 4 5 2 37
+make 4 21 2 37
+make 15 21 12 21
+make 4 37 2 37
+make 15 37 12 5
+make 12 21 3 45
+move 0 60 0
+make 19 7 19 47
+frame 2
+make 17 25 4 9
+make 17 41 4 9
+make 17 9 4 25
+make 17 25 4 25
+make 17 41 4 25
+make 17 9 4 41
+make 17 25 4 41
+make 17 41 4 41
+make 15 37 12 21
+make 17 41 8 9
+make 15 21 12 37
+make 17 25 8 25
+make 17 41 8 25
+make 17 9 8 41
+make 17 25 8 41
+make 17 41 8 41
+make 15 5 12 37
+make 18 47 19 7

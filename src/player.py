@@ -15,6 +15,8 @@ class Player:
 
     bool lever
 
+    bool flower[8]
+
 def player_allocate -> Block *:
     Player *self
     land_alloc(self)
@@ -214,17 +216,34 @@ def player_tick(Block *super):
 
 def player_touch(Block *super, Block *c, float dx, dy, dz):
     Player *self = (void *)super
+    cube_touch(super, c, dx, dy, dz)
     if c->block_type == Render_Gremlin:
         self.dead = True
+    int flower = 0
+    if c->block_type == Render_Gentian:
+        flower = 1
+    if c->block_type == Render_Edelweiss:
+        flower = 2
+    if c->block_type == Render_Orchid:
+        flower = 3
+    if c->block_type == Render_Hyacinth:
+        flower = 4
+    if c->block_type == Render_Sunflower:
+        flower = 5
+    if c->block_type == Render_Rose:
+        flower = 6
+    if c->block_type == Render_Belladonna:
+        flower = 7
+    if flower:
+        c->y -= 9000
+        self->flower[flower] = True
     if dy < 0:
-        if c->block_type == Render_Plate:
-            c->frame = 1
-        elif c->block_type == Render_ExitLeft:
-            if c.frame != 0:
+        if c->block_type == Render_ExitLeft:
+            if c.frame == 1 or c.frame == 2:
                 game_level_done(game, c.x > 0 ? 1 : -1, 0)
         elif c->block_type == Render_ExitRight:
-            if c.frame != 0:
-                game_level_done(game, 0, c.z > 0 ? 7 : -7)
+            if c.frame == 1 or c.frame == 2:
+                game_level_done(game, 0, c.z > 0 ? 1 : -1)
     if not self.lever:
         if dx < 0 and c.block_type == Render_LeverLeft:
             if c.frame == 0:
@@ -262,6 +281,8 @@ def player_find_entrance(Block *super):
         super.x = e.x + e.xs / 2 + game->gox * (e.xs / 2 + super.xs / 2) - super.xs / 2
         super.y = e.y + e.ys
         super.z = e.z + e.zs / 2 + game->goz * (e.zs / 2 + super.zs / 2) - super.zs / 2
+        if e.frame == 3:
+            e.frame = 2
 
     LandArray *a = block_colliders(super)
     for Block *c in LandArray *a:

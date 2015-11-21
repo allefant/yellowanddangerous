@@ -1,0 +1,1 @@
+hint Touch the D-Pad to move.

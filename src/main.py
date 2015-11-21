@@ -8,12 +8,13 @@ global char *main_data_path
 def main_switch_to_game:
     All *a = global_a
     a.title = False
-    load_level(False)
+    a.load_after_redraw = 1
 
-def main_switch_to_title:
+def main_switch_to_title(int com):
     All *a = global_a
     a.title = True
     save_level(False)
+    title_com(com)
     
 def all_init(All *self):
     self.title = True
@@ -32,7 +33,8 @@ def all_init(All *self):
     self->running = True
 
 def sound(LandSound *s, float vol):
-    land_sound_play(s, vol, 0, 1)
+    All *a = global_a
+    land_sound_play(s, vol * a.sound / 6.0, 0, 1)
 
 def add_time():
     All *a = global_a
@@ -62,7 +64,14 @@ def get_fps(double *average, *minmax):
     *minmax = floor(d / 2)
 
 def redraw():
+
     All *a = global_a
+
+    if a.load_after_redraw:
+        render_loading_screen()
+        a.load_after_redraw++
+        return
+    
     float w = land_display_width()
     #float h = land_display_height()
     #float fh = land_font_height(a->font)
@@ -119,7 +128,23 @@ def update():
         viewport_update(game->viewport)
 
     All *a = global_a
+
+    if a.load_after_redraw:
+        if a.load_after_redraw == 2:
+            load_level(False)
+            if a.find_entrance:
+                a.find_entrance = False
+                if game->player:
+                    player_find_entrance(&game->player->super)
+            a.load_after_redraw = 0
+        return
+    
     config_check_controls(a)
+
+    if land_key_pressed('h'):
+        platform_halt()
+    if land_key_pressed('j'):
+        platform_resume()
 
     if a.title:
         title_tick()
@@ -149,15 +174,12 @@ def runner_update(LandRunner *self):
 
     update()
 
-    # The game loads fast enough we can just completely quit it -
-    # I personally prefer that a lot to keep it running in the back
-    # even if it doesn't use much power.
-    # Also, don't have to worry about optimizing the background mode,
-    # like e.g. reduce timer frequency and stuff. Plus, this is good
-    # in case there is a memory leak.
-    if land_closebutton() or land_was_halted():
+    if land_closebutton():
         save_level(False)
         land_quit()
+
+    if land_was_halted():
+        pass
 
     if not land_keybuffer_empty():
         int k, u
@@ -175,8 +197,12 @@ def runner_update(LandRunner *self):
                     u = '\n'
                 if u == 13:
                     u = 0
-                    a.text_input = False
-                game->hint[a.cursor++] = u
+                if a.text_input == 1:
+                    game->title[a.cursor++] = u
+                elif a.text_input == 2:
+                    game->hint[a.cursor++] = u
+                if u == 0:
+                    a.text_input = 0
             elif not a.title:
                 game_key(game, k)
 

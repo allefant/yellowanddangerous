@@ -1,40 +1,79 @@
-hint Which way is up?
-make 10 5 4 41
-make 13 41 8 9
-make 13 41 20 29
-make 23 17 2 5
-make 23 25 2 5
-make 23 33 2 5
-make 23 41 2 5
-make 23 41 2 9
-make 12 41 3 13
+hint Touch the D-Pad to move.
+make 14 21 4 17
+make 14 21 4 21
+make 14 21 4 13
+make 14 25 4 25
+make 14 29 4 21
+make 14 21 4 25
+make 14 29 4 17
+make 14 25 4 13
+make 14 29 4 13
+make 14 25 4 21
+make 14 33 4 17
+make 14 29 4 25
+make 14 25 4 17
+make 14 33 4 21
+make 14 33 4 13
+make 30 29 2 21
+make 30 29 2 13
+make 30 21 2 21
+make 30 21 2 13
+make 10 39 5 7
+make 14 33 4 25
+make 4 37 3 29
+make 4 13 3 21
+make 4 29 3 29
+make 4 37 3 21
+make 12 -9 3 29
 move 0 60 0
-make 23 13 2 17
-make 23 21 2 17
-make 23 21 2 25
-make 23 29 2 25
-make 23 29 2 33
-make 23 5 2 41
-make 23 13 6 5
-make 23 13 6 13
-make 23 25 6 33
-make 23 9 6 41
-make 23 21 6 45
-make 23 29 6 45
-make 19 33 7 45
-make 23 21 10 9
-make 23 29 10 9
-make 23 21 10 33
-make 23 13 10 41
-make 23 21 10 41
-make 12 41 15 25
+make 4 37 3 5
+make 4 29 3 5
+make 12 -3 3 23
 move 0 60 0
-make 23 13 14 29
-make 23 41 14 29
-make 23 41 14 33
-make 23 13 14 37
-make 23 13 18 25
-make 23 21 18 25
-make 23 29 18 25
-make 23 29 18 33
-make 23 37 18 33
+make 4 21 3 5
+make 4 21 3 29
+make 4 13 3 29
+make 4 13 3 5
+make 11 17 0 17
+make 5 13 3 13
+make 12 3 3 23
+move 0 60 0
+make 11 13 0 17
+make 12 3 3 17
+move 0 60 0
+make 12 -3 3 17
+move 0 60 0
+make 12 -9 3 17
+move 0 60 0
+make 12 -9 3 23
+move 0 60 0
+make 12 -9 3 11
+move 0 60 0
+make 12 -3 3 11
+move 0 60 0
+make 12 3 3 11
+move 0 60 0
+make 12 9 3 11
+move 0 60 0
+make 12 9 3 17
+move 0 60 0
+make 12 9 3 23
+move 0 60 0
+make 12 9 3 31
+move 0 60 0
+make 12 3 3 29
+move 0 60 0
+make 12 -3 3 29
+move 0 60 0
+make 17 -4 1 16
+make 17 -4 1 22
+make 17 -4 1 28
+make 17 2 1 28
+make 17 8 1 28
+make 17 8 1 22
+make 17 8 1 16
+make 17 2 1 16
+make 17 2 1 22
+make 5 37 3 13
+make 11 37 0 17
+make 11 41 0 17

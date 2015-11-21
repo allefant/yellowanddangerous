@@ -1,0 +1,18 @@
+hint Touch the D-Pad to move.
+title Garden
+make 10 27 4 27
+make 26 17 4 25
+make 29 17 12 25
+make 4 21 2 21
+make 4 13 2 21
+make 4 13 4 13
+make 4 21 2 13
+make 4 29 2 13
+make 4 29 2 21
+make 4 29 2 29
+make 4 21 2 29
+make 4 13 2 29
+make 11 29 0 5
+make 19 11 3 7
+frame 2
+make 18 37 3 21

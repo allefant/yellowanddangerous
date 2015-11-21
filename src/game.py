@@ -1,6 +1,7 @@
 import common
 import block, isometric, level, render, player, cube, allefant, level
 import save
+import intro
 
 class Game:
     int level
@@ -23,13 +24,19 @@ class Game:
     double start_time
 
     char hint[1024]
+    char title[1024]
     bool pristine
 
     int gox, goz
     int ex, ez
 
+    int swap_level
+
+    bool sequence
+    int sequence_ticks
+
 global Game *game
-global int game_starting_level = 1
+global int game_starting_level = 22
   
 Game *def game_new():
     Game *self; land_alloc(self)
@@ -85,42 +92,85 @@ def game_key(Game *self, int k):
         debug_bounding_boxes %= 2
     elif k == LandKeyFunction + 7:
         a.editor = not a.editor
+    elif k == LandKeyFunction + 8:
+        load_all()
+        viewport_update(game->viewport)
+        game->viewport->zoom /= 8
+        a.running = False
+    elif k == LandKeyFunction + 10:
+        game->sequence = not game->sequence
     elif k == ' ':
         pass
     elif k == LandKeyEnter:
         if not a->running:
             a->running = True
-    elif k == 'q':
-        game->level -= 1
-        if game->level < 1:
-            game->level = 49
-        load_level(True)
-        a.running = False
-    elif k == 'e':
-        game->level += 1
-        if game->level > 49:
-            game->level = 1
-        load_level(True)
-        a.running = False
+    elif k == 'q' or k == 'e' or k == 'w' or k == 's':
+        if k == 'q' or k == 'e' or not game->picked:
+            if k == 'q': game->level -= 1
+            if k == 'e': game->level += 1
+            if k == 'w': game->level -= 7
+            if k == 's': game->level += 7
+            if game->level < 1:
+                game->level += 49
+            if game->level > 49:
+                game->level -= 49
+            load_level(True)
+            a.running = False
     elif k == 't':
-        a.text_input = True
+        a.text_input = 1
         a.cursor = 0
+    elif k == 'h':
+        a.text_input = 2
+        a.cursor = 0
+    elif k >= '0' and k <= '9':
+        int d = k - '0'
+        game->level *= 10
+        game->level %= 100
+        game->level += d
+    elif k == 'c':
+        game->swap_level = game->level
+    elif k == 'v':
+        if game->swap_level:
+            int level1 = game->swap_level
+            game->swap_level = 0
+            int level2 = game->level
+
+            # 2 -> 0
+            load_level(True)
+            game->level = 0
+            save_level(True)
+
+            # 1 -> 2
+            game->level = level1
+            load_level(True)
+            game->level = level2
+            save_level(True)
+
+            # 0 -> 1
+            game->level = 0
+            load_level(True)
+            game->level = level1
+            save_level(True)
 
 def game_tick(Game *self):
     All *a = global_a
 
     if land_equals(self->state, "done") or land_equals(self->state, "died"):
         if self->ticks > self->state_tick + 30:
-            load_level(False)
-            if self->player:
-                player_find_entrance(&self->player->super)
+            a.load_after_redraw = 1
+            a.find_entrance = True
+            play_song()
 
     for int ti in range(11):
         if not land_touch_down(ti):
             continue
 
         double rr = land_display_width() / 8 * 0.8
+        if a.dpad == 2 or a.dpad == 3:
+            rr *= 1.5
         double rx = rr
+        if a.dpad == 1 or a.dpad == 3:
+            rx = land_display_width() - rr
         double ry = land_display_height() - rr
         double mx = land_touch_x(ti)
         double my = land_touch_y(ti)
@@ -128,24 +178,38 @@ def game_tick(Game *self):
         double dy = my - ry
 
         # move control
+        #                  c
+        #                 b d
+        #                a   e
+        #               9     f
+        #              8       0
+        #               7     1
+        #                6   2
+        #                 5 3
+        #                  4
+           
         if dx * dx + dy * dy < rr * rr:
             if dx * dx + dy * dy > rr * rr / 16:
                 double ang = atan2(dy, dx)
-                ang += pi / 8
+                # we use 16 subdivisions, the main directions get 12
+                # out of that and the diagonals 4
+                ang += pi / 16
                 if ang < 0:
                     ang += pi * 2
-                int i = ang * 4 / pi
-                if i == 0 or i == 1 or i == 7:
+                int i = ang * 8 / pi
+                if i <= 3 or i >= 0xd:
                     a.right = True
-                if i == 1 or i == 2 or i == 3:
+                if i >= 1 and i <= 7:
                     a.down = True
-                if i == 3 or i == 4 or i == 5:
+                if i >= 5 and i <= 0xb:
                     a.left = True
-                if i == 5 or i == 6 or i == 7:
+                if i >= 9:
                     a.up = True
 
         # jump control
         rx = land_display_width() - rr
+        if a.dpad == 1 or a.dpad == 3:
+            rx = rr
         dx = mx - rx
         dy = my - ry
         if dx * dx + dy * dy < rr * rr:
@@ -155,7 +219,7 @@ def game_tick(Game *self):
         rx = land_display_width() - rr
         ry = rr
         if mx > rx and my < ry:
-            main_switch_to_title()
+            main_switch_to_title(0)
 
     int plates_count = 0
     int plates_on_before = 0
@@ -183,6 +247,12 @@ def game_tick(Game *self):
 
     double s = 24
 
+    if land_key_pressed(LandKeyBack):
+        main_switch_to_title(0)
+
+    if land_key_pressed(LandKeyMenu):
+        main_switch_to_title(1)
+
     if land_key_pressed(LandKeyInsert):
         Block *l = game.picked
         if l:
@@ -192,6 +262,9 @@ def game_tick(Game *self):
             game.picked = block_new(self.blocks, -s, -s * 2, -s,
                 Render_BlockBottom3)
         block_add(game.picked)
+
+    if game.sequence and a.running:
+        intro_sequence()
 
     if game.picked:
         Block *p = game.picked

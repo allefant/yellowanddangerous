@@ -6,6 +6,7 @@ import platform
 import eye
 import cart
 import gremlin
+import intro
 
 class Render:
     bool was_setup
@@ -13,12 +14,24 @@ class Render:
     LandFont *font
     LandStream *music
     char *path
+    int song
 
 Render r
+global LandImage *Render_Smoke
 
 #static int filter(char const *name, bool is_dir, void *data):
 #    if is_dir: return 0
 #    return 1
+
+static def loadpic(char const *name) -> LandImage *:
+    LandBuffer *b = land_buffer_new()
+    land_buffer_cat(b, r.path)
+    land_buffer_cat(b, name)
+    char *path = land_buffer_finish(b)
+    LandImage *i = land_image_load(path)
+    land_free(path)
+    land_image_center(i)
+    return i
 
 static BlockType *def render_load(char const *name, float x, y, z,
         bool dynamic, lift, transparent, fixed, int frames):
@@ -96,8 +109,8 @@ load("Barrel", .8, 1.2, .8, dynamic = True, frames = 3)
 load("TreeBottom", 2, 2, 2)
 load("TreeTop", 2, 2, 2)
 load("Trunk", 0.2, 1.0, 0.2)
-load("ExitLeft", 1, 0.25, 2, frames = 3)
-load("ExitRight", 2, 0.25, 1, frames = 3)
+load("ExitLeft", 1, 0.25, 2, frames = 4)
+load("ExitRight", 2, 0.25, 1, frames = 4)
 load("Allefant", 1.3, 1.8, 1.3, dynamic = True, frames = 64)
 load("BlockRight4", 2, 2, .5, transparent = True)
 load("BlockLeft4", .5, 2, 2, transparent = True)
@@ -120,10 +133,10 @@ load("BlockSmall", 1, 0.5, 1)
 load("BlockRight", 2, 2, .5)
 load("BlockSmallLeft", 0.5, 1, 1)
 load("BlockSmallRight", 1, 1, 0.5)
-load("Gentian", 0.5, 0.5, 0.5, dynamic = True, lift = True)
+load("Gentian", 0.5, 0.5, 0.5)
 load("Eye", 0.5, 0.5, 0.5, dynamic = True, lift = True, frames = 8)
 load("Ginko", 2, 4, 2)
-load("Edelweiss", .5, .5, .5, dynamic = True, lift = True)
+load("Edelweiss", .5, .5, .5)
 load("Cart", 2, 1.25, 2, dynamic = True, frames = 4)
 load("GrateBottom", 2, 0.25, 2)
 load("GrateLeft", .25, 2, 2)
@@ -131,6 +144,17 @@ load("GrateRight", 2, 2, .25)
 load("Gremlin", .5, .5, .5, dynamic = True, frames = 16)
 load("InvisibleLeft", .25, 4, 2)
 load("InvisibleRight", 2, 4, .25)
+load("Orchid", .5, 1.25, .75)
+load("Sunflower", 1, 2.5, 1)
+load("Hyacinth", .5, 1, .5)
+load("DeskLeft", 1, 1, 2)
+load("WallLeft", .5, 3, 2)
+load("WallRight", 2, 3, .5)
+load("DeskRight", 2, 1, 1)
+load("Floor", 2, .25, 2, frames = 2)
+load("TestTube", .125, .5, .125, dynamic = True, lift = True, frames = 7)
+load("Rose", .5, 1, .5)
+load("Belladonna", .5, 1.5, .5)
 
 loads("step")
 loads("push")
@@ -139,6 +163,7 @@ loads("on")
 loads("uhg")
 loads("oh no")
 loads("teleport")
+loads("glass")
 ***
 
 static LandSound *def render_loads(char const *name):
@@ -153,6 +178,15 @@ static LandSound *def render_loads(char const *name):
     if not s:
         print("Could not load %s", fpath)
     return s
+
+def render_loading_screen():
+    land_clear(1, 1, 1, 1)
+    land_clear_depth(1)
+    land_reset_transform()
+    land_text_pos(480, 300)
+    land_font_set(r.font)
+    land_color(0, 0, 0, 1)
+    land_print_center("%s", "Loading! Please Wait!")
 
 def render_setup():
     if r.was_setup: return
@@ -177,21 +211,15 @@ def render_setup():
     char *fontpath = land_buffer_finish(b)
     r.font = land_font_load(fontpath, 24)
     land_free(fontpath)
-    land_clear(1, 1, 1, 1)
-    land_text_pos(480, 300)
-    land_font_set(r.font)
-    land_color(0, 0, 0, 1)
-    land_print_center("%s", "Loading! Please Wait!")
+
+    render_loading_screen()
     land_flip()
 
     r.music = land_stream_new(2048, 4, 22050, 16, 2)
-    b = land_buffer_new()
-    land_buffer_cat(b, main_data_path)
-    land_buffer_cat(b, "/data/katyusha.ogg")
-    char *musicpath = land_buffer_finish(b)
-    land_stream_music(r.music, musicpath)
-    land_free(musicpath)
-    land_stream_volume(r.music, 0.75)
+
+    load_info()
+
+    play_song()
 
     block_types = land_array_new()
 ***scramble
@@ -236,6 +264,31 @@ for name, vname in sdefs:
     Render_Gremlin->touch = gremlin_touch
     Render_Gremlin->allocate = gremlin_allocate
 
+    Render_Smoke = loadpic("../smoke.png")
+
+def play_song:
+    All *a = global_a
+    LandBuffer *b = land_buffer_new()
+    land_buffer_cat(b, main_data_path)
+    if r.song == 0:
+        land_buffer_cat(b, "/data/katyusha.ogg")
+    elif r.song == 1:
+        land_buffer_cat(b, "/data/allefant.ogg")
+    elif r.song == 2:
+        land_buffer_cat(b, "/data/fairy.ogg")
+    char *musicpath = land_buffer_finish(b)
+    land_stream_music(r.music, musicpath)
+    land_free(musicpath)
+    land_stream_volume(r.music, a.music / 6.0)
+
+    r.song++
+    if r.song == 3:
+        r.song = 0
+
+def song_volume:
+    All *a = global_a
+    land_stream_volume(r.music, a.music / 6.0)
+
 def render_teardown():
 ***scramble
 for name, x, y, z, dynamic, lift, transparent, fixed, frames in defs:
@@ -250,12 +303,19 @@ for name, vname in sdefs:
     land_free(r.path)
 
 static def draw_move_controls:
+    All *a = global_a
     float w = land_display_width()
     float h = land_display_height()
     land_color(0.5, 0.4, 0, 0.5)
     float rr = w / 8 * 0.8
+    if a.dpad == 2 or a.dpad == 3:
+        rr *= 1.5
     float rx = rr
     float ry = h - rr
+
+    if a.dpad == 1 or a.dpad == 3:
+        rx = w - rr
+
     float xy[2 * 34]
     xy[0] = rx
     xy[1] = ry
@@ -270,12 +330,17 @@ static def draw_move_controls:
     land_filled_polygon(34, xy)
 
 static def draw_jump_controls:
+    All *a = global_a
     land_color(0.5, 0.4, 0, 0.5)
     float w = land_display_width()
     float h = land_display_height()
     float rr = w / 8 * 0.8
+    if a.dpad == 2 or a.dpad == 3:
+        rr *= 1.5
     float rx = w - rr
     float ry = h - rr
+    if a.dpad == 1 or a.dpad == 3:
+        rx = rr
     rr *= 0.6
     land_filled_circle(rx - rr, ry - rr, rx + rr, ry + rr)
 
@@ -290,22 +355,33 @@ static def draw_pause_controls:
         w - rr + rr * 7 / 8, rr * 7 / 8)
 
 def render(Game *g):
+    All *a = global_a
     float w = land_display_width()
     float h = land_display_height()
     float fh = land_font_height(r.font)
     #float z = g.viewport->zoom
 
     land_clear_depth(1)
-    land_clear(r.background_color.r, r.background_color.g,
-        r.background_color.b, r.background_color.a)
+
+    if game->sequence:
+        a.tint = intro_tint
+        land_clear(0, 0, 0, 1)
+    else:
+        a.tint.a = 0
+        land_clear(r.background_color.r, r.background_color.g,
+            r.background_color.b, r.background_color.a)
 
     render_blocks(g->blocks, g->viewport)
 
+    if game->sequence:
+        intro_postprocess()
+
     land_reset_transform()
 
-    draw_move_controls()
-    draw_jump_controls()
-    draw_pause_controls()
+    if not game->sequence:
+        draw_move_controls()
+        draw_jump_controls()
+        draw_pause_controls()
 
     land_color(0, 0, 0, 1)
     land_font_set(r.font)
@@ -313,7 +389,9 @@ def render(Game *g):
     if True:
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
-        land_print("Room %d", g->level)
+        land_print("%s", g->title)
+        if a.editor:
+            land_print("%d", g->level)
 
     if g->ticks < 300:
         
@@ -321,9 +399,10 @@ def render(Game *g):
         land_print_center("%s", "Yellow and Dangerous")
         land_print_center("%s", "by Allefant")
 
-    float y = h - 3 * fh
-    land_text_pos(0, y)
-    land_print_wordwrap(w, h, "%s", g->hint)
+    if g->ticks > 600 or a.editor:
+        float y = h - 3 * fh
+        land_text_pos(0, y)
+        land_print_wordwrap(w, h, "%s", g->hint)
 
 def render_block(Block *self, Viewport *viewport):
     All *a = global_a
@@ -346,7 +425,8 @@ def render_block(Block *self, Viewport *viewport):
         float cr = 1
         float cg = 1
         float cb = 1
-        float scale = 24# / sqrt(2)
+        float ca = 1
+        float scale = 24
         float height = floor(self.y / scale + 4)
         if height >= 0:
             cb -= height / 64.0
@@ -354,13 +434,18 @@ def render_block(Block *self, Viewport *viewport):
         else:
             cb += height / 64
             cr += height / 64
+        if a.tint.a:
+            cr = a.tint.r
+            cg = a.tint.g
+            cb = a.tint.b
+            ca = a.tint.a
         LandImage *frame = land_array_get_nth(bt.bitmaps,
             self->frame)
         land_image_load_on_demand(frame)
         x -= land_image_width(frame) / 4
         y -= land_image_height(frame) / 4
         land_image_draw_scaled_tinted(frame, x, y, 0.5, 0.5,
-                cr, cg, cb, 1)
+                cr, cg, cb, ca)
 
     bool show_bounds = debug_bounding_boxes or self == game->picked
     bool show_misaligned = False
