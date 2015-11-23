@@ -213,5 +213,8 @@ def title_render:
     a.tint.a = 0
 
     land_font_set(a.font)
-    land_text_pos(w / s, h - land_line_height())
-    land_print_right("Version 1.1")
+    land_text_pos(w / s, h - land_line_height() * 2)
+    int t = a.time / 60
+    land_print_right("Playtime on this savegame: %02d:%02d:%02d",
+        t / 3600, (t / 60) % 60, t % 60)
+    land_print_right("Version 0.9")

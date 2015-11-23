@@ -136,15 +136,12 @@ def update():
                 a.find_entrance = False
                 if game->player:
                     player_find_entrance(&game->player->super)
+                if game->player2:
+                    allefant_onload(&game->player2->super)
             a.load_after_redraw = 0
         return
     
     config_check_controls(a)
-
-    if land_key_pressed('h'):
-        platform_halt()
-    if land_key_pressed('j'):
-        platform_resume()
 
     if a.title:
         title_tick()

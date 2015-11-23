@@ -1,24 +1,55 @@
-hint Lovely yellow critter|it seems hungry
-make 50 17 4 35
-frame 1
-make 10 17 4 41
-frame 2
-make 6 21 4 35
-make 6 21 4 27
-make 6 21 4 31
+hint only one barrel...
+title Loading deck
+make 10 25 4 31
+make 14 7 6 13
+make 13 22 14 6
+make 13 25 14 6
+make 13 22 6 7
+make 13 25 6 7
 make 4 21 2 21
+make 4 29 2 21
 make 4 13 2 21
-make 4 5 2 21
-make 4 5 2 13
-make 4 13 2 29
+make 4 13 2 13
+make 4 29 2 13
+make 12 -1 5 33
+move 0 60 0
+make 4 29 2 29
 make 4 21 2 29
-make 4 21 2 37
-make 4 13 2 37
-make 4 5 2 5
-make 48 20 4 29
-make 19 5 3 1
-frame 1
-make 49 13 4 37
-make 48 12 4 29
-make 28 13 4 19
-make 28 13 8 19
+make 4 13 2 29
+make 12 -1 5 13
+move 0 60 0
+make 12 -1 5 21
+move 0 60 0
+make 4 3 4 29
+make 4 3 4 21
+make 4 3 4 13
+make 27 11 2 13
+make 27 11 2 21
+make 27 11 2 29
+make 12 -1 5 17
+move 0 60 0
+make 12 -1 5 25
+move 0 60 0
+make 12 -1 5 29
+move 0 60 0
+make 34 21 6 17
+make 34 25 6 17
+make 40 19 4 25
+make 35 29 4 25
+make 4 21 2 5
+make 38 25 6 13
+make 4 13 2 5
+make 4 29 2 5
+make 4 21 2 13
+make 38 21 6 13
+make 39 21 4 5
+make 1 21 4 21
+make 4 37 2 29
+make 4 37 2 21
+make 4 37 2 13
+make 4 37 2 5
+make 38 25 10 7
+make 38 21 10 7
+make 18 45 3 29
+frame 2
+make 18 -5 5 21

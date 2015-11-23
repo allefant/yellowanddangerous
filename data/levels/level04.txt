@@ -1,0 +1,51 @@
+hint under the boards...
+title Wooden Office
+make 6 13 4 27
+make 10 37 6 33
+frame 2
+make 6 29 4 25
+make 6 13 4 23
+make 6 29 4 23
+make 6 21 4 27
+make 6 13 4 21
+make 6 13 4 25
+make 6 21 4 25
+make 6 29 4 21
+make 6 21 4 23
+make 6 29 4 27
+make 6 21 4 21
+make 6 13 4 19
+make 6 13 4 17
+make 6 21 4 17
+make 6 21 4 19
+make 6 29 4 19
+make 6 29 4 17
+make 13 21 4 29
+make 13 25 4 29
+make 7 17 5 17
+make 7 31 5 17
+make 7 31 5 25
+make 7 17 5 25
+make 8 9 -2 17
+make 9 33 -2 33
+make 3 21 0 25
+make 9 33 -2 13
+make 3 13 0 25
+make 8 9 -2 25
+make 3 29 0 25
+make 9 17 -2 13
+make 9 9 -2 13
+make 9 25 -2 13
+make 8 37 -2 17
+make 8 37 -2 25
+make 9 25 -2 33
+make 9 17 -2 33
+make 9 9 -2 33
+make 12 13 3 17
+move 0 60 0
+make 12 25 3 17
+move 0 60 0
+make 3 17 0 17
+make 11 13 0 21
+make 11 25 0 21
+make 3 29 0 17

@@ -1,41 +1,39 @@
-hint Which way is up?
-title Laboratory
-make 10 5 4 41
-make 13 41 8 9
-make 13 41 20 29
-make 23 17 2 5
-make 23 25 2 5
-make 23 33 2 5
-make 23 41 2 5
-make 23 41 2 9
-make 12 41 3 13
-move 0 60 0
-make 23 13 2 17
-make 23 21 2 17
-make 23 21 2 25
-make 23 29 2 25
-make 23 29 2 33
-make 23 5 2 41
-make 23 13 6 5
-make 23 13 6 13
-make 23 25 6 33
-make 23 9 6 41
-make 23 21 6 45
-make 23 29 6 45
-make 19 33 7 45
-make 23 21 10 9
-make 23 29 10 9
-make 23 21 10 33
-make 23 13 10 41
-make 23 21 10 41
-make 12 41 15 25
-move 0 60 0
-make 23 13 14 29
-make 23 41 14 29
-make 23 41 14 33
-make 23 13 14 37
-make 23 13 18 25
-make 23 21 18 25
-make 23 29 18 25
-make 23 29 18 33
-make 23 37 18 33
+hint heaving the cube
+title The Cave
+make 10 23 4 48
+frame 6
+make 13 39 4 23
+make 0 29 -4 37
+make 19 21 3 53
+frame 2
+make 1 25 22 29
+make 0 21 -4 45
+make 0 13 0 45
+make 0 29 4 29
+make 0 13 4 37
+make 1 37 4 15
+make 0 37 -4 21
+make 39 21 4 43
+make 1 29 12 23
+make 0 37 6 15
+make 0 29 8 15
+make 1 29 2 21
+make 0 13 12 29
+make 60 29 15 7
+make 1 21 14 13
+make 1 21 12 37
+make 1 21 12 29
+make 19 29 15 3
+frame 1
+make 0 21 -4 37
+make 1 21 2 29
+make 1 21 2 21
+make 1 21 12 21
+make 39 21 14 35
+make 2 27 16 7
+make 1 29 12 31
+make 39 25 14 25
+make 39 29 14 35
+make 38 29 22 25
+make 38 25 22 25
+make 2 25 24 29

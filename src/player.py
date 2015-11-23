@@ -143,11 +143,11 @@ def player_tick(Block *super):
                     self->want_direction &= 7
                     
             elif a->jump:
-                self->super.dy += 20 * sqrt(2)
+                self->super.dy += 30
                 sound(Render_uhg, 1)
 
-        x *= 2 * sqrt(2)
-        z *= 2 * sqrt(2)
+        x *= 2.8
+        z *= 2.8
 
         super->dx += x
         super->dz += z

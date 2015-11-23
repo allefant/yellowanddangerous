@@ -17,6 +17,9 @@ def viewport_update(Viewport *self):
     self->x = w / 2 / self.zoom
     self->y = h / 2 / self.zoom
 
+    if global_a->overview:
+        self.zoom /= 8
+
 def project(Viewport *self, float x, y, z, *sx, *sy):
     float s = 1 / 2.0
     float t = sqrt(3) / sqrt(2)

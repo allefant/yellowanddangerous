@@ -33,6 +33,17 @@ def allefant_init(Block *super):
     self->travel = 0
     game->player2 = self
 
+def allefant_onload(Block *super):
+    Allefant *self = (void *)super
+    float mind = -1
+    for int i in range(game->waypoints_count):
+        float x = game->waypoints[i][0] - super.x
+        float z = game->waypoints[i][2] - super.z
+        float d = x * x + z * z
+        if mind < 0 or d < mind:
+            mind = d
+            self.waypoint = i
+
 def allefant_destroy(Block *super):
     game->player2 = None
     block_destroy(super)

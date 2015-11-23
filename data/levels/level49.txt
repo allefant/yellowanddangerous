@@ -1,6 +1,6 @@
 hint climb
 title Wall
-make 10 41 4 39
+make 10 35 28 27
 make 42 5 10 41
 make 45 57 16 21
 make 0 29 2 23
@@ -16,13 +16,13 @@ make 0 45 20 23
 make 1 25 2 41
 make 1 33 2 33
 make 1 41 2 35
-make 0 49 2 25
+make 0 49 2 27
 make 0 13 4 27
 make 1 13 2 35
 make 38 13 4 37
 make 38 47 4 35
 make 38 25 4 35
-make 38 49 6 33
+make 38 49 6 35
 make 38 11 12 29
 make 38 21 12 33
 make 38 37 26 27
@@ -32,12 +32,13 @@ make 38 49 22 19
 make 40 37 6 31
 make 38 25 20 29
 make 40 37 16 25
-make 2 11 8 33
+make 2 11 10 33
 make 0 27 28 23
-make 19 29 27 19
+make 19 27 25 13
 frame 1
 make 39 5 2 41
 make 38 33 18 29
 make 40 55 16 23
 make 38 57 8 25
 make 38 57 14 21
+make 38 31 24 17

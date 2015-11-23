@@ -80,6 +80,8 @@ def game_key(Game *self, int k):
             save_level(True)
     elif k == LandKeyFunction + 3:
         load_level(True)
+        a.overview = False
+        viewport_update(game->viewport)
         a.running = False
     elif k == LandKeyFunction + 4:
         blocks_reset(game->blocks)
@@ -94,8 +96,8 @@ def game_key(Game *self, int k):
         a.editor = not a.editor
     elif k == LandKeyFunction + 8:
         load_all()
+        a.overview = True
         viewport_update(game->viewport)
-        game->viewport->zoom /= 8
         a.running = False
     elif k == LandKeyFunction + 10:
         game->sequence = not game->sequence
@@ -116,6 +118,10 @@ def game_key(Game *self, int k):
                 game->level -= 49
             load_level(True)
             a.running = False
+    elif k == 'i':
+        Block *p = game->picked
+        if p:
+            print("%.1f %.1f %.1f", p.x, p.y, p.z)
     elif k == 't':
         a.text_input = 1
         a.cursor = 0
@@ -160,6 +166,9 @@ def game_tick(Game *self):
             a.load_after_redraw = 1
             a.find_entrance = True
             play_song()
+
+    if a.load_after_redraw:
+        return
 
     for int ti in range(11):
         if not land_touch_down(ti):
@@ -320,6 +329,7 @@ def game_tick(Game *self):
             game.picked = None
 
     if a.running and not game.picked:
+        a.time++
         for Block *b in LandArray *self->blocks->dynamic:
             b->block_type->tick(b)
 

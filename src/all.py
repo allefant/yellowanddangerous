@@ -35,3 +35,6 @@ class All:
 
     int load_after_redraw
     bool find_entrance
+
+    int time
+    bool overview

@@ -9,6 +9,7 @@ def save_info:
     land_file_print(f, "dpad %d", a.dpad)
     land_file_print(f, "music %d", a.music)
     land_file_print(f, "sound %d", a.sound)
+    land_file_print(f, "time %d", a.time)
     land_file_destroy(f)
     land_free(path)
 
@@ -35,6 +36,16 @@ def load_info:
                 sscanf(row, "music %d", &a->music)
             if land_starts_with(row, "sound "):
                 sscanf(row, "sound %d", &a->sound)
+            if land_starts_with(row, "time "):
+                int t
+                sscanf(row, "time %d", &t)
+                if t > a.time:
+                    a.time = t
+                    # If a room is reloaded after dying or pausing,
+                    # we want to keep the current play time which
+                    # will always be higher.
+                    # If the game restarts however we want to use
+                    # the saved time.
             land_free(row)
         land_array_destroy(rows)
         
@@ -193,6 +204,7 @@ def save_new:
     for int i in range(1, 50):
         save_reset_room(i)
     game->level = game_starting_level
+    global_a->time = 0
     save_info()
 
 def load_all:

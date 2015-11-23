@@ -5,7 +5,8 @@ make 21 29 3 43
 make 21 21 11 43
 make 21 29 11 43
 make 10 39 4 7
-make 54 47 19 27
+make 18 53 3 29
+frame 2
 make 4 21 2 29
 make 4 13 2 29
 make 4 13 1 5
@@ -57,10 +58,3 @@ make 38 31 19 41
 make 38 25 23 41
 make 40 33 21 41
 make 40 23 21 41
-make 40 33 21 37
-make 40 33 21 33
-make 40 33 21 29
-make 41 35 21 29
-make 41 39 19 29
-make 41 43 17 29
-make 41 47 15 29

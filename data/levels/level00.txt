@@ -1,25 +1,63 @@
-hint enough material?
-title The Gap
-make 7 35 19 29
-make 7 31 20 49
-make 7 34 19 21
-make 7 34 19 37
-make 10 35 21 57
-make 26 31 20 45
-make 26 35 20 45
-make 7 37 20 49
-make 0 33 12 13
-make 1 29 2 29
-make 0 31 12 45
-make 0 31 12 53
-make 19 31 19 65
+hint Round 'n' round|all the way to the top
+title Strange Statue
+make 10 37 0 21
 frame 2
-make 19 31 19 9
-make 1 31 2 21
-make 1 31 2 37
-make 38 31 18 61
-make 38 35 18 61
-make 0 31 4 13
-make 0 29 4 45
-make 1 33 2 13
-make 1 31 2 47
+make 14 29 0 37
+make 43 19 16 19
+make 6 25 6 13
+make 7 15 8 25
+make 38 37 -2 1
+make 1 29 0 9
+make 1 33 -2 5
+make 1 9 2 17
+make 1 9 2 25
+make 1 13 0 29
+make 1 1 -2 33
+make 19 17 -1 -3
+make 1 17 2 25
+make 1 29 0 25
+make 1 25 -2 33
+make 38 21 4 21
+make 33 17 8 17
+make 12 25 5 21
+move 0 60 0
+make 35 25 2 29
+make 38 29 0 4
+make 38 29 2 9
+make 1 21 0 5
+make 1 17 -2 33
+make 1 21 0 29
+make 1 33 -2 29
+make 1 9 -2 33
+make 35 29 0 33
+make 1 33 -2 21
+make 1 33 -2 13
+make 35 33 -2 37
+make 35 21 4 25
+make 38 33 0 5
+make 1 25 2 21
+make 1 17 6 17
+make 1 1 -2 25
+make 1 1 -2 17
+make 1 1 -2 9
+make 1 1 -2 1
+make 1 9 -2 1
+make 1 17 -2 1
+make 1 25 -2 1
+make 38 33 -2 1
+make 1 5 0 29
+make 1 5 0 13
+make 1 5 0 21
+make 1 5 0 5
+make 1 13 0 5
+make 1 9 2 9
+make 1 17 2 9
+make 38 25 2 9
+make 1 13 4 21
+make 1 13 4 13
+make 1 21 4 13
+make 18 41 -1 17
+make 18 -4 -1 17
+frame 2
+make 19 17 -1 41
+frame 3

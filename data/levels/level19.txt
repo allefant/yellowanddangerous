@@ -1,63 +1,35 @@
-hint Round 'n' round|all the way to the top
-title Strange Statue
-make 10 37 0 21
-frame 2
-make 14 29 0 37
-make 43 19 16 19
-make 6 25 6 13
-make 7 15 8 25
-make 38 37 -2 1
-make 1 29 0 9
-make 1 33 -2 5
-make 1 9 2 17
-make 1 9 2 25
-make 1 13 0 29
-make 1 1 -2 33
-make 19 17 -1 -3
-make 1 17 2 25
-make 1 29 0 25
-make 1 25 -2 33
-make 38 21 4 21
-make 33 17 8 17
-make 12 25 5 21
+hint 
+title 
+make 10 41 4 9
+make 13 11 8 15
+make 17 43 0 29
+make 4 37 2 21
+make 4 37 2 5
+make 4 37 2 37
+make 28 11 4 15
+make 4 5 2 19
+make 17 17 4 43
+make 4 21 2 37
+make 24 21 0 5
+make 27 37 4 9
+make 27 37 4 17
+make 28 33 4 43
+make 28 25 4 43
+make 17 11 4 37
+make 27 11 4 17
+make 17 11 4 31
+make 17 11 4 43
+make 17 11 4 25
+make 17 23 4 43
+make 17 43 0 35
+make 27 19 4 15
+make 27 19 4 23
+make 12 23 3 27
 move 0 60 0
-make 35 25 2 29
-make 38 29 0 4
-make 38 29 2 9
-make 1 21 0 5
-make 1 17 -2 33
-make 1 21 0 29
-make 1 33 -2 29
-make 1 9 -2 33
-make 35 29 0 33
-make 1 33 -2 21
-make 1 33 -2 13
-make 35 33 -2 37
-make 35 21 4 25
-make 38 33 0 5
-make 1 25 2 21
-make 1 17 6 17
-make 1 1 -2 25
-make 1 1 -2 17
-make 1 1 -2 9
-make 1 1 -2 1
-make 1 9 -2 1
-make 1 17 -2 1
-make 1 25 -2 1
-make 38 33 -2 1
-make 1 5 0 29
-make 1 5 0 13
-make 1 5 0 21
-make 1 5 0 5
-make 1 13 0 5
-make 1 9 2 9
-make 1 17 2 9
-make 38 25 2 9
-make 1 13 4 21
-make 1 13 4 13
-make 1 21 4 13
-make 18 41 -1 17
-make 18 -4 -1 17
+make 19 33 3 1
+make 17 39 0 35
+make 17 39 0 29
+make 5 19 2 23
+make 23 19 2 27
+make 18 45 3 21
 frame 2
-make 19 17 -1 41
-frame 3
