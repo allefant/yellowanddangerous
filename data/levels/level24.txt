@@ -1,5 +1,7 @@
 hint Touch the jump circle while|moving to jump.
+title Laboratory
 make 10 19 4 25
+make 13 21 4 -1
 make 4 13 2 13
 make 4 21 2 13
 make 4 29 2 13
@@ -14,8 +16,16 @@ make 4 29 2 29
 make 4 37 2 29
 make 3 29 4 13
 make 18 45 3 21
-frame 1
+frame 2
 make 3 29 4 21
 make 3 29 4 29
 make 18 9 3 21
 frame 2
+make 4 9 2 -5
+make 4 17 2 -5
+make 4 25 2 -5
+make 18 33 3 -5
+frame 3
+make 19 9 3 -9
+make 12 17 3 -9
+move 0 60 0

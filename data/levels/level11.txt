@@ -1,0 +1,81 @@
+hint 
+title Laboratory
+make 10 39 4 19
+frame 2
+make 50 17 4 12
+make 50 25 4 43
+frame 3
+make 50 11 4 30
+frame 5
+make 50 13 4 20
+frame 13
+make 50 23 4 10
+frame 2
+make 50 40 4 5
+frame 3
+make 50 26 8 22
+make 50 9 4 25
+frame 13
+make 64 37 8 41
+make 64 37 8 37
+make 64 37 8 33
+make 65 35 9 35
+move 0 1 0
+make 65 39 9 35
+move 0 1 0
+make 65 43 9 35
+move 0 1 0
+make 13 7 8 39
+make 13 39 9 7
+make 13 7 8 7
+make 4 13 2 13
+make 4 13 2 21
+make 4 5 2 21
+make 4 5 2 13
+make 4 5 2 5
+make 4 13 2 5
+make 4 21 2 5
+make 4 29 2 5
+make 4 37 2 5
+make 4 37 2 13
+make 4 37 2 21
+make 4 37 2 29
+make 4 37 2 37
+make 4 29 2 37
+make 4 21 2 37
+make 4 13 2 37
+make 4 5 2 37
+make 4 5 2 29
+make 4 13 2 29
+make 4 21 2 29
+make 4 29 2 29
+make 4 29 2 21
+make 4 29 2 13
+make 4 21 2 13
+make 27 7 4 33
+make 27 7 4 25
+make 27 7 4 17
+make 27 7 4 9
+make 28 33 4 7
+make 28 25 4 7
+make 28 17 4 7
+make 28 9 4 7
+make 28 9 4 41
+make 17 25 12 25
+make 17 25 8 25
+make 28 33 4 41
+make 27 41 4 33
+make 28 17 4 41
+make 18 45 3 21
+frame 2
+make 27 41 4 9
+make 4 21 6 21
+make 28 21 4 19
+make 28 21 4 29
+make 27 19 4 21
+make 27 29 4 21
+make 19 21 3 45
+make 5 21 16 25
+make 12 21 17 21
+make 23 25 16 21
+make 28 25 4 41

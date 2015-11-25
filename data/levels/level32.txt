@@ -1,4 +1,4 @@
-hint To lift, stand still,|then press jump key,|then push.
+hint To lift, stand still,|press and hold jump,|then push at the same time.
 title Packing station
 make 10 41 4 25
 make 13 13 12 17

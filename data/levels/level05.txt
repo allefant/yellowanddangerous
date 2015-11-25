@@ -1,6 +1,6 @@
 hint Which way is up?
 title Laboratory
-make 10 5 4 41
+make 10 5 4 39
 make 13 41 8 9
 make 13 41 20 29
 make 23 17 2 5
@@ -22,7 +22,7 @@ make 23 25 6 33
 make 23 9 6 41
 make 23 21 6 45
 make 23 29 6 45
-make 19 33 7 45
+make 23 37 18 33
 make 23 21 10 9
 make 23 29 10 9
 make 23 21 10 33
@@ -38,4 +38,6 @@ make 23 13 18 25
 make 23 21 18 25
 make 23 29 18 25
 make 23 29 18 33
-make 23 37 18 33
+make 18 33 7 45
+make 19 5 3 45
+frame 2

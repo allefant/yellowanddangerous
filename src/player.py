@@ -115,6 +115,10 @@ def player_tick(Block *super):
     if a->left: x -= 1; z += 1
     if a->right: x += 1; z -= 1
 
+    # slow down jump stronger if only tapping
+    if not a.jump and self->super.dy > 0:
+        self->super.dy *= 0.5
+
     float d = pow(x * x + z * z, 0.5)
     if d > 0 and not land_array_count(self->stack):
 

@@ -73,6 +73,7 @@ class Block:
     int bid
 
     bool pushed_something
+    bool mover
 
     LandArray *cache
     
@@ -222,7 +223,10 @@ LandArray *def block_colliders(Block *self):
 bool def block_move(Block *self, float dx, dy, dz):
     tag += 1
     self->recursion_prevention = tag
-    return block_push(self, dx, dy, dz)
+    self.mover = True
+    bool r = block_push(self, dx, dy, dz)
+    self.mover = False
+    return r
 
 def move_on_top(Block *self, float dx, dy, dz):
     float on_top_y = self.y
@@ -286,6 +290,7 @@ bool def block_push(Block *self, float odx, ody, odz):
                 continue
 
             # doing this in general is too dangerous of getting stuck
+            # re-align to pushed block
             if self->block_type == Render_Cart:
                 if self->x + self->xs < c->x and self.x + self->xs > c->x - 1:
                     self.x = c->x - self->xs
@@ -318,7 +323,9 @@ bool def block_push(Block *self, float odx, ody, odz):
             first_ramp_up = False
             self.y += 1
             goto retry
-        elif first_single_dir > 0:
+        # only an active mover can do single directions, otherwise
+        # pushing in xz will behave very weird
+        elif self.mover and first_single_dir > 0:
             first_single_dir--
             goto retry
         
