@@ -5,6 +5,7 @@ class Platform:
     Block super
     int go_x, go_z
     bool moving
+    int wait
 
 def platform_allocate -> Block *:
     Platform *self
@@ -37,8 +38,13 @@ def platform_tick(Block *super):
             self.go_z = 1
 
     if game->lever_on or self.moving:
-        super.dx += self.go_x * 2
-        super.dz += self.go_z * 2
+        if not self.moving:
+            self.wait = 30
+        if self.wait > 0:
+            self.wait--
+        else:
+            super.dx += self.go_x * 2
+            super.dz += self.go_z * 2
         self.moving = True
 
     block_tick(super)

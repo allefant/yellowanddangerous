@@ -11,7 +11,6 @@ import intro
 class Render:
     bool was_setup
     LandColor background_color
-    LandFont *font
     LandStream *music
     char *path
     int song
@@ -109,8 +108,8 @@ load("Barrel", .8, 1.2, .8, dynamic = True, frames = 3)
 load("TreeBottom", 2, 2, 2)
 load("TreeTop", 2, 2, 2)
 load("Trunk", 0.2, 1.0, 0.2)
-load("ExitLeft", 1, 0.25, 2, frames = 4)
-load("ExitRight", 2, 0.25, 1, frames = 4)
+load("ExitLeft", 1, 0.25, 2, frames = 5)
+load("ExitRight", 2, 0.25, 1, frames = 5)
 load("Allefant", 1.3, 1.8, 1.3, dynamic = True, frames = 64)
 load("BlockRight4", 2, 2, .5, transparent = True)
 load("BlockLeft4", .5, 2, 2, transparent = True)
@@ -157,6 +156,7 @@ load("Rose", .5, 1, .5)
 load("Belladonna", .5, 1.5, .5)
 load("BridgeRight", 2.5, 0.25, 0.5, dynamic = True, lift = True)
 load("BridgeLeft", 0.5, 0.25, 2.5, dynamic = True, lift = True)
+load("Car", 2, 2, 3, frames = 2)
 
 loads("step")
 loads("push")
@@ -166,6 +166,8 @@ loads("uhg")
 loads("oh no")
 loads("teleport")
 loads("glass")
+loads("metal")
+loads("ignition")
 ***
 
 static LandSound *def render_loads(char const *name):
@@ -185,8 +187,10 @@ def render_loading_screen():
     land_clear(1, 1, 1, 1)
     land_clear_depth(1)
     land_reset_transform()
-    land_text_pos(480, 300)
-    land_font_set(r.font)
+    float w = land_display_width()
+    float h = land_display_height()
+    land_text_pos(w / 2, h / 2 - 10)
+    land_font_set(global_a->medium)
     land_color(0, 0, 0, 1)
     land_print_center("%s", "Loading! Please Wait!")
 
@@ -206,13 +210,6 @@ def render_setup():
     land_buffer_cat(b, main_data_path)
     land_buffer_cat(b, "/data/yellowanddangerous/")
     r.path = land_buffer_finish(b)
-
-    b = land_buffer_new()
-    land_buffer_cat(b, main_data_path)
-    land_buffer_cat(b, "/data/Muli-Regular.ttf")
-    char *fontpath = land_buffer_finish(b)
-    r.font = land_font_load(fontpath, 24)
-    land_free(fontpath)
 
     render_loading_screen()
     land_flip()
@@ -300,7 +297,6 @@ for name, vname in sdefs:
     parse('    land_sound_destroy({})\n'.format(vname))
 ***
 
-    land_font_destroy(r.font)
     land_stream_destroy(r.music)
     land_free(r.path)
 
@@ -310,12 +306,18 @@ static def draw_move_controls:
     float h = land_display_height()
     land_color(0.5, 0.4, 0, 0.5)
     float rr = w / 8 * 0.8
+
     if a.dpad == 2 or a.dpad == 3:
         rr *= 1.5
     float rx = rr
     float ry = h - rr
 
-    if a.dpad == 1 or a.dpad == 3:
+    if a.dpad == 4:
+        if not a.swipe:
+            return
+        rx = a.swipex
+        ry = a.swipey
+    elif a.dpad == 1 or a.dpad == 3:
         rx = w - rr
 
     float xy[2 * 34]
@@ -333,6 +335,8 @@ static def draw_move_controls:
 
 static def draw_jump_controls:
     All *a = global_a
+    if a.dpad == 4:
+        return
     land_color(0.5, 0.4, 0, 0.5)
     float w = land_display_width()
     float h = land_display_height()
@@ -360,7 +364,7 @@ def render(Game *g):
     All *a = global_a
     float w = land_display_width()
     float h = land_display_height()
-    float fh = land_font_height(r.font)
+    float fh = land_font_height(a.medium)
     #float z = g.viewport->zoom
 
     land_clear_depth(1)
@@ -386,7 +390,7 @@ def render(Game *g):
         draw_pause_controls()
 
     land_color(0, 0, 0, 1)
-    land_font_set(r.font)
+    land_font_set(a.medium)
 
     if True:
         land_color(0, 0, 0, 1)

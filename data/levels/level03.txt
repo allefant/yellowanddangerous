@@ -1,57 +1,14 @@
-hint Thanks a lot for playing!|Thanks Richard for Pyweek!|Making this was great fun :)
-title Garden
-make 46 13 4 13
-make 50 1 4 9
-make 10 33 4 7
-make 14 -5 4 21
-make 14 -5 4 25
-make 47 29 3 21
-make 18 37 3 5
+hint Let's go home!
+title Parking lot
+make 10 23 4 31
+make 4 21 2 29
+make 4 29 2 29
+make 4 13 2 29
+make 18 1 3 29
+make 18 45 3 29
 frame 2
-make 18 -7 3 21
-make 47 5 3 -3
-make 47 29 3 5
-make 47 21 3 -3
-make 47 29 3 -3
-make 47 13 3 -3
-make 47 5 3 5
-make 47 13 3 5
-make 47 21 3 5
-make 47 29 3 29
-make 47 21 3 29
-make 47 13 3 29
-make 47 5 3 29
-make 47 -3 3 29
-make 47 -3 3 21
-make 47 5 3 21
-make 47 13 3 21
-make 47 21 3 21
-make 47 21 3 13
-make 47 13 3 13
-make 47 29 3 13
-make 47 5 3 13
-make 47 -3 3 13
-make 47 -3 3 5
-make 47 -3 3 -3
-make 48 -3 3 -3
-make 48 -3 3 5
-make 48 -3 3 13
-make 49 -3 3 -3
-make 49 5 3 -3
-make 49 13 3 -3
-make 49 21 3 -3
-make 49 29 3 -3
-make 48 -3 3 29
-make 12 31 3 37
-move 0 60 0
-make 17 35 4 27
-make 17 35 4 19
-make 17 11 4 35
-make 12 37 3 31
-move 0 60 0
-make 17 19 4 35
-make 17 27 4 35
-make 17 35 4 35
-make 17 35 4 11
-make 17 35 4 3
-make 17 3 4 35
+make 66 29 2 1
+make 66 17 2 1
+make 66 5 2 1
+make 4 5 2 29
+make 4 37 2 29

@@ -4,6 +4,7 @@ class All:
     int FPS
     int w, h
     LandFont *font
+    LandFont *medium
     LandFont *big
     bool up, down, left, right, jump
 
@@ -38,3 +39,9 @@ class All:
 
     int time
     bool overview
+
+    int code
+    bool godmode
+
+    bool swipe
+    double swipex, swipey, swipet, swipej

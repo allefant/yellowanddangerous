@@ -1,0 +1,35 @@
+hint climb
+title Wall
+make 37 3 4 21
+make 37 13 4 19
+make 37 23 4 21
+make 37 33 4 21
+make 10 39 4 23
+make 13 5 5 25
+make 36 1 4 33
+make 60 21 3 19
+make 60 13 3 19
+make 60 29 3 19
+make 60 5 3 19
+make 60 37 3 19
+make 60 -3 3 19
+make 18 45 3 21
+frame 2
+make 18 -9 3 21
+make 25 33 10 21
+frame 3
+make 25 23 10 21
+frame 7
+make 25 13 10 19
+frame 1
+make 58 -5 4 21
+make 58 37 4 21
+make 12 41 3 15
+move 0 60 0
+make 60 11 3 29
+make 60 21 3 11
+make 60 29 3 11
+make 60 1 3 29
+make 59 19 4 17
+make 25 1 10 33
+frame 3

@@ -14,6 +14,7 @@ class Player:
     bool dead
 
     bool lever
+    bool metal
 
     bool flower[8]
 
@@ -130,7 +131,7 @@ def player_tick(Block *super):
 
         self->want_direction = angle
 
-        if super->ground and a->jump:
+        if (super->ground or (a.godmode and self->super.dy < 5)) and a->jump:
             if self->pull:
                 if not self->reverse:
                     player_grab(self)
@@ -160,7 +161,9 @@ def player_tick(Block *super):
         self->step &= 31
 
         if self->step == 9 or self->step == 25:
-            if self->super.ground: sound(Render_step, 0.3)
+            if self->super.ground:
+                if self.metal: sound(Render_metal, 0.3)
+                else: sound(Render_step, 0.3)
 
     else:
         if self->step != 8 and self->step != 24:
@@ -219,11 +222,16 @@ def player_tick(Block *super):
             player_lift(self)
 
 def player_touch(Block *super, Block *c, float dx, dy, dz):
+    All *a = global_a
     Player *self = (void *)super
     cube_touch(super, c, dx, dy, dz)
     if c->block_type == Render_Gremlin:
         self.dead = True
     int flower = 0
+    if c->block_type == Render_Car:
+        sound(Render_ignition, .5)
+        game->sequence = 2
+        game->sequence_ticks = 0
     if c->block_type == Render_Gentian:
         flower = 1
     if c->block_type == Render_Edelweiss:
@@ -242,12 +250,16 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
         c->y -= 9000
         self->flower[flower] = True
     if dy < 0:
-        if c->block_type == Render_ExitLeft:
-            if c.frame == 1 or c.frame == 2:
+        if c->block_type == Render_ExitLeft and c.frame != 4:
+            if c.frame == 1 or c.frame == 2 or a.godmode:
                 game_level_done(game, c.x > 0 ? 1 : -1, 0)
-        elif c->block_type == Render_ExitRight:
-            if c.frame == 1 or c.frame == 2:
+        elif c->block_type == Render_ExitRight and c.frame != 4:
+            if c.frame == 1 or c.frame == 2 or a.godmode:
                 game_level_done(game, 0, c.z > 0 ? 1 : -1)
+        if c.block_type == Render_GrateBottom or c.block_type == Render_Cart:
+            self.metal = True
+        else:
+            self.metal = False
     if not self.lever:
         if dx < 0 and c.block_type == Render_LeverLeft:
             if c.frame == 0:

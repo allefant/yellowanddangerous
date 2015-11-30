@@ -3,6 +3,7 @@ title Laboratory
 make 10 5 4 39
 make 13 41 8 9
 make 13 41 20 29
+make 43 30 12 10
 make 23 17 2 5
 make 23 25 2 5
 make 23 33 2 5
@@ -38,6 +39,7 @@ make 23 13 18 25
 make 23 21 18 25
 make 23 29 18 25
 make 23 29 18 33
-make 18 33 7 45
-make 19 5 3 45
+make 18 39 7 45
+make 19 3 3 45
 frame 2
+make 23 35 6 45

@@ -32,7 +32,7 @@ class Game:
 
     int swap_level
 
-    bool sequence
+    int sequence
     int sequence_ticks
 
 global Game *game
@@ -66,7 +66,13 @@ def game_level_done(Game *self, int gox, goz):
         if self->player:
             self->ex = self->player->super.x
             self->ez = self->player->super.z
-        self->level += gox + goz * 7
+        int row = (self.level - 1) / 7
+        int col = (self.level - 1) % 7
+        col += gox + 7
+        row += goz + 7
+        col %= 7
+        row %= 7
+        self->level = 1 + row * 7 + col
         sound(Render_teleport, 1)
 
 static def recalc:
@@ -170,21 +176,56 @@ def game_tick(Game *self):
     if a.load_after_redraw:
         return
 
+    bool any = False
     for int ti in range(11):
         if not land_touch_down(ti):
             continue
+        any = True
 
+        double mx = land_touch_x(ti)
+        double my = land_touch_y(ti)
+
+        # pause control
         double rr = land_display_width() / 8 * 0.8
         if a.dpad == 2 or a.dpad == 3:
             rr *= 1.5
         double rx = rr
-        if a.dpad == 1 or a.dpad == 3:
-            rx = land_display_width() - rr
-        double ry = land_display_height() - rr
-        double mx = land_touch_x(ti)
-        double my = land_touch_y(ti)
-        double dx = mx - rx
-        double dy = my - ry
+        double ry = rr
+        rx = land_display_width() - rr
+        if mx > rx and my < ry:
+            main_switch_to_title(0)
+
+        double dx, dy
+
+        if a.dpad == 4:
+            if not a.swipe:
+                a.swipe = True
+                if land_get_time() < a.swipet + 0.25:
+                    if not a.swipej:
+                        a.swipej = 1
+                    else:
+                        # after heaving, just push
+                        # (so can lift+push, not lift+jump)
+                        a.swipej = 0
+                else:
+                    a.swipex = mx
+                    a.swipey = my
+                    a.swipej = 0
+                a.swipet = land_get_time()
+
+            dx = mx - a.swipex
+            dy = my - a.swipey
+            if a.swipej:
+                a.jump = True
+        else:
+            rx = rr
+            if a.dpad == 1 or a.dpad == 3:
+                rx = land_display_width() - rr
+            ry = land_display_height() - rr
+            if a.dpad == 1 or a.dpad == 3:
+                rx = land_display_width() - rr
+            dx = mx - rx
+            dy = my - ry
 
         # move control
         #                  c
@@ -197,7 +238,7 @@ def game_tick(Game *self):
         #                 5 3
         #                  4
            
-        if dx * dx + dy * dy < rr * rr:
+        if dx * dx + dy * dy < rr * rr or a.dpad == 4:
             if dx * dx + dy * dy > rr * rr / 16:
                 double ang = atan2(dy, dx)
                 # we use 16 subdivisions, the main directions get 12
@@ -214,21 +255,30 @@ def game_tick(Game *self):
                     a.left = True
                 if i >= 9:
                     a.up = True
+                a.swipet = land_get_time()
+            else:
+                if a.dpad == 4:
+                    if land_get_time() > a.swipet + 0.5:
+                        a.swipej = 1
 
         # jump control
-        rx = land_display_width() - rr
-        if a.dpad == 1 or a.dpad == 3:
-            rx = rr
-        dx = mx - rx
-        dy = my - ry
-        if dx * dx + dy * dy < rr * rr:
-            a.jump = True
+        if a.dpad == 4:
+            pass
+        else:
+            rx = land_display_width() - rr
+            ry = land_display_height() - rr
+            if a.dpad == 1 or a.dpad == 3:
+                rx = rr
+            dx = mx - rx
+            dy = my - ry
+            if dx * dx + dy * dy < rr * rr:
+                a.jump = True
 
-        # pause control
-        rx = land_display_width() - rr
-        ry = rr
-        if mx > rx and my < ry:
-            main_switch_to_title(0)
+    if not any:
+        if a.dpad == 4:
+            if a.swipe:
+                a.swipet = land_get_time()
+        a.swipe = False
 
     int plates_count = 0
     int plates_on_before = 0

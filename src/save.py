@@ -123,6 +123,7 @@ def load_level(bool editor):
     self.lever_left = 0
     self.lever_right = 0
     self.lever_on = False
+    self.sequence = 0
 
     Blocks *blocks = game->blocks
     blocks_reset(blocks)
@@ -142,7 +143,7 @@ def load_level(bool editor):
                 self.waypoints_count = b.frame + 1
 
     if game->level == game_starting_level:
-        game->sequence = True
+        game->sequence = 1
         game->sequence_ticks = 0
 
     blocks_preload(blocks)

@@ -17,6 +17,7 @@ def main_switch_to_title(int com):
     title_com(com)
     
 def all_init(All *self):
+    memset(self, 0, sizeof *self)
     self.title = True
     self->FPS = 60
 
@@ -99,6 +100,7 @@ def init():
     land_buffer_cat(b, "/data/Muli-Regular.ttf")
     char *path = land_buffer_finish(b)
     a->font = land_font_load(path, 10)
+    a->medium = land_font_load(path, 24)
     a->big = land_font_load(path, 60)
     land_free(path)
 
@@ -236,7 +238,8 @@ int def my_main():
     
     #land_set_display_parameters(w, h, LAND_OPENGL)
     *** "ifdef" ANDROID
-    land_set_display_parameters(w, h, LAND_FULLSCREEN | LAND_DEPTH)
+    land_set_display_parameters(w, h, LAND_FULLSCREEN | LAND_DEPTH |
+        LAND_LANDSCAPE)
     *** "else"
     land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE)
     *** "endif"

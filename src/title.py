@@ -51,7 +51,7 @@ def title_tick:
             if settings:
                 if i == 0:
                     a.dpad++
-                    if a.dpad == 4:
+                    if a.dpad == 5:
                         a.dpad = 0
                 elif i == 2:
                     a.music = volget(land_touch_x(ti))
@@ -63,7 +63,12 @@ def title_tick:
                     settings = False
                     save_info()
             elif restart:
-                if i == 3:
+                if i == 1:
+                    a.code++
+                    if a.code == 7:
+                        sound(Render_glass, 1)
+                        a.godmode = True
+                elif i == 3:
                     # start new game
                     save_new()
                     main_switch_to_game()
@@ -80,6 +85,8 @@ def title_tick:
                     if game->player:
                         player_find_entrance(&game->player->super)
                 if i == 3:
+                    a.code = 0
+                    a.godmode = False
                     restart = True
                 if i == 0:
                     # load saved game
@@ -155,6 +162,7 @@ def title_render:
                 if a.dpad == 1: land_print("DPad right")
                 if a.dpad == 2: land_print("DPad left big")
                 if a.dpad == 3: land_print("DPad right big")
+                if a.dpad == 4: land_print("swipe")
             elif i == 2:
                 land_print("Music")
                 drawvol(a.music, x + yw + 6 * 32, y)

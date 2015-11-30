@@ -3,6 +3,8 @@ import game
 global LandColor intro_tint
 static Block *test_tube
 static int ty
+static int scrolly
+
 static def find_test_tube:
     if test_tube:
         return
@@ -14,12 +16,14 @@ static def find_test_tube:
                     return
 
 static macro SN 100
+static macro STARN 500
 static class Smoke:
     bool active
     float x, y, z
     float sx, sy
     float dx, dy, dz
-static Smoke smokes[SN]
+    bool two
+static Smoke smokes[STARN]
 
 static def walls_down(bool final):
     for Block *b in LandArray *game->blocks->fixed:
@@ -29,7 +33,54 @@ static def walls_down(bool final):
                b.y = -9000
            game->blocks->rebuild_static_cache = True
 
+static def move_car:
+    for Block *b in LandArray *game->blocks->fixed:
+        if b.block_type == Render_Car:
+           b.dz += 0.1
+           b.z += b.dz
+           b.frame = 1
+           game->blocks->rebuild_static_cache = True
+
 def intro_sequence:
+    if game->sequence == 1:
+        intro()
+    if game->sequence == 2:
+        extro()
+
+static def extro:
+    Game *g = game
+    int t = g.sequence_ticks++
+    game->player->super.y = 9000
+    if t < 60 * 5:
+        move_car()
+        intro_tint.r = 1
+        intro_tint.g = 1
+        intro_tint.b = 1
+        intro_tint.a = 1
+        smokes[0].active = False
+    else:
+        intro_tint.r *= 0.99
+        intro_tint.g *= 0.99
+        intro_tint.b *= 0.99
+        intro_tint.a = 1
+        scrolly++
+
+        if not smokes[0].active:
+            for int i in range(STARN):
+                Smoke *s = smokes + i
+                s.active = True
+                s.x = land_rnd(-480, 480)
+                s.y = land_rnd(-480, 480)
+                s.z = land_rnd(-480, 480)
+                s.two = land_rnd(0, 100) < 2
+        else:
+            for int i in range(STARN):
+                Smoke *s = smokes + i
+                s.z += 1
+                if s.z > 480:
+                    s.z -= 960
+
+static def intro:
     All *a = global_a
     Game *g = game
 
@@ -43,7 +94,7 @@ def intro_sequence:
         test_tube = None
         find_test_tube()
         if not test_tube:
-            g.sequence = False
+            g.sequence = 0
             return
         intro_tint.a = 1
         intro_tint.r = .8
@@ -88,9 +139,15 @@ def intro_sequence:
     else:
         walls_down(True)
         strcpy(g.title, "What happened to the walls?")
-        g.sequence = False
+        g.sequence = 0
 
 def intro_postprocess:
+    if game->sequence == 1:
+        postprocess1()
+    if game->sequence == 2:
+        postprocess2()
+
+static def postprocess1
     int w = 60 * 2.5
     int t = game->sequence_ticks
     if t > w + 60 * 1.5:
@@ -123,3 +180,134 @@ def intro_postprocess:
             s.z += s.dz
             s.sx += 0.01
             s.sy += 0.01
+
+static char const credits[] = """
+Yellow and Dangerous
+
+
+by
+
+^Allefant
+
+
+
+Thanks to
+
+
+Andrea Avers
+_<3
+
+Rachel Morris
+_publishing
+
+Thomas Fjellstrom
+_android port Allegro
+
+Trent Gamblin
+_Allegro library, inspiration
+
+Pavel Sountsov
+_Allegro library
+
+Peter Wang
+_Allegro library
+
+Peter Hull
+_OSX port Allegro
+
+Shawn Hargreaves
+_Allegro library
+
+Eric Botcazou
+_Allegro library
+
+Jon Rafkind
+_Allegro library
+
+Milan Mimica
+_Allegro library
+
+Beoran
+_Allegro library
+
+Matthew Leverton
+allegro.cc
+
+Evert Gleebbeek
+_Allegro library
+
+Grzegorz Adam Hankiewicz
+_Allegro library
+
+Angelo Mottola
+_Allegro library
+
+Jonathan Seeley
+_distracting me on IRC
+
+
+
+Made with
+
+
+
+^Allegro
+Game Programming Library
+
+^Blender
+3D Modeler
+
+^Gimp
+Image Manipulator
+
+^Geany
+Code Editor
+
+^Scramble
+Pythonic C Compiler
+"""
+static LandArray *rows
+static def postprocess2:
+    int t = game->sequence_ticks
+    All *a = global_a
+    float w = land_display_width()
+    float h = land_display_height()
+
+    Viewport *v = game->viewport
+    if smokes[0].active:
+        # frames used in the title so always loaded
+        LandImage *pic = land_array_get_nth(Render_Gremlin->bitmaps, 0)
+        LandImage *pic2 = land_array_get_nth(Render_Allefant->bitmaps, 8)
+        for int i in range(STARN):
+            Smoke *s = smokes + i
+            float pz = 480 - s.z
+            float z = 16 / pz
+            float angle = t * pi / 300
+            float rx = s.x * cos(angle) + s.y * sin(angle)
+            float ry = s.y * cos(angle) - s.x * sin(angle)
+            float px = w / 2 / v.zoom + rx * z * 16
+            float py = h / 2 / v.zoom + ry * z * 4
+            px = px - 256 * z
+            py = py - 256 * z
+            land_image_draw_scaled(s.two ? pic2 : pic, px, py, z, z)
+
+    if not rows:
+        rows = land_text_splitlines(credits)
+
+    land_color(1, 1, 1, 1)
+    land_text_pos(480, 480 - scrolly)
+    for char *row in LandArray *rows:
+        if row[0] == '_':
+            land_font_set(a.font)
+            row++
+        elif row[0] == '^':
+            land_font_set(a.big)
+            row++
+ 
+        else:
+            land_font_set(a.medium)
+        land_print_center(row)
+
+    if land_text_y_pos() < 0:
+        scrolly = 0
+
