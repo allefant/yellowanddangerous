@@ -1,2 +1,42 @@
-hint Touch the D-Pad to move.
-title Laboratory
+hint All the books are gone.
+title Library
+make 10 23 4 23
+make 61 15 12 15
+frame 6
+make 61 17 12 15
+frame 5
+make 61 19 12 15
+make 61 21 12 15
+make 61 23 12 15
+make 61 25 12 15
+frame 3
+make 61 35 8 19
+frame 2
+make 61 33 8 19
+frame 4
+make 61 31 8 19
+make 61 29 8 19
+make 61 27 8 19
+make 61 25 8 19
+make 61 27 12 15
+make 61 23 8 19
+make 61 34 8 19
+frame 1
+make 60 21 3 13
+make 60 13 3 21
+make 60 21 3 21
+make 60 13 3 13
+make 60 29 3 13
+make 60 29 3 21
+make 60 29 3 29
+make 60 21 3 29
+make 60 13 3 29
+make 18 9 3 21
+frame 2
+make 59 29 4 17
+make 59 21 4 17
+make 59 13 4 17
+make 59 29 4 13
+make 59 29 8 13
+make 59 21 8 13
+make 59 13 8 13

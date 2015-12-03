@@ -1,6 +1,8 @@
 import land.land
 import all
 
+global char const *VERSION = "0.97"
+
 def print(char const *str, ...):
     va_list args
     va_start(args, str)

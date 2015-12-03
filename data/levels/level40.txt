@@ -1,5 +1,5 @@
 hint Finally at the top!|(Of the trees.)
-title Laboratory
+title Alley
 make 65 41 20 29
 make 13 25 20 21
 make 13 21 20 25

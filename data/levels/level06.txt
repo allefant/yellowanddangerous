@@ -50,7 +50,7 @@ make 11 13 0 21
 make 11 25 0 21
 make 3 29 0 17
 make 18 1 5 21
-frame 2
+frame 1
 make 18 45 5 21
 make 8 5 -2 21
 make 8 41 -2 21

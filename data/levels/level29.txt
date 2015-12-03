@@ -1,5 +1,5 @@
 hint Lab repairs.
-title Laboratory
+title Former laboratory
 make 10 29 8 21
 make 6 33 12 21
 make 6 33 16 21

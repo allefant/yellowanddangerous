@@ -264,7 +264,8 @@ bool def block_push(Block *self, float odx, ody, odz):
     float dz = first_single_dir != 1 ? odz : 0
 
     self->x += dx
-    self->y += dy
+    if self.y < 9000:
+        self->y += dy
     self->z += dz
 
     if self.y < -9000:

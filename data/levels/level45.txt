@@ -1,5 +1,5 @@
-hint Touch the D-Pad to move.
-title Laboratory
+hint Yay! Levers!
+title Storage
 make 10 7 4 9
 frame 62
 make 30 29 2 13

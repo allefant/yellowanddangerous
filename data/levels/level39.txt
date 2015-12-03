@@ -1,4 +1,4 @@
-hint Touch the D-Pad to move.
+hint nothing but Ginko trees
 title Street
 make 21 21 3 43
 make 21 29 3 43

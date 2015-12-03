@@ -1,5 +1,5 @@
 hint Where is the plate?
-title Laboratory
+title Boiling room
 make 46 17 4 17
 make 10 19 12 15
 make 46 9 4 17

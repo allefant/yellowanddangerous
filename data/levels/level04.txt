@@ -1,5 +1,5 @@
-hint Touch the D-Pad to move.
-title Laboratory
+hint Nothing to see
+title More statues
 make 10 27 4 31
 make 4 37 2 21
 make 4 21 2 29

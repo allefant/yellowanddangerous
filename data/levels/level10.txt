@@ -1,5 +1,5 @@
-hint Thanks a lot for playing!|Thanks Richard for Pyweek!|Making this was great fun :)
-title Garden
+hint avoid the critter...
+title Cage
 make 46 13 4 13
 make 50 11 4 1
 make 10 13 4 29

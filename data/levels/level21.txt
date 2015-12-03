@@ -1,5 +1,5 @@
-hint Touch the D-Pad to move.
-title Laboratory
+hint One of the flowers
+title Blocked passage
 make 10 39 6 25
 frame 2
 make 26 17 4 25
@@ -58,3 +58,4 @@ make 28 5 4 37
 make 28 21 12 17
 make 19 39 5 39
 frame 2
+make 18 47 5 21

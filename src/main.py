@@ -116,6 +116,8 @@ def init():
 
     game = game_new()
 
+    render_setup()
+
     a->show_fps = False
 
     a->cheatpos = 0

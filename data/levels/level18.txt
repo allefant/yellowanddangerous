@@ -1,5 +1,5 @@
 hint Oh how much fun it is|riding on an elephant!
-title Laboratory
+title Infirmary
 make 10 23 4 9
 make 20 37 4 33
 make 50 43 4 27

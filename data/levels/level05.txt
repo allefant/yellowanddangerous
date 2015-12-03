@@ -1,5 +1,5 @@
 hint Which way is up?
-title Laboratory
+title Floating room
 make 10 5 4 39
 make 13 41 8 9
 make 13 41 20 29

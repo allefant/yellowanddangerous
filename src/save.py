@@ -10,14 +10,18 @@ def save_info:
     land_file_print(f, "music %d", a.music)
     land_file_print(f, "sound %d", a.sound)
     land_file_print(f, "time %d", a.time)
+    land_file_print(f, "key %d", game->key)
+    land_file_print(f, "deaths %d", game->deaths)
+    bool *fl = game->flower
+    land_file_print(f, "flower %d %d %d %d %d %d %d",
+        fl[1], fl[2], fl[3], fl[4], fl[5], fl[6], fl[7])
     land_file_destroy(f)
     land_free(path)
 
 def load_info:
     All *a = global_a
     char *path = land_get_save_file("com.yellowdanger", "info.txt")
-    if game:
-        game->level = game_starting_level
+    game->level = game_starting_level
     a.dpad = 0
     a.music = 4
     a.sound = 7
@@ -28,8 +32,7 @@ def load_info:
         for LandBuffer *rowb in LandArray *rows:
             char *row = land_buffer_finish(rowb)
             if land_starts_with(row, "room "):
-                if game:
-                    sscanf(row, "room %d", &game->level)
+                sscanf(row, "room %d", &game->level)
             if land_starts_with(row, "dpad "):
                 sscanf(row, "dpad %d", &a->dpad)
             if land_starts_with(row, "music "):
@@ -46,6 +49,19 @@ def load_info:
                     # will always be higher.
                     # If the game restarts however we want to use
                     # the saved time.
+            if land_starts_with(row, "key "):
+                int i
+                sscanf(row, "key %d", &i)
+                if i: game->key = True
+            if land_starts_with(row, "deaths "):
+                sscanf(row, "deaths %d", &game->deaths)
+            if land_starts_with(row, "flower "):
+                int i[8]
+                i[0] = 0
+                sscanf(row, "flower %d %d %d %d %d %d %d", i + 1,
+                    i + 2, i + 3, i + 4, i + 5, i + 6, i + 7)
+                for int j in range(8):
+                    game->flower[j] = i[j]
             land_free(row)
         land_array_destroy(rows)
         
@@ -142,6 +158,22 @@ def load_level(bool editor):
             if b.frame >= self.waypoints_count:
                 self.waypoints_count = b.frame + 1
 
+    bool visible = True
+    for int i in range(1, 8):
+        visible = visible and self.flower[i]
+    if self.key:
+        visible = False
+    if global_a->editor:
+        visible = True
+    for Block *b in LandArray *blocks.dynamic:
+        if b.block_type == Render_Key:
+            if b.y < 9000:
+                if not visible:
+                    b.y += 9000
+            else:
+                if visible:
+                    b.y -= 9000
+
     if game->level == game_starting_level:
         game->sequence = 1
         game->sequence_ticks = 0
@@ -205,6 +237,10 @@ def save_new:
     for int i in range(1, 50):
         save_reset_room(i)
     game->level = game_starting_level
+    game->deaths = 0
+    game->key = False
+    for int i in range(8):
+        game->flower[i] = False
     global_a->time = 0
     save_info()
 

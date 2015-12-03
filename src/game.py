@@ -35,6 +35,11 @@ class Game:
     int sequence
     int sequence_ticks
 
+    bool flower[8]
+    bool key
+
+    int deaths
+
 global Game *game
 global int game_starting_level = 22
   
@@ -43,8 +48,6 @@ Game *def game_new():
     self->viewport = viewport_new()
 
     self->level = 0
-
-    render_setup()
 
     self->blocks = blocks_new()
 
@@ -296,6 +299,7 @@ def game_tick(Game *self):
             if self->player->dead or self->player->super.y < -960:
                 sound(Render_oh_no, 1)
                 self->state = "died"
+                game->deaths++
 
     for Block *b in LandArray *self->blocks->fixed:
         if b->block_type == Render_Plate:

@@ -25,16 +25,16 @@ make 61 8 8 33
 make 56 7 4 29
 make 56 7 4 21
 make 56 7 4 13
-make 59 25 4 13
-make 59 17 4 13
-make 58 13 4 11
+make 59 27 4 13
+make 59 19 4 13
+make 60 37 3 11
 make 58 21 4 11
 make 58 29 4 11
 make 58 37 4 11
-make 59 33 4 13
+make 59 35 4 13
 make 18 45 3 21
 frame 1
-make 58 5 4 11
+make 58 3 4 11
 make 57 5 4 13
 make 57 5 4 21
 make 57 5 4 29
@@ -52,4 +52,6 @@ make 60 21 3 11
 make 60 29 3 11
 make 60 29 3 20
 make 60 37 3 20
-make 60 37 3 11
+make 57 9 4 3
+make 19 11 3 7
+frame 2

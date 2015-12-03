@@ -1,13 +1,17 @@
-hint Touch the D-Pad to move.
-title Laboratory
+hint prison break
+title High security
 make 10 17 5 49
 frame 2
-make 47 21 4 21
-make 47 13 4 21
-make 47 29 4 21
-make 47 37 4 21
-make 47 45 4 21
-make 47 5 4 21
+make 43 27 21 27
+make 14 7 4 15
+make 7 35 4 45
+make 6 29 4 31
+make 47 21 3 21
+make 47 13 3 21
+make 47 29 3 21
+make 47 37 3 21
+make 47 45 3 21
+make 47 5 3 21
 make 48 4 4 21
 make 48 4 12 21
 make 49 13 4 20
@@ -22,29 +26,32 @@ make 47 29 20 21
 make 47 37 20 21
 make 47 45 20 21
 make 48 53 4 21
-make 49 21 4 28
-make 49 29 4 28
-make 49 37 4 28
-make 49 5 4 28
-make 49 13 4 28
-make 47 45 4 29
-make 47 37 4 29
-make 47 29 4 29
-make 47 29 4 37
-make 47 13 4 45
-make 47 21 4 45
-make 47 29 4 45
+make 49 21 4 29
+make 49 29 4 29
+make 49 37 4 29
+make 49 5 4 29
+make 49 13 4 29
+make 47 45 3 29
+make 47 37 3 29
+make 47 29 3 29
+make 47 29 3 37
+make 47 13 3 45
+make 47 21 3 45
+make 47 29 3 45
 make 49 13 12 20
-make 47 5 4 13
+make 47 5 3 13
 make 49 21 12 20
 make 49 29 12 20
 make 49 37 12 20
 make 49 45 12 20
 make 48 53 12 21
-make 49 5 12 28
-make 19 31 20 17
-make 49 21 12 28
-make 49 29 12 28
-make 49 37 12 28
-make 18 9 4 45
+make 18 9 3 45
 frame 2
+make 19 31 20 17
+make 49 5 12 29
+make 49 13 12 29
+make 49 37 12 29
+make 0 4 8 30
+make 17 11 4 37
+make 17 5 4 37
+make 17 11 4 31

@@ -1,5 +1,5 @@
-hint Touch the D-Pad to move.
-title Laboratory
+hint one fell down
+title Kennels
 make 50 10 4 24
 move 99 0 98
 frame 2

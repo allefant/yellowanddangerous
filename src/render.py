@@ -7,6 +7,7 @@ import eye
 import cart
 import gremlin
 import intro
+import testtube
 
 class Render:
     bool was_setup
@@ -157,6 +158,7 @@ load("Belladonna", .5, 1.5, .5)
 load("BridgeRight", 2.5, 0.25, 0.5, dynamic = True, lift = True)
 load("BridgeLeft", 0.5, 0.25, 2.5, dynamic = True, lift = True)
 load("Car", 2, 2, 3, frames = 2)
+load("Key", .5, .5, .5, dynamic = True)
 
 loads("step")
 loads("push")
@@ -168,6 +170,7 @@ loads("teleport")
 loads("glass")
 loads("metal")
 loads("ignition")
+loads("pickup")
 ***
 
 static LandSound *def render_loads(char const *name):
@@ -262,6 +265,8 @@ for name, vname in sdefs:
     Render_Gremlin->tick = gremlin_tick
     Render_Gremlin->touch = gremlin_touch
     Render_Gremlin->allocate = gremlin_allocate
+    Render_TestTube->touch = testtube_touch
+    Render_TestTube->tick = testtube_tick
 
     Render_Smoke = loadpic("../smoke.png")
 

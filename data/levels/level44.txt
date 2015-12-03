@@ -1,5 +1,5 @@
 hint Yellow and...|helpful?
-title Laboratory
+title Courtyard
 make 20 13 4 13
 make 10 25 4 21
 make 6 21 4 29
@@ -86,3 +86,5 @@ make 17 9 12 41
 make 17 41 12 41
 make 16 37 16 5
 make 18 45 3 21
+make 19 21 3 1
+frame 2

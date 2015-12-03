@@ -221,8 +221,15 @@ def title_render:
     a.tint.a = 0
 
     land_font_set(a.font)
-    land_text_pos(w / s, h - land_line_height() * 2)
+    land_text_pos(w / s, h - land_line_height() * 4)
     int t = a.time / 60
+    int f = 0
+    for int i in range(8):
+        if game->flower[i]:
+            f++
+    land_print_right("Flowers picked: %d/7", f)
+    land_print_right("Car keys found: %s", game->key ? "yes" : "no")
+    land_print_right("Died %d time%s.", game->deaths, game->deaths != 1 ? "s" : "")
     land_print_right("Playtime on this savegame: %02d:%02d:%02d",
         t / 3600, (t / 60) % 60, t % 60)
-    land_print_right("Version 0.9")
+    land_print_right("Version %s", VERSION)

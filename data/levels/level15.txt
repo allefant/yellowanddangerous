@@ -1,2 +1,20 @@
-hint Thanks a lot for playing!|Thanks Richard for Pyweek!|Making this was great fun :)
-title Laboratory
+hint I need to find the flowers.|Some are in the garden,|some in the lab.
+title Hallway
+make 10 23 4 23
+make 60 21 3 13
+make 60 13 3 21
+make 60 21 3 21
+make 60 13 3 13
+make 60 29 3 13
+make 60 29 3 21
+make 60 29 3 29
+make 60 21 3 29
+make 60 13 3 29
+make 19 21 3 9
+frame 2
+make 18 37 3 21
+frame 2
+make 19 21 3 37
+frame 2
+make 18 9 3 21
+frame 3

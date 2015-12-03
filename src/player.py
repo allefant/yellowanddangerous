@@ -16,8 +16,6 @@ class Player:
     bool lever
     bool metal
 
-    bool flower[8]
-
 def player_allocate -> Block *:
     Player *self
     land_alloc(self)
@@ -229,9 +227,10 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
         self.dead = True
     int flower = 0
     if c->block_type == Render_Car:
-        sound(Render_ignition, .5)
-        game->sequence = 2
-        game->sequence_ticks = 0
+        if game->key:
+            sound(Render_ignition, .5)
+            game->sequence = 2
+            game->sequence_ticks = 0
     if c->block_type == Render_Gentian:
         flower = 1
     if c->block_type == Render_Edelweiss:
@@ -248,7 +247,12 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
         flower = 7
     if flower:
         c->y -= 9000
-        self->flower[flower] = True
+        game->flower[flower] = True
+        sound(Render_pickup, 1)
+    if c->block_type == Render_Key:
+        c->y -= 9000
+        game->key = True
+        sound(Render_pickup, 1)
     if dy < 0:
         if c->block_type == Render_ExitLeft and c.frame != 4:
             if c.frame == 1 or c.frame == 2 or a.godmode:

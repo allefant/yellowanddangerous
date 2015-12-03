@@ -1,4 +1,4 @@
-hint Let's go home!
+hint Why is every car yellow?
 title Parking lot
 make 10 23 4 31
 make 4 21 2 29

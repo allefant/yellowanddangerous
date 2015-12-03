@@ -1,5 +1,5 @@
-hint 
-title Laboratory
+hint where has all the food gone?
+title Refectory
 make 10 39 4 19
 frame 2
 make 50 17 4 12
