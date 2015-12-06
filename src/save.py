@@ -150,6 +150,15 @@ def load_level(bool editor):
 
     _load_from_offset(f, 0, 0, 0)
 
+    BlockType *flowers[8] = {None,
+        Render_Gentian,
+        Render_Edelweiss,
+        Render_Orchid,
+        Render_Hyacinth,
+        Render_Sunflower,
+        Render_Rose,
+        Render_Belladonna}
+
     for Block *b in LandArray *blocks.fixed:
         if b.block_type == Render_Waypoint:
             self.waypoints[b.frame][0] = b.x
@@ -157,6 +166,14 @@ def load_level(bool editor):
             self.waypoints[b.frame][2] = b.z
             if b.frame >= self.waypoints_count:
                 self.waypoints_count = b.frame + 1
+        # If a level is reloaded, and a flower is not picked (which
+        # sets y to somewhere around -9000), it means we failed or
+        # reset the level and so ought to get the flower again.
+        for int i in range(1, 8):
+            if b.block_type == flowers[i]:
+                if b.y > -8000:
+                    game->flower[i] = False
+                
 
     bool visible = True
     for int i in range(1, 8):

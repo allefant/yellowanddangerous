@@ -201,9 +201,15 @@ def game_tick(Game *self):
         double dx, dy
 
         if a.dpad == 4:
+            dx = mx - a.swipex
+            dy = my - a.swipey
+            a.swipex = a.swipex * 0.95 + mx * 0.05
+            a.swipey = a.swipey * 0.95 + my * 0.05
+
             if not a.swipe:
                 a.swipe = True
                 if land_get_time() < a.swipet + 0.25:
+                    # double tap
                     if not a.swipej:
                         a.swipej = 1
                     else:
@@ -214,10 +220,10 @@ def game_tick(Game *self):
                     a.swipex = mx
                     a.swipey = my
                     a.swipej = 0
+                    dx = 0
+                    dy = 0
                 a.swipet = land_get_time()
 
-            dx = mx - a.swipex
-            dy = my - a.swipey
             if a.swipej:
                 a.jump = True
         else:
@@ -240,8 +246,8 @@ def game_tick(Game *self):
         #                6   2
         #                 5 3
         #                  4
-           
-        if dx * dx + dy * dy < rr * rr or a.dpad == 4:
+
+        if (fabs(dx) < rr and fabs(dy) < rr) or a.dpad == 4:
             if dx * dx + dy * dy > rr * rr / 16:
                 double ang = atan2(dy, dx)
                 # we use 16 subdivisions, the main directions get 12
@@ -260,9 +266,7 @@ def game_tick(Game *self):
                     a.up = True
                 a.swipet = land_get_time()
             else:
-                if a.dpad == 4:
-                    if land_get_time() > a.swipet + 0.5:
-                        a.swipej = 1
+                pass
 
         # jump control
         if a.dpad == 4:

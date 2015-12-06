@@ -142,6 +142,21 @@ def title_render:
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2
     land_filled_rectangle(tx + yw, 0, 960, h)
 
+    if settings:
+        land_font_set(a.medium)
+        land_color(0.5, 0, 0, 1)
+        float nh = land_line_height()
+        float y = (h - 64 * 5) / 2 + (32 - th) / 2
+        float x = tx
+        land_text_pos(x + yw, y - nh * 2)
+        if a.dpad == 4:
+            land_print("Jump: Move then double tap")
+            land_print("Pull/Lift: Double tap then move")
+        else:
+            land_print("Jump: Hold move then jump")
+            land_print("Pull/Lift: Hold jump then move")
+        land_font_set(a.big)
+
     for int i in range(5):
         float y = (h - 64 * 5) / 2 + i * 64 + (32 - th) / 2
         float x = tx
@@ -162,7 +177,7 @@ def title_render:
                 if a.dpad == 1: land_print("DPad right")
                 if a.dpad == 2: land_print("DPad left big")
                 if a.dpad == 3: land_print("DPad right big")
-                if a.dpad == 4: land_print("swipe")
+                if a.dpad == 4: land_print("DPad combined")
             elif i == 2:
                 land_print("Music")
                 drawvol(a.music, x + yw + 6 * 32, y)
@@ -221,7 +236,7 @@ def title_render:
     a.tint.a = 0
 
     land_font_set(a.font)
-    land_text_pos(w / s, h - land_line_height() * 4)
+    land_text_pos(w / s, h - land_line_height() * 5)
     int t = a.time / 60
     int f = 0
     for int i in range(8):

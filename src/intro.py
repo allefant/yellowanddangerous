@@ -190,15 +190,38 @@ by
 ^Allefant
 
 
+^Programming
 
-Thanks to
+Elias Pschernig
+
+^Graphics
+
+Elias Pschernig
+
+^Level Design
+
+Elias Pschernig
+
+^Music
+
+"Manic Polka" Kevin MacLeod (incompetech.com)
+"Pixel Peeker Polka - slower" Kevin MacLeod (incompetech.com)
+"Overcast" Kevin MacLeod (incompetech.com)
+"Allefant Song" Elias Pschernig
+"Katjusha"
+"Dance of the Sugar Plum Fairy"
+
+^Publishing
+
+Rachel Morris
+
+
+
+^Thanks to
 
 
 Andrea Avers
 _<3
-
-Rachel Morris
-_publishing
 
 Thomas Fjellstrom
 _android port Allegro

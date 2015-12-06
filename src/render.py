@@ -274,11 +274,18 @@ def play_song:
     All *a = global_a
     LandBuffer *b = land_buffer_new()
     land_buffer_cat(b, main_data_path)
+
     if r.song == 0:
-        land_buffer_cat(b, "/data/katyusha.ogg")
+        land_buffer_cat(b, "/data/Manic Polka.ogg")
     elif r.song == 1:
-        land_buffer_cat(b, "/data/allefant.ogg")
+        land_buffer_cat(b, "/data/katyusha.ogg")
     elif r.song == 2:
+        land_buffer_cat(b, "/data/Overcast.ogg")
+    elif r.song == 3:
+        land_buffer_cat(b, "/data/allefant.ogg")
+    elif r.song == 4:
+         land_buffer_cat(b, "/data/Pixel Peeker Polka.ogg")
+    elif r.song == 5:
         land_buffer_cat(b, "/data/fairy.ogg")
     char *musicpath = land_buffer_finish(b)
     land_stream_music(r.music, musicpath)
@@ -286,7 +293,7 @@ def play_song:
     land_stream_volume(r.music, a.music / 6.0)
 
     r.song++
-    if r.song == 3:
+    if r.song == 6:
         r.song = 0
 
 def song_volume:
@@ -309,7 +316,10 @@ static def draw_move_controls:
     All *a = global_a
     float w = land_display_width()
     float h = land_display_height()
-    land_color(0.5, 0.4, 0, 0.5)
+    if a.swipej and a.dpad == 4:
+        land_color(0.8, 0.1, 0, 0.5)
+    else:
+        land_color(0.5, 0.4, 0, 0.5)
     float rr = w / 8 * 0.8
 
     if a.dpad == 2 or a.dpad == 3:
