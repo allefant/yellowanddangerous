@@ -51,6 +51,8 @@ def blocktype_destroy(BlockType *self):
         land_array_destroy(self->bitmaps)
     land_free(self)
 
-def blocktype_preload(BlockType *self):
+def blocktype_preload(BlockType *self) -> bool:
     for LandImage *pic in LandArray *self.bitmaps:
-        land_image_load_on_demand(pic)
+        if land_image_load_on_demand(pic):
+            return True
+    return False

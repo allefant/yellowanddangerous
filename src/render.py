@@ -192,7 +192,8 @@ def render_loading_screen():
     land_reset_transform()
     float w = land_display_width()
     float h = land_display_height()
-    land_text_pos(w / 2, h / 2 - 10)
+    land_scale(w / 960, w / 960)
+    land_text_pos(960 / 2, (h / (w / 960)) / 2 - 10)
     land_font_set(global_a->medium)
     land_color(0, 0, 0, 1)
     land_print_center("%s", "Loading! Please Wait!")
@@ -316,7 +317,7 @@ static def draw_move_controls:
     All *a = global_a
     float w = land_display_width()
     float h = land_display_height()
-    if a.swipej and a.dpad == 4:
+    if a.swipej and a.dpad > 3:
         land_color(0.8, 0.1, 0, 0.5)
     else:
         land_color(0.5, 0.4, 0, 0.5)
@@ -327,7 +328,7 @@ static def draw_move_controls:
     float rx = rr
     float ry = h - rr
 
-    if a.dpad == 4:
+    if a.dpad > 3:
         if not a.swipe:
             return
         rx = a.swipex
@@ -350,7 +351,7 @@ static def draw_move_controls:
 
 static def draw_jump_controls:
     All *a = global_a
-    if a.dpad == 4:
+    if a.dpad > 3:
         return
     land_color(0.5, 0.4, 0, 0.5)
     float w = land_display_width()
@@ -407,7 +408,10 @@ def render(Game *g):
     land_color(0, 0, 0, 1)
     land_font_set(a.medium)
 
+    land_push_transform()
+    land_scale(w / 960.0, w / 960.0)
     if True:
+        
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
         land_print("%s", g->title)
@@ -416,14 +420,16 @@ def render(Game *g):
 
     if g->ticks < 300:
         
-        land_text_pos(w * 3 / 4, fh)
+        land_text_pos(960 * 3 / 4, fh)
         land_print_center("%s", "Yellow and Dangerous")
         land_print_center("%s", "by Allefant")
 
     if g->ticks > 600 or a.editor:
-        float y = h - 3 * fh
+        float y = h / (w / 960) - 3 * fh
         land_text_pos(0, y)
         land_print_wordwrap(w, h, "%s", g->hint)
+
+    land_pop_transform()
 
 def render_block(Block *self, Viewport *viewport):
     All *a = global_a

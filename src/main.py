@@ -71,6 +71,15 @@ def redraw():
     if a.load_after_redraw:
         render_loading_screen()
         a.load_after_redraw++
+
+        if a.load_after_redraw > 2:
+            double t = land_get_time()
+            while True:
+                if not blocks_preload(game->blocks):
+                    a.load_after_redraw = 0
+                    break
+                if land_get_time() > t + 0.01:
+                    break
         return
     
     float w = land_display_width()
@@ -91,24 +100,49 @@ def redraw():
         land_print_right("FPS: %4d +- %-4d", (int)f1, (int)f2)
         land_print_right("%4d / sec", (int)(1.0 / a->direct_speed_measure))
 
+def reload_fonts:
+    LandBuffer *b = land_buffer_new()
+    land_buffer_cat(b, main_data_path)
+    #land_buffer_cat(b, "/data/Muli-Regular.ttf")
+    land_buffer_cat(b, "/data/JosefinSans-Regular.ttf")
+    char *path = land_buffer_finish(b)
+    
+    All *a = global_a
+    float w = land_display_width()
+    #float h = land_display_height()
+    double s = w / 960
+
+    if a.font:
+        land_font_destroy(a.font)
+    if a.medium:
+        land_font_destroy(a.medium)
+    if a.big:
+        land_font_destroy(a.big)
+    
+    a.font = land_font_load(path, 10 * s)
+    land_font_scale(a.font, 1.0 / s)
+    a.medium = land_font_load(path, 24 * s)
+    land_font_scale(a.medium, 1.0 / s)
+    a.big = land_font_load(path, 60 * s)
+    land_font_scale(a.big, 1.0 / s)
+
+    land_font_set(a.medium)
+    land_text_get_width("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+    land_free(path)
+
 def init():
     All *a = global_a
     all_init(a)
     land_display_title("Yellow and Dangerous")
-    LandBuffer *b = land_buffer_new()
-    land_buffer_cat(b, main_data_path)
-    land_buffer_cat(b, "/data/Muli-Regular.ttf")
-    char *path = land_buffer_finish(b)
-    a->font = land_font_load(path, 10)
-    a->medium = land_font_load(path, 24)
-    a->big = land_font_load(path, 60)
-    land_free(path)
+    reload_fonts()
+    
 
-    a->up = False
-    a->down = False
-    a->left = False
-    a->right = False
-    a->jump = False
+    a.up = False
+    a.down = False
+    a.left = False
+    a.right = False
+    a.jump = False
 
     a->text = (LandColor){0, 0, 0, 1}
 
@@ -128,10 +162,16 @@ def done():
     land_font_destroy(a->font)
 
 def update():
+    All *a = global_a
+
     if land_was_resized():
         viewport_update(game->viewport)
+        a.resize_in_ticks = 10
 
-    All *a = global_a
+    if a.resize_in_ticks > 0:
+        a.resize_in_ticks--
+        if a.resize_in_ticks == 0:
+            reload_fonts()
 
     if a.load_after_redraw:
         if a.load_after_redraw == 2:
@@ -142,7 +182,7 @@ def update():
                     player_find_entrance(&game->player->super)
                 if game->player2:
                     allefant_onload(&game->player2->super)
-            a.load_after_redraw = 0
+            a.load_after_redraw++
         return
     
     config_check_controls(a)

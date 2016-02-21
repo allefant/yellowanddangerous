@@ -6,6 +6,8 @@ class All:
     LandFont *font
     LandFont *medium
     LandFont *big
+
+    # controls
     bool up, down, left, right, jump
 
     int ftpos
@@ -30,6 +32,12 @@ class All:
 
     LandColor tint
 
+    # 0 dpad left
+    # 1 dpad right
+    # 2 dpad left big
+    # 3 dpad right big
+    # 4 on screen, double tap jump
+    # 5 on screen, two-finger jump
     int dpad
     int music
     int sound
@@ -45,3 +53,5 @@ class All:
 
     bool swipe
     double swipex, swipey, swipet, swipej
+
+    int resize_in_ticks

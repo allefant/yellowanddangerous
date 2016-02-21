@@ -30,8 +30,8 @@ def config_check_controls(All *a):
         controls.down[j] = False
         for int i in range(3):
             if land_key(controls.c[j][i]): controls.down[j] = True
-    a->left = controls.down[ControlLeft]
-    a->right = controls.down[ControlRight]
-    a->up = controls.down[ControlUp]
-    a->down = controls.down[ControlDown]
-    a->jump = controls.down[ControlJump]
+    a.left = controls.down[ControlLeft]
+    a.right = controls.down[ControlRight]
+    a.up = controls.down[ControlUp]
+    a.down = controls.down[ControlDown]
+    a.jump = controls.down[ControlJump]

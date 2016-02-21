@@ -195,8 +195,6 @@ def load_level(bool editor):
         game->sequence = 1
         game->sequence_ticks = 0
 
-    blocks_preload(blocks)
-
     land_unpause()
 
 static def _load_from_offset(LandBuffer *f, int ox, oy, oz):

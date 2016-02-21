@@ -516,7 +516,7 @@ def block_tick(Block *self):
 def block_touch(Block *self, *c, float dx, dy, dz):
     pass
 
-def blocks_preload(Blocks *self):
+def blocks_preload(Blocks *self) -> bool:
     int n1, n2, n3
     n1 = land_array_count(self->fixed)
     n2 = land_array_count(self->dynamic)
@@ -527,4 +527,6 @@ def blocks_preload(Blocks *self):
         elif i - n1 < n2: other = land_array_get_nth(self->dynamic, i - n1)
         elif i - n1 - n2 < n3: other = land_array_get_nth(self->transparent, i - n1 - n2)
         BlockType *bt = other.block_type
-        blocktype_preload(bt)
+        if blocktype_preload(bt):
+            return True
+    return False

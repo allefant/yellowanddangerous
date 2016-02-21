@@ -5,6 +5,7 @@ static bool settings
 static bool restart
 static Block *block1
 static Block *block2
+static int moment
 
 def get_line(float y) -> int:
     float w = land_display_width()
@@ -51,7 +52,7 @@ def title_tick:
             if settings:
                 if i == 0:
                     a.dpad++
-                    if a.dpad == 5:
+                    if a.dpad == 6:
                         a.dpad = 0
                 elif i == 2:
                     a.music = volget(land_touch_x(ti))
@@ -124,6 +125,9 @@ static def volget(float mx) -> int:
     if i > 6: i = 6
     return i
 
+def align(float x, float s) -> float:
+    return floor(x * s) / s
+
 def title_render:
     All *a = global_a
     float w = land_display_width()
@@ -149,7 +153,10 @@ def title_render:
         float y = (h - 64 * 5) / 2 + (32 - th) / 2
         float x = tx
         land_text_pos(x + yw, y - nh * 2)
-        if a.dpad == 4:
+        if a.dpad == 5:
+            land_print("Jump: touch second finger")
+            land_print("Pull/Lift: two finger swipe")
+        elif a.dpad == 4:
             land_print("Jump: Move then double tap")
             land_print("Pull/Lift: Double tap then move")
         else:
@@ -178,6 +185,7 @@ def title_render:
                 if a.dpad == 2: land_print("DPad left big")
                 if a.dpad == 3: land_print("DPad right big")
                 if a.dpad == 4: land_print("DPad combined")
+                if a.dpad == 5: land_print("DPad two finger")
             elif i == 2:
                 land_print("Music")
                 drawvol(a.music, x + yw + 6 * 32, y)
@@ -211,27 +219,31 @@ def title_render:
     if not block2:
         block2 = block_new(game->blocks, -660, 0, -60, Render_Allefant)
 
-    float speed = 60 * 7 / 2.0
-    for int i in range(7):
-        float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed
-        block1.y = 60 * fabs(sin(ang * 3.5))
-        block1.x = 0 + cos(ang) * 120
-        block1.z = 600 + sin(ang) * 120
-        block1.frame = ((land_get_ticks() / 30 + i) % 4) * 4
-        if ((land_get_ticks() / 60) % 14 >= 7) and i == 0:
-            a.tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1)
-            a.tint.a = 0.5
-            a.tint.r *= a.tint.a
-            a.tint.g *= a.tint.a
-            a.tint.b *= a.tint.a
-        else:
-            a.tint = land_color_premul(1, 1, 1, .2)
-        render_block(block1, game->viewport)
+    moment++
+    if moment > 4:
+        # wait a moment so Android gets a moment to recover and
+        # won't crash :P
+        float speed = 60 * 7 / 2.0
+        for int i in range(7):
+            float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed
+            block1.y = 60 * fabs(sin(ang * 3.5))
+            block1.x = 0 + cos(ang) * 120
+            block1.z = 600 + sin(ang) * 120
+            block1.frame = ((land_get_ticks() / 30 + i) % 4) * 4
+            if ((land_get_ticks() / 60) % 14 >= 7) and i == 0:
+                a.tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1)
+                a.tint.a = 0.5
+                a.tint.r *= a.tint.a
+                a.tint.g *= a.tint.a
+                a.tint.b *= a.tint.a
+            else:
+                a.tint = land_color_premul(1, 1, 1, .2)
+            render_block(block1, game->viewport)
 
-    a.tint = land_color_premul(1, 1, 1, .2)
+        a.tint = land_color_premul(1, 1, 1, .2)
 
-    block2.frame = 8 + ((16 * land_get_ticks() / 60) % 8)
-    render_block(block2, game->viewport)
+        block2.frame = 8 + ((16 * land_get_ticks() / 60) % 8)
+        render_block(block2, game->viewport)
 
     a.tint.a = 0
 
