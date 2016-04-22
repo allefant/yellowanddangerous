@@ -47,6 +47,7 @@ class All:
 
     int time
     bool overview
+    bool render_screenshot
 
     int code
     bool godmode

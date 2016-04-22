@@ -1,6 +1,7 @@
 import game
 
 global LandColor intro_tint
+global LandColor intro_back
 static Block *test_tube
 static int ty
 static int scrolly
@@ -50,6 +51,10 @@ def intro_sequence:
 static def extro:
     Game *g = game
     int t = g.sequence_ticks++
+    intro_back.r = 0
+    intro_back.g = 0
+    intro_back.b = 0
+    intro_back.a = 1
     game->player->super.y = 9000
     if t < 60 * 5:
         move_car()
@@ -83,6 +88,11 @@ static def extro:
 static def intro:
     All *a = global_a
     Game *g = game
+
+    intro_back.r = 0
+    intro_back.g = 0
+    intro_back.b = 0
+    intro_back.a = 1
 
     a.right = 0
     a.left = 0

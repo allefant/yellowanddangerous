@@ -1,18 +1,20 @@
 import block
 import game
 
+type Game *game
+
 def save_info:
     All *a = global_a
     char *path = land_get_save_file("com.yellowdanger", "info.txt")
     LandFile *f = land_file_new(path, "w")
-    land_file_print(f, "room %d", game->level)
+    land_file_print(f, "room %d", game.level)
     land_file_print(f, "dpad %d", a.dpad)
     land_file_print(f, "music %d", a.music)
     land_file_print(f, "sound %d", a.sound)
     land_file_print(f, "time %d", a.time)
-    land_file_print(f, "key %d", game->key)
-    land_file_print(f, "deaths %d", game->deaths)
-    bool *fl = game->flower
+    land_file_print(f, "key %d", game.key)
+    land_file_print(f, "deaths %d", game.deaths)
+    bool *fl = game.flower
     land_file_print(f, "flower %d %d %d %d %d %d %d",
         fl[1], fl[2], fl[3], fl[4], fl[5], fl[6], fl[7])
     land_file_destroy(f)
@@ -21,7 +23,7 @@ def save_info:
 def load_info:
     All *a = global_a
     char *path = land_get_save_file("com.yellowdanger", "info.txt")
-    game->level = game_starting_level
+    game.level = game_starting_level
     a.dpad = 0
     a.music = 4
     a.sound = 7
@@ -32,7 +34,7 @@ def load_info:
         for LandBuffer *rowb in LandArray *rows:
             char *row = land_buffer_finish(rowb)
             if land_starts_with(row, "room "):
-                sscanf(row, "room %d", &game->level)
+                sscanf(row, "room %d", &game.level)
             if land_starts_with(row, "dpad "):
                 sscanf(row, "dpad %d", &a->dpad)
             if land_starts_with(row, "music "):
@@ -52,16 +54,16 @@ def load_info:
             if land_starts_with(row, "key "):
                 int i
                 sscanf(row, "key %d", &i)
-                if i: game->key = True
+                if i: game.key = True
             if land_starts_with(row, "deaths "):
-                sscanf(row, "deaths %d", &game->deaths)
+                sscanf(row, "deaths %d", &game.deaths)
             if land_starts_with(row, "flower "):
                 int i[8]
                 i[0] = 0
                 sscanf(row, "flower %d %d %d %d %d %d %d", i + 1,
                     i + 2, i + 3, i + 4, i + 5, i + 6, i + 7)
                 for int j in range(8):
-                    game->flower[j] = i[j]
+                    game.flower[j] = i[j]
             land_free(row)
         land_array_destroy(rows)
         
@@ -70,20 +72,20 @@ def load_info:
 def save_level(bool editor):
     char name[1024]
     if editor:
-        sprintf(name, "data/levels/level%02d.txt", game->level)
+        sprintf(name, "data/levels/level%02d.txt", game.level)
     else:
-        sprintf(name, "save%02d.txt", game->level)
+        sprintf(name, "save%02d.txt", game.level)
         char *path = land_get_save_file("com.yellowdanger", name)
         strcpy(name, path)
         land_free(path)
         save_info()
         
-    Blocks *blocks = game->blocks
+    Blocks *blocks = game.blocks
     LandFile *f = land_file_new(name, "w")
-    char *st = land_strdup(game->hint)
+    char *st = land_strdup(game.hint)
     land_replace_all(&st, "\n", "|")
     land_file_print(f, "hint %s", st)
-    land_file_print(f, "title %s", game->title)
+    land_file_print(f, "title %s", game.title)
     land_free(st)
     float s = 24
     LandArray *arrays[] = {blocks.transparent, blocks.dynamic, blocks.fixed}
@@ -120,13 +122,13 @@ def load_level(bool editor):
 
     LandBuffer *f = None
     if not editor:
-        sprintf(name, "save%02d.txt", game->level)
+        sprintf(name, "save%02d.txt", game.level)
         char *path = land_get_save_file("com.yellowdanger", name)
         strcpy(name, path)
         land_free(path)
         f = land_buffer_read_from_file(name)
     if not f:
-        sprintf(name, "data/levels/level%02d.txt", game->level)
+        sprintf(name, "data/levels/level%02d.txt", game.level)
         f = land_buffer_read_from_file(name)
         self.pristine = True
 
@@ -141,14 +143,14 @@ def load_level(bool editor):
     self.lever_on = False
     self.sequence = 0
 
-    Blocks *blocks = game->blocks
+    Blocks *blocks = game.blocks
     blocks_reset(blocks)
 
     if not f:
         land_unpause()
         return
 
-    _load_from_offset(f, 0, 0, 0)
+    save_load_from_offset(f, 0, 0, 0)
 
     BlockType *flowers[8] = {None,
         Render_Gentian,
@@ -172,7 +174,7 @@ def load_level(bool editor):
         for int i in range(1, 8):
             if b.block_type == flowers[i]:
                 if b.y > -8000:
-                    game->flower[i] = False
+                    game.flower[i] = False
                 
 
     bool visible = True
@@ -191,18 +193,19 @@ def load_level(bool editor):
                 if visible:
                     b.y -= 9000
 
-    if game->level == game_starting_level:
-        game->sequence = 1
-        game->sequence_ticks = 0
+    if game.level == game_starting_level:
+        game.sequence = 1
+        game.sequence_ticks = 0
 
     land_unpause()
 
-static def _load_from_offset(LandBuffer *f, int ox, oy, oz):
+def save_load_from_offset(LandBuffer *f, int ox, oy, oz):
+    All *all = global_a
     LandArray *rows = land_buffer_split(f, '\n')
     land_buffer_destroy(f)
     float s = 24
     int t, xi, yi, zi
-    Blocks *blocks = game->blocks
+    Blocks *blocks = game.blocks
     Block *block
     for LandBuffer *rowb in LandArray *rows:
         char *row = land_buffer_finish(rowb)
@@ -232,10 +235,12 @@ static def _load_from_offset(LandBuffer *f, int ox, oy, oz):
         if land_starts_with(row, "hint "):
             char *st = land_strdup(row + 5)
             land_replace_all(&st, "|", "\n")
-            land_string_copy(game->hint, st, 1024)
+            if all.dpad == 4 or all.dpad == 5:
+                land_replace_all(&st, "the D-Pad", "anywhere")
+            land_string_copy(game.hint, st, 1024)
             land_free(st)
         if land_starts_with(row, "title "):
-            land_string_copy(game->title, row + 6, 1024)
+            land_string_copy(game.title, row + 6, 1024)
 
         land_free(row)
     land_array_destroy(rows)
@@ -251,21 +256,11 @@ def save_reset_room(int i):
 def save_new:
     for int i in range(1, 50):
         save_reset_room(i)
-    game->level = game_starting_level
-    game->deaths = 0
-    game->key = False
+    game.level = game_starting_level
+    game.deaths = 0
+    game.key = False
     for int i in range(8):
-        game->flower[i] = False
+        game.flower[i] = False
     global_a->time = 0
     save_info()
 
-def load_all:
-    blocks_reset(game->blocks)
-    for int i in range(1, 50):
-        int lx = (i - 1) % 7 + 3
-        int lz = (i - 1) / 7 - 3
-        char name[1024]
-        sprintf(name, "data/levels/level%02d.txt", i)
-        LandBuffer *f = land_buffer_read_from_file(name)
-        if f:
-            _load_from_offset(f, 48 * lx, 0, 48 * lz)

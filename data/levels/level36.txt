@@ -57,3 +57,5 @@ make 12 21 15 41
 move 0 60 0
 make 18 45 3 21
 frame 3
+make 19 13 15 53
+frame 2

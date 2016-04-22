@@ -8,6 +8,9 @@ import cart
 import gremlin
 import intro
 import testtube
+import menu
+
+type Game *game
 
 class Render:
     bool was_setup
@@ -385,32 +388,39 @@ def render(Game *g):
 
     land_clear_depth(1)
 
-    if game->sequence:
+    if game.sequence:
         a.tint = intro_tint
-        land_clear(0, 0, 0, 1)
+        land_clear(intro_back.r, intro_back.g, intro_back.b, intro_back.a)
     else:
         a.tint.a = 0
         land_clear(r.background_color.r, r.background_color.g,
             r.background_color.b, r.background_color.a)
 
-    render_blocks(g->blocks, g->viewport)
+    if not a.overview:
+        render_blocks(g->blocks, g->viewport)
 
-    if game->sequence:
-        intro_postprocess()
+        if game.sequence:
+            intro_postprocess()
+
+    if a.overview:
+        overview_render(game.overview)
 
     land_reset_transform()
 
-    if not game->sequence:
+    if not game.sequence and not a.render_screenshot:
         draw_move_controls()
         draw_jump_controls()
         draw_pause_controls()
+
+        if game.menu_on:
+            menu_draw(game.menu)
 
     land_color(0, 0, 0, 1)
     land_font_set(a.medium)
 
     land_push_transform()
     land_scale(w / 960.0, w / 960.0)
-    if True:
+    if not a.overview and not a.render_screenshot:
         
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
@@ -418,16 +428,16 @@ def render(Game *g):
         if a.editor:
             land_print("%d", g->level)
 
-    if g->ticks < 300:
-        
-        land_text_pos(960 * 3 / 4, fh)
-        land_print_center("%s", "Yellow and Dangerous")
-        land_print_center("%s", "by Allefant")
+        if g->ticks < 300:
+            
+            land_text_pos(960 * 3 / 4, fh)
+            land_print_center("%s", "Yellow and Dangerous")
+            land_print_center("%s", "by Allefant")
 
-    if g->ticks > 600 or a.editor:
-        float y = h / (w / 960) - 3 * fh
-        land_text_pos(0, y)
-        land_print_wordwrap(w, h, "%s", g->hint)
+        if g->ticks > 600 or a.editor:
+            float y = h / (w / 960) - 3 * fh
+            land_text_pos(0, y)
+            land_print_wordwrap(w, h, "%s", g->hint)
 
     land_pop_transform()
 
@@ -474,9 +484,9 @@ def render_block(Block *self, Viewport *viewport):
         land_image_draw_scaled_tinted(frame, x, y, 0.5, 0.5,
                 cr, cg, cb, ca)
 
-    bool show_bounds = debug_bounding_boxes or self == game->picked
+    bool show_bounds = debug_bounding_boxes or self == game.picked
     bool show_misaligned = False
-    bool show_ground = self == game->picked
+    bool show_ground = self == game.picked
 
     if a->editor:
         float s = 24

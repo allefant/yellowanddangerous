@@ -238,12 +238,14 @@ def title_render:
                 a.tint.b *= a.tint.a
             else:
                 a.tint = land_color_premul(1, 1, 1, .2)
-            render_block(block1, game->viewport)
+            if not blocktype_preload(block1.block_type):
+                render_block(block1, game->viewport)
 
         a.tint = land_color_premul(1, 1, 1, .2)
 
         block2.frame = 8 + ((16 * land_get_ticks() / 60) % 8)
-        render_block(block2, game->viewport)
+        if not blocktype_preload(block2.block_type):
+            render_block(block2, game->viewport)
 
     a.tint.a = 0
 

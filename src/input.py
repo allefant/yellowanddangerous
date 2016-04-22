@@ -1,5 +1,32 @@
 import common
 import main
+import menu
+
+type Game *game
+
+static def check_pause_button(LandFloat mx, my) -> bool:
+    All *a = global_a
+    double rr = land_display_width() / 8 * 0.8
+    if a.dpad == 2 or a.dpad == 3:
+        rr *= 1.5
+    double ry = rr
+    double rx = land_display_width() - rr
+    if mx > rx and my < ry and (a.dpad < 4 or not a.swipe):
+        return True
+    return False
+
+static def check_menu(LandFloat mx, my, bool clicked) -> bool:
+    if not game->menu_on:
+        return False
+    return menu_tick(game->menu, mx, my, clicked)
+
+static def check_pick(LandFloat mx, my, bool delta) -> bool:
+    if global_editor_enabled:
+        if delta:
+            game->picked = blocks_pick(game->blocks, mx, my,
+                game->viewport)
+            return True
+    return False
 
 def input_tick:
     All *a = global_a
@@ -7,23 +34,41 @@ def input_tick:
     int count = 0
     bool any = False
     for int ti in range(11):
+        double mx = land_touch_x(ti)
+        double my = land_touch_y(ti)
+        
         if not land_touch_down(ti):
+            if land_touch_delta(ti):
+                if check_menu(mx, my, True):
+                    break
+                if a.overview:
+                    overview_click(game.overview, mx, my, 0, 1)
+                    break
+                
             continue
         any = True
         count++
 
-        double mx = land_touch_x(ti)
-        double my = land_touch_y(ti)
-
-        # pause control
         double rr = land_display_width() / 8 * 0.8
-        if a.dpad == 2 or a.dpad == 3:
-            rr *= 1.5
-        double rx = rr
-        double ry = rr
-        rx = land_display_width() - rr
-        if mx > rx and my < ry and (a.dpad < 4 or not a.swipe):
-            main_switch_to_title(0)
+      
+        if check_pause_button(mx, my):
+            if global_editor_enabled:
+                if land_touch_delta(ti):
+                    menu_toggle()
+            else:
+                main_switch_to_title(0)
+            return
+
+        if check_menu(mx, my, False):
+            break
+
+        if a.editor:
+            if check_pick(mx, my, land_touch_delta(ti)):
+                break
+
+        if a.overview:
+            overview_click(game.overview, mx, my, land_touch_delta(ti), 0)
+            break
 
         double dx, dy
 
@@ -71,10 +116,10 @@ def input_tick:
             if a.swipej:
                 a.jump = True
         else:
-            rx = rr
+            double rx = rr
             if a.dpad == 1 or a.dpad == 3:
                 rx = land_display_width() - rr
-            ry = land_display_height() - rr
+            double ry = land_display_height() - rr
             if a.dpad == 1 or a.dpad == 3:
                 rx = land_display_width() - rr
             dx = mx - rx
@@ -122,8 +167,8 @@ def input_tick:
         if a.dpad == 4 or a.dpad == 5:
             pass
         else:
-            rx = land_display_width() - rr
-            ry = land_display_height() - rr
+            double rx = land_display_width() - rr
+            double ry = land_display_height() - rr
             if a.dpad == 1 or a.dpad == 3:
                 rx = rr
             dx = mx - rx
