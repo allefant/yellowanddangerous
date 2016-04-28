@@ -1,58 +1,109 @@
 import main
 type Game *game
+type Editor *editor
 
 class Menu:
-    int menu
-    char items[16][16][32]
+    int menu[3]
+    char items[16][128][32]
     int n[16]
-    int hilite
+    int hilite[3]
 
     int pos
 
 macro S(text):
     strcpy(menu->items[menu->pos][menu->n[menu->pos]++], text)
-
-macro T(text):
+macro T:
     menu->pos++
     menu->n[menu->pos] = 0
-    S(text)
 
 def menu_new -> Menu*:
     Menu *menu
     land_alloc(menu)
+
+    return menu
+
+static macro categories_count 8
+
+static def category(BlockType *bt) -> int:
+    if land_starts_with(bt.name, "BlockBottom") or\
+        land_starts_with(bt.name, "BlockSmall") or\
+        land_starts_with(bt.name, "Ramp"):
+        return 0
+    if land_starts_with(bt.name, "Block") or\
+        land_starts_with(bt.name, "Invisible"):
+        return 1
+    if block_type_flower(bt) or bt == Render_Key:
+        return 2
+    if bt == Render_Allefant or bt == Render_Gremlin or bt == Render_Scientist:
+        return 3
+    if land_starts_with(bt.name, "Lever") or\
+        land_starts_with(bt.name, "Vent") or\
+        land_starts_with(bt.name, "Plate") or\
+        land_starts_with(bt.name, "Platform") or\
+        land_starts_with(bt.name, "Waypoint") or\
+        land_starts_with(bt.name, "Exit"):
+        return 4
+    if bt.dynamic:
+        return 5
+    if land_starts_with(bt.name, "Tree") or\
+            land_ends_with(bt.name, "Tree") or\
+            bt == Render_Ginko or\
+            bt == Render_Trunk:
+        return 6
+    return 7
+
+static def category_name(int c) -> char const *:
+    if c == 0: return "Floor"
+    if c == 1: return "Wall"
+    if c == 2: return "Item"
+    if c == 3: return "Monster"
+    if c == 4: return "Device"
+    if c == 5: return "Moving"
+    if c == 6: return "Plant"
+    if c == 7: return "Decoration"
+    return ""
+
+static def menu_items(Menu *menu):
+    All *a = global_a
+
+    menu.pos = 0
+    menu.n[0] = 0
 
     S("Mode")
     S("File")
     S("View")
     S("Level")
     S("Object")
-
-    T("Title")
-    S("Edit")
-    S("Play")
-
-    T("Save")
+    T
+    S(a.editor ? "Play" : "Edit")
+    S("Title")
+    T
+    S("Save")
     S("Load")
     S("Clear")
-
-    T("Bounds")
+    T
+    S("Bounds")
     S("Mask")
     S("Info")
-
-    T("Overview")
+    T
+    S("Overview")
     S("Intro")
-    S("Move")
     S("Title")
     S("Hint")
-
-    T("Move")
-    S("Delete")
-    S("Frame")
-    S("Type")
-    S("Align")
+    T
     S("Insert")
-
-    return menu
+    S("Type")
+    S("Frame")
+    S("Align")
+    S("Delete")
+    T
+    for int i in range(categories_count):
+        S(category_name(i))
+    for int i in range(categories_count):
+        T
+        for BlockType *bt in LandArray *block_types:
+            if category(bt) == i:
+                S(bt.name)
 
 def menu_toggle:
     if game.menu_on:
@@ -60,8 +111,11 @@ def menu_toggle:
     else:
         game.menu_on = True
         Menu *menu = game.menu
-        menu.hilite = -1
-        menu.menu = 0
+        menu_items(menu)
+        menu.hilite[0] = -1
+        menu.menu[0] = 0
+        menu.menu[1] = -1
+        menu.menu[2] = -1
 
 def menu_draw(Menu *menu):
     All *a = global_a
@@ -73,30 +127,35 @@ def menu_draw(Menu *menu):
     float mw = 120
     float mih = 30
     float border = 40
-    
-    float x0 = 960 - mw - border
-    float y0 = 160
-    land_font_set(a.medium)
-    int n = menu.n[menu.menu]
-    land_premul(1, 1, 1, 0.8)
-    land_filled_rectangle(x0 - border, y0 - border,
-        x0 + mw + border, y0 + n * mih + border)
-    land_color(1, 1, 0, 1)
-    land_thickness(8)
-    land_rectangle(x0 - border, y0 - border,
-        x0 + mw + border, y0 + n * mih + border)
-    land_thickness(1)
-    for int i in range(n):
-        char *text = menu.items[menu.menu][i]
-        float x = x0
-        float y = y0 + i * mih
-        if menu.hilite == i:
-            land_color(1, 1, 0.5, 1)
-            land_filled_rectangle(x, y, x + mw, y + mih)
-        land_text_pos(x, y)
-        land_color(0, 0, 0, 1)
-        land_print("%s", text)
-    land_pop_transform()
+
+    for int mi in range(3):
+        int m = menu.menu[mi]
+        if m == -1:
+            break
+        float x0 = 960 - (mw + border) * (1 + mi)
+        float y0 = 160
+        land_font_set(a.medium)
+        int n = menu.n[m]
+        land_premul(1, 1, 1, 0.8)
+        land_filled_rectangle(x0 - border, y0 - border,
+            x0 + mw + border, y0 + n * mih + border)
+        land_color(1, 1, 0, 1)
+        int t = 4
+        land_thickness(t * 2)
+        land_rectangle(x0 - border + t, y0 - border + t,
+            x0 + mw + border - t, y0 + n * mih + border - t)
+        land_thickness(1)
+        for int i in range(n):
+            char *text = menu.items[m][i]
+            float x = x0
+            float y = y0 + i * mih
+            if menu.hilite[mi] == i:
+                land_color(1, 1, 0.5, 1)
+                land_filled_rectangle(x, y, x + mw, y + mih)
+            land_text_pos(x, y)
+            land_color(0, 0, 0, 1)
+            land_print("%s", text)
+        land_pop_transform()
 
 def menu_key(int k):
     All *a = global_a
@@ -108,7 +167,7 @@ def menu_key(int k):
         load_level(True)
         a.overview = False
         viewport_update(game.viewport)
-        a.running = False
+        a.editor = True
     elif k == LandKeyFunction + 4:
         blocks_reset(game.blocks)
         game.player = None
@@ -122,22 +181,19 @@ def menu_key(int k):
         a.editor = not a.editor
     elif k == LandKeyFunction + 8:
         if a.overview:
-            overview_destroy(game.overview)
-            game.overview = None
             a.overview = False
+            game.level = game.overview->selected
+            menu_key(LandKeyFunction + 3)
         else:
-            game.overview = overview_new()
-            a.overview = True
-            a.running = False
+            overview_update(game.overview)
     elif k == LandKeyFunction + 10:
         game.sequence = not game.sequence
     elif k == ' ':
         pass
     elif k == LandKeyEnter:
-        if not a.running:
-            a.running = True
+        a.editor = not a.editor
     elif k == 'q' or k == 'e' or k == 'w' or k == 's':
-        if k == 'q' or k == 'e' or not game.picked:
+        if k == 'q' or k == 'e' or not editor.picked:
             int gox = 0, goz = 0
             if k == 'q': gox--
             if k == 'e': gox++
@@ -145,9 +201,9 @@ def menu_key(int k):
             if k == 's': goz++
             game.level = game_neighboring_level(game.level, gox, goz)
             load_level(True)
-            a.running = False
+            a.editor = True
     elif k == 'i':
-        Block *p = game.picked
+        Block *p = editor.picked
         if p:
             print("%.1f %.1f %.1f", p.x, p.y, p.z)
     elif k == 't':
@@ -164,16 +220,16 @@ def menu_key(int k):
         s2 = s
 
     if k == LandKeyInsert:
-        Block *l = game.picked
+        Block *l = editor.picked
         if l:
-            game.picked = block_new(game.blocks, l.x, l.y, l.z,
+            editor.picked = block_new(game.blocks, l.x, l.y, l.z,
                 l.block_type)
         else:
-            game.picked = block_new(game.blocks, -s, -s * 2, -s,
+            editor.picked = block_new(game.blocks, -s, -s * 2, -s,
                 Render_BlockBottom3)
-        block_add(game.picked)
+        block_add(editor.picked)
 
-    Block *p = game.picked
+    Block *p = editor.picked
     
     if not p:
         return
@@ -213,16 +269,16 @@ def menu_key(int k):
             p.y = floor(p.y / s + 0.1) * s
             p.z = floor(p.z / s + 0.1) * s
     elif k == 'a':
-        game.picked = p = block_change_type(p, -1)
+        editor.picked = p = block_change_type(p, -1)
     elif k == 'd':
-        game.picked = p = block_change_type(p, 1)
+        editor.picked = p = block_change_type(p, 1)
     elif k == 'f':
         p.frame++
         if p.frame >= land_array_count(p.block_type->bitmaps):
             p.frame = 0
     elif k == LandKeyDelete:
         block_del(p)
-        game.picked = None
+        editor.picked = None
 
 macro ON(x, k):
     if land_equals(text, x):
@@ -235,38 +291,60 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
     float mw = 120 * w / 960
     float mih = 30 * w / 960
     float border = 40 * w / 960
-    float x0 = w - mw - border
-    float y0 = 160 * w / 960
-    int n = menu.n[menu.menu]
 
-    menu.hilite = -1
+    bool out = True
+    char *text = None
 
-    if mx < x0 - border:
-        return False
-    if mx > x0 + mw + border:
-        return False
-    if my < y0 - border:
-        return False
-    if my > y0 + n * mih + border:
+    int selected = -1
+    int mi
+    for mi in range(3):
+        float x0 = w - (mw + border) * (1 + mi)
+        float y0 = 160 * w / 960
+
+        if menu.menu[mi] == -1:
+            break
+        
+        int n = menu.n[menu.menu[mi]]
+
+        menu.hilite[mi] = -1
+
+        if mx < x0 - border:
+            continue
+        if mx > x0 + mw + border:
+            continue
+        if my < y0 - border:
+            continue
+        if my > y0 + n * mih + border:
+            continue
+
+        out = False
+
+        if mx < x0 or mx > x0 + mw:
+            continue
+        selected = floor((my - y0) / mih)
+        if selected < 0 or selected >= n:
+            continue
+
+        text = menu.items[menu.menu[mi]][selected]
+        break
+
+    if out:
         return False
 
-    if mx < x0 or mx > x0 + mw:
+    if not text:
         return True
-    int i = floor((my - y0) / mih)
-    if i < 0 or i >= n:
-        return True
-    char *text = menu.items[menu.menu][i]
 
     if click:
-        if menu.menu > 0:
+        if menu.menu[mi] > 0:
             game.menu_on = False
-            menu.menu = 0
+            menu.menu[0] = 0
+            menu.menu[1] = -1
         
-        if land_equals(text, "Mode"): menu.menu = 1
-        if land_equals(text, "File"): menu.menu = 2
-        if land_equals(text, "View"): menu.menu = 3
-        if land_equals(text, "Level"): menu.menu = 4
-        if land_equals(text, "Object"): menu.menu = 5
+        if land_equals(text, "Mode"): menu.menu[mi] = 1
+        if land_equals(text, "File"): menu.menu[mi] = 2
+        if land_equals(text, "View"): menu.menu[mi] = 3
+        if land_equals(text, "Level"): menu.menu[mi] = 4
+        if land_equals(text, "Object"): menu.menu[mi] = 5
 
         if land_equals(text, "Title"):
            main_switch_to_title(0)
@@ -290,19 +368,27 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
         ON("Title", 't')
         ON("Hint", 'h')
       
-        if land_equals(text, "Move"):
-            if menu.menu == 4: # Level
-                pass
-            if menu.menu == 5: # Object
-                pass
         ON("Delete", LandKeyDelete)
         ON("Frame", 'f')
-        ON("Type", 'a')
+        if land_equals(text, "Type"):
+            menu.menu[mi] = 6
+            game.menu_on = True
         ON("Align", 'c')
         ON("Insert", LandKeyInsert)
 
+        for int c in range(categories_count):
+            if land_equals(text, category_name(c)):
+                menu.menu[0] = 6
+                menu.menu[1] = 7 + c
+                game.menu_on = True
+
     else:
-        menu.hilite = i
+        if mi == 1:
+            if editor.picked:
+                editor.picked  = block_change_type_to(editor.picked,
+                    text)
+                
+        menu.hilite[mi] = selected
 
     return True
     

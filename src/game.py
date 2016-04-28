@@ -5,6 +5,9 @@ import intro
 import input
 import menu
 import overview
+import editor
+
+type Editor *editor
 
 class Game:
     int level
@@ -18,11 +21,7 @@ class Game:
     Player *player
     Allefant *player2
 
-    Block *lever_left
-    Block *lever_right
-    bool lever_on
-
-    Block *picked
+    Block *lever
 
     double start_time
 
@@ -61,14 +60,21 @@ Game *def game_new():
 
     self.menu = menu_new()
 
+    self.overview = overview_new()
+
+    editor_new()
+
     return self
 
 def game_del(Game *self):
     blocks_destroy(self->blocks)
     render_teardown()
+    overview_destroy(game.overview)
     land_free(self.viewport)
     land_free(self.menu)
     land_free(self)
+
+    editor_del()
 
 def game_neighboring_level(int level, gox, goz) -> int:
     int row = (level - 1) / 7
@@ -120,6 +126,10 @@ def game_tick(Game *self):
         return
 
     input_tick()
+
+    if a.overview:
+        overview_tick(game.overview)
+        return
     
     int plates_count = 0
     int plates_on_before = 0
@@ -145,10 +155,10 @@ def game_tick(Game *self):
     if land_key_pressed(LandKeyMenu):
         main_switch_to_title(1)
 
-        if game.sequence and a.running:
-            intro_sequence()
+    if game.sequence:
+        intro_sequence()
 
-    if a.running and not game.picked:
+    if not a.editor:
         a.time++
         for Block *b in LandArray *self->blocks->dynamic:
             b->block_type->tick(b)

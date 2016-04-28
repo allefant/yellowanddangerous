@@ -11,6 +11,7 @@ import testtube
 import menu
 
 type Game *game
+type Editor *editor
 
 class Render:
     bool was_setup
@@ -124,7 +125,7 @@ load("Crate", 0.95, 2, 0.95, dynamic = True)
 load("BlockLeft3", 0.5, 1, 2)
 load("BlockRight3", 2, 1, 0.5)
 load("Plant", 0.5, 0.5, 0.5, dynamic = True, lift = True)
-load("Platform", 2, 0.5, 2, dynamic = True, fixed = True)
+load("Platform", 2, 0.5, 2, dynamic = True, fixed = True, frames = 4)
 load("LeverLeft", 0.5, 2, 1, frames = 2)
 load("LeverRight", 1, 2, 0.5, frames = 2)
 load("Statue", 2, 2, 2)
@@ -396,14 +397,13 @@ def render(Game *g):
         land_clear(r.background_color.r, r.background_color.g,
             r.background_color.b, r.background_color.a)
 
-    if not a.overview:
+    if a.overview:
+        overview_render(game->overview)
+    else:
         render_blocks(g->blocks, g->viewport)
 
         if game.sequence:
             intro_postprocess()
-
-    if a.overview:
-        overview_render(game.overview)
 
     land_reset_transform()
 
@@ -420,7 +420,13 @@ def render(Game *g):
 
     land_push_transform()
     land_scale(w / 960.0, w / 960.0)
-    if not a.overview and not a.render_screenshot:
+
+    if a.overview:
+        land_color(0, 0, 0, 1)
+        land_text_pos(0, 0)
+        land_print("%d", g->overview->selected)
+        
+    if not a.render_screenshot and not a.overview:
         
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
@@ -484,9 +490,9 @@ def render_block(Block *self, Viewport *viewport):
         land_image_draw_scaled_tinted(frame, x, y, 0.5, 0.5,
                 cr, cg, cb, ca)
 
-    bool show_bounds = debug_bounding_boxes or self == game.picked
+    bool show_bounds = debug_bounding_boxes or self == editor.picked
     bool show_misaligned = False
-    bool show_ground = self == game.picked
+    bool show_ground = self == editor.picked
 
     if a->editor:
         float s = 24

@@ -1,8 +1,10 @@
 import common
 import main
 import menu
+import editor
 
 type Game *game
+type Editor *editor
 
 static def check_pause_button(LandFloat mx, my) -> bool:
     All *a = global_a
@@ -16,17 +18,9 @@ static def check_pause_button(LandFloat mx, my) -> bool:
     return False
 
 static def check_menu(LandFloat mx, my, bool clicked) -> bool:
-    if not game->menu_on:
+    if not game.menu_on:
         return False
-    return menu_tick(game->menu, mx, my, clicked)
-
-static def check_pick(LandFloat mx, my, bool delta) -> bool:
-    if global_editor_enabled:
-        if delta:
-            game->picked = blocks_pick(game->blocks, mx, my,
-                game->viewport)
-            return True
-    return False
+    return menu_tick(game.menu, mx, my, clicked)
 
 def input_tick:
     All *a = global_a
@@ -36,39 +30,39 @@ def input_tick:
     for int ti in range(11):
         double mx = land_touch_x(ti)
         double my = land_touch_y(ti)
+
+        bool holding = land_touch_down(ti)
+        bool clicked = holding and land_touch_delta(ti)
+        bool released = not land_touch_down(ti) and land_touch_delta(ti)
+
+        if not holding and not released:
+            continue
+
+        if check_pause_button(mx, my):
+            if clicked:
+                if global_editor_enabled:
+                    menu_toggle()
+                else:
+                    main_switch_to_title(0)
+            return
+
+        if check_menu(mx, my, released):
+            break
+
+        if a.overview:
+            overview_click(game.overview, mx, my, clicked, released)
+            break
+
+        if a.editor:
+            editor_click(mx, my, clicked, released):
+            break
         
         if not land_touch_down(ti):
-            if land_touch_delta(ti):
-                if check_menu(mx, my, True):
-                    break
-                if a.overview:
-                    overview_click(game.overview, mx, my, 0, 1)
-                    break
-                
             continue
         any = True
         count++
 
-        double rr = land_display_width() / 8 * 0.8
-      
-        if check_pause_button(mx, my):
-            if global_editor_enabled:
-                if land_touch_delta(ti):
-                    menu_toggle()
-            else:
-                main_switch_to_title(0)
-            return
-
-        if check_menu(mx, my, False):
-            break
-
-        if a.editor:
-            if check_pick(mx, my, land_touch_delta(ti)):
-                break
-
-        if a.overview:
-            overview_click(game.overview, mx, my, land_touch_delta(ti), 0)
-            break
+        double rr = land_display_width() / 8 * 0.8 
 
         double dx, dy
 

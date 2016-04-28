@@ -145,6 +145,12 @@ def block_change_type(Block *self, int d) -> Block *:
     block_add(self)
     return self
 
+def block_change_type_to(Block *self, char const *text) -> Block *:
+    for BlockType *bt in LandArray *block_types:
+        if land_equals(bt.name, text):
+            return block_change_type(self, bt.btid - self.block_type.btid)
+    return self
+
 def block_del(Block *self):
     LandArray *array
     if self.block_type and self->block_type->dynamic:

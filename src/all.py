@@ -13,11 +13,8 @@ class All:
     int ftpos
     double frame_times[60]
     float direct_speed_measure
-        
-    bool mouse_down
-    int mx, my
 
-    bool show_fps, running
+    bool show_fps
     bool show_help
 
     int cheatpos

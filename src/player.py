@@ -269,14 +269,12 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
             if c.frame == 0:
                 self.lever = True
                 c.frame = 1
-                game->lever_left = c
-                game->lever_on = True
+                game->lever = c
         if dz < 0 and c.block_type == Render_LeverRight:
             if c.frame == 0:
                 self.lever = True
                 c.frame = 1
-                game->lever_right = c
-                game->lever_on = True
+                game->lever = c
     if dx != 0 or dz != 0:
         if c->block_type->dynamic:
             self->pushing = True

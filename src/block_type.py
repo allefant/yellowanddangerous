@@ -1,5 +1,6 @@
 import common
 import block
+static import render
 
 class BlockType:
     char *name
@@ -20,7 +21,6 @@ class BlockType:
     void (*post_init)(Block *)
 
 global LandArray *block_types
-
 
 BlockType *def blocktype_new(char const *name, float xs, ys, zs,
         void (*tick)(Block *),
@@ -56,3 +56,17 @@ def blocktype_preload(BlockType *self) -> bool:
         if land_image_load_on_demand(pic):
             return True
     return False
+
+def block_type_flower(BlockType *self) -> int:
+    BlockType *flowers[8] = {None,
+        Render_Gentian,
+        Render_Edelweiss,
+        Render_Orchid,
+        Render_Hyacinth,
+        Render_Sunflower,
+        Render_Rose,
+        Render_Belladonna}
+    for int i in range(1, 8):
+        if self == flowers[i]:
+            return i
+    return 0

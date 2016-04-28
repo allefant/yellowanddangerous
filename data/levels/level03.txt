@@ -3,6 +3,7 @@ title Parking lot
 make 10 31 4 31
 make 13 10 4 8
 make 30 7 2 5
+frame 3
 make 4 21 2 31
 make 4 29 2 29
 make 19 25 3 -9

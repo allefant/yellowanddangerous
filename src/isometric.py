@@ -1,5 +1,15 @@
 import common
 
+#
+#       
+#              0
+#            __--__
+#    +Z __--      --__ +X
+#          --__  __--
+#              --
+#       
+#
+
 class Viewport:
     float x, y
     float zoom
@@ -23,8 +33,14 @@ def project(Viewport *self, float x, y, z, *sx, *sy):
     *sx = self.x + x * s - z * s
     *sy = self.y + (x * s - y * t + z * s) * 0.5
 
-def unproject(Viewport *self, float sx, sy, *x, *z):
+def unproject(Viewport *self, float sx, sy, y, *x, *z):
     float s = 1 / 2.0
     float t = sqrt(3) / sqrt(2)
-    *x = ((sx - self.x) / 2.0 + (sy - self.y)) / s
-    *z = ((sx - self.x) / -2.0 + (sy - self.y)) / s
+
+    *x = ((sx - self.x) / 2.0 + sy - self.y + y * t / 2.0) / s
+    *z = ((sx - self.x) / -2.0 + (sy - self.y) + y * t / 2.0) / s
+
+def unproject_y(Viewport *self, float sy, x, z, *y):
+    float s = 1 / 2.0
+    float t = sqrt(3) / sqrt(2)
+    *y = ((sy - self.y) * 2 - x * s - z * s) / -t

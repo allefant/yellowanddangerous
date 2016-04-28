@@ -184,8 +184,8 @@ def title_render:
                 if a.dpad == 1: land_print("DPad right")
                 if a.dpad == 2: land_print("DPad left big")
                 if a.dpad == 3: land_print("DPad right big")
-                if a.dpad == 4: land_print("DPad combined")
-                if a.dpad == 5: land_print("DPad two finger")
+                if a.dpad == 4: land_print("double click swipe")
+                if a.dpad == 5: land_print("two finger swipe")
             elif i == 2:
                 land_print("Music")
                 drawvol(a.music, x + yw + 6 * 32, y)

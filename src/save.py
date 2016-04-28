@@ -1,7 +1,9 @@
 import block
 import game
+import editor
 
 type Game *game
+type Editor *editor
 
 def save_info:
     All *a = global_a
@@ -69,10 +71,11 @@ def load_info:
         
     land_free(path)
 
-def save_level(bool editor):
+def save_level(bool editing):
     char name[1024]
-    if editor:
+    if editing:
         sprintf(name, "data/levels/level%02d.txt", game.level)
+        overview_update_level(game.overview, game.level)
     else:
         sprintf(name, "save%02d.txt", game.level)
         char *path = land_get_save_file("com.yellowdanger", name)
@@ -112,7 +115,7 @@ def save_level(bool editor):
             
     land_file_destroy(f)
     
-def load_level(bool editor):
+def load_level(bool editing):
 
     land_pause()
 
@@ -120,8 +123,10 @@ def load_level(bool editor):
     Game *self = game
     self.pristine = False
 
+    print("Loading %d", game.level)
+
     LandBuffer *f = None
-    if not editor:
+    if not editing:
         sprintf(name, "save%02d.txt", game.level)
         char *path = land_get_save_file("com.yellowdanger", name)
         strcpy(name, path)
@@ -137,10 +142,8 @@ def load_level(bool editor):
     self.ticks = 0
     self.state_tick = 0
     self.waypoints_count = 0
-    self.picked = None
-    self.lever_left = 0
-    self.lever_right = 0
-    self.lever_on = False
+    editor.picked = None
+    self.lever = None
     self.sequence = 0
 
     Blocks *blocks = game.blocks
@@ -152,16 +155,11 @@ def load_level(bool editor):
 
     save_load_from_offset(f, 0, 0, 0)
 
-    BlockType *flowers[8] = {None,
-        Render_Gentian,
-        Render_Edelweiss,
-        Render_Orchid,
-        Render_Hyacinth,
-        Render_Sunflower,
-        Render_Rose,
-        Render_Belladonna}
-
     for Block *b in LandArray *blocks.fixed:
+        if b.block_type == Render_LeverLeft or\
+                b.block_type == Render_LeverRight:
+            if b.frame == 1:
+                self.lever = b
         if b.block_type == Render_Waypoint:
             self.waypoints[b.frame][0] = b.x
             self.waypoints[b.frame][1] = b.y
@@ -171,10 +169,10 @@ def load_level(bool editor):
         # If a level is reloaded, and a flower is not picked (which
         # sets y to somewhere around -9000), it means we failed or
         # reset the level and so ought to get the flower again.
-        for int i in range(1, 8):
-            if b.block_type == flowers[i]:
-                if b.y > -8000:
-                    game.flower[i] = False
+        int flower = block_type_flower(b.block_type)
+        if flower:
+            if b.y > -8000:
+                game.flower[flower] = False
                 
 
     bool visible = True

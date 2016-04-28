@@ -25,13 +25,9 @@ def all_init(All *self):
 
     self->ftpos = 0
     self->direct_speed_measure = self->FPS
-    
-    self->mouse_down = False
-    self->mx = 0
-    self->my = 0
+
     
     self->show_fps = False
-    self->running = True
 
 def sound(LandSound *s, float vol):
     All *a = global_a
@@ -69,18 +65,27 @@ def redraw():
     All *a = global_a
 
     if a.load_after_redraw:
-        render_loading_screen()
-        a.load_after_redraw++
-
+        if not a.overview:
+            render_loading_screen()
+        if a.load_after_redraw == 1:
+            a.load_after_redraw = 2
+        elif a.load_after_redraw == 2:
+            # wait for logic code to advance
         if a.load_after_redraw > 2:
+            a.load_after_redraw++
             double t = land_get_time()
             while True:
                 if not blocks_preload(game->blocks):
                     a.load_after_redraw = 0
+
+                    if a.overview:
+                        overview_render_next(game->overview)
                     break
                 if land_get_time() > t + 0.01:
                     break
-        return
+
+        if not a.overview:
+            return
     
     float w = land_display_width()
     #float h = land_display_height()
@@ -136,7 +141,6 @@ def init():
     all_init(a)
     land_display_title("Yellow and Dangerous")
     reload_fonts()
-    
 
     a.up = False
     a.down = False
@@ -175,7 +179,7 @@ def update():
 
     if a.load_after_redraw:
         if a.load_after_redraw == 2:
-            load_level(False)
+            load_level(a.editor)
             if a.find_entrance:
                 a.find_entrance = False
                 if game->player:
@@ -250,10 +254,6 @@ def runner_update(LandRunner *self):
         #elif k == 'm':
         #    land_stream_set_playing(render_music,
         #        not land_stream_is_playing(render_music))
-
-    a->mouse_down = land_mouse_button(0)
-    a->mx = land_mouse_x()
-    a->my = land_mouse_y()
 
 def runner_redraw(LandRunner *self):
     All *a = global_a
