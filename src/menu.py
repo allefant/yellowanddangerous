@@ -9,6 +9,7 @@ class Menu:
     int hilite[3]
 
     int pos
+    int sub_frame
 
 macro S(text):
     strcpy(menu->items[menu->pos][menu->n[menu->pos]++], text)
@@ -76,7 +77,7 @@ static def menu_items(Menu *menu):
     S("Object")
     T
     S(a.editor ? "Play" : "Edit")
-    S("Title")
+    S("Exit")
     T
     S("Save")
     S("Load")
@@ -104,6 +105,11 @@ static def menu_items(Menu *menu):
         for BlockType *bt in LandArray *block_types:
             if category(bt) == i:
                 S(bt.name)
+
+    T
+    S("0")
+    S("1")
+    menu.sub_frame = menu.pos
 
 def menu_toggle:
     if game.menu_on:
@@ -155,7 +161,7 @@ def menu_draw(Menu *menu):
             land_text_pos(x, y)
             land_color(0, 0, 0, 1)
             land_print("%s", text)
-        land_pop_transform()
+    land_pop_transform()
 
 def menu_key(int k):
     All *a = global_a
@@ -346,7 +352,7 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
         if land_equals(text, "Level"): menu.menu[mi] = 4
         if land_equals(text, "Object"): menu.menu[mi] = 5
 
-        if land_equals(text, "Title"):
+        if land_equals(text, "Exit"):
            main_switch_to_title(0)
 
         if land_equals(text, "Play"):
@@ -369,12 +375,34 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
         ON("Hint", 'h')
       
         ON("Delete", LandKeyDelete)
-        ON("Frame", 'f')
+
+        if land_equals(text, "Frame"):
+            menu.menu[0] = menu.sub_frame
+            menu.menu[1] = -1
+            game.menu_on = True
+
+            Block *p = editor.picked
+            if p:
+                int n = land_array_count(p.block_type->bitmaps)
+                if n > 10:
+                    n = 10
+                for int i in range(n):
+                    sprintf(menu.items[menu.sub_frame][i], "Frame %d",
+                        1 + i)
+                menu.n[menu.sub_frame] = n
+
         if land_equals(text, "Type"):
             menu.menu[mi] = 6
             game.menu_on = True
         ON("Align", 'c')
         ON("Insert", LandKeyInsert)
+
+        if land_starts_with(text, "Frame "):
+            Block *p = editor.picked
+            if p:
+                p.frame = selected
+                if p.frame >= land_array_count(p.block_type->bitmaps):
+                    p.frame = 0
 
         for int c in range(categories_count):
             if land_equals(text, category_name(c)):

@@ -23,7 +23,7 @@ make 3 13 0 13
 make 3 21 0 13
 make 3 29 0 13
 make 3 37 0 13
-make 18 45 3 31
+make 18 45 17 21
 make 3 5 0 21
 make 3 13 0 21
 make 3 21 0 21
@@ -96,3 +96,6 @@ move 0 59 0
 make 9 21 4 13
 make 19 29 19 9
 frame 2
+make 15 37 12 21
+make 17 39 4 23
+make 17 39 8 23

@@ -1,3 +1,21 @@
+import common
+
+"""
+Savegame format:
+a block in the center is at 22, 4, 22
+position are multipled by 24
+
+A block at 22/4/22 will end up at 0/0/0.
+A block at 0/0/0 will end up at -528,-96,-528.
+
+"""
+
+global class SaveInfo:
+    bool saved
+    bool exits[4]
+    int n
+    float *xy
+
 import block
 import game
 import editor
@@ -114,7 +132,79 @@ def save_level(bool editing):
                 land_file_print(f, "frame %d", block.frame)
             
     land_file_destroy(f)
+
+static def add(SaveInfo *si, float x, y, z, xs, ys, zs):
+    float xy[14]
+    float *p = xy
+    Viewport v = {0, 0, 1}
+    project(&v, x + xs, y + ys, z, p + 0, p + 1); p += 2
+    project(&v, x, y + ys, z, p + 0, p + 1); p += 2
+    project(&v, x, y + ys, z + zs, p + 0, p + 1); p += 2
+    project(&v, x, y, z + zs, p + 0, p + 1); p += 2
+    project(&v, x + xs, y, z + zs, p + 0, p + 1); p += 2
+    project(&v, x + xs, y, z, p + 0, p + 1); p += 2
+    project(&v, x + xs, y + ys, z + zs, p + 0, p + 1); p += 2
+    si.xy = land_realloc(si.xy, (si.n + 14) * sizeof(float))
+    memcpy(si.xy + si.n, xy, sizeof(float) * 14)
+    si.n += 14
+
+def save_check(int level, SaveInfo *si):
+    char name[1024]
+
+    LandBuffer *f = None
+
+    if level == game.level:
+        sprintf(name, "data/levels/level%02d.txt", level)
+        f = land_buffer_read_from_file(name)
+
+    if not f:
+        sprintf(name, "save%02d.txt", level)
+        char *path = land_get_save_file("com.yellowdanger", name)
+        strcpy(name, path)
+        land_free(path)
+        f = land_buffer_read_from_file(name)
+
+    if not f:
+        return
+
+    memset(si, 0, sizeof *si)
+   
+    si.saved = True
+
+    LandArray *rows = land_buffer_split(f, '\n')
+    land_buffer_destroy(f)
+   
+    for LandBuffer *rowb in LandArray *rows:
+        char *row = land_buffer_finish(rowb)
+        if land_starts_with(row, "make "):
+            int t, xi, yi, zi
+            sscanf(row, "make %d %d %d %d", &t, &xi, &yi, &zi)
+
+            BlockType *bt = land_array_get_nth(block_types, t)
+
+            float x = (xi - 22 - 3) * 24
+            float y = (yi - 4) * 24
+            float z = (zi - 22 - 3) * 24
+
+            if y < -5000:
+                continue
+
+            if bt == Render_Scientist:
+                continue
+
+            add(si, x, y, z, bt.xs, bt.ys, bt.zs)
+
+            if bt == Render_ExitLeft:
+                if xi < 22: si.exits[0] = True
+                if xi > 22: si.exits[1] = True
+            if bt == Render_ExitRight:
+                if zi < 22: si.exits[2] = True
+                if zi > 22: si.exits[3] = True
+           
+        land_free(row)
     
+    land_array_destroy(rows)
+
 def load_level(bool editing):
 
     land_pause()
@@ -133,6 +223,8 @@ def load_level(bool editing):
         land_free(path)
         f = land_buffer_read_from_file(name)
     if not f:
+        if not editing:
+            print("    failed from %s", name)
         sprintf(name, "data/levels/level%02d.txt", game.level)
         f = land_buffer_read_from_file(name)
         self.pristine = True
@@ -150,6 +242,7 @@ def load_level(bool editing):
     blocks_reset(blocks)
 
     if not f:
+        printf("    failed from %s", name)
         land_unpause()
         return
 
@@ -192,8 +285,9 @@ def load_level(bool editing):
                     b.y -= 9000
 
     if game.level == game_starting_level:
-        game.sequence = 1
-        game.sequence_ticks = 0
+        if not editing:
+            game.sequence = 1
+            game.sequence_ticks = 0
 
     land_unpause()
 

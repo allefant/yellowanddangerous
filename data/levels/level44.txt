@@ -1,90 +1,81 @@
-hint Yellow and...|helpful?
-title Courtyard
-make 20 13 4 13
-make 10 25 4 21
-make 6 21 4 29
-make 6 33 4 29
-make 13 33 8 17
-make 13 33 12 17
-make 16 5 16 37
-make 4 5 2 5
-make 4 13 2 5
-make 4 21 2 5
-make 4 29 2 5
-make 4 37 2 5
-make 4 5 2 13
+hint Blowing in the wind
+title Ventilation duct
+make 10 39 4 15
+frame 2
+make 37 33 4 11
+make 37 29 4 11
+frame 2
+make 37 25 4 11
+make 37 21 4 11
+frame 2
+make 37 17 4 11
+frame 1
+make 37 13 4 11
+frame 1
+make 13 21 4 41
+move 47 0 0
+make 36 11 4 33
+make 36 11 4 29
+frame 2
+make 36 11 4 25
+frame 2
+make 36 11 4 21
+frame 3
+make 36 11 4 17
+frame 1
+make 36 11 4 13
+frame 1
+make 36 11 4 37
+frame 1
+make 36 11 4 41
+frame 1
+make 30 37 2 37
+frame 1
+make 4 29 2 13
+make 4 37 2 13
+make 25 12 10 42
+make 4 21 2 37
+make 4 13 2 29
+make 4 13 2 21
 make 4 13 2 13
 make 4 21 2 13
-make 12 29 3 13
-move 0 60 0
-make 23 33 2 13
-make 4 37 2 13
-make 5 29 2 17
-make 18 1 3 29
-frame 2
-make 4 5 2 21
-make 4 13 2 21
-make 4 21 2 21
-make 12 29 3 21
-move 0 60 0
-make 23 33 2 21
-make 4 37 2 21
-make 5 29 2 25
-make 4 5 2 29
-make 4 13 2 29
-make 4 21 2 29
-make 12 29 3 29
-move 0 60 0
-make 23 33 2 29
-make 4 37 2 29
-make 5 29 2 33
-make 4 5 2 37
-make 4 13 2 37
-make 4 21 2 37
-make 4 29 2 37
-make 4 37 2 37
-make 17 9 4 9
-make 17 13 4 9
-make 17 17 4 9
-make 17 21 4 9
-make 17 33 4 9
-make 17 37 4 9
-make 17 41 4 9
-make 17 9 4 13
-make 25 13 4 13
-make 17 41 4 13
-make 17 9 4 17
-make 17 41 4 17
-make 17 29 4 9
-make 17 25 4 9
-make 17 9 4 21
-make 25 13 4 29
+make 25 34 10 12
+make 25 30 10 12
 frame 1
-make 25 29 4 29
+make 25 26 10 12
 frame 2
-make 17 41 4 29
-make 17 9 4 25
-make 17 41 4 33
-make 17 9 4 37
-make 17 41 4 37
-make 17 9 4 41
-make 17 13 4 41
-make 17 17 4 41
-make 17 21 4 41
-make 17 25 4 41
-make 17 29 4 41
-make 17 33 4 41
-make 17 37 4 41
-make 17 41 4 41
-make 17 9 8 9
-make 17 41 8 9
-make 17 9 8 41
-make 17 41 8 41
-make 17 9 12 9
-make 17 41 12 9
-make 17 9 12 41
-make 17 41 12 41
-make 16 37 16 5
-make 18 45 3 21
-make 19 21 3 1
-frame 2
+make 25 22 10 12
+frame 3
+make 25 18 10 12
+frame 4
+make 25 14 10 12
+frame 4
+make 25 12 10 14
+frame 4
+make 25 12 10 18
+frame 4
+make 25 12 10 22
+frame 5
+make 25 12 10 26
+frame 6
+make 25 12 10 30
+frame 7
+make 25 12 10 34
+frame 8
+make 4 13 2 37
+make 25 12 10 38
+frame 9
+make 4 29 2 37
+make 32 33 4 35
+make 18 47 3 39
+make 12 45 3 13
+move 0 60 0
+make 38 33 1 21
+make 38 45 1 21
+make 38 34 1 45
+make 19 27 3 3
+frame 3
+make 4 35 2 5
+make 5 27 2 7
+make 18 7 11 37
+frame 3

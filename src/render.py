@@ -9,6 +9,7 @@ import gremlin
 import intro
 import testtube
 import menu
+import map
 
 type Game *game
 type Editor *editor
@@ -163,6 +164,7 @@ load("BridgeRight", 2.5, 0.25, 0.5, dynamic = True, lift = True)
 load("BridgeLeft", 0.5, 0.25, 2.5, dynamic = True, lift = True)
 load("Car", 2, 2, 3, frames = 2)
 load("Key", .5, .5, .5, dynamic = True)
+load("BlockBottomRight3", 1, 0.5, 2)
 
 loads("step")
 loads("push")
@@ -380,6 +382,12 @@ static def draw_pause_controls:
     land_filled_rectangle(w - rr + rr * 4 / 8, rr / 8,
         w - rr + rr * 7 / 8, rr * 7 / 8)
 
+    if not global_a->show_map:
+        return
+        
+    land_filled_triangle(w - rr, w / 8 + rr / 2,
+        w - rr / 8, w / 8, w - rr / 8, w / 8 + rr)
+
 def render(Game *g):
     All *a = global_a
     float w = land_display_width()
@@ -402,12 +410,14 @@ def render(Game *g):
     else:
         render_blocks(g->blocks, g->viewport)
 
-        if game.sequence:
+        if game.sequence and not a.render_screenshot:
             intro_postprocess()
 
     land_reset_transform()
+    land_render_state(LAND_DEPTH_TEST, False)
 
     if not game.sequence and not a.render_screenshot:
+
         draw_move_controls()
         draw_jump_controls()
         draw_pause_controls()
@@ -425,8 +435,24 @@ def render(Game *g):
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
         land_print("%d", g->overview->selected)
+
+    if a.show_map:
+        map_render()
         
     if not a.render_screenshot and not a.overview:
+
+        float v[8]
+        float o = 72
+        float m = 480
+        Viewport  *vp = game.viewport
+
+        if a.editor:
+            project(vp, o-m, 0, o-m, v + 0, v + 1)
+            project(vp, o-m, 0, o+m, v + 2, v + 3)
+            project(vp, o+m, 0, o+m, v + 4, v + 5)
+            project(vp, o+m, 0, o-m, v + 6, v + 7)
+            land_color(.5, .5, .5, 1)
+            land_polygon(4, v)
         
         land_color(0, 0, 0, 1)
         land_text_pos(0, 0)
@@ -447,7 +473,7 @@ def render(Game *g):
 
     land_pop_transform()
 
-def render_block(Block *self, Viewport *viewport):
+def render_block_scaled(Block *self, Viewport *viewport, double scaled):
     All *a = global_a
     BlockType *bt = self->block_type
     float x, y
@@ -487,7 +513,7 @@ def render_block(Block *self, Viewport *viewport):
         land_image_load_on_demand(frame)
         x -= land_image_width(frame) / 4
         y -= land_image_height(frame) / 4
-        land_image_draw_scaled_tinted(frame, x, y, 0.5, 0.5,
+        land_image_draw_scaled_tinted(frame, x, y, scaled, scaled,
                 cr, cg, cb, ca)
 
     bool show_bounds = debug_bounding_boxes or self == editor.picked
@@ -558,7 +584,9 @@ def render_block(Block *self, Viewport *viewport):
             land_line(v[16], v[17], v[18], v[19])
             land_line(v[18], v[19], v[20], v[21])
             land_line(v[20], v[21], v[14], v[15])
-            
+
+def render_block(Block *self, Viewport *viewport)
+    render_block_scaled(self, viewport, 0.5)
 
 def render_blocks(Blocks *blocks, Viewport *viewport):
 

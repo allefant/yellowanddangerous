@@ -7,14 +7,19 @@ make 13 25 8 37
 make 3 21 0 13
 make 3 21 0 21
 make 3 21 0 29
-make 3 21 0 37
+make 3 19 0 37
 make 9 21 4 13
-make 19 21 11 1
+make 19 25 11 1
 frame 1
-make 3 21 8 5
-make 18 29 3 25
+make 3 29 -1 13
+make 18 37 2 5
 frame 2
-make 19 21 3 45
+make 19 5 3 45
 frame 3
-make 18 17 3 25
+make 18 3 3 15
 frame 3
+make 3 17 8 5
+make 3 29 -1 5
+make 3 25 8 5
+make 3 7 0 15
+make 3 5 0 37

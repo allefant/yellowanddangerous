@@ -1,79 +1,57 @@
-hint Blowing in the wind
-title Ventilation duct
-make 10 39 4 15
+hint use the stairs
+title Basement
+make 10 33 4 7
 frame 2
-make 37 33 4 11
-make 37 29 4 11
-frame 2
-make 37 25 4 11
-make 37 21 4 11
-frame 2
-make 37 17 4 11
-frame 1
-make 37 13 4 11
-frame 1
-make 13 21 4 41
-move 47 0 0
-make 36 11 4 33
-make 36 11 4 29
-frame 2
-make 36 11 4 25
-frame 2
-make 36 11 4 21
-frame 3
-make 36 11 4 17
-frame 1
-make 36 11 4 13
-frame 1
-make 36 11 4 37
-frame 1
-make 36 11 4 41
-frame 1
-make 30 37 2 37
-frame 1
-make 4 29 2 13
+make 43 35 8 13
+make 43 35 16 29
+make 13 25 -2 15
+make 43 13 16 51
+make 13 25 -2 19
+make 20 15 16 43
+make 13 27 13 13
+make 13 15 17 17
+make 4 21 -2 29
+make 4 29 0 29
+make 4 13 -4 29
+make 4 13 14 29
+make 4 21 14 29
+make 4 29 14 29
+make 4 29 14 37
+make 4 37 2 29
+make 4 37 2 21
+make 4 33 4 13
+make 4 29 6 13
+make 4 25 8 13
+make 4 21 10 13
+make 4 17 12 13
+make 4 13 14 13
 make 4 37 2 13
-make 25 12 10 42
-make 4 21 2 37
-make 4 13 2 29
-make 4 13 2 21
-make 4 13 2 13
-make 4 21 2 13
-make 25 34 10 12
-make 25 30 10 12
+make 4 13 14 21
+make 4 13 14 37
+make 4 13 14 45
+make 4 21 14 45
+make 4 29 14 45
+make 19 29 3 1
+frame 2
+make 4 13 -4 13
+make 4 13 -4 21
+make 4 37 2 5
+make 4 29 2 5
+make 4 21 2 5
+make 18 37 15 37
+make 25 31 16 47
 frame 1
-make 25 26 10 12
+make 25 17 16 47
+make 25 31 16 31
 frame 2
-make 25 22 10 12
+make 25 15 16 31
 frame 3
-make 25 18 10 12
-frame 4
-make 25 14 10 12
-frame 4
-make 25 12 10 14
-frame 4
-make 25 12 10 18
-frame 4
-make 25 12 10 22
-frame 5
-make 25 12 10 26
-frame 6
-make 25 12 10 30
-frame 7
-make 25 12 10 34
-frame 8
-make 4 13 2 37
-make 25 12 10 38
-frame 9
-make 4 29 2 37
-make 32 33 4 35
-make 18 47 3 37
-make 12 45 3 13
+make 4 21 -4 13
+make 12 21 15 37
 move 0 60 0
-make 38 33 1 21
-make 38 45 1 21
-make 38 34 1 45
-make 19 37 3 9
-frame 2
-make 19 13 11 5
-frame 2
+make 12 25 15 37
+move 0 60 0
+make 12 25 15 41
+move 0 60 0
+make 12 21 15 41
+move 0 60 0

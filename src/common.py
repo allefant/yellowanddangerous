@@ -1,8 +1,8 @@
 import land.land
 import all
 
-global char const *VERSION = "1.7"
-global bool global_editor_enabled = True
+global char const *VERSION = "1.8"
+global bool global_can_enable_editor = True
 
 def print(char const *str, ...):
     va_list args

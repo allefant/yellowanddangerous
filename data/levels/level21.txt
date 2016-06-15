@@ -39,9 +39,9 @@ make 28 13 8 37
 make 28 13 4 37
 make 28 21 8 17
 make 28 21 8 37
-make 28 39 2 37
-make 27 35 4 39
-make 27 35 8 39
+make 28 23 2 39
+make 27 19 4 39
+make 27 19 8 39
 make 4 5 4 29
 make 4 5 4 21
 make 4 5 4 13
@@ -56,6 +56,8 @@ make 18 1 5 21
 frame 1
 make 28 5 4 37
 make 28 21 12 17
-make 19 39 5 39
+make 19 21 3 45
 frame 2
 make 18 47 5 21
+make 5 21 2 41
+make 28 35 2 39

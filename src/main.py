@@ -4,6 +4,7 @@ import save
 import title
 
 global char *main_data_path
+type Game *game
 
 def main_switch_to_game:
     All *a = global_a
@@ -158,7 +159,8 @@ def init():
 
     a->show_fps = False
 
-    a->cheatpos = 0
+    for int i in range(10):
+        a->cheatpos[i] = 0
 
 def done():
     All *a = global_a
@@ -204,15 +206,21 @@ def runner_done(LandRunner *self):
 
 static def cheat(char unichar):
     All *a = global_a
-    char const *cheatcode = "iddqd"
-    if unichar == cheatcode[a->cheatpos]:
-        a->cheatpos += 1
-        if a->cheatpos == (int)strlen(cheatcode):
-            game->level += 1
-            a->cheatpos = 0
-            load_level(False)
-    else:
-        a->cheatpos = 0
+    char const *cheatcodes[] = {"iddqd", "idflower", "idkey"}
+    for int i in range(3):
+        if unichar == cheatcodes[i][a->cheatpos[i]]:
+            a->cheatpos[i] += 1
+            if a->cheatpos[i] == (int)strlen(cheatcodes[i]):
+                a->cheatpos[i] = 0
+                if i == 0:
+                    a.godmode = not a.godmode
+                if i == 1:
+                    for int j in range(1, 8):
+                        game.flower[j] = True
+                if i == 2:
+                    game.key = True
+        else:
+            a->cheatpos[i] = 0
 
 def runner_update(LandRunner *self):
     All *a = global_a
@@ -249,7 +257,8 @@ def runner_update(LandRunner *self):
                 if u == 0:
                     a.text_input = 0
             elif not a.title:
-                game_key(game, k)
+                if a.editor_enabled:
+                    game_key(game, k)
 
         #elif k == 'm':
         #    land_stream_set_playing(render_music,
@@ -280,7 +289,7 @@ int def my_main():
     
     #land_set_display_parameters(w, h, LAND_OPENGL)
     *** "ifdef" ANDROID
-    land_set_display_parameters(w, h, LAND_FULLSCREEN | LAND_DEPTH |
+    land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH |
         LAND_LANDSCAPE)
     *** "else"
     land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE)

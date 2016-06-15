@@ -1,6 +1,6 @@
 hint To lift, stand still,|press and hold jump,|then push at the same time.
 title Packing station
-make 10 41 4 25
+make 10 39 4 19
 make 13 13 12 17
 make 13 13 12 21
 make 19 13 3 1
@@ -13,14 +13,14 @@ make 3 29 0 13
 make 3 13 0 21
 make 3 21 0 21
 make 3 29 0 21
-make 4 37 2 21
+make 4 37 2 17
 make 3 13 0 29
 make 3 21 0 29
 make 3 29 0 29
 make 3 13 0 37
 make 3 21 0 37
 make 3 29 0 37
-make 19 13 3 45
+make 19 13 2 45
 make 11 25 4 5
 make 11 29 4 5
 make 11 33 4 5
@@ -42,5 +42,5 @@ move 0 60 0
 make 3 13 4 17
 make 12 29 7 37
 move 0 60 0
-make 18 45 3 21
+make 18 45 3 17
 frame 2

@@ -60,9 +60,12 @@ make 12 19 3 19
 move 0 60 0
 make 12 37 3 5
 move 0 60 0
-make 47 8 11 0
-make 19 22 11 42
+make 19 21 11 5
+frame 4
+make 19 21 11 45
 frame 2
 make 48 0 8 11
-make 19 8 11 -4
+make 19 21 11 1
 make 49 9 10 41
+make 19 21 11 41
+frame 4

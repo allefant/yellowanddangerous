@@ -90,6 +90,12 @@ def title_tick:
                     a.godmode = False
                     restart = True
                 if i == 0:
+                    if global_can_enable_editor and volget(land_touch_x(ti)) > 0:
+                        a.editor_enabled = True
+                        a.editor = True
+                    else:
+                        a.editor_enabled = False
+                        
                     # load saved game
                     load_info()
                     main_switch_to_game()
@@ -99,7 +105,6 @@ def title_tick:
 
 static int volx = 0
 static def drawvol(int v, float x, y):
-    volx = x
     y += 16
     float s = 48
     for int i in range(7):
@@ -164,6 +169,8 @@ def title_render:
             land_print("Pull/Lift: Hold jump then move")
         land_font_set(a.big)
 
+    volx = tx + yw + 6 * 32
+
     for int i in range(5):
         float y = (h - 64 * 5) / 2 + i * 64 + (32 - th) / 2
         float x = tx
@@ -188,10 +195,10 @@ def title_render:
                 if a.dpad == 5: land_print("two finger swipe")
             elif i == 2:
                 land_print("Music")
-                drawvol(a.music, x + yw + 6 * 32, y)
+                drawvol(a.music, volx, y)
             elif i == 3:
                 land_print("Sound")
-                drawvol(a.sound, x + yw + 6 * 32, y)
+                drawvol(a.sound, volx, y)
             elif i == 4:
                 land_print("Back")
         elif restart:
@@ -205,6 +212,9 @@ def title_render:
         else:
             if i == 0:
                 land_print("Play")
+                if global_can_enable_editor:
+                    land_text_pos(volx + 48, y)
+                    land_print("Edit")
             elif i == 2:
                 land_print("Reset room")
             elif i == 3:

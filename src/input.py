@@ -17,6 +17,19 @@ static def check_pause_button(LandFloat mx, my) -> bool:
         return True
     return False
 
+static def check_title_button(LandFloat mx, my) -> bool:
+    All *a = global_a
+    if not a.show_map:
+        return False
+    double rr = land_display_width() / 8 * 0.8
+    if a.dpad == 2 or a.dpad == 3:
+        rr *= 1.5
+    double ry = rr
+    double rx = land_display_width() - rr
+    if mx > rx and my > ry and my < ry + rr and (a.dpad < 4 or not a.swipe):
+        return True
+    return False
+
 static def check_menu(LandFloat mx, my, bool clicked) -> bool:
     if not game.menu_on:
         return False
@@ -40,10 +53,18 @@ def input_tick:
 
         if check_pause_button(mx, my):
             if clicked:
-                if global_editor_enabled:
+                if a.editor_enabled:
                     menu_toggle()
                 else:
-                    main_switch_to_title(0)
+                    if a.show_map:
+                        a.show_map = False
+                    else:
+                        a.show_map = True
+            return
+
+        if check_title_button(mx, my):
+            a.show_map = False
+            main_switch_to_title(0)
             return
 
         if check_menu(mx, my, released):

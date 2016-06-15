@@ -17,12 +17,13 @@ class All:
     bool show_fps
     bool show_help
 
-    int cheatpos
+    int cheatpos[10]
 
     LandColor text
 
     bool title
 
+    bool editor_enabled
     bool editor
     int text_input
     int cursor
@@ -53,3 +54,4 @@ class All:
     double swipex, swipey, swipet, swipej
 
     int resize_in_ticks
+    bool show_map

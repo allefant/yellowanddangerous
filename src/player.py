@@ -1,6 +1,8 @@
 import common
 import block, game, main
 
+type Game *game
+
 class Player:
     Block super
     LandArray *stack
@@ -224,7 +226,9 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
     Player *self = (void *)super
     cube_touch(super, c, dx, dy, dz)
     if c->block_type == Render_Gremlin:
-        self.dead = True
+        Gremlin *gremlin = (void *)c
+        if not gremlin.respect:
+            self.dead = True
     int flower = 0
     if c->block_type == Render_Car:
         if game->key:
@@ -246,11 +250,11 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
     if c->block_type == Render_Belladonna:
         flower = 7
     if flower:
-        c->y -= 9000
-        game->flower[flower] = True
+        c->y = -9000
+        game.flower[flower] = True
         sound(Render_pickup, 1)
     if c->block_type == Render_Key:
-        c->y -= 9000
+        c->y = -9000
         game->key = True
         sound(Render_pickup, 1)
     if dy < 0:

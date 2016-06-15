@@ -57,8 +57,8 @@ def blocktype_preload(BlockType *self) -> bool:
             return True
     return False
 
-def block_type_flower(BlockType *self) -> int:
-    BlockType *flowers[8] = {None,
+def block_type_flowers -> BlockType**:
+    return (BlockType *[8]) {None,
         Render_Gentian,
         Render_Edelweiss,
         Render_Orchid,
@@ -66,7 +66,14 @@ def block_type_flower(BlockType *self) -> int:
         Render_Sunflower,
         Render_Rose,
         Render_Belladonna}
+   
+def block_type_flower(BlockType *self) -> int:
+    BlockType **flowers = block_type_flowers()
     for int i in range(1, 8):
         if self == flowers[i]:
             return i
     return 0
+
+def block_flower(int i) -> BlockType *:
+    BlockType **flowers = block_type_flowers()
+    return flowers[i]

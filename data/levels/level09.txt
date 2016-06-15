@@ -15,7 +15,7 @@ make 60 37 3 19
 make 60 -3 3 19
 make 18 45 3 21
 frame 2
-make 18 -9 3 21
+make 18 -7 3 21
 make 25 33 10 21
 frame 3
 make 25 23 10 21

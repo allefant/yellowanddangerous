@@ -1,8 +1,9 @@
 hint Yay! Levers!
 title Storage
-make 10 7 4 9
-frame 62
+make 10 8 4 8
+frame 54
 make 30 29 2 13
+frame 2
 make 13 31 4 9
 make 31 3 4 25
 make 4 5 2 21
@@ -12,17 +13,17 @@ make 4 29 2 21
 make 4 5 2 5
 make 27 37 0 13
 make 27 3 0 13
-make 12 7 3 29
+make 12 7 3 35
 move 0 60 0
-make 1 37 -2 25
-make 40 35 -2 29
-make 18 45 -1 25
+make 68 7 2 39
+make 5 7 2 31
+make 18 45 3 21
 make 4 29 2 29
-make 40 35 -2 25
-make 18 -7 3 5
+make 68 11 2 35
+make 18 3 3 39
 frame 2
 make 19 5 3 1
 frame 2
-make 4 -3 2 5
 make 19 29 3 37
 frame 2
+make 4 37 2 21

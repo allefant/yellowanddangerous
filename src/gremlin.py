@@ -8,6 +8,7 @@ class Gremlin:
 def gremlin_allocate -> Block *:
     Gremlin *self
     land_alloc(self)
+    self.respect = 60
     return &self.super
 
 def gremlin_tick(Block *super):
@@ -43,4 +44,5 @@ def gremlin_touch(Block *super, Block *c, float dx, dy, dz):
         super.dx = c.dx
         super.dz = c.dz
     if c->block_type == Render_Scientist:
-        ((Player *)c)->dead = True
+        if not self.respect:
+            ((Player *)c)->dead = True

@@ -108,9 +108,6 @@ def game_recalc:
     game.blocks.rebuild_dynamic_cache = True
 
 def game_key(Game *self, int k):
-    if not global_editor_enabled:
-        return
-    
     menu_key(k)
 
 def game_tick(Game *self):
@@ -129,6 +126,9 @@ def game_tick(Game *self):
 
     if a.overview:
         overview_tick(game.overview)
+        return
+
+    if a.show_map:
         return
     
     int plates_count = 0

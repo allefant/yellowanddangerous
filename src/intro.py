@@ -23,8 +23,11 @@ static class Smoke:
     float x, y, z
     float sx, sy
     float dx, dy, dz
+    float ax, ay, az
+    float r, g, b, a
     bool two
 static Smoke smokes[STARN]
+static bool smoke
 
 static def walls_down(bool final):
     for Block *b in LandArray *game->blocks->fixed:
@@ -51,23 +54,14 @@ def intro_sequence:
 static def extro:
     Game *g = game
     int t = g.sequence_ticks++
-    intro_back.r = 0
-    intro_back.g = 0
-    intro_back.b = 0
-    intro_back.a = 1
+    set_back_color(0, 0, 0)
     game->player->super.y = 9000
     if t < 60 * 5:
         move_car()
-        intro_tint.r = 1
-        intro_tint.g = 1
-        intro_tint.b = 1
-        intro_tint.a = 1
+        set_tint_color(1, 1, 1)
         smokes[0].active = False
     else:
-        intro_tint.r *= 0.99
-        intro_tint.g *= 0.99
-        intro_tint.b *= 0.99
-        intro_tint.a = 1
+        fade_tint_color(0, 0, 0)
         scrolly++
 
         if not smokes[0].active:
@@ -85,14 +79,39 @@ static def extro:
                 if s.z > 480:
                     s.z -= 960
 
+static macro set__color(X, r, g, b):
+    LandColor *c = &intro_******X
+    c.r = r
+    c.g = g
+    c.b = b
+    c.a = 1
+
+static macro fade__color(X, r, g, b, p):
+    double q = 1 - p
+    LandColor *c = &intro_******X
+    c.r *= p
+    c.r += q * r
+    c.g *= p
+    c.g += q * g
+    c.b *= p
+    c.b += q * b
+    c.a = 1
+
+static def set_back_color(float r, g, b):
+    set__color(back, r, g, b)
+
+static def fade_back_color(float r, g, b):
+    fade__color(back, r, g, b, 0.95)
+
+static def set_tint_color(float r, g, b):
+    set__color(tint, r, g, b)
+
+static def fade_tint_color(float r, g, b):
+    fade__color(tint, r, g, b, 0.99)
+
 static def intro:
     All *a = global_a
     Game *g = game
-
-    intro_back.r = 0
-    intro_back.g = 0
-    intro_back.b = 0
-    intro_back.a = 1
 
     a.right = 0
     a.left = 0
@@ -101,19 +120,19 @@ static def intro:
     a.jump = 0
     int t = g.sequence_ticks++
     if t == 1:
+        smoke = False
+        set_back_color(0, 0, 0)
+        set_tint_color(1, 1, 1)
         test_tube = None
         find_test_tube()
         if not test_tube:
             g.sequence = 0
             return
-        intro_tint.a = 1
-        intro_tint.r = .8
-        intro_tint.g = .8
-        intro_tint.b = .8
     int w = 60 * 2.5
     if t < w:
         a.left = 1
         a.up = 1
+        fade_tint_color(.8, .8, .8)
     elif t < w + 60 * 0.5:
         a.jump = 1
         ty = test_tube.y
@@ -125,26 +144,17 @@ static def intro:
         test_tube.z = g.player->super.z
         test_tube.y = ty
     elif t < w + 60 * 5:
-        if test_tube.y < 0:
-            pass
-        elif test_tube.y < 1:
-            test_tube.y = -1
-            LandArray *c = block_colliders(test_tube)
-            for Block *b in LandArray *c:
-                b.frame = 1
-            test_tube.y = -9000
-            smokes[0].active = False
-            sound(Render_glass, 1)
-        float p = (w + 60 * 5 - t) / (60 * 4.0)
-        intro_tint.a = 1
-        intro_tint.r = .8 * p + (1 - p) * 1
-        intro_tint.g = .8 * p + (1 - p) * 1
-        intro_tint.b = .8 * p  + (1 - p) * 0
+        if test_tube.y < -8000:
+            if not smoke:
+                setup_smoke()
+        if t > w + 60 * 4:
+            fade_tint_color(1, 0.8, 0.1)
+    elif t < w + 60 * 6:
+        fade_tint_color(1, 1, 1)
+        walls_down(False)
     elif t < w + 60 * 7:
-        intro_tint.a = 1
-        intro_tint.r *= 0.99
-        intro_tint.g *= 0.99
-        intro_tint.b *= 0.99
+        fade_tint_color(1, 1, 1)
+        fade_back_color(1, 1, 1)
         walls_down(False)
     else:
         walls_down(True)
@@ -157,29 +167,38 @@ def intro_postprocess:
     if game->sequence == 2:
         postprocess2()
 
-static def postprocess1
-    int w = 60 * 2.5
-    int t = game->sequence_ticks
-    if t > w + 60 * 1.5:
-        if not smokes[0].active:
-            for int i in range(SN):
-                Smoke *s = smokes + i
-                s.active = True
-                s.x = game->player->super.x - 72
-                s.z = game->player->super.z
-                s.y = 0
-                s.sx = 0.2
-                s.sy = 0.2
-                float r = land_rnd(0, 2 * pi)
-                s.dx = cos(r) * 2
-                s.dz = sin(r) * 2
-                s.dy = land_rnd(0, 0.2)
-        float a = 0.1
-        float r = 1 * a
-        float g = 0.9 * a
-        float b = 0.3 * a
+static def setup_smoke:
+    if smoke:
+        return
+    smoke = True
+    for int i in range(SN):
+        Smoke *s = smokes + i
+        s.active = True
+        s.x = game->player->super.x - 72
+        s.z = game->player->super.z
+        s.y = 0
+        s.sx = 0.1
+        s.sy = 0.1
+        float r = land_rnd(0, 2 * pi)
+        s.ax = cos(r) * 0.015
+        s.az = sin(r) * 0.015
+        s.ay = -0.2
+        s.dx = s.ax * land_rnd(-60, 60)
+        s.dy = land_rnd(1, 5)
+        s.dz = s.az * land_rnd(-60, 60)
+        s.a = 0.3
+        s.r = land_rnd(0.8, 1)
+        s.g = land_rnd(0.5, 1)
+        s.b = land_rnd(0, 0.4)
+
+static def postprocess1:
+    if smoke:
         for int i in range(SN):
             Smoke *s = smokes + i
+            float a = s.a
+            float r = s.r * a
+            float g = s.g * a
+            float b = s.b * a
             float sx, sy
             project(game->viewport, s.x, s.y, s.z, &sx, &sy)
             land_image_draw_scaled_tinted(Render_Smoke, sx, sy,
@@ -187,9 +206,16 @@ static def postprocess1
                 r, g, b, a)
             s.x += s.dx
             s.y += s.dy
+            if s.y < 0:
+                s.y = 0
+                s.dy = -s.dy
             s.z += s.dz
             s.sx += 0.01
             s.sy += 0.01
+            s.dx += s.ax
+            s.dy += s.ay
+            s.dz += s.az
+            s.a *= 0.99
 
 static char const credits[] = """
 Yellow and Dangerous
