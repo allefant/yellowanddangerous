@@ -1,6 +1,7 @@
 hint Why is every car yellow?
 title Parking lot
 make 10 31 4 31
+frame 2
 make 13 10 4 8
 make 30 7 2 5
 frame 3
@@ -27,3 +28,6 @@ make 32 39 4 7
 make 5 37 2 9
 make 23 25 2 -5
 make 23 21 4 -5
+make 25 1 4 11
+make 25 17 4 11
+make 25 29 4 12

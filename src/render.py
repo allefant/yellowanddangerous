@@ -376,17 +376,18 @@ static def draw_pause_controls:
     land_color(0.5, 0.4, 0, 0.5)
     float w = land_display_width()
     float rr = w / 8 * 0.8
-    
-    land_filled_rectangle(w - rr, rr / 8,
-        w - rr + rr * 3 / 8, rr * 7 / 8)
-    land_filled_rectangle(w - rr + rr * 4 / 8, rr / 8,
-        w - rr + rr * 7 / 8, rr * 7 / 8)
 
-    if not global_a->show_map:
-        return
-        
-    land_filled_triangle(w - rr, w / 8 + rr / 2,
-        w - rr / 8, w / 8, w - rr / 8, w / 8 + rr)
+    if global_a->show_map:
+        land_filled_triangle(w - rr / 8, rr / 2,
+             w - rr, rr, w - rr, 0)
+            
+        land_filled_triangle(w - rr, w / 8 + rr / 2,
+            w - rr / 8, w / 8, w - rr / 8, w / 8 + rr)
+    else:
+        land_filled_rectangle(w - rr, rr / 8,
+            w - rr + rr * 3 / 8, rr * 7 / 8)
+        land_filled_rectangle(w - rr + rr * 4 / 8, rr / 8,
+            w - rr + rr * 7 / 8, rr * 7 / 8)
 
 def render(Game *g):
     All *a = global_a
@@ -407,7 +408,7 @@ def render(Game *g):
 
     if a.overview:
         overview_render(game->overview)
-    else:
+    elif not a.show_map:
         render_blocks(g->blocks, g->viewport)
 
         if game.sequence and not a.render_screenshot:

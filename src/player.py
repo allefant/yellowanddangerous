@@ -231,10 +231,14 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
             self.dead = True
     int flower = 0
     if c->block_type == Render_Car:
-        if game->key:
-            sound(Render_ignition, .5)
-            game->sequence = 2
-            game->sequence_ticks = 0
+        if game->key and game->sequence == 0:
+            LandArray *cs = block_colliders(c)
+            int n = land_array_count(cs)
+            land_array_destroy(cs)
+            if n == 0:
+                sound(Render_ignition, .5)
+                game->sequence = 2
+                game->sequence_ticks = 0
     if c->block_type == Render_Gentian:
         flower = 1
     if c->block_type == Render_Edelweiss:

@@ -218,7 +218,7 @@ static def cheat(char unichar):
                     for int j in range(1, 8):
                         game.flower[j] = True
                 if i == 2:
-                    game.key = True
+                    game.key = not game.key
         else:
             a->cheatpos[i] = 0
 

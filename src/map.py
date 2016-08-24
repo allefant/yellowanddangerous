@@ -13,6 +13,7 @@ class MapRender:
 static MapRender mr
 
 def map_render:
+    All *a = global_a
     float zoom = game.viewport->zoom
     land_reset_transform()
     land_scale(zoom, zoom)
@@ -100,13 +101,35 @@ def map_render:
             #land_color(0, 0, 0, 1)
             #land_polygon(6, bxy)
 
-        land_pop_transform()         
+        land_pop_transform()
+
+
+    float x, y
+    project(game->viewport,
+        -120,
+        0,
+        720,
+        &x, &y)
+    land_text_pos(x, y)
+    land_color(0, 0, 0, 1)
+    if game.key:
+        land_print("car keys found")
+    else:
+        land_print("no car keys")
 
     for int fi in range(1, 8):
-        if game->flower[fi]:
-            if not mr.flower[fi]:
-                mr.flower[fi] = block_new(game->blocks, 120, 0, 720, block_flower(fi))
-            mr.flower[fi]->x = 120 + fi * 60
-            mr.flower[fi]->z = 1080 - fi * 60
-            render_block_scaled(mr.flower[fi], game->viewport, .333)
-   
+        if not mr.flower[fi]:
+            mr.flower[fi] = block_new(game->blocks, 120, 0, 720,
+                block_flower(fi))
+        mr.flower[fi]->x = 120 + fi * 60
+        mr.flower[fi]->z = 1080 - fi * 60
+        LandColor tint = a.tint
+        if not game->flower[fi]:
+            float c = (1 + sin(pi * 2 * land_get_ticks() / 60.0)) / 2
+            a.tint.r = 0
+            a.tint.g = 0
+            a.tint.b = 0
+            a.tint.a = 0.02 + 0.2 * c
+        render_block_scaled(mr.flower[fi], game->viewport, .333)
+       
+        a.tint = tint
