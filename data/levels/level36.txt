@@ -16,7 +16,6 @@ make 4 5 2 13
 make 4 13 2 13
 make 4 21 2 13
 make 12 29 3 13
-move 0 60 0
 make 23 33 2 13
 make 4 37 2 13
 make 5 29 2 17
@@ -26,7 +25,6 @@ make 4 5 2 21
 make 4 13 2 21
 make 4 21 2 21
 make 12 29 3 21
-move 0 60 0
 make 23 33 2 21
 make 4 37 2 21
 make 5 29 2 25
@@ -34,7 +32,6 @@ make 4 5 2 29
 make 4 13 2 29
 make 4 21 2 29
 make 12 29 3 29
-move 0 60 0
 make 23 33 2 29
 make 4 37 2 29
 make 5 29 2 33

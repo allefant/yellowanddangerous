@@ -69,7 +69,6 @@ make 4 29 2 37
 make 32 33 4 35
 make 18 47 3 39
 make 12 45 3 13
-move 0 60 0
 make 38 33 1 21
 make 38 45 1 21
 make 38 34 1 45

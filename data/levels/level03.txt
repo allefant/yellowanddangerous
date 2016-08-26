@@ -19,7 +19,6 @@ make 4 7 2 31
 make 4 37 2 29
 make 5 15 2 27
 make 12 17 3 31
-move 0 60 0
 make 23 17 2 35
 make 23 29 2 -5
 make 23 11 2 1

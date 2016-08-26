@@ -38,9 +38,7 @@ make 11 25 4 41
 make 11 29 4 41
 make 11 33 4 41
 make 12 29 7 9
-move 0 60 0
 make 3 13 4 17
 make 12 29 7 37
-move 0 60 0
 make 18 45 3 17
 frame 2

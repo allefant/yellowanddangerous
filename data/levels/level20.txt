@@ -12,14 +12,11 @@ make 4 13 2 21
 make 4 13 2 13
 make 4 29 2 13
 make 12 -1 5 33
-move 0 60 0
 make 4 29 2 29
 make 4 21 2 29
 make 4 13 2 29
 make 12 -1 5 13
-move 0 60 0
 make 12 -1 5 21
-move 0 60 0
 make 4 3 4 29
 make 4 3 4 21
 make 4 3 4 13
@@ -27,11 +24,8 @@ make 27 11 2 13
 make 27 11 2 21
 make 27 11 2 29
 make 12 -1 5 17
-move 0 60 0
 make 12 -1 5 25
-move 0 60 0
 make 12 -1 5 29
-move 0 60 0
 make 34 21 6 17
 make 34 25 6 17
 make 40 19 4 25

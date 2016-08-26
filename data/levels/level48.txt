@@ -22,7 +22,6 @@ make 18 37 3 21
 make 19 11 1 7
 frame 2
 make 12 29 3 13
-move 0 60 0
 make 11 13 0 37
 make 11 17 0 37
 make 11 21 0 37

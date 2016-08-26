@@ -240,7 +240,7 @@ def move_on_top(Block *self, float dx, dy, dz):
     LandArray *top = block_colliders(self)
     self.y = on_top_y
     for Block *c in LandArray *top:
-        if c->block_type->dynamic:
+        if c->block_type->dynamic and not c->block_type->fixed:
             if c->recursion_prevention != tag:
                 c->recursion_prevention = tag
                 block_push(c, dx, dy, dz)
@@ -312,11 +312,12 @@ bool def block_push(Block *self, float odx, ody, odz):
                     self.x = c->x + c->xs
 
             # prevent "pushing" something that's actually on top
-            if c->y < self->y + self->ys and\
+            if (dy > 0 or c->y < self->y + self->ys) and\
                     c->block_type->dynamic and not c->block_type->fixed:
                 if c->recursion_prevention != tag:
                     c->recursion_prevention = tag
                     if block_push(c, dx, dy, dz):
+                        #print("%d %s -> %s %f", tag, self->block_type->name, c->block_type->name, dy)
                         self.pushed_something = True
                         retry_after_push = True
 
@@ -337,7 +338,8 @@ bool def block_push(Block *self, float odx, ody, odz):
             goto retry
         
     else:
-        move_on_top(self, dx, dy, dz)
+        if dx or dz:
+            move_on_top(self, dx, dy, dz)
         
         self->blocks->rebuild_dynamic_cache = True
         r = True

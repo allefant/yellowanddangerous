@@ -99,9 +99,7 @@ frame 4
 make 18 17 3 29
 frame 4
 make 12 25 3 29
-move 0 60 0
 make 12 29 3 29
-move 0 60 0
 make 18 33 3 29
 frame 4
 make 19 41 3 29

@@ -42,12 +42,10 @@ make 49 29 3 5
 make 49 37 3 5
 make 48 5 3 37
 make 12 30 3 45
-move 0 60 0
 make 17 43 4 35
 make 17 43 4 27
 make 17 19 4 43
 make 12 45 3 33
-move 0 60 0
 make 17 27 4 43
 make 17 35 4 43
 make 17 43 4 43

@@ -42,9 +42,7 @@ make 9 25 -2 33
 make 9 17 -2 33
 make 9 9 -2 33
 make 12 13 3 17
-move 0 60 0
 make 12 25 3 17
-move 0 60 0
 make 3 17 0 17
 make 11 13 0 21
 make 11 25 0 21

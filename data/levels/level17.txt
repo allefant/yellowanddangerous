@@ -53,13 +53,9 @@ make 47 25 3 9
 make 47 17 3 9
 make 47 9 3 9
 make 12 41 3 37
-move 0 60 0
 make 12 9 3 41
-move 0 60 0
 make 12 19 3 19
-move 0 60 0
 make 12 37 3 5
-move 0 60 0
 make 19 21 11 5
 frame 4
 make 19 21 11 45

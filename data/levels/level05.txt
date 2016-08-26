@@ -10,7 +10,6 @@ make 23 33 2 5
 make 23 41 2 5
 make 23 41 2 9
 make 12 41 3 13
-move 0 60 0
 make 23 13 2 17
 make 23 21 2 17
 make 23 21 2 25
@@ -30,7 +29,6 @@ make 23 21 10 33
 make 23 13 10 41
 make 23 21 10 41
 make 12 41 15 25
-move 0 60 0
 make 23 13 14 29
 make 23 41 14 29
 make 23 41 14 33

@@ -4,7 +4,6 @@ make 10 41 4 9
 make 20 37 4 21
 make 13 11 8 35
 make 12 29 3 5
-move 0 60 0
 make 5 5 2 9
 make 5 13 2 9
 make 5 21 2 9

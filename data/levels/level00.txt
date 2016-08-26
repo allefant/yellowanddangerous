@@ -9,7 +9,6 @@ make 4 9 2 33
 make 4 33 2 23
 make 4 9 2 19
 make 12 21 3 25
-move 0 60 0
 make 18 47 3 15
 make 4 9 2 9
 make 4 21 2 9
@@ -17,11 +16,8 @@ make 4 33 2 9
 make 4 33 2 33
 make 4 19 2 33
 make 12 21 3 21
-move 0 60 0
 make 12 25 3 19
-move 0 60 0
 make 12 25 3 23
-move 0 60 0
 make 19 27 3 47
 frame 2
 make 19 27 3 -1

@@ -13,13 +13,12 @@ make 4 29 2 21
 make 4 5 2 5
 make 27 37 0 13
 make 27 3 0 13
-make 12 7 3 35
-move 0 60 0
+make 12 11 3 35
 make 68 7 2 39
 make 5 7 2 31
 make 18 45 3 21
 make 4 29 2 29
-make 68 11 2 35
+make 68 11 2 39
 make 18 3 3 39
 frame 2
 make 19 5 3 1
