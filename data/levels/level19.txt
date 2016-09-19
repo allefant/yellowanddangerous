@@ -2,7 +2,7 @@ hint
 title Cherry tree
 make 10 41 4 9
 make 13 11 8 15
-make 17 43 0 29
+make 17 43 2 29
 make 4 37 2 21
 make 4 37 2 5
 make 4 37 2 37
@@ -21,14 +21,13 @@ make 17 11 4 31
 make 17 11 4 43
 make 17 11 4 25
 make 17 23 4 43
-make 17 43 0 35
+make 17 43 2 35
 make 27 19 4 15
 make 27 19 4 23
 make 12 23 3 27
-make 19 33 3 1
-make 17 39 0 35
-make 17 39 0 29
+make 19 37 3 1
+make 17 43 2 32
+make 18 45 5 29
+frame 2
 make 5 19 2 23
 make 23 19 2 27
-make 18 45 3 21
-frame 2

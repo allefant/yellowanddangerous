@@ -32,9 +32,9 @@ make 4 13 2 37
 make 4 21 2 37
 make 4 29 2 37
 make 4 37 2 37
-make 52 29 4 3
+make 51 46 4 29
 make 19 21 3 45
-make 52 9 4 3
+make 52 9 4 5
 make 38 29 4 41
 make 38 17 4 41
 make 8 5 4 37
@@ -73,7 +73,7 @@ make 8 5 12 33
 make 8 5 12 21
 make 5 11 4 23
 make 5 35 4 23
-make 52 19 4 3
+make 51 46 4 39
 make 19 21 3 1
 frame 2
 make 63 41 16 7
@@ -94,12 +94,10 @@ make 25 39 4 35
 frame 7
 make 12 13 9 23
 make 12 37 9 23
-make 52 9 4 46
-make 52 19 4 46
+make 52 5 4 46
+make 52 13 4 46
 make 52 29 4 46
 make 52 39 4 46
-make 52 37 4 3
+make 52 33 4 5
 make 51 46 4 9
 make 51 46 4 19
-make 51 46 4 29
-make 51 46 4 39

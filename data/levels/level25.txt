@@ -1,31 +1,30 @@
 hint Push the block!
 title Laboratory
-make 13 13 4 19
+make 13 11 4 23
 make 10 6 4 24
-make 4 5 2 13
+make 70 29 2 41
+make 70 21 2 41
+make 69 21 2 33
+make 25 22 3 36
 make 5 21 2 5
 make 4 5 2 21
 make 5 13 6 5
 make 4 37 2 13
-make 12 21 3 17
-make 4 13 2 21
-make 4 21 2 21
-make 4 29 2 21
+make 12 37 3 41
+make 4 13 2 23
+make 4 21 2 25
+make 4 29 2 23
 make 4 37 2 21
 make 18 45 3 21
-make 4 7 2 29
-make 4 13 2 37
-make 4 17 2 29
-make 4 27 2 29
-make 4 37 2 29
-make 5 13 2 17
-make 23 25 2 17
-make 18 1 3 21
-frame 2
+make 4 5 10 5
 make 19 13 3 45
 frame 3
-make 4 5 10 5
 make 18 1 11 5
 make 19 21 3 1
 frame 3
-make 5 29 2 17
+make 5 29 2 19
+make 5 13 2 19
+make 23 25 2 21
+make 18 1 3 21
+frame 2
+make 5 13 2 41

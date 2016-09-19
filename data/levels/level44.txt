@@ -2,6 +2,10 @@ hint Blowing in the wind
 title Ventilation duct
 make 10 39 4 15
 frame 2
+make 13 21 4 41
+move 47 0 0
+make 30 35 2 37
+frame 1
 make 37 33 4 11
 make 37 29 4 11
 frame 2
@@ -12,8 +16,6 @@ make 37 17 4 11
 frame 1
 make 37 13 4 11
 frame 1
-make 13 21 4 41
-move 47 0 0
 make 36 11 4 33
 make 36 11 4 29
 frame 2
@@ -29,12 +31,10 @@ make 36 11 4 37
 frame 1
 make 36 11 4 41
 frame 1
-make 30 37 2 37
-frame 1
 make 4 29 2 13
 make 4 37 2 13
 make 25 12 10 42
-make 4 21 2 37
+make 4 19 2 37
 make 4 13 2 29
 make 4 13 2 21
 make 4 13 2 13
@@ -62,19 +62,21 @@ make 25 12 10 30
 frame 7
 make 25 12 10 34
 frame 8
-make 4 13 2 37
+make 4 11 2 37
 make 25 12 10 38
 frame 9
-make 4 29 2 37
-make 32 33 4 35
-make 18 47 3 39
-make 12 45 3 13
-make 38 33 1 21
-make 38 45 1 21
-make 38 34 1 45
-make 19 27 3 3
+make 4 27 2 37
+make 32 31 4 35
+make 18 45 3 37
+make 12 43 3 9
+make 38 31 1 21
+make 38 43 1 21
+make 38 32 1 45
+make 19 27 3 1
+frame 3
+make 4 27 2 5
+make 5 27 2 7
+make 18 1 15 37
 frame 3
 make 4 35 2 5
-make 5 27 2 7
-make 18 7 11 37
-frame 3
+make 60 5 14 37

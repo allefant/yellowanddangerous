@@ -1,25 +1,23 @@
 hint enough material?
 title The Gap
-make 7 35 19 29
-make 7 31 20 49
-make 7 34 19 21
-make 7 34 19 37
-make 10 35 21 57
-make 26 31 20 45
-make 26 35 20 45
-make 7 37 20 49
-make 0 33 12 13
-make 1 29 2 29
-make 0 31 12 45
-make 0 31 12 53
-make 19 31 19 65
+make 7 35 19 17
+make 7 31 20 37
+make 7 34 19 9
+make 7 34 19 25
+make 10 35 21 43
+make 26 31 20 33
+make 26 35 20 33
+make 7 37 20 37
+make 38 33 18 41
+make 1 29 2 21
+make 0 31 12 33
+make 0 29 4 33
+make 19 31 19 45
 frame 2
-make 19 31 19 9
-make 1 31 2 21
-make 1 31 2 37
-make 38 31 18 61
-make 38 35 18 61
-make 0 31 4 13
-make 0 29 4 45
-make 1 33 2 13
-make 1 31 2 47
+make 19 33 19 1
+make 1 31 2 13
+make 1 31 2 29
+make 1 33 2 5
+make 0 31 4 1
+make 39 33 12 7
+make 39 33 12 5

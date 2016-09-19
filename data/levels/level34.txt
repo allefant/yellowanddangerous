@@ -1,23 +1,25 @@
 hint Pull the barrels.
 title Paint storage
-make 21 29 12 27
-make 21 5 4 27
-make 21 13 4 27
-make 21 21 4 27
-make 21 29 4 27
-make 21 37 4 27
-make 21 37 12 27
-make 21 5 12 27
-make 21 13 12 27
-make 21 21 12 27
-make 22 43 4 21
-make 22 43 12 21
-make 14 5 4 17
-make 14 9 4 17
-make 14 13 4 17
-make 14 5 4 21
-make 14 9 4 21
-make 14 13 4 21
+make 21 5 12 28
+make 21 5 4 28
+make 22 44 4 21
+make 22 44 12 21
+make 21 13 12 28
+make 21 21 12 28
+make 21 29 12 28
+make 21 37 12 28
+make 21 37 4 28
+make 21 29 4 28
+make 21 21 4 28
+make 21 13 4 28
+make 22 44 12 13
+make 22 44 4 13
+make 14 5 4 19
+make 14 9 4 19
+make 14 13 4 19
+make 14 5 4 23
+make 14 9 4 23
+make 14 13 4 23
 make 10 29 8 21
 make 3 5 0 13
 make 3 13 0 13
@@ -29,35 +31,28 @@ make 3 13 0 21
 make 3 21 0 21
 make 3 29 0 21
 make 3 37 0 21
-make 9 5 4 13
-make 9 13 4 13
-make 9 21 4 13
-make 11 41 16 17
-make 9 37 4 13
+make 9 5 4 15
+make 9 13 4 15
+make 9 21 4 15
+make 47 37 19 29
+make 3 5 20 21
 make 18 1 7 17
 frame 1
-make 11 41 8 17
+make 3 5 20 13
 make 3 29 0 5
-make 9 13 12 13
-make 9 21 12 13
-make 9 29 12 13
-make 9 37 12 13
+make 3 29 20 21
+make 3 37 20 21
+make 18 45 19 29
+frame 2
+make 47 29 19 37
 make 8 13 12 17
 make 19 29 3 1
 frame 2
-make 11 41 12 17
-make 19 37 23 29
+make 3 21 20 21
+make 19 29 19 45
 frame 2
-make 11 41 4 17
+make 3 13 20 13
 make 3 13 20 21
 make 3 37 20 13
 make 3 29 20 13
 make 3 21 20 13
-make 3 5 20 21
-make 3 13 20 13
-make 3 5 20 13
-make 3 21 20 21
-make 3 29 20 21
-make 3 37 20 21
-make 18 45 23 21
-frame 2

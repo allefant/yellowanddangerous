@@ -25,10 +25,10 @@ make 55 25 16 17
 make 4 21 2 13
 make 4 13 2 21
 make 4 21 2 29
-make 4 39 4 21
+make 4 37 4 21
 make 4 13 2 13
 make 4 13 2 29
-make 4 39 4 29
+make 4 37 4 29
 make 28 39 2 19
 make 4 21 2 21
 make 28 13 4 17
@@ -58,6 +58,6 @@ make 28 5 4 37
 make 28 21 12 17
 make 19 21 3 45
 frame 2
-make 18 47 5 21
+make 18 45 5 21
 make 5 21 2 41
 make 28 35 2 39

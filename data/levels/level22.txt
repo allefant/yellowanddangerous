@@ -1,55 +1,55 @@
 hint Touch anywhere to move.
 title Laboratory
-make 10 42 4 23
+make 10 42 4 17
 frame 42
-make 61 31 8 13
-make 61 29 8 13
+make 61 31 8 7
+make 61 29 8 7
 frame 1
-make 61 41 8 13
+make 61 41 8 7
 frame 2
-make 61 37 8 13
+make 61 37 8 7
 frame 3
-make 61 35 8 13
+make 61 35 8 7
 frame 4
-make 61 33 8 13
+make 61 33 8 7
 frame 5
-make 61 39 8 13
+make 61 39 8 7
 frame 6
-make 61 10 8 24
+make 61 10 8 18
 frame 5
-make 61 8 8 17
-make 61 8 8 25
-make 61 8 8 21
-make 61 8 8 29
-make 61 8 8 33
-make 56 7 4 29
-make 56 7 4 21
-make 56 7 4 13
-make 59 27 4 13
-make 19 13 3 7
+make 61 8 8 11
+make 61 8 8 19
+make 61 8 8 15
+make 61 8 8 23
+make 61 8 8 27
+make 56 7 4 23
+make 56 7 4 15
+make 56 7 4 7
+make 59 27 4 7
+make 19 13 3 1
 frame 2
-make 60 37 3 11
-make 58 21 4 11
-make 58 29 4 11
-make 58 37 4 11
-make 59 35 4 13
+make 60 37 3 5
+make 58 21 4 5
+make 58 29 4 5
+make 58 37 4 5
+make 59 35 4 7
 make 18 45 3 21
 frame 1
-make 58 5 4 11
-make 57 5 4 13
-make 57 5 4 21
-make 57 5 4 29
-make 60 37 3 29
-make 60 29 3 29
-make 60 21 3 29
-make 60 13 3 29
-make 60 5 3 29
-make 60 5 3 20
-make 60 5 3 11
-make 60 13 3 11
-make 60 13 3 20
-make 60 21 3 20
-make 60 21 3 11
-make 60 29 3 11
-make 60 29 3 20
-make 60 37 3 20
+make 58 5 4 5
+make 57 5 4 7
+make 57 5 4 15
+make 57 5 4 23
+make 60 37 3 23
+make 60 29 3 23
+make 60 21 3 23
+make 60 13 3 23
+make 60 5 3 23
+make 60 5 3 14
+make 60 5 3 5
+make 60 13 3 5
+make 60 13 3 14
+make 60 21 3 14
+make 60 21 3 5
+make 60 29 3 5
+make 60 29 3 14
+make 60 37 3 14

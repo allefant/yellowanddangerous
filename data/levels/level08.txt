@@ -1,8 +1,8 @@
 hint Where are my car keys?
 title Parking lot
 make 10 24 4 32
-make 30 29 2 13
-make 37 29 4 12
+make 30 37 2 21
+make 37 37 4 20
 make 4 21 2 29
 make 4 21 2 21
 make 4 21 2 13
@@ -10,6 +10,9 @@ make 4 21 2 5
 make 66 13 4 5
 make 19 21 3 45
 frame 2
-make 18 37 3 13
+make 18 45 3 21
 frame 3
 make 4 21 2 37
+make 4 29 2 21
+make 19 21 3 1
+frame 3

@@ -1,6 +1,6 @@
 hint pushin' 'round
 title Stone bridge
-make 10 29 4 25
+make 10 29 4 23
 make 13 21 8 5
 make 4 5 2 5
 make 4 13 2 5
@@ -11,10 +11,10 @@ make 4 5 2 13
 make 4 37 2 13
 make 4 5 2 21
 make 4 37 2 21
-make 18 45 3 13
-make 5 13 2 25
-make 5 21 2 25
-make 12 29 3 25
+make 18 45 3 21
+make 5 13 2 23
+make 5 21 2 23
+make 12 29 3 23
 make 4 5 2 29
 make 4 37 2 29
 make 4 5 2 37

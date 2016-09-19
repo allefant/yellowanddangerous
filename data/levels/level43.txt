@@ -6,11 +6,9 @@ make 43 35 8 13
 make 43 35 16 29
 make 13 25 -2 15
 make 43 13 16 51
-make 13 15 17 17
+make 13 15 17 21
 make 20 15 16 43
 make 13 27 13 13
-make 13 15 17 21
-make 13 15 17 25
 make 4 21 -2 29
 make 4 29 0 29
 make 4 13 -4 29
@@ -39,7 +37,7 @@ make 4 13 -4 21
 make 4 37 2 5
 make 4 29 2 5
 make 4 21 2 5
-make 18 37 15 37
+make 18 45 15 37
 make 25 31 16 47
 frame 1
 make 25 19 16 49
@@ -54,3 +52,4 @@ make 12 25 15 41
 make 12 21 15 41
 make 68 45 2 9
 make 68 45 2 17
+make 4 37 14 37
