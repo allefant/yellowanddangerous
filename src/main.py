@@ -2,6 +2,7 @@ import common
 import render, config
 import save
 import title
+import test
 
 global char *main_data_path
 type Game *game
@@ -72,6 +73,7 @@ def redraw():
             a.load_after_redraw = 2
         elif a.load_after_redraw == 2:
             # wait for logic code to advance
+            pass
         if a.load_after_redraw > 2:
             a.load_after_redraw++
             double t = land_get_time()
@@ -153,7 +155,7 @@ def init():
 
     config_controls_read()
 
-    game = game_new()
+    game_setup(land_display_width(), land_display_height())
 
     render_setup()
 
@@ -171,7 +173,8 @@ def update():
     All *a = global_a
 
     if land_was_resized():
-        viewport_update(game->viewport)
+        viewport_update(game->viewport, land_display_width(),
+            land_display_height())
         a.resize_in_ticks = 10
 
     if a.resize_in_ticks > 0:
@@ -181,13 +184,15 @@ def update():
 
     if a.load_after_redraw:
         if a.load_after_redraw == 2:
-            load_level(a.editor)
+            load_level(a.editor or game.record->is_replaying
+                or game.record->is_recording)
             if a.find_entrance:
                 a.find_entrance = False
                 if game->player:
                     player_find_entrance(&game->player->super)
-                if game->player2:
-                    allefant_onload(&game->player2->super)
+            if game and game.player:
+                record_load(game.record, game.level, game.player->super.x,
+                    game.player->super.y, game.player->super.z)
             a.load_after_redraw++
         return
     
@@ -286,6 +291,10 @@ int def my_main():
     land_init()
 
     main_data_path = land_strdup(".")
+
+    if land_argc > 1:
+        if land_equals(land_argv[1], "test"):
+            return test()
     
     #land_set_display_parameters(w, h, LAND_OPENGL)
     *** "ifdef" ANDROID

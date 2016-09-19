@@ -1,11 +1,12 @@
 import common
-import block, isometric, level, render, player, cube, allefant, level
+import block, isometric, render, player, cube, allefant
 import save
 import intro
 import input
 import menu
 import overview
 import editor
+import record
 
 type Editor *editor
 
@@ -46,13 +47,14 @@ class Game:
     bool menu_on
 
     Overview *overview
+    Record *record
 
 global Game *game
 global int game_starting_level = 22
   
-Game *def game_new():
+def game_setup(float w, h):
     Game *self; land_alloc(self)
-    self.viewport = viewport_new()
+    self.viewport = viewport_new(w, h)
 
     self.level = 0
 
@@ -62,14 +64,17 @@ Game *def game_new():
 
     self.overview = overview_new()
 
+    self.record = record_new()
+
     editor_new()
 
-    return self
+    game = self
 
 def game_del(Game *self):
     blocks_destroy(self->blocks)
     render_teardown()
     overview_destroy(game.overview)
+    record_destroy(self.record)
     land_free(self.viewport)
     land_free(self.menu)
     land_free(self)
@@ -92,6 +97,7 @@ def game_level_number_to_xz(int level, *x, *z):
     
 def game_level_done(Game *self, int gox, goz):
     if land_equals(self->state, "play") :
+        record_done(self.record)
         self->state = "done"
         self->state_tick = self->ticks
         save_level(False)
@@ -108,7 +114,7 @@ def game_recalc:
     game.blocks.rebuild_dynamic_cache = True
 
 def game_key(Game *self, int k):
-    menu_key(k)
+    menu_key(k, land_key(LandKeyLeftShift) or land_key(LandKeyRightShift))
 
 def game_tick(Game *self):
     All *a = global_a
@@ -135,12 +141,12 @@ def game_tick(Game *self):
     int plates_on_before = 0
 
     if self->player:
-
-        if strcmp(self->state, "play") == 0:
+        if land_equals(self->state, "play"):
             if self->player->dead or self->player->super.y < -960:
                 sound(Render_oh_no, 1)
                 self->state = "died"
                 game->deaths++
+                record_done(self.record)
 
     for Block *b in LandArray *self->blocks->fixed:
         if b->block_type == Render_Plate:
@@ -159,8 +165,9 @@ def game_tick(Game *self):
         intro_sequence()
 
     if not a.editor:
+        record_tick(game.record)
         a.time++
-        for Block *b in LandArray *self->blocks->dynamic:
+        for Block *b in LandArray *self->blocks->animated:
             b->block_type->tick(b)
 
         int plates_on = 0

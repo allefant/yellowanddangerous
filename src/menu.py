@@ -31,7 +31,8 @@ static def category(BlockType *bt) -> int:
         land_starts_with(bt.name, "Ramp"):
         return 0
     if land_starts_with(bt.name, "Block") or\
-        land_starts_with(bt.name, "Invisible"):
+        land_starts_with(bt.name, "Invisible") or\
+        land_starts_with(bt.name, "Window"):
         return 1
     if block_type_flower(bt) or bt == Render_Key:
         return 2
@@ -42,7 +43,8 @@ static def category(BlockType *bt) -> int:
         land_starts_with(bt.name, "Plate") or\
         land_starts_with(bt.name, "Platform") or\
         land_starts_with(bt.name, "Waypoint") or\
-        land_starts_with(bt.name, "Exit"):
+        land_starts_with(bt.name, "Exit") or\
+        land_starts_with(bt.name, "Conveyor"):
         return 4
     if bt.dynamic:
         return 5
@@ -77,6 +79,8 @@ static def menu_items(Menu *menu):
     S("Object")
     T
     S(a.editor ? "Play" : "Edit")
+    S("Record")
+    S("Replay")
     S("Exit")
     T
     S("Save")
@@ -91,6 +95,12 @@ static def menu_items(Menu *menu):
     S("Intro")
     S("Title")
     S("Hint")
+    S("Shift X+")
+    S("Shift X-")
+    S("Shift Y+")
+    S("Shift Y-")
+    S("Shift Z+")
+    S("Shift Z-")
     T
     S("Insert")
     S("Type")
@@ -163,7 +173,7 @@ def menu_draw(Menu *menu):
             land_print("%s", text)
     land_pop_transform()
 
-def menu_key(int k):
+def menu_key(int k, bool shift):
     All *a = global_a
 
     if k == LandKeyFunction + 2:
@@ -172,7 +182,8 @@ def menu_key(int k):
     elif k == LandKeyFunction + 3:
         load_level(True)
         a.overview = False
-        viewport_update(game.viewport)
+        viewport_update(game.viewport, land_display_width(),
+            land_display_height())
         a.editor = True
     elif k == LandKeyFunction + 4:
         blocks_reset(game.blocks)
@@ -189,7 +200,7 @@ def menu_key(int k):
         if a.overview:
             a.overview = False
             game.level = game.overview->selected
-            menu_key(LandKeyFunction + 3)
+            menu_key(LandKeyFunction + 3, False)
         else:
             overview_update(game.overview)
     elif k == LandKeyFunction + 10:
@@ -211,18 +222,33 @@ def menu_key(int k):
     elif k == 'i':
         Block *p = editor.picked
         if p:
-            print("%.1f %.1f %.1f", p.x, p.y, p.z)
+            print("F%d X%.1f Y%.1f Z%.1f %2d/%2d/%2d", p.frame,
+                p.x, p.y, p.z,
+                p.x // 24 + 22, p.y // 24 + 4, p.z // 24 + 22)
     elif k == 't':
         a.text_input = 1
         a.cursor = 0
     elif k == 'h':
         a.text_input = 2
         a.cursor = 0
+    elif k == 'r':
+        if shift:
+            record_set_replaying(game.record)
+        else:
+            record_set_recording(game.record)
+
+    if not editor.picked:
+        if k == 'x':
+            blocks_shift(game.blocks, shift ? 24 : -24, 0, 0)
+        elif k == 'y':
+            blocks_shift(game.blocks, 0, shift ? 24 : -24, 0)
+        elif k == 'z':
+            blocks_shift(game.blocks, 0, 0, shift ? 24 : -24)
 
     double s = 24
     double s2 = s * 2
 
-    if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
+    if shift:
         s2 = s
 
     if k == LandKeyInsert:
@@ -259,12 +285,12 @@ def menu_key(int k):
         p.y -= s2
         game_recalc()
     elif k == 'x':
-        if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
+        if shift:
             p.y += p.ys
         else:
             p.y -= p.ys
     elif k == 'c':
-        if land_key(LandKeyLeftShift) or land_key(LandKeyRightShift):
+        if shift:
             p.x = floor(p.x / s) * s
             p.y = floor(p.y / s) * s
             p.z = floor(p.z / s) * s
@@ -288,7 +314,11 @@ def menu_key(int k):
 
 macro ON(x, k):
     if land_equals(text, x):
-        menu_key(k)
+        menu_key(k, False)
+
+macro ON_SHIFT(x, k):
+    if land_equals(text, x):
+        menu_key(k, True)
 
 def menu_tick(Menu *menu, float mx, my, click) -> bool:
     All *a = global_a
@@ -353,6 +383,7 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
         if land_equals(text, "Object"): menu.menu[mi] = 5
 
         if land_equals(text, "Exit"):
+           a.editor = False
            main_switch_to_title(0)
 
         if land_equals(text, "Play"):
@@ -360,6 +391,8 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
 
         if land_equals(text, "Edit"):
             a.editor = True
+        ON("Record", 'r')
+        ON_SHIFT("Replay", 'r')
 
         ON("Save", LandKeyFunction + 2)
         ON("Load", LandKeyFunction + 3)
@@ -373,6 +406,12 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
         ON("Intro", LandKeyFunction + 10)
         ON("Title", 't')
         ON("Hint", 'h')
+        ON_SHIFT("Shift X+", 'x')
+        ON("Shift X-", 'x')
+        ON_SHIFT("Shift Y+", 'y')
+        ON("Shift Y-", 'y')
+        ON_SHIFT("Shift Z+", 'z')
+        ON("Shift Z-", 'z')
       
         ON("Delete", LandKeyDelete)
 

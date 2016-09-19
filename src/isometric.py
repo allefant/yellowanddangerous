@@ -14,15 +14,13 @@ class Viewport:
     float x, y
     float zoom
 
-Viewport *def viewport_new:
+Viewport *def viewport_new(float w, h):
     Viewport *self
     land_alloc(self)
-    viewport_update(self)
+    viewport_update(self, w, h)
     return self
 
-def viewport_update(Viewport *self):
-    float w = land_display_width()
-    float h = land_display_height()
+def viewport_update(Viewport *self, float w, h):
     self.zoom = w / 960
     self->x = w / 2 / self.zoom
     self->y = h / 2 / self.zoom

@@ -10,6 +10,7 @@ import intro
 import testtube
 import menu
 import map
+import conveyor
 
 type Game *game
 type Editor *editor
@@ -20,6 +21,7 @@ class Render:
     LandStream *music
     char *path
     int song
+    LandIniFile *offsets
 
 Render r
 global LandImage *Render_Smoke
@@ -39,16 +41,18 @@ static def loadpic(char const *name) -> LandImage *:
     return i
 
 static BlockType *def render_load(char const *name, float x, y, z,
-        bool dynamic, lift, transparent, fixed, int frames):
+        bool dynamic, lift, transparent, fixed, int frames,
+        bool animated):
     BlockType *bt = None
     float ss = 96
     bt = blocktype_new(name, ss * x, ss * y, ss * z,
         block_tick, block_touch, block_destroy, block_allocate,
         block_post_init)
-    bt->dynamic = dynamic
-    bt->lift = lift
-    bt->transparent = transparent
+    bt.dynamic = dynamic
+    bt.lift = lift
+    bt.transparent = transparent
     bt.fixed = fixed
+    bt.animated = animated or dynamic
 
     #LandArray *frames
     LandBuffer *b = land_buffer_new()
@@ -66,10 +70,14 @@ static BlockType *def render_load(char const *name, float x, y, z,
     #for char *s in LandArray *frames:
     for int fi in range(1, frames + 1)
         char s[1024]
+        char section[1024]
         sprintf(s, "%s/%04d.png", path, fi)
+        sprintf(section, "%s/%04d.png", name, fi)
         #LandImage *pic = land_image_load(s)
         LandImage *pic = land_image_new_deferred(s)
-        pic.flags |= LAND_AUTOCROP
+        pic.x = land_ini_get_int(r.offsets, section, "x", 0)
+        pic.y = land_ini_get_int(r.offsets, section, "y", 0)
+        #pic.flags |= LAND_IMAGE_CENTER
         if not pic: # or not (pic.flags & LAND_LOADED):
             print("Could not load %s", s)
             break
@@ -86,8 +94,10 @@ static BlockType *def render_load(char const *name, float x, y, z,
 
 ***scramble
 defs = []
-def load(name, x, y, z, dynamic = False, lift = False, transparent = False, fixed = False, frames = 1):
-    defs.append((name, x, y, z, dynamic, lift, transparent, fixed, frames))
+def load(name, x, y, z, dynamic = False, lift = False,
+        transparent = False, fixed = False, frames = 1, animated = False):
+    defs.append((name, x, y, z, dynamic, lift, transparent, fixed,
+        frames, animated))
     parse("global BlockType *Render_" + name + "\n")
 
 sdefs = []
@@ -106,7 +116,7 @@ load("PlankRight", 1.9, 0.245, 0.5, dynamic = True, lift = True)
 load("PlankLeft", 0.5, 0.245, 1.9, dynamic = True, lift = True)
 load("BlockLeft2", 1, 2, 2)
 load("BlockRight2", 2, 2, 1)
-load("Scientist", 0.75, 1.75, 0.75, dynamic = True, frames = 64)
+load("Scientist", 0.75, 1.75, 0.75, dynamic = True, frames = 128)
 load("Cube2", 1, 1, 1)
 load("Plate", 1, 0.25, 1, frames = 2)
 load("Cube3", 0.667, 0.667, 0.667, dynamic = True, lift = True)
@@ -116,9 +126,9 @@ load("TreeTop", 2, 2, 2)
 load("Trunk", 0.2, 1.0, 0.2)
 load("ExitLeft", 1, 0.25, 2, frames = 5)
 load("ExitRight", 2, 0.25, 1, frames = 5)
-load("Allefant", 1.3, 1.8, 1.3, dynamic = True, frames = 64)
-load("BlockRight4", 2, 2, .5, transparent = True)
-load("BlockLeft4", .5, 2, 2, transparent = True)
+load("Allefant", 1.25, 1.75, 1.25, dynamic = True, frames = 64)
+load("WindowRight", 2, 2, .25, transparent = True)
+load("WindowLeft", .25, 2, 2, transparent = True)
 load("BlockSmall3", 1, 0.5, 1)
 load("CherryTree", 3, 5, 3)
 load("Waypoint", 0.5, 0, 0.5, frames = 10)
@@ -132,8 +142,8 @@ load("LeverRight", 1, 2, 0.5, frames = 2)
 load("Statue", 2, 2, 2)
 load("RampLeft", 1, 0.5, 2)
 load("RampRight", 2, 0.5, 1)
-load("VentLeft", 0.5, 2, 1, dynamic = True, fixed = True, frames = 4)
-load("VentRight", 1, 2, 0.5, dynamic = True, fixed = True, frames = 4)
+load("VentLeft", 0.5, 2, 1, animated = True, frames = 4)
+load("VentRight", 1, 2, 0.5, animated = True, frames = 4)
 load("BlockSmall", 1, 0.5, 1)
 load("BlockRight", 2, 2, .5)
 load("BlockSmallLeft", 0.5, 1, 1)
@@ -165,6 +175,8 @@ load("BridgeLeft", 0.5, 0.25, 2.5, dynamic = True, lift = True)
 load("Car", 2, 2, 3, frames = 2)
 load("Key", .5, .5, .5, dynamic = True)
 load("BlockBottomRight3", 1, 0.5, 2)
+load("ConveyorLeft", 1, 0.5, 2, animated = True, frames = 4)
+load("ConveyorRight", 2, 0.5, 1, animated = True, frames = 4)
 
 loads("step")
 loads("push")
@@ -214,12 +226,7 @@ def render_setup():
 
     r.background_color = (LandColor){1, 1, 1, 1}
 
-    if r.path:
-        land_free(r.path)
-    LandBuffer *b = land_buffer_new()
-    land_buffer_cat(b, main_data_path)
-    land_buffer_cat(b, "/data/yellowanddangerous/")
-    r.path = land_buffer_finish(b)
+    render_setup_path()
 
     render_loading_screen()
     land_flip()
@@ -230,15 +237,36 @@ def render_setup():
 
     play_song()
 
-    block_types = land_array_new()
-***scramble
-for name, x, y, z, dynamic, lift, transparent, fixed, frames in defs:
-    parse('    Render_{} = render_load("{}", {}, {}, {}, {}, {}, {}, {}, {})\n'.format(
-        name, name, x, y, z, dynamic, lift, transparent, fixed, frames))
-    parse('    land_array_add(block_types, Render_{})\n'.format(name))
+    Render_Smoke = loadpic("../smoke.png")
 
+***scramble
 for name, vname in sdefs:
     parse('    {} = render_loads("{}")\n'.format(vname, name))
+***
+
+    render_load_blocktypes()
+
+def render_setup_path:
+    if r.path:
+        land_free(r.path)
+    LandBuffer *b = land_buffer_new()
+    land_buffer_cat(b, main_data_path)
+    land_buffer_cat(b, "/data/yellowanddangerous/")
+    r.path = land_buffer_finish(b)
+
+def render_load_blocktypes:
+
+    char *ini = land_strdup(r.path)
+    land_concatenate(&ini, "/offsets.ini")
+    r.offsets = land_ini_read(ini)
+    land_free(ini)
+
+    block_types = land_array_new()
+***scramble
+for d in defs:
+    args = (d[0],) + d
+    parse('    Render_{} = render_load("{}", {}, {}, {}, {}, {}, {}, {}, {}, {})\n'.format(*args))
+    parse('    land_array_add(block_types, Render_{})\n'.format(d[0]))
 ***
 
     int i = 0
@@ -274,10 +302,15 @@ for name, vname in sdefs:
     Render_Gremlin->allocate = gremlin_allocate
     Render_TestTube->touch = testtube_touch
     Render_TestTube->tick = testtube_tick
-
-    Render_Smoke = loadpic("../smoke.png")
+    Render_ConveyorLeft->tick = conveyor_tick
+    Render_ConveyorLeft->allocate = conveyor_allocate
+    Render_ConveyorRight->tick = conveyor_tick
+    Render_ConveyorRight->allocate = conveyor_allocate
 
 def play_song:
+    if not r.music:
+        return
+
     All *a = global_a
     LandBuffer *b = land_buffer_new()
     land_buffer_cat(b, main_data_path)
@@ -309,8 +342,8 @@ def song_volume:
 
 def render_teardown():
 ***scramble
-for name, x, y, z, dynamic, lift, transparent, fixed, frames in defs:
-    parse('    blocktype_destroy(Render_{})\n'.format(name))
+for d in defs:
+    parse('    blocktype_destroy(Render_{})\n'.format(d[0]))
 
 for name, vname in sdefs:
     parse('    land_sound_destroy({})\n'.format(vname))
@@ -467,10 +500,19 @@ def render(Game *g):
             land_print_center("%s", "Yellow and Dangerous")
             land_print_center("%s", "by Allefant")
 
-        if g->ticks > 600 or a.editor:
+        if not a.show_map and (g->ticks > 600 or a.editor):
             float y = h / (w / 960) - 3 * fh
             land_text_pos(0, y)
             land_print_wordwrap(w, h, "%s", g->hint)
+
+        if g.record->is_recording:
+            land_color(1, 0, 0, 1)
+            if not g.record->wait_on_level or ((g.ticks / 30) & 1):
+                land_filled_circle(940, 0, 960, 20)
+        if g.record->is_replaying:
+            land_color(0, 0, 1, 1)
+            if not g.record->wait_on_level or ((g.ticks / 30) & 1):
+                land_filled_circle(940, 0, 960, 20)
 
     land_pop_transform()
 
@@ -498,6 +540,8 @@ def render_block_scaled(Block *self, Viewport *viewport, double scaled):
         float ca = 1
         float scale = 24
         float height = floor(self.y / scale + 4)
+        if bt.transparent:
+            height = 0
         if height >= 0:
             cb -= height / 64.0
             cg -= height / 128.0
@@ -512,8 +556,8 @@ def render_block_scaled(Block *self, Viewport *viewport, double scaled):
         LandImage *frame = land_array_get_nth(bt.bitmaps,
             self->frame)
         land_image_load_on_demand(frame)
-        x -= land_image_width(frame) / 4
-        y -= land_image_height(frame) / 4
+        #x -= land_image_width(frame) / 4
+        #y -= land_image_height(frame) / 4
         land_image_draw_scaled_tinted(frame, x, y, scaled, scaled,
                 cr, cg, cb, ca)
 
@@ -521,7 +565,7 @@ def render_block_scaled(Block *self, Viewport *viewport, double scaled):
     bool show_misaligned = False
     bool show_ground = self == editor.picked
 
-    if a->editor:
+    if a.editor:
         float s = 24
 
         if self.y < -s * 6:
@@ -605,31 +649,37 @@ def render_blocks(Blocks *blocks, Viewport *viewport):
 
     int n1 = land_array_count(blocks->fixed)
     int n2 = land_array_count(blocks->dynamic)
-    for int i in range(n1 + n2):
+    int n3 = land_array_count(blocks->transparent)
+    for int i in range(n1 + n2 + n3):
         Block *b
         if i < n1:
             b = land_array_get_nth(blocks->fixed, i)
-        else:
+        elif i < n1 + n2:
             b = land_array_get_nth(blocks->dynamic, i - n1)
+        else:
+            b = land_array_get_nth(blocks->transparent, i - n1 - n2)
+
+        BlockType *bt = b.block_type
+        
         bool need_mask = False
 
         # Need to rebuild the cache for this block?
-        if (not b->block_type->dynamic and blocks->rebuild_static_cache) or\
-            (b->block_type->dynamic and blocks->rebuild_dynamic_cache):
+        if (not bt.dynamic and blocks->rebuild_static_cache) or\
+            (bt.dynamic and blocks->rebuild_dynamic_cache) or\
+            (bt.transparent and blocks->rebuild_dynamic_cache):
 
             land_array_clear(b->cache)
 
-            int n = land_array_count(blocks->fixed)
-            int m = n
-            if b->block_type->dynamic:
-                n += land_array_count(blocks->dynamic)
+            int n = n1
+            if bt.dynamic or bt.transparent:
+                n += n2
 
             for int j in range(n):
                 Block *already
-                if j < m:
+                if j < n1:
                     already = land_array_get_nth(blocks->fixed, j)
                 else:
-                    already = land_array_get_nth(blocks->dynamic, j - m)
+                    already = land_array_get_nth(blocks->dynamic, j - n1)
                 if debug_no_mask: break
                 if already == b: break
                 if block_sort_order(already, b, viewport) == 1:
@@ -682,8 +732,8 @@ def render_blocks(Blocks *blocks, Viewport *viewport):
             land_render_state(LAND_DEPTH_TEST, False)
             land_unclip()
 
-    for Block *b in LandArray *blocks->transparent:
-        render_block(b, viewport)
+    #for Block *b in LandArray *blocks->transparent:
+    #    render_block(b, viewport)
 
     blocks->rebuild_static_cache = False
     blocks->rebuild_dynamic_cache = False

@@ -226,6 +226,11 @@ by
 ^Allefant
 
 
+Thanks for playing!
+
+Hope you enjoyed it!
+
+
 ^Programming
 
 Elias Pschernig

@@ -116,6 +116,8 @@ def player_tick(Block *super):
     if a->left: x -= 1; z += 1
     if a->right: x += 1; z -= 1
 
+    bool push_animation = False
+
     # slow down jump stronger if only tapping
     if not a.jump and self->super.dy > 0:
         self->super.dy *= 0.5
@@ -202,6 +204,7 @@ def player_tick(Block *super):
         super.pushed_something = False
         super.dx *= 0.7
         super.dz *= 0.7
+        push_animation = True
 
     block_tick(super)
 
@@ -212,6 +215,7 @@ def player_tick(Block *super):
 
         if px or pz:
             player_try_pull(self, px, pz)
+            push_animation = True
 
     if land_array_count(self->stack):
         if not a->jump:
@@ -220,6 +224,13 @@ def player_tick(Block *super):
                 b->no_fall = False
         else:
             player_lift(self)
+            push_animation = True
+
+    if not super.ground and a.jump:
+        push_animation = True
+        
+    if push_animation:
+        super.frame += 64
 
 def player_touch(Block *super, Block *c, float dx, dy, dz):
     All *a = global_a
@@ -262,12 +273,15 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
         game->key = True
         sound(Render_pickup, 1)
     if dy < 0:
+        bool always = a.godmode or game.record->wait_on_level
         if c->block_type == Render_ExitLeft and c.frame != 4:
-            if c.frame == 1 or c.frame == 2 or a.godmode:
-                game_level_done(game, c.x > 0 ? 1 : -1, 0)
+            if c.frame == 1 or c.frame == 2 or always:
+                if block_center_overlaps(super, c):
+                    game_level_done(game, c.x > 0 ? 1 : -1, 0)
         elif c->block_type == Render_ExitRight and c.frame != 4:
-            if c.frame == 1 or c.frame == 2 or a.godmode:
-                game_level_done(game, 0, c.z > 0 ? 1 : -1)
+            if c.frame == 1 or c.frame == 2 or always:
+                if block_center_overlaps(super, c):
+                    game_level_done(game, 0, c.z > 0 ? 1 : -1)
         if c.block_type == Render_GrateBottom or c.block_type == Render_Cart:
             self.metal = True
         else:

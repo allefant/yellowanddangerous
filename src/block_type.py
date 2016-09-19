@@ -5,11 +5,12 @@ static import render
 class BlockType:
     char *name
     float xs, ys, zs
-    bool dynamic
-    bool lift
-    bool transparent
-    bool fixed
+    bool dynamic # in the dynamic list - must be set for any block that can move
+    bool lift # can be lifted
+    bool transparent # in the transparent list
+    bool fixed # cannot be pushed/pulled
     bool invisible
+    bool animated
     LandArray *bitmaps
     #float x, y, z
     int btid
