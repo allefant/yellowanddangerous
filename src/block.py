@@ -8,6 +8,7 @@ class Blocks:
     LandArray *fixed
     LandArray *dynamic
     LandArray *transparent
+    LandArray *animated
     bool rebuild_static_cache
     bool rebuild_dynamic_cache
 
@@ -22,12 +23,15 @@ def blocks_clear(Blocks *self):
     blocks_list_destroy(&self->fixed)
     blocks_list_destroy(&self->dynamic)
     blocks_list_destroy(&self->transparent)
+    if self.animated:
+        land_array_destroy(self.animated)
 
 def blocks_reset(Blocks *self):
     blocks_clear(self)
     self->fixed = land_array_new()
     self->dynamic = land_array_new()
     self->transparent = land_array_new()
+    self->animated = land_array_new()
     self->rebuild_static_cache = True
     self->rebuild_dynamic_cache = True
 
@@ -128,6 +132,9 @@ def block_add(Block *self):
     else:
         land_array_add(self->blocks->fixed, self)
 
+    if self.block_type and self.block_type.animated:
+        land_array_add(self.blocks.animated, self)
+
 def block_change_type(Block *self, int d) -> Block *:
     int n = land_array_count(block_types)
     int btid = self.block_type.btid + d
@@ -207,6 +214,13 @@ bool def block_overlaps(Block *self, *other):
             if land_cross2d(self.x - ax, self.y - ay, bx - ax, by - ay
                     ) > 0:
                 return False
+        return True
+    return False
+
+def block_center_overlaps(Block *super, *c) -> bool:
+    float cx = super.x + super.xs / 2
+    float cz = super.z + super.zs / 2
+    if cx > c.x and cx < c.x + c.xs and cz > c.z and cz < c.z + c.zs:
         return True
     return False
 
@@ -486,7 +500,7 @@ static float def sgn(float a, x):
     return 0
 
 def block_tick(Block *self):
-    if not self->block_type->dynamic: return
+    if not self->block_type->animated: return
 
     if not self.no_fall and not self.block_type->fixed:
         self->dy -= sqrt(2)
@@ -538,3 +552,18 @@ def blocks_preload(Blocks *self) -> bool:
         if blocktype_preload(bt):
             return True
     return False
+
+def blocks_shift(Blocks *self, int dx, dy, dz):
+    int n1, n2, n3
+    n1 = land_array_count(self->fixed)
+    n2 = land_array_count(self->dynamic)
+    n3 = land_array_count(self->transparent)
+    for int i in range(n1 + n2 + n3):
+        Block *other
+        if i < n1: other = land_array_get_nth(self->fixed, i)
+        elif i - n1 < n2: other = land_array_get_nth(self->dynamic, i - n1)
+        elif i - n1 - n2 < n3: other = land_array_get_nth(self->transparent, i - n1 - n2)
+        other.x += dx
+        other.y += dy
+        other.z += dz
+    
