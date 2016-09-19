@@ -24,7 +24,7 @@ def allefant_init(Block *super):
     self->direction = 0
     self->want_direction = 0
     self->rotstep = 0
-    self->waypoint = 1
+    self->waypoint = -1
     self->wait = 60 * 2
     self->tx = super.x
     self->tz = super.y
@@ -33,9 +33,10 @@ def allefant_init(Block *super):
     self->travel = 0
     game->player2 = self
 
-def allefant_onload(Block *super):
+def find_waypoint(Block *super):
     Allefant *self = (void *)super
     float mind = -1
+
     for int i in range(game->waypoints_count):
         float x = game->waypoints[i][0] - super.x
         float z = game->waypoints[i][2] - super.z
@@ -52,6 +53,9 @@ def allefant_tick(Block *super):
     Allefant *self = (void *)super
     float speed = 1.4
 
+    if self.waypoint == -1:
+        find_waypoint(super)
+
     if self->wait > 0:
         if self->step != 8 and self->step != 24:
             self->step += 1
@@ -59,13 +63,13 @@ def allefant_tick(Block *super):
         self->wait -= 1
 
         if self->wait == 0:
-            if self->waypoint >= game->waypoints_count:
-                self->waypoint = 0
-
             self->tx = game->waypoints[self->waypoint][0]
             self->tz = game->waypoints[self->waypoint][2]
             self->waypoint += 1
             self->travel = 0
+
+            if self->waypoint >= game->waypoints_count:
+                self->waypoint = 0
                 
     else:
 
