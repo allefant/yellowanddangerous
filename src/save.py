@@ -3,10 +3,24 @@ import common
 """
 Savegame format:
 a block in the center is at 22, 4, 22
-position are multipled by 24
+positions are multipled by 24 to obtain in-game positions
+
+An isometric block's origin is the bottom back corner, x then goes right
+down, y goes up, z goes left down.
+
+        y
+        
+        |
+        |
+        |
+     _-´ `-_
+  _-´       `-_
+z               x
 
 A block at 22/4/22 will end up at 0/0/0.
-A block at 0/0/0 will end up at -528,-96,-528.
+A block at 0/0/0 will end up at -528,-96,-528. (-22*24,-4*42,-22*24)
+
+A level's floor typically is 40 x 40 in size.
 
 """
 
@@ -22,6 +36,7 @@ import editor
 
 type Game *game
 type Editor *editor
+type All *global_a
 
 def save_info:
     All *a = global_a
@@ -89,16 +104,19 @@ def load_info:
         
     land_free(path)
 
+def save_get_name(char const *base, int level, char const *suffix, char *out):
+    sprintf(out, "%s%02d%s", base, level, suffix)
+    char *path = land_get_save_file("com.yellowdanger", out)
+    strcpy(out, path)
+    land_free(path)
+
 def save_level(bool editing):
     char name[1024]
     if editing:
         sprintf(name, "data/levels/level%02d.txt", game.level)
         overview_update_level(game.overview, game.level)
     else:
-        sprintf(name, "save%02d.txt", game.level)
-        char *path = land_get_save_file("com.yellowdanger", name)
-        strcpy(name, path)
-        land_free(path)
+        save_get_name("save", game.level, ".txt", name)
         save_info()
         
     Blocks *blocks = game.blocks
@@ -158,10 +176,7 @@ def save_check(int level, SaveInfo *si):
         f = land_buffer_read_from_file(name)
 
     if not f:
-        sprintf(name, "save%02d.txt", level)
-        char *path = land_get_save_file("com.yellowdanger", name)
-        strcpy(name, path)
-        land_free(path)
+        save_get_name("save", level, ".txt", name)
         f = land_buffer_read_from_file(name)
 
     if not f:
@@ -217,10 +232,7 @@ def load_level(bool editing):
 
     LandBuffer *f = None
     if not editing:
-        sprintf(name, "save%02d.txt", game.level)
-        char *path = land_get_save_file("com.yellowdanger", name)
-        strcpy(name, path)
-        land_free(path)
+        save_get_name("save", game.level, ".txt", name)
         f = land_buffer_read_from_file(name)
     if not f:
         if not editing:
@@ -273,7 +285,7 @@ def load_level(bool editing):
         visible = visible and self.flower[i]
     if self.key:
         visible = False
-    if global_a->editor:
+    if global_a.editor:
         visible = True
     for Block *b in LandArray *blocks.dynamic:
         if b.block_type == Render_Key:
@@ -285,7 +297,7 @@ def load_level(bool editing):
                     b.y -= 9000
 
     if game.level == game_starting_level:
-        if not editing:
+        if not editing and self.pristine:
             game.sequence = 1
             game.sequence_ticks = 0
 
@@ -339,11 +351,9 @@ def save_load_from_offset(LandBuffer *f, int ox, oy, oz):
 
 def save_reset_room(int i):
     char name[1024]
-    sprintf(name, "save%02d.txt", i)
-    char *path = land_get_save_file("com.yellowdanger", name)
-    if not land_file_remove(path):
-        land_log_message("Cannot remove %s.", path)
-    land_free(path)
+    save_get_name("save", i, ".txt", name)
+    if not land_file_remove(name):
+        land_log_message("Cannot remove %s.", name)
 
 def save_new:
     for int i in range(1, 50):
