@@ -1,9 +1,10 @@
 import game
 type Game *game
+type All *global_a
 
 char const *tests = """
-record01_040803070468.gz
-record02_012000960660.gz
+record01_091203550756.gz
+record02_100800960660.gz
 record03_012000960660.gz
 record04_056400961008.gz
 record05_037200961008.gz
@@ -30,7 +31,7 @@ record25_012000960564.gz
 record26_012000960564.gz
 record27_012000960564.gz
 record28_066002881008.gz
-record29_100800960804.gz
+record29_100800960756.gz
 record30_100800960228.gz
 record31_066002881008.gz
 record32_100800960468.gz
@@ -47,7 +48,6 @@ record42_080404801008.gz
 record43_075600960120.gz
 record44_070800960120.gz
 record45_012000960948.gz
-record45_100800960564.gz
 record46_012000960564.gz
 record47_012004800564.gz
 record48_056400960120.gz
@@ -55,6 +55,7 @@ record49_012000960948.gz
 """
 
 def test -> bool:
+    global_a.test = True
     render_setup_path()
     render_load_blocktypes()
     game_setup(1920, 1080)
@@ -103,7 +104,8 @@ def test_level(int level, x, y, z, int *tick) -> bool
     load_level(True)
     record_set_replaying(game.record)
     record_load(game.record, game.level, x, y, z)
-
+    if game.record->wait_on_level:
+        game.state = "no recording"
     Block *b = &game.player->super
     b.x = x
     b.y = y

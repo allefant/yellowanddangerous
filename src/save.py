@@ -111,6 +111,7 @@ def save_get_name(char const *base, int level, char const *suffix, char *out):
     land_free(path)
 
 def save_level(bool editing):
+    print("save_level")
     char name[1024]
     if editing:
         sprintf(name, "data/levels/level%02d.txt", game.level)
@@ -229,6 +230,8 @@ def load_level(bool editing):
     self.pristine = False
 
     print("Loading %d", game.level)
+
+    event("level_up level=%d", game.level)
 
     LandBuffer *f = None
     if not editing:

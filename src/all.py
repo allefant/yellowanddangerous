@@ -55,3 +55,5 @@ class All:
 
     int resize_in_ticks
     bool show_map
+
+    bool test

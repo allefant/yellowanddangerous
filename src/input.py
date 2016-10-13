@@ -83,7 +83,9 @@ def input_tick:
         any = True
         count++
 
-        double rr = land_display_width() / 8 * 0.8 
+        double rr = land_display_width() / 8 * 0.8
+        if a.dpad == 2 or a.dpad == 3:
+            rr *= 1.5
 
         double dx, dy
 

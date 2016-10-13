@@ -422,10 +422,8 @@ static def draw_pause_controls:
         land_filled_rectangle(w - rr + rr * 4 / 8, rr / 8,
             w - rr + rr * 7 / 8, rr * 7 / 8)
 
-def render(Game *g):
+def render(Game *g, float w, h):
     All *a = global_a
-    float w = land_display_width()
-    float h = land_display_height()
     float fh = land_font_height(a.medium)
     #float z = g.viewport->zoom
 
@@ -452,8 +450,9 @@ def render(Game *g):
 
     if not game.sequence and not a.render_screenshot:
 
-        draw_move_controls()
-        draw_jump_controls()
+        if not a.show_map:
+            draw_move_controls()
+            draw_jump_controls()
         draw_pause_controls()
 
         if game.menu_on:

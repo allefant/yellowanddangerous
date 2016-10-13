@@ -106,9 +106,9 @@ def map_render:
 
     float x, y
     project(game->viewport,
-        -120,
         0,
-        720,
+        0,
+        900,
         &x, &y)
     land_text_pos(x, y)
     land_color(0, 0, 0, 1)
@@ -119,10 +119,10 @@ def map_render:
 
     for int fi in range(1, 8):
         if not mr.flower[fi]:
-            mr.flower[fi] = block_new(game->blocks, 120, 0, 720,
+            mr.flower[fi] = block_new(game->blocks, 0, 0, 0,
                 block_flower(fi))
-        mr.flower[fi]->x = 120 + fi * 60
-        mr.flower[fi]->z = 1080 - fi * 60
+        mr.flower[fi]->x = -240 + fi * 72
+        mr.flower[fi]->z = 720 #- fi * 60
         LandColor tint = a.tint
         if not game->flower[fi]:
             float c = (1 + sin(pi * 2 * land_get_ticks() / 60.0)) / 2

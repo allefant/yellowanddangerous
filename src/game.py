@@ -7,6 +7,7 @@ import menu
 import overview
 import editor
 import record
+import event
 
 type Editor *editor
 
@@ -98,15 +99,16 @@ def game_level_number_to_xz(int level, *x, *z):
 def game_level_done(Game *self, int gox, goz):
     if land_equals(self->state, "play") :
         record_done(self.record)
+        if not global_a->test:
+            save_level(False)
         self->state = "done"
         self->state_tick = self->ticks
-        save_level(False)
         self->gox = gox
         self->goz = goz
         if self->player:
             self->ex = self->player->super.x
             self->ez = self->player->super.z
-        self->level = game_neighboring_level(self.level, gox, goz)
+        self.level = game_neighboring_level(self.level, gox, goz)
         sound(Render_teleport, 1)
 
 def game_recalc:
@@ -135,6 +137,8 @@ def game_tick(Game *self):
         return
 
     if a.show_map:
+        if land_key_pressed(LandKeyBack):
+            a.show_map = False
         return
     
     int plates_count = 0
@@ -147,6 +151,9 @@ def game_tick(Game *self):
                 self->state = "died"
                 game->deaths++
                 record_done(self.record)
+                event("join_group group_id=died_x%.0f_y%.0f_z%.0f",
+                    self->player->super.x, self->player->super.y,
+                    self->player->super.z)
 
     for Block *b in LandArray *self->blocks->fixed:
         if b->block_type == Render_Plate:

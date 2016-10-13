@@ -76,18 +76,22 @@ def overview_render_next(Overview *self):
     intro_back = land_color_rgba(0, 0, 0, 0)
     a.render_screenshot = True
 
-    a.overview = False
-    render(game)
-    a.overview = True
     int w = land_display_width()
     int h = land_display_height()
-    LandImage *s = land_image_new(w, h)
-    land_image_grab(s, 0, 0)
     self.screenshot[game.level] = land_image_new(w / 4, h / 4)
     land_set_image_display(self.screenshot[game.level])
-    land_image_draw_scaled(s, 0, 0, 0.25, 0.25)
+
+    Viewport *backup = game.viewport
+    Viewport ovp
+    game.viewport = &ovp
+    viewport_update(game.viewport, w / 4, h / 4)
+    a.overview = False
+    render(game, w / 4, h / 4)
+    a.overview = True
+    game.viewport = backup
+    
     land_unset_image_display()
-    land_image_destroy(s)
+
     land_image_center(self.screenshot[game.level])
 
     game.sequence = False

@@ -16,6 +16,16 @@ class Exit:
         # 3 = open from other side
         # 4 = shut permanently
         self.frame = 0
+        self.side = None
+
+        if t == 18 and self.x == 45:
+            self.side = "right"
+        if t == 18 and self.x == 1:
+            self.side = "left"
+        if t == 19 and self.z == 45:
+            self.side = "down"
+        if t == 19 and self.z == 1:
+            self.side = "up"
 
     def framestring(self):
         if self.frame == 0:
@@ -84,48 +94,54 @@ def check_exit(i, f):
             elif row.startswith("make"):
                 e = None
 
-for i in range(49):
-    if os.path.exists(path(i)):
-        check_exit(i, path(i))
+def find_exits():
+    for i in range(49):
+        if os.path.exists(path(i)):
+            check_exit(i, path(i))
 
-for i in range(49):
-    l = levels[i]
-    for e in levels[i].exits:
-        if e.frame == 4:
-            continue
-        info =   "%2d %s %s %d/%d/%d" % (1 + i, e.typestring(), e.framestring(), e.x, e.y, e.z)
-        if e.t == 18 and e.x == 45:
-            x = levels[l.right()]
-            for e2 in x.exits:
-                if e2.z == e.z and e2.y == e.y and e2.x == 1:
-                    print(colors.bash("green"), "+", colors.bash("end"), info)
-                    break
+def main():
+    find_exits()
+
+    for i in range(49):
+        l = levels[i]
+        for e in levels[i].exits:
+            if e.frame == 4:
+                continue
+            info =   "%2d %s %s %d/%d/%d" % (1 + i, e.typestring(), e.framestring(), e.x, e.y, e.z)
+            if e.t == 18 and e.x == 45:
+                x = levels[l.right()]
+                for e2 in x.exits:
+                    if e2.z == e.z and e2.y == e.y and e2.x == 1:
+                        print(colors.bash("green"), "+", colors.bash("end"), info)
+                        break
+                else:
+                    print(colors.bash("back red"), "-", colors.bash("end"), info)
+            elif e.t == 18 and e.x == 1:
+                x = levels[l.left()]
+                for e2 in x.exits:
+                    if e2.z == e.z and e2.y == e.y and e2.x == 45:
+                        print(colors.bash("green"), "+", colors.bash("end"), info)
+                        break
+                else:
+                    print(colors.bash("back red"), "-", colors.bash("end"), info)
+            elif e.t == 19 and e.z == 45:
+                x = levels[l.down()]
+                for e2 in x.exits:
+                    if e2.x == e.x and e2.y == e.y and e2.z == 1:
+                        print(colors.bash("green"), "+", colors.bash("end"), info)
+                        break
+                else:
+                    print(colors.bash("back red"), "-", colors.bash("end"), info)
+            elif e.t == 19 and e.z == 1:
+                x = levels[l.up()]
+                for e2 in x.exits:
+                    if e2.x == e.x and e2.y == e.y and e2.z == 45:
+                        print(colors.bash("green"), "+", colors.bash("end"), info)
+                        break
+                else:
+                    print(colors.bash("back red"), "-", colors.bash("end"), info)
             else:
-                print(colors.bash("back red"), "-", colors.bash("end"), info)
-        elif e.t == 18 and e.x == 1:
-            x = levels[l.left()]
-            for e2 in x.exits:
-                if e2.z == e.z and e2.y == e.y and e2.x == 45:
-                    print(colors.bash("green"), "+", colors.bash("end"), info)
-                    break
-            else:
-                print(colors.bash("back red"), "-", colors.bash("end"), info)
-        elif e.t == 19 and e.z == 45:
-            x = levels[l.down()]
-            for e2 in x.exits:
-                if e2.x == e.x and e2.y == e.y and e2.z == 1:
-                    print(colors.bash("green"), "+", colors.bash("end"), info)
-                    break
-            else:
-                print(colors.bash("back red"), "-", colors.bash("end"), info)
-        elif e.t == 19 and e.z == 1:
-            x = levels[l.up()]
-            for e2 in x.exits:
-                if e2.x == e.x and e2.y == e.y and e2.z == 45:
-                    print(colors.bash("green"), "+", colors.bash("end"), info)
-                    break
-            else:
-                print(colors.bash("back red"), "-", colors.bash("end"), info)
-        else:
-            print(colors.bash("yellow"), "?", colors.bash("end"), info)
+                print(colors.bash("yellow"), "?", colors.bash("end"), info)
     
+if __name__ == "__main__":
+    main()

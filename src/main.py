@@ -91,13 +91,13 @@ def redraw():
             return
     
     float w = land_display_width()
-    #float h = land_display_height()
+    float h = land_display_height()
     #float fh = land_font_height(a->font)
 
     if a.title:
         title_render()
     else:
-        render(game)
+        render(game, w, h)
 
     if a->show_fps:
         double f1, f2

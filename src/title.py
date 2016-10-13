@@ -206,8 +206,10 @@ def title_render:
                 land_color(1, 0.75, 0.75, 1)
                 land_print("Are you sure?")
             elif i == 3:
-                land_print("Delete all saves")
+                land_color(1, 0, 0, 1)
+                land_print("Delete savegame!")
             elif i == 4:
+                land_color(0, 0.5, 0, 1)
                 land_print("Continue playing")
         else:
             if i == 0:
@@ -223,6 +225,7 @@ def title_render:
                 land_print("Settings")
 
     land_font_set(a.font)
+    land_color(0, 0, 0, 1)
     
     if not block1:
         block1 = block_new(game->blocks, 120, 0, 720, Render_Gremlin)

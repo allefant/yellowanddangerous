@@ -1,11 +1,13 @@
 hint Between the bushes...
 title Garden
+make 22 21 8 32
 make 10 39 4 27
-make 43 40 4 20
+make 43 42 4 22
 make 43 12 4 20
-make 29 32 4 20
+make 29 38 4 20
 make 29 4 4 20
 make 43 18 6 15
+make 13 39 4 17
 make 1 29 4 1
 make 16 21 6 9
 make 1 21 4 1
@@ -13,7 +15,7 @@ make 4 37 2 25
 make 1 13 4 9
 make 1 37 4 9
 make 3 9 0 17
-make 3 29 0 17
+make 70 21 2 33
 make 1 29 4 9
 make 18 45 3 25
 frame 2
@@ -24,13 +26,13 @@ make 3 1 0 17
 make 3 37 0 17
 make 1 13 4 1
 make 4 5 2 25
-make 4 29 2 25
+make 1 5 4 1
 make 16 9 6 9
 make 16 33 6 9
 make 3 5 0 33
 make 44 5 4 33
 make 23 13 2 25
 make 23 13 2 29
-make 3 21 0 9
-make 3 13 0 9
-make 1 5 4 1
+make 3 29 0 17
+make 70 13 2 33
+make 12 29 3 33
