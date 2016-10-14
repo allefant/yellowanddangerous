@@ -1,6 +1,6 @@
 import common
 
-global char const *VERSION = "1.13"
+global char const *VERSION = "1.14"
 global bool global_can_enable_editor = True
 
 enum:
