@@ -1,1 +1,9 @@
 gradle/local.properties
+gradle/.gradle/
+gradle/.idea/
+gradle/app/.externalNativeBuild/
+gradle/app/app.iml
+gradle/app/build/
+gradle/build/
+gradle/gradle.iml
+

@@ -19,6 +19,7 @@ def platform_tick(Block *super):
         if not self.moving:
             self.wait = 60
             self.last_last_y = self.last_y = 9000
+            print("waiting 60, frame is %d", super.frame)
         if self.wait > 0:
             self.wait--
         else:
@@ -37,10 +38,10 @@ def platform_tick(Block *super):
     block_tick(super)
 
     # hardcoded for now
-    if super.dy > 0 and super.y >= 336:
+    if super.dy > 0 and super.y > 336:
         super.y = 336
         stop(super)
-    if super.dy < 0 and super.y <= -48:
+    if super.dy < 0 and super.y < -48:
         super.y = -48
         stop(super)
 
@@ -59,6 +60,9 @@ def stop(Block *super):
     Platform *self = (void *)super
     
     self.moving = False
+    super.dx = 0
+    super.dy = 0
+    super.dz = 0
     if game->lever:
         if super.frame < 4:
             super.frame += 2
@@ -69,3 +73,4 @@ def stop(Block *super):
                 super.frame = 4
         game->lever->frame = 0
         game->lever = None
+        print("game.lever is None, frame is %d", super.frame)

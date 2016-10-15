@@ -111,7 +111,6 @@ def save_get_name(char const *base, int level, char const *suffix, char *out):
     land_free(path)
 
 def save_level(bool editing):
-    print("save_level")
     char name[1024]
     if editing:
         sprintf(name, "data/levels/level%02d.txt", game.level)
@@ -128,6 +127,7 @@ def save_level(bool editing):
     land_file_print(f, "title %s", game.title)
     land_free(st)
     float s = 24
+    int n = 0
     LandArray *arrays[] = {blocks.transparent, blocks.dynamic, blocks.fixed}
     for int i in range(3):
         LandArray *array = arrays[i]
@@ -149,8 +149,11 @@ def save_level(bool editing):
                 land_file_print(f, "move %d %d %d", xi, yi, zi)
             if block.frame != 0:
                 land_file_print(f, "frame %d", block.frame)
+            n++
             
     land_file_destroy(f)
+
+    print("save_level %s %d", name, n)
 
 static def add(SaveInfo *si, float x, y, z, xs, ys, zs):
     float xy[14]
