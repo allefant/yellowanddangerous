@@ -62,5 +62,8 @@ public class YellowAndDangerous extends AllegroActivity {
             bundle.putString(keyval[0], keyval[1]);
         }
         mFirebaseAnalytics.logEvent(parameters[0], bundle);
+        if (parameters[0].equals("level_up")) {
+            mFirebaseAnalytics.logEvent(parameters[0] + bundle.getString("level"), null);
+        }
     }
 }
