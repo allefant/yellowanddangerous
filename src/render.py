@@ -216,6 +216,18 @@ def render_loading_screen():
     land_color(0, 0, 0, 1)
     land_print_center("%s", "Loading! Please Wait!")
 
+def render_ad_screen():
+    land_clear(1, 1, 1, 1)
+    land_clear_depth(1)
+    land_reset_transform()
+    float w = land_display_width()
+    float h = land_display_height()
+    land_scale(w / 960, w / 960)
+    land_text_pos(960 / 2, (h / (w / 960)) / 2 - 10)
+    land_font_set(global_a->medium)
+    land_color(0, 0, 0, 1)
+    land_print_center("Displaying ad!")
+
 def render_setup():
     if r.was_setup: return
     r.was_setup = True
@@ -436,6 +448,11 @@ def render(Game *g, float w, h):
         a.tint.a = 0
         land_clear(r.background_color.r, r.background_color.g,
             r.background_color.b, r.background_color.a)
+
+    if a.show_ad:
+        land_stream_volume(r.music, 0)
+        render_ad_screen()
+        return
 
     if a.overview:
         overview_render(game->overview)

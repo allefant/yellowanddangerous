@@ -54,7 +54,8 @@ struct All {
 #line 56
     int resize_in_ticks;
     bool show_map;
-#line 59
+    bool show_ad;
+#line 60
     bool test;
 };
 #endif

@@ -121,11 +121,24 @@ def game_key(Game *self, int k):
 def game_tick(Game *self):
     All *a = global_a
 
+    if a.show_ad:
+        if show_ad_done():
+            land_log_message("show_ad_done")
+            a.show_ad = False
+            song_volume()
+        else:
+            return
+
     if land_equals(self->state, "done") or land_equals(self->state, "died"):
         if self->ticks > self->state_tick + 30:
             a.load_after_redraw = 1
             a.find_entrance = True
             play_song()
+            if land_equals(self->state, "died"):
+                land_log_message("show_interstitial_ad")
+                show_interstitial_ad()
+                a.show_ad = True
+                return
 
     if a.load_after_redraw:
         return

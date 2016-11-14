@@ -273,372 +273,384 @@ void render_loading_screen(void) {
     land_color(0, 0, 0, 1);
     land_print_center("%s", "Loading! Please Wait!");
 }
+void render_ad_screen(void) {
+    land_clear(1, 1, 1, 1);
+    land_clear_depth(1);
+    land_reset_transform();
+    float w = land_display_width();
+    float h = land_display_height();
+    land_scale(w / 960, w / 960);
+    land_text_pos(960 / 2, (h / (w / 960)) / 2 - 10);
+    land_font_set(global_a->medium);
+    land_color(0, 0, 0, 1);
+    land_print_center("Displaying ad!");
+}
 void render_setup(void) {
     if (r.was_setup) {
-#line 220
+#line 232
         return ;
     }
-#line 221
+#line 233
     r.was_setup = 1;
-#line 223
+#line 235
     land_render_state(LAND_ALPHA_TEST, 1);
     land_render_state(LAND_ALPHA_FUNCTION, LAND_GREATER);
     land_render_state(LAND_ALPHA_VALUE, 0);
-#line 227
+#line 239
     r.background_color = (LandColor) {1, 1, 1, 1};
-#line 229
+#line 241
     render_setup_path();
-#line 231
+#line 243
     render_loading_screen();
     land_flip();
-#line 234
+#line 246
     r.music = land_stream_new(2048, 4, 22050, 16, 2);
-#line 236
+#line 248
     load_info();
-#line 238
+#line 250
     play_song();
-#line 240
+#line 252
     Render_Smoke = loadpic("../smoke.png");
-#line 242
+#line 254
     Render_step = render_loads("step");
-#line 242
+#line 254
     Render_push = render_loads("push");
-#line 242
+#line 254
     Render_off = render_loads("off");
-#line 242
+#line 254
     Render_on = render_loads("on");
-#line 242
+#line 254
     Render_uhg = render_loads("uhg");
-#line 242
+#line 254
     Render_oh_no = render_loads("oh no");
-#line 242
+#line 254
     Render_teleport = render_loads("teleport");
-#line 242
+#line 254
     Render_glass = render_loads("glass");
-#line 242
+#line 254
     Render_metal = render_loads("metal");
-#line 242
+#line 254
     Render_ignition = render_loads("ignition");
-#line 242
+#line 254
     Render_pickup = render_loads("pickup");
-#line 247
+#line 259
     render_load_blocktypes();
 }
 void render_setup_path(void) {
     if (r.path) {
         land_free(r.path);
     }
-#line 252
+#line 264
     LandBuffer * b = land_buffer_new();
     land_buffer_cat(b, main_data_path);
     land_buffer_cat(b, "/data/yellowanddangerous/");
     r.path = land_buffer_finish(b);
 }
 void render_load_blocktypes(void) {
-#line 259
+#line 271
     char * ini = land_strdup(r.path);
     land_concatenate(& ini, "/offsets.ini");
     r.offsets = land_ini_read(ini);
     land_free(ini);
-#line 264
+#line 276
     block_types = land_array_new();
     Render_Block = render_load("Block", 2, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Block);
-#line 265
+#line 277
     Render_BlockBottom = render_load("BlockBottom", 2, 0.5, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockBottom);
-#line 265
+#line 277
     Render_BlockLeft = render_load("BlockLeft", 0.5, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockLeft);
-#line 265
+#line 277
     Render_BlockBottom2 = render_load("BlockBottom2", 2, 1, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockBottom2);
-#line 265
+#line 277
     Render_BlockBottom3 = render_load("BlockBottom3", 2, 0.5, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockBottom3);
-#line 265
+#line 277
     Render_BlockBottomLeft3 = render_load("BlockBottomLeft3", 2, 0.5, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockBottomLeft3);
-#line 265
+#line 277
     Render_PlankRight = render_load("PlankRight", 1.9, 0.245, 0.5, 1, 1, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_PlankRight);
-#line 265
+#line 277
     Render_PlankLeft = render_load("PlankLeft", 0.5, 0.245, 1.9, 1, 1, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_PlankLeft);
-#line 265
+#line 277
     Render_BlockLeft2 = render_load("BlockLeft2", 1, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockLeft2);
-#line 265
+#line 277
     Render_BlockRight2 = render_load("BlockRight2", 2, 2, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockRight2);
-#line 265
+#line 277
     Render_Scientist = render_load("Scientist", 0.75, 1.75, 0.75, 1, 0, 0, 0, 128, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Scientist);
-#line 265
+#line 277
     Render_Cube2 = render_load("Cube2", 1, 1, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Cube2);
-#line 265
+#line 277
     Render_Plate = render_load("Plate", 1, 0.25, 1, 0, 0, 0, 0, 2, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Plate);
-#line 265
+#line 277
     Render_Cube3 = render_load("Cube3", 0.667, 0.667, 0.667, 1, 1, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Cube3);
-#line 265
+#line 277
     Render_Barrel = render_load("Barrel", 0.8, 1.2, 0.8, 1, 0, 0, 0, 3, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Barrel);
-#line 265
+#line 277
     Render_TreeBottom = render_load("TreeBottom", 2, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_TreeBottom);
-#line 265
+#line 277
     Render_TreeTop = render_load("TreeTop", 2, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_TreeTop);
-#line 265
+#line 277
     Render_Trunk = render_load("Trunk", 0.2, 1.0, 0.2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Trunk);
-#line 265
+#line 277
     Render_ExitLeft = render_load("ExitLeft", 1, 0.25, 2, 0, 0, 0, 0, 5, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_ExitLeft);
-#line 265
+#line 277
     Render_ExitRight = render_load("ExitRight", 2, 0.25, 1, 0, 0, 0, 0, 5, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_ExitRight);
-#line 265
+#line 277
     Render_Allefant = render_load("Allefant", 1.25, 1.75, 1.25, 1, 0, 0, 0, 64, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Allefant);
-#line 265
+#line 277
     Render_WindowRight = render_load("WindowRight", 2, 2, 0.25, 0, 0, 1, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_WindowRight);
-#line 265
+#line 277
     Render_WindowLeft = render_load("WindowLeft", 0.25, 2, 2, 0, 0, 1, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_WindowLeft);
-#line 265
+#line 277
     Render_BlockSmall3 = render_load("BlockSmall3", 1, 0.5, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockSmall3);
-#line 265
+#line 277
     Render_CherryTree = render_load("CherryTree", 3, 5, 3, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_CherryTree);
-#line 265
+#line 277
     Render_Waypoint = render_load("Waypoint", 0.5, 0, 0.5, 0, 0, 0, 0, 10, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Waypoint);
-#line 265
+#line 277
     Render_Crate = render_load("Crate", 0.95, 2, 0.95, 1, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Crate);
-#line 265
+#line 277
     Render_BlockLeft3 = render_load("BlockLeft3", 0.5, 1, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockLeft3);
-#line 265
+#line 277
     Render_BlockRight3 = render_load("BlockRight3", 2, 1, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockRight3);
-#line 265
+#line 277
     Render_Plant = render_load("Plant", 0.5, 0.5, 0.5, 1, 1, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Plant);
-#line 265
+#line 277
     Render_Platform = render_load("Platform", 2, 0.5, 2, 1, 0, 0, 1, 6, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Platform);
-#line 265
+#line 277
     Render_LeverLeft = render_load("LeverLeft", 0.5, 2, 1, 0, 0, 0, 0, 2, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_LeverLeft);
-#line 265
+#line 277
     Render_LeverRight = render_load("LeverRight", 1, 2, 0.5, 0, 0, 0, 0, 2, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_LeverRight);
-#line 265
+#line 277
     Render_Statue = render_load("Statue", 2, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Statue);
-#line 265
+#line 277
     Render_RampLeft = render_load("RampLeft", 1, 0.5, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_RampLeft);
-#line 265
+#line 277
     Render_RampRight = render_load("RampRight", 2, 0.5, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_RampRight);
-#line 265
+#line 277
     Render_VentLeft = render_load("VentLeft", 0.5, 2, 1, 0, 0, 0, 0, 4, 1);
-#line 265
+#line 277
     land_array_add(block_types, Render_VentLeft);
-#line 265
+#line 277
     Render_VentRight = render_load("VentRight", 1, 2, 0.5, 0, 0, 0, 0, 4, 1);
-#line 265
+#line 277
     land_array_add(block_types, Render_VentRight);
-#line 265
+#line 277
     Render_BlockSmall = render_load("BlockSmall", 1, 0.5, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockSmall);
-#line 265
+#line 277
     Render_BlockRight = render_load("BlockRight", 2, 2, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockRight);
-#line 265
+#line 277
     Render_BlockSmallLeft = render_load("BlockSmallLeft", 0.5, 1, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockSmallLeft);
-#line 265
+#line 277
     Render_BlockSmallRight = render_load("BlockSmallRight", 1, 1, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockSmallRight);
-#line 265
+#line 277
     Render_Gentian = render_load("Gentian", 0.5, 0.5, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Gentian);
-#line 265
+#line 277
     Render_Eye = render_load("Eye", 0.5, 0.5, 0.5, 1, 1, 0, 0, 8, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Eye);
-#line 265
+#line 277
     Render_Ginko = render_load("Ginko", 2, 4, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Ginko);
-#line 265
+#line 277
     Render_Edelweiss = render_load("Edelweiss", 0.5, 0.5, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Edelweiss);
-#line 265
+#line 277
     Render_Cart = render_load("Cart", 2, 1.25, 2, 1, 0, 0, 0, 4, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Cart);
-#line 265
+#line 277
     Render_GrateBottom = render_load("GrateBottom", 2, 0.25, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_GrateBottom);
-#line 265
+#line 277
     Render_GrateLeft = render_load("GrateLeft", 0.25, 2, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_GrateLeft);
-#line 265
+#line 277
     Render_GrateRight = render_load("GrateRight", 2, 2, 0.25, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_GrateRight);
-#line 265
+#line 277
     Render_Gremlin = render_load("Gremlin", 0.5, 0.5, 0.5, 1, 0, 0, 0, 16, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Gremlin);
-#line 265
+#line 277
     Render_InvisibleLeft = render_load("InvisibleLeft", 0.25, 4, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_InvisibleLeft);
-#line 265
+#line 277
     Render_InvisibleRight = render_load("InvisibleRight", 2, 4, 0.25, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_InvisibleRight);
-#line 265
+#line 277
     Render_Orchid = render_load("Orchid", 0.5, 1.25, 0.75, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Orchid);
-#line 265
+#line 277
     Render_Sunflower = render_load("Sunflower", 1, 2.5, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Sunflower);
-#line 265
+#line 277
     Render_Hyacinth = render_load("Hyacinth", 0.5, 1, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Hyacinth);
-#line 265
+#line 277
     Render_DeskLeft = render_load("DeskLeft", 1, 1, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_DeskLeft);
-#line 265
+#line 277
     Render_WallLeft = render_load("WallLeft", 0.5, 3, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_WallLeft);
-#line 265
+#line 277
     Render_WallRight = render_load("WallRight", 2, 3, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_WallRight);
-#line 265
+#line 277
     Render_DeskRight = render_load("DeskRight", 2, 1, 1, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_DeskRight);
-#line 265
+#line 277
     Render_Floor = render_load("Floor", 2, 0.25, 2, 0, 0, 0, 0, 2, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Floor);
-#line 265
+#line 277
     Render_TestTube = render_load("TestTube", 0.125, 0.5, 0.125, 1, 1, 0, 0, 7, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_TestTube);
-#line 265
+#line 277
     Render_Rose = render_load("Rose", 0.5, 1, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Rose);
-#line 265
+#line 277
     Render_Belladonna = render_load("Belladonna", 0.5, 1.5, 0.5, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Belladonna);
-#line 265
+#line 277
     Render_BridgeRight = render_load("BridgeRight", 2.5, 0.25, 0.5, 1, 1, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BridgeRight);
-#line 265
+#line 277
     Render_BridgeLeft = render_load("BridgeLeft", 0.5, 0.25, 2.5, 1, 1, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BridgeLeft);
-#line 265
+#line 277
     Render_Car = render_load("Car", 2, 2, 3, 0, 0, 0, 0, 2, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Car);
-#line 265
+#line 277
     Render_Key = render_load("Key", 0.5, 0.5, 0.5, 1, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_Key);
-#line 265
+#line 277
     Render_BlockBottomRight3 = render_load("BlockBottomRight3", 1, 0.5, 2, 0, 0, 0, 0, 1, 0);
-#line 265
+#line 277
     land_array_add(block_types, Render_BlockBottomRight3);
-#line 265
+#line 277
     Render_ConveyorLeft = render_load("ConveyorLeft", 1, 0.5, 2, 0, 0, 0, 0, 4, 1);
-#line 265
+#line 277
     land_array_add(block_types, Render_ConveyorLeft);
-#line 265
+#line 277
     Render_ConveyorRight = render_load("ConveyorRight", 2, 0.5, 1, 0, 0, 0, 0, 4, 1);
-#line 265
+#line 277
     land_array_add(block_types, Render_ConveyorRight);
-#line 272
+#line 284
     int i = 0;
     {
-#line 273
+#line 285
         LandArrayIterator __iter0__ = LandArrayIterator_first(block_types);
-#line 273
+#line 285
         for (BlockType * bt = LandArrayIterator_item(block_types, &__iter0__); LandArrayIterator_next(block_types, &__iter0__); bt = LandArrayIterator_item(block_types, &__iter0__)) {
             bt->btid = i++;
         }
     }
-#line 276
+#line 288
     Render_InvisibleLeft->invisible = 1;
     Render_InvisibleRight->invisible = 1;
-#line 279
+#line 291
     Render_Scientist->tick = player_tick;
     Render_Scientist->touch = player_touch;
     Render_Scientist->destroy = player_destroy;
@@ -672,218 +684,218 @@ void render_load_blocktypes(void) {
 }
 void play_song(void) {
     if (! r.music) {
-#line 311
+#line 323
         return ;
     }
-#line 314
+#line 326
     All * a = global_a;
     LandBuffer * b = land_buffer_new();
     land_buffer_cat(b, main_data_path);
-#line 318
+#line 330
     if (r.song == 0) {
         land_buffer_cat(b, "/data/Manic Polka.ogg");
     }
-#line 320
+#line 332
     else if (r.song == 1) {
         land_buffer_cat(b, "/data/katyusha.ogg");
     }
-#line 322
+#line 334
     else if (r.song == 2) {
         land_buffer_cat(b, "/data/Overcast.ogg");
     }
-#line 324
+#line 336
     else if (r.song == 3) {
         land_buffer_cat(b, "/data/allefant.ogg");
     }
-#line 326
+#line 338
     else if (r.song == 4) {
         land_buffer_cat(b, "/data/Pixel Peeker Polka.ogg");
     }
-#line 328
+#line 340
     else if (r.song == 5) {
         land_buffer_cat(b, "/data/fairy.ogg");
     }
-#line 330
+#line 342
     char * musicpath = land_buffer_finish(b);
     land_stream_music(r.music, musicpath);
     land_free(musicpath);
     land_stream_volume(r.music, a->music / 6.0);
-#line 335
+#line 347
     r.song++;
     if (r.song == 6) {
         r.song = 0;
     }
 }
-#line 339
+#line 351
 void song_volume(void) {
     All * a = global_a;
     land_stream_volume(r.music, a->music / 6.0);
 }
 void render_teardown(void) {
     blocktype_destroy(Render_Block);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockBottom);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockBottom2);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockBottom3);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockBottomLeft3);
-#line 344
+#line 356
     blocktype_destroy(Render_PlankRight);
-#line 344
+#line 356
     blocktype_destroy(Render_PlankLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockLeft2);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockRight2);
-#line 344
+#line 356
     blocktype_destroy(Render_Scientist);
-#line 344
+#line 356
     blocktype_destroy(Render_Cube2);
-#line 344
+#line 356
     blocktype_destroy(Render_Plate);
-#line 344
+#line 356
     blocktype_destroy(Render_Cube3);
-#line 344
+#line 356
     blocktype_destroy(Render_Barrel);
-#line 344
+#line 356
     blocktype_destroy(Render_TreeBottom);
-#line 344
+#line 356
     blocktype_destroy(Render_TreeTop);
-#line 344
+#line 356
     blocktype_destroy(Render_Trunk);
-#line 344
+#line 356
     blocktype_destroy(Render_ExitLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_ExitRight);
-#line 344
+#line 356
     blocktype_destroy(Render_Allefant);
-#line 344
+#line 356
     blocktype_destroy(Render_WindowRight);
-#line 344
+#line 356
     blocktype_destroy(Render_WindowLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockSmall3);
-#line 344
+#line 356
     blocktype_destroy(Render_CherryTree);
-#line 344
+#line 356
     blocktype_destroy(Render_Waypoint);
-#line 344
+#line 356
     blocktype_destroy(Render_Crate);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockLeft3);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockRight3);
-#line 344
+#line 356
     blocktype_destroy(Render_Plant);
-#line 344
+#line 356
     blocktype_destroy(Render_Platform);
-#line 344
+#line 356
     blocktype_destroy(Render_LeverLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_LeverRight);
-#line 344
+#line 356
     blocktype_destroy(Render_Statue);
-#line 344
+#line 356
     blocktype_destroy(Render_RampLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_RampRight);
-#line 344
+#line 356
     blocktype_destroy(Render_VentLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_VentRight);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockSmall);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockRight);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockSmallLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockSmallRight);
-#line 344
+#line 356
     blocktype_destroy(Render_Gentian);
-#line 344
+#line 356
     blocktype_destroy(Render_Eye);
-#line 344
+#line 356
     blocktype_destroy(Render_Ginko);
-#line 344
+#line 356
     blocktype_destroy(Render_Edelweiss);
-#line 344
+#line 356
     blocktype_destroy(Render_Cart);
-#line 344
+#line 356
     blocktype_destroy(Render_GrateBottom);
-#line 344
+#line 356
     blocktype_destroy(Render_GrateLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_GrateRight);
-#line 344
+#line 356
     blocktype_destroy(Render_Gremlin);
-#line 344
+#line 356
     blocktype_destroy(Render_InvisibleLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_InvisibleRight);
-#line 344
+#line 356
     blocktype_destroy(Render_Orchid);
-#line 344
+#line 356
     blocktype_destroy(Render_Sunflower);
-#line 344
+#line 356
     blocktype_destroy(Render_Hyacinth);
-#line 344
+#line 356
     blocktype_destroy(Render_DeskLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_WallLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_WallRight);
-#line 344
+#line 356
     blocktype_destroy(Render_DeskRight);
-#line 344
+#line 356
     blocktype_destroy(Render_Floor);
-#line 344
+#line 356
     blocktype_destroy(Render_TestTube);
-#line 344
+#line 356
     blocktype_destroy(Render_Rose);
-#line 344
+#line 356
     blocktype_destroy(Render_Belladonna);
-#line 344
+#line 356
     blocktype_destroy(Render_BridgeRight);
-#line 344
+#line 356
     blocktype_destroy(Render_BridgeLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_Car);
-#line 344
+#line 356
     blocktype_destroy(Render_Key);
-#line 344
+#line 356
     blocktype_destroy(Render_BlockBottomRight3);
-#line 344
+#line 356
     blocktype_destroy(Render_ConveyorLeft);
-#line 344
+#line 356
     blocktype_destroy(Render_ConveyorRight);
-#line 344
+#line 356
     land_sound_destroy(Render_step);
-#line 344
+#line 356
     land_sound_destroy(Render_push);
-#line 344
+#line 356
     land_sound_destroy(Render_off);
-#line 344
+#line 356
     land_sound_destroy(Render_on);
-#line 344
+#line 356
     land_sound_destroy(Render_uhg);
-#line 344
+#line 356
     land_sound_destroy(Render_oh_no);
-#line 344
+#line 356
     land_sound_destroy(Render_teleport);
-#line 344
+#line 356
     land_sound_destroy(Render_glass);
-#line 344
+#line 356
     land_sound_destroy(Render_metal);
-#line 344
+#line 356
     land_sound_destroy(Render_ignition);
-#line 344
+#line 356
     land_sound_destroy(Render_pickup);
-#line 352
+#line 364
     land_stream_destroy(r.music);
     land_free(r.path);
 }
@@ -894,30 +906,30 @@ static void draw_move_controls(void) {
     if (a->swipej && a->dpad > 3) {
         land_color(0.8, 0.1, 0, 0.5);
     }
-#line 360
+#line 372
     else {
-#line 362
+#line 374
         land_color(0.5, 0.4, 0, 0.5);
     }
-#line 363
+#line 375
     float rr = w / 8 * 0.8;
-#line 365
+#line 377
     if (a->dpad == 2 || a->dpad == 3) {
         rr *= 1.5;
     }
-#line 367
+#line 379
     float rx = rr;
     float ry = h - rr;
-#line 370
+#line 382
     if (a->dpad > 3) {
         if (! a->swipe) {
-#line 371
+#line 383
             return ;
         }
         rx = a->swipex;
         ry = a->swipey;
     }
-#line 375
+#line 387
     else if (a->dpad == 1 || a->dpad == 3) {
         rx = w - rr;
     }
@@ -931,17 +943,17 @@ static void draw_move_controls(void) {
         if (i % 4 == 0 || i % 4 == 3) {
             r2 *= 0.75;
         }
-#line 387
+#line 399
         xy [i * 2 + 0] = rx + c * r2;
         xy [i * 2 + 1] = ry + s * r2;
     }
-#line 389
+#line 401
     land_filled_polygon(34, xy);
 }
 static void draw_jump_controls(void) {
     All * a = global_a;
     if (a->dpad > 3) {
-#line 393
+#line 405
         return ;
     }
     land_color(0.5, 0.4, 0, 0.5);
@@ -951,13 +963,13 @@ static void draw_jump_controls(void) {
     if (a->dpad == 2 || a->dpad == 3) {
         rr *= 1.5;
     }
-#line 401
+#line 413
     float rx = w - rr;
     float ry = h - rr;
     if (a->dpad == 1 || a->dpad == 3) {
         rx = rr;
     }
-#line 405
+#line 417
     rr *= 0.6;
     land_filled_circle(rx - rr, ry - rr, rx + rr, ry + rr);
 }
@@ -965,75 +977,82 @@ static void draw_pause_controls(void) {
     land_color(0.5, 0.4, 0, 0.5);
     float w = land_display_width();
     float rr = w / 8 * 0.8;
-#line 413
+#line 425
     if (global_a->show_map) {
-#line 415
+#line 427
         land_filled_triangle(w - rr / 8, rr / 2, w - rr, rr, w - rr, 0);
-#line 418
+#line 430
         land_filled_triangle(w - rr, w / 8 + rr / 2, w - rr / 8, w / 8, w - rr / 8, w / 8 + rr);
     }
-#line 418
+#line 430
     else {
-#line 421
+#line 433
         land_filled_rectangle(w - rr, rr / 8, w - rr + rr * 3 / 8, rr * 7 / 8);
-#line 423
+#line 435
         land_filled_rectangle(w - rr + rr * 4 / 8, rr / 8, w - rr + rr * 7 / 8, rr * 7 / 8);
     }
 }
-#line 425
+#line 437
 void render(Game * g, float w, float h) {
     All * a = global_a;
     float fh = land_font_height(a->medium);
     //float z = g.viewport->zoom
-#line 430
+#line 442
     land_clear_depth(1);
-#line 432
+#line 444
     if (game->sequence) {
         a->tint = intro_tint;
         land_clear(intro_back.r, intro_back.g, intro_back.b, intro_back.a);
     }
-#line 434
+#line 446
     else {
-#line 436
+#line 448
         a->tint.a = 0;
-#line 438
+#line 450
         land_clear(r.background_color.r, r.background_color.g, r.background_color.b, r.background_color.a);
     }
+    if (a->show_ad) {
+        land_stream_volume(r.music, 0);
+        render_ad_screen();
+#line 454
+        return ;
+    }
+#line 457
     if (a->overview) {
         overview_render(game->overview);
     }
-#line 442
+#line 459
     else if (! a->show_map) {
         render_blocks(g->blocks, g->viewport);
-#line 445
+#line 462
         if (game->sequence && ! a->render_screenshot) {
             intro_postprocess();
         }
     }
-#line 448
+#line 465
     land_reset_transform();
     land_render_state(LAND_DEPTH_TEST, 0);
-#line 451
+#line 468
     if (! game->sequence && ! a->render_screenshot) {
-#line 453
+#line 470
         if (! a->show_map) {
             draw_move_controls();
             draw_jump_controls();
         }
-#line 456
+#line 473
         draw_pause_controls();
-#line 458
+#line 475
         if (game->menu_on) {
             menu_draw(game->menu);
         }
     }
-#line 461
+#line 478
     land_color(0, 0, 0, 1);
     land_font_set(a->medium);
-#line 464
+#line 481
     land_push_transform();
     land_scale(w / 960.0, w / 960.0);
-#line 467
+#line 484
     if (a->overview) {
         land_color(0, 0, 0, 1);
         land_text_pos(0, 0);
@@ -1043,12 +1062,12 @@ void render(Game * g, float w, float h) {
         map_render();
     }
     if (! a->render_screenshot && ! a->overview) {
-#line 477
+#line 494
         float v [8];
         float o = 72;
         float m = 480;
         Viewport * vp = game->viewport;
-#line 482
+#line 499
         if (a->editor) {
             project(vp, o - m, 0, o - m, v + 0, v + 1);
             project(vp, o - m, 0, o + m, v + 2, v + 3);
@@ -1064,7 +1083,7 @@ void render(Game * g, float w, float h) {
             land_print("%d", g->level);
         }
         if (g->ticks < 300) {
-#line 498
+#line 515
             land_text_pos(960 * 3 / 4, fh);
             land_print_center("%s", "Yellow and Dangerous");
             land_print_center("%s", "by Allefant");
@@ -1080,7 +1099,7 @@ void render(Game * g, float w, float h) {
                 land_filled_circle(940, 0, 960, 20);
             }
         }
-#line 511
+#line 528
         if (g->record->is_replaying) {
             land_color(0, 0, 1, 1);
             if (! g->record->wait_on_level || ((g->ticks / 30) & 1)) {
@@ -1088,25 +1107,25 @@ void render(Game * g, float w, float h) {
             }
         }
     }
-#line 516
+#line 533
     land_pop_transform();
 }
 void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
     All * a = global_a;
     BlockType * bt = self->block_type;
     float x, y;
-#line 526
+#line 543
     project(viewport, self->x + self->xs / 2, self->y + self->ys / 2, self->z + self->zs / 2, & x, & y);
     //x += bt->x
     //y += bt->y
-#line 530
+#line 547
     bool hide = bt->invisible;
     if (bt == Render_Waypoint) {
         if (! a->editor) {
             hide = 1;
         }
     }
-#line 535
+#line 552
     if (self->block_type->bitmaps && ! hide) {
         float cr = 1;
         float cg = 1;
@@ -1117,18 +1136,18 @@ void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
         if (bt->transparent) {
             height = 0;
         }
-#line 544
+#line 561
         if (height >= 0) {
             cb -= height / 64.0;
             cg -= height / 128.0;
         }
-#line 546
+#line 563
         else {
-#line 548
+#line 565
             cb += height / 64;
             cr += height / 64;
         }
-#line 550
+#line 567
         if (a->tint.a) {
             cr = a->tint.r;
             cg = a->tint.g;
@@ -1139,16 +1158,16 @@ void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
         land_image_load_on_demand(frame);
         //x -= land_image_width(frame) / 4
         //y -= land_image_height(frame) / 4
-#line 561
+#line 578
         land_image_draw_scaled_tinted(frame, x, y, scaled, scaled, cr, cg, cb, ca);
     }
     bool show_bounds = debug_bounding_boxes || self == editor->picked;
     bool show_misaligned = 0;
     bool show_ground = self == editor->picked;
-#line 567
+#line 584
     if (a->editor) {
         float s = 24;
-#line 570
+#line 587
         if (self->y < - s * 6) {
             show_ground = 1;
             show_bounds = 1;
@@ -1164,12 +1183,12 @@ void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
             show_misaligned = 1;
         }
     }
-#line 584
+#line 601
     if (show_bounds) {
         float x2 = self->x + self->xs;
         float y2 = self->y + self->ys;
         float z2 = self->z + self->zs;
-#line 589
+#line 606
         float v [22];
         project(viewport, self->x, y2, self->z, v + 0, v + 1);
         project(viewport, self->x, y2, z2, v + 2, v + 3);
@@ -1186,15 +1205,15 @@ void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
         //  4   2   6
         //    \ | /
         //      5
-#line 607
+#line 624
         if (show_misaligned) {
             land_color(0.75, 0, 0.75, 1);
             land_line(v [0], v [1], v [4], v [5]);
             land_line(v [2], v [3], v [6], v [7]);
         }
-#line 610
+#line 627
         else {
-#line 612
+#line 629
             land_color(0, 0, 0, 1);
         }
         land_line(v [0], v [1], v [2], v [3]);
@@ -1203,7 +1222,7 @@ void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
         land_line(v [10], v [11], v [12], v [13]);
         land_line(v [12], v [13], v [6], v [7]);
         land_line(v [6], v [7], v [0], v [1]);
-#line 621
+#line 638
         if (show_ground) {
             project(viewport, self->x, 0, self->z, v + 14, v + 15);
             project(viewport, self->x, 0, z2, v + 16, v + 17);
@@ -1217,7 +1236,7 @@ void render_block_scaled(Block * self, Viewport * viewport, double scaled) {
         }
     }
 }
-#line 632
+#line 649
 void render_block(Block * self, Viewport * viewport) {
     render_block_scaled(self, viewport, 0.5);
 }
@@ -1229,11 +1248,11 @@ void render_blocks(Blocks * blocks, Viewport * viewport) {
     // all.
     // For dynamic blocks the cache has to be rebuilt whenever any of them moves
     // however.
-#line 645
+#line 662
     float z = viewport->zoom;
     land_reset_transform();
     land_scale(z, z);
-#line 649
+#line 666
     int n1 = land_array_count(blocks->fixed);
     int n2 = land_array_count(blocks->dynamic);
     int n3 = land_array_count(blocks->transparent);
@@ -1242,24 +1261,24 @@ void render_blocks(Blocks * blocks, Viewport * viewport) {
         if (i < n1) {
             b = land_array_get_nth(blocks->fixed, i);
         }
-#line 656
+#line 673
         else if (i < n1 + n2) {
             b = land_array_get_nth(blocks->dynamic, i - n1);
         }
-#line 657
+#line 674
         else {
-#line 659
+#line 676
             b = land_array_get_nth(blocks->transparent, i - n1 - n2);
         }
         BlockType * bt = b->block_type;
-#line 663
+#line 680
         bool need_mask = 0;
         // Need to rebuild the cache for this block?
-#line 668
+#line 685
         if ((! bt->dynamic && blocks->rebuild_static_cache) || (bt->dynamic && blocks->rebuild_dynamic_cache) || (bt->transparent && blocks->rebuild_dynamic_cache)) {
-#line 670
+#line 687
             land_array_clear(b->cache);
-#line 672
+#line 689
             int n = n1;
             if (bt->dynamic || bt->transparent) {
                 n += n2;
@@ -1269,32 +1288,32 @@ void render_blocks(Blocks * blocks, Viewport * viewport) {
                 if (j < n1) {
                     already = land_array_get_nth(blocks->fixed, j);
                 }
-#line 679
+#line 696
                 else {
-#line 681
+#line 698
                     already = land_array_get_nth(blocks->dynamic, j - n1);
                 }
-#line 682
+#line 699
                 if (debug_no_mask) {
-#line 682
+#line 699
                     break;
                 }
-#line 683
+#line 700
                 if (already == b) {
-#line 683
+#line 700
                     break;
                 }
-#line 684
+#line 701
                 if (block_sort_order(already, b, viewport) == 1) {
                     land_array_add(b->cache, already);
                 }
             }
         }
-#line 687
+#line 704
         {
-#line 687
+#line 704
             LandArrayIterator __iter0__ = LandArrayIterator_first(b->cache);
-#line 687
+#line 704
             for (Block * already = LandArrayIterator_item(b->cache, &__iter0__); LandArrayIterator_next(b->cache, &__iter0__); already = LandArrayIterator_item(b->cache, &__iter0__)) {
                 if (! debug_no_mask && ! need_mask) {
                     need_mask = 1;
@@ -1302,43 +1321,43 @@ void render_blocks(Blocks * blocks, Viewport * viewport) {
                     // mask). The mask will have all blocks which have been
                     // drawn already but are in front (and so should not be
                     // overdrawn).
-#line 696
+#line 713
                     land_render_state(LAND_DEPTH_TEST, 1);
                     land_render_state(LAND_DEPTH_FUNCTION, LAND_ALWAYS);
                     land_render_state(LAND_WRITE_MASK, LAND_DEPTH_MASK);
-#line 700
+#line 717
                     float x1, y1, x2, y2;
                     block_get_bounding_rect(b, viewport, & x1, & y1, & x2, & y2);
                     x1 -= 30;
                     y1 -= 30;
                     x2 += 60;
                     y2 += 60;
-#line 707
+#line 724
                     land_clip((int)(x1 * z), (int)(y1 * z), (int)(x2 * z) + 1, (int)(y2 * z) + 1);
                 }
                 render_block(already, viewport);
             }
         }
-#line 711
+#line 728
         if (! debug_no_mask && need_mask) {
             // Write only color (no depth), but only where there is no mask.
             land_render_state(LAND_DEPTH_FUNCTION, LAND_LESS);
             land_render_state(LAND_WRITE_MASK, LAND_RGBA_MASK);
         }
         //x1, y1, x2, y2 = b.get_bounding_rect(viewport)
-#line 718
+#line 735
         render_block(b, viewport);
         //if not debug->no_mask and need_mask:
         //    render_block(b, viewport)
         //c = al_map_rgb_f(1, 0, 0)
         //al_draw_line(x1 + 2, y1 + 2, x2 - 2, y1 + 2, c, 1)
         //al_draw_line(x1 + 2, y1 + 2, x1 + 2, y2 - 2, c, 1)
-#line 726
+#line 743
         if (! debug_no_mask && need_mask) {
             // Restore everything to how it was before this block was drawn.
             land_render_state(LAND_WRITE_MASK, LAND_DEPTH_MASK | LAND_RGBA_MASK);
             land_clear_depth(1);
-#line 731
+#line 748
             land_render_state(LAND_DEPTH_TEST, 0);
             land_unclip();
         }

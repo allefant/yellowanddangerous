@@ -1,15 +1,22 @@
 package com.yellowdanger;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Keep;
 import android.util.Log;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.liballeg.android.AllegroActivity;
 
 public class YellowAndDangerous extends AllegroActivity {
-
+    private InterstitialAd mInterstitialAd;
+    private boolean showingAd;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -50,6 +57,47 @@ public class YellowAndDangerous extends AllegroActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-7818455682102414~5319754883");
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-7818455682102414/8273221287");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                Log.d("yellow", "onAdClosed");
+                requestNewInterstitial();
+                showingAd = false;
+            }
+        });
+
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        Log.d("YellowAndDangerous", "requestNewInterstitial");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    @Keep
+    public void showInterstitialAd() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (mInterstitialAd.isLoaded()) {
+                    showingAd = true;
+                    mInterstitialAd.show();
+                }
+                else if (!mInterstitialAd.isLoading()) {
+                    requestNewInterstitial();
+                }
+            }
+        });
+    }
+
+    @Keep
+    public int showAdDone() {
+        return showingAd ? 0 : 1;
     }
 
     @Keep
@@ -66,4 +114,5 @@ public class YellowAndDangerous extends AllegroActivity {
             mFirebaseAnalytics.logEvent(parameters[0] + bundle.getString("level"), null);
         }
     }
+
 }
