@@ -1,7 +1,7 @@
 import common
 
-global char const *VERSION = "1.16"
-global bool global_can_enable_editor = True
+global char const *VERSION = "1.17"
+global bool global_can_enable_editor = False
 
 enum:
     ControlLeft

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: 'version.gradle'
 
 android {
     signingConfigs {
@@ -12,11 +13,9 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
     defaultConfig {
-        applicationId "com.yellowdanger"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 14
-        versionName '1.14'
+        versionCode getVersionCode()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -30,6 +29,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        ads {
+            applicationId "com.yellowdanger.ads"
+            versionName getVersionName() + "-ads"
+        }
+        paid {
+            applicationId "com.yellowdanger"
+            versionName getVersionName()
         }
     }
     externalNativeBuild {
@@ -51,7 +60,9 @@ dependencies {
     compile 'org.liballeg:allegro5-release:5.2.2.0'
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
-    compile 'com.google.firebase:firebase-ads:9.8.0'
+
+    adsCompile 'com.google.firebase:firebase-ads:9.8.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
