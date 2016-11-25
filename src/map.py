@@ -4,11 +4,10 @@ type Game *game
 
 class MapRender:
     int l
-    SaveInfo si[50]
     int current
     int count
-
     Block *flower[8]
+    Block *test_tube
 
 static MapRender mr
 
@@ -35,7 +34,7 @@ def map_render:
         if i > 49:
             i = 1
         if i == mr.l and mr.count < 49:
-            save_check(i, mr.si + i)
+            save_check(i)
             mr.count++
             
         game_level_number_to_xz(i, &x, &z)
@@ -50,7 +49,7 @@ def map_render:
             sx - s, sy}
         land_filled_polygon(4, xy)
 
-        if not mr.si[i].saved and i != game.level:
+        if not save_is_saved(i) and i != game.level:
             continue
 
         #land_color(0, 0, 0, 1)
@@ -87,9 +86,12 @@ def map_render:
         land_push_transform()
         land_translate(sx, sy)
         land_scale(1.0 / 9, 1.0 / 9)
-        for int bi in range(0, mr.si[i].n, 14):
+
+        int n = save_get_level_n(i)
+        # each polygon has 14 vertices
+        for int bi in range(0, n, 14):
             
-            float *bxy = mr.si[i].xy + bi
+            float *bxy = save_get_level_xy(i) + bi
 
             if game.level == i:
                 float c = (land_get_ticks() / 15) % 2
@@ -122,7 +124,7 @@ def map_render:
             mr.flower[fi] = block_new(game->blocks, 0, 0, 0,
                 block_flower(fi))
         mr.flower[fi]->x = -240 + fi * 72
-        mr.flower[fi]->z = 720 #- fi * 60
+        mr.flower[fi]->z = 720
         LandColor tint = a.tint
         if not game->flower[fi]:
             float c = (1 + sin(pi * 2 * land_get_ticks() / 60.0)) / 2
@@ -131,5 +133,19 @@ def map_render:
             a.tint.b = 0
             a.tint.a = 0.02 + 0.2 * c
         render_block_scaled(mr.flower[fi], game->viewport, .333)
-       
+        a.tint = tint
+
+    if not mr.test_tube:
+        mr.test_tube = block_new(game.blocks, 0, 0, 0, Render_TestTube)
+    for int ti in range(1, 8):
+        mr.test_tube->x = 648
+        mr.test_tube->z = -240 + ti * 72
+        mr.test_tube->frame = ti - 1
+        LandColor tint = a.tint
+        if not game->test_tube[ti]:
+            a.tint.r = 0
+            a.tint.g = 0
+            a.tint.b = 0
+            a.tint.a = 0.5
+        render_block_scaled(mr.test_tube, game.viewport, .5)
         a.tint = tint

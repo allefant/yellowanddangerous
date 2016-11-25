@@ -222,6 +222,7 @@ static def cheat(char unichar):
                 if i == 1:
                     for int j in range(1, 8):
                         game.flower[j] = True
+                        game.test_tube[j] = True
                 if i == 2:
                     game.key = not game.key
         else:
@@ -235,6 +236,9 @@ def runner_update(LandRunner *self):
     if land_closebutton():
         save_level(False)
         land_quit()
+
+    if land_switched_out():
+        save_level(False)
 
     if land_was_halted():
         pass

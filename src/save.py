@@ -38,6 +38,8 @@ type Game *game
 type Editor *editor
 type All *global_a
 
+static SaveInfo g_save_info[50]
+
 def save_info:
     All *a = global_a
     char *path = land_get_save_file("com.yellowdanger", "info.txt")
@@ -52,6 +54,9 @@ def save_info:
     bool *fl = game.flower
     land_file_print(f, "flower %d %d %d %d %d %d %d",
         fl[1], fl[2], fl[3], fl[4], fl[5], fl[6], fl[7])
+    bool *tt = game.test_tube
+    land_file_print(f, "testtube %d %d %d %d %d %d %d",
+        tt[1], tt[2], tt[3], tt[4], tt[5], tt[6], tt[7])
     land_file_destroy(f)
     land_free(path)
 
@@ -99,6 +104,13 @@ def load_info:
                     i + 2, i + 3, i + 4, i + 5, i + 6, i + 7)
                 for int j in range(8):
                     game.flower[j] = i[j]
+            if land_starts_with(row, "testtube "):
+                int i[8]
+                i[0] = 0
+                sscanf(row, "testtube %d %d %d %d %d %d %d", i + 1,
+                    i + 2, i + 3, i + 4, i + 5, i + 6, i + 7)
+                for int j in range(8):
+                    game.test_tube[j] = i[j]
             land_free(row)
         land_array_destroy(rows)
         
@@ -170,10 +182,11 @@ static def add(SaveInfo *si, float x, y, z, xs, ys, zs):
     memcpy(si.xy + si.n, xy, sizeof(float) * 14)
     si.n += 14
 
-def save_check(int level, SaveInfo *si):
+def save_check(int level):
     char name[1024]
 
     LandBuffer *f = None
+    SaveInfo *si = g_save_info + level
 
     if level == game.level:
         sprintf(name, "data/levels/level%02d.txt", level)
@@ -360,6 +373,8 @@ def save_reset_room(int i):
     save_get_name("save", i, ".txt", name)
     if not land_file_remove(name):
         land_log_message("Cannot remove %s.", name)
+    SaveInfo *si = g_save_info + i
+    si.saved = False
 
 def save_new:
     for int i in range(1, 50):
@@ -372,3 +387,11 @@ def save_new:
     global_a->time = 0
     save_info()
 
+def save_is_saved(int i) -> bool:
+    return g_save_info[i].saved
+
+def save_get_level_n(int i) -> int:
+    return g_save_info[i].n
+
+def save_get_level_xy(int i) -> float *:
+    return g_save_info[i].xy 

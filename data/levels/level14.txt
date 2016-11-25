@@ -6,6 +6,8 @@ make 43 27 21 27
 make 14 7 4 15
 make 7 35 4 35
 make 6 29 4 31
+make 61 8 18 34
+frame 1
 make 47 21 3 21
 make 47 13 3 21
 make 47 29 3 21

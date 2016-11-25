@@ -15,7 +15,7 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode getVersionCode()
+        versionCode = getYellowDangerVersionCode()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -34,11 +34,11 @@ android {
     productFlavors {
         ads {
             applicationId "com.yellowdanger.ads"
-            versionName getVersionName() + "-ads"
+            versionName getYellowDangerVersionName() + "-ads"
         }
         paid {
             applicationId "com.yellowdanger"
-            versionName getVersionName()
+            versionName getYellowDangerVersionName()
         }
     }
     externalNativeBuild {
@@ -57,10 +57,10 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     //compile project(path: ':allegro5')
-    compile 'org.liballeg:allegro5-release:5.2.2.0'
+    compile 'org.liballeg:allegro5-release:5.2.2.0b'
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
-
+    compile 'com.google.firebase:firebase-crash:9.8.0'
     adsCompile 'com.google.firebase:firebase-ads:9.8.0'
 
 }

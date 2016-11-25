@@ -236,12 +236,12 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
     All *a = global_a
     Player *self = (void *)super
     cube_touch(super, c, dx, dy, dz)
-    if c->block_type == Render_Gremlin:
+    if c.block_type == Render_Gremlin:
         Gremlin *gremlin = (void *)c
         if not gremlin.respect:
             self.dead = True
     int flower = 0
-    if c->block_type == Render_Car:
+    if c.block_type == Render_Car:
         if game->key and game->sequence == 0:
             LandArray *cs = block_colliders(c)
             int n = land_array_count(cs)
@@ -250,35 +250,40 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
                 sound(Render_ignition, .5)
                 game->sequence = 2
                 game->sequence_ticks = 0
-    if c->block_type == Render_Gentian:
+    if c.block_type == Render_Gentian:
         flower = 1
-    if c->block_type == Render_Edelweiss:
+    if c.block_type == Render_Edelweiss:
         flower = 2
-    if c->block_type == Render_Orchid:
+    if c.block_type == Render_Orchid:
         flower = 3
-    if c->block_type == Render_Hyacinth:
+    if c.block_type == Render_Hyacinth:
         flower = 4
-    if c->block_type == Render_Sunflower:
+    if c.block_type == Render_Sunflower:
         flower = 5
-    if c->block_type == Render_Rose:
+    if c.block_type == Render_Rose:
         flower = 6
-    if c->block_type == Render_Belladonna:
+    if c.block_type == Render_Belladonna:
         flower = 7
+    if c.block_type == Render_TestTube:
+        if not game.test_tube[c.frame + 1]:
+            game.test_tube[c.frame + 1] = True
+            sound(Render_on, 1)
+            c.y = -9000
     if flower:
-        c->y = -9000
+        c.y = -9000
         game.flower[flower] = True
         sound(Render_pickup, 1)
-    if c->block_type == Render_Key:
-        c->y = -9000
+    if c.block_type == Render_Key:
+        c.y = -9000
         game->key = True
         sound(Render_pickup, 1)
     if dy < 0:
         bool always = a.godmode or game.record->wait_on_level
-        if c->block_type == Render_ExitLeft and c.frame != 4:
+        if c.block_type == Render_ExitLeft and c.frame != 4:
             if c.frame == 1 or c.frame == 2 or always:
                 if block_center_overlaps(super, c):
                     game_level_done(game, c.x > 0 ? 1 : -1, 0)
-        elif c->block_type == Render_ExitRight and c.frame != 4:
+        elif c.block_type == Render_ExitRight and c.frame != 4:
             if c.frame == 1 or c.frame == 2 or always:
                 if block_center_overlaps(super, c):
                     game_level_done(game, 0, c.z > 0 ? 1 : -1)
@@ -298,7 +303,7 @@ def player_touch(Block *super, Block *c, float dx, dy, dz):
                 c.frame = 1
                 game->lever = c
     if dx != 0 or dz != 0:
-        if c->block_type->dynamic:
+        if c.block_type->dynamic:
             self->pushing = True
 
 def player_find_entrance(Block *super):

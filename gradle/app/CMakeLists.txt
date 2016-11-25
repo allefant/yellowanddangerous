@@ -90,4 +90,4 @@ include_directories(
     )
 
 set(NATIVE_LIB native)
-include(build/intermediates/exploded-aar/org.liballeg/allegro5-release/5.2.2.0/assets/allegro.cmake)
+include(build/intermediates/exploded-aar/org.liballeg/allegro5-release/5.2.2.0b/assets/allegro.cmake)

@@ -40,6 +40,7 @@ class Game:
     int sequence_ticks
 
     bool flower[8]
+    bool test_tube[8]
     bool key
 
     int deaths

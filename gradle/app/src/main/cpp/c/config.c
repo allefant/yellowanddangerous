@@ -2,8 +2,8 @@
 #line 1 "src/config.py"
 #include "config.h"
 #line 3
-char const * VERSION = "1.17";
-bool global_can_enable_editor = 0;
+char const * VERSION = "1.19";
+bool global_can_enable_editor = true;
 #line 17
 Controls controls;
 #line 19

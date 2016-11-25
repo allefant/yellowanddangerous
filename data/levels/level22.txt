@@ -4,17 +4,11 @@ make 10 42 4 17
 frame 42
 make 61 31 8 7
 make 61 29 8 7
-frame 1
 make 61 41 8 7
-frame 2
 make 61 37 8 7
-frame 3
 make 61 35 8 7
-frame 4
 make 61 33 8 7
-frame 5
 make 61 39 8 7
-frame 6
 make 61 10 8 18
 frame 5
 make 61 8 8 11

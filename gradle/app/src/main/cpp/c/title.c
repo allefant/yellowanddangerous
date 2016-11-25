@@ -3,6 +3,7 @@
 #include "title.h"
 static void drawvol(int v, float x, float y);
 static int volget(float mx);
+static void draw_title_animation(void);
 #line 4
 static bool settings;
 static bool restart;
@@ -202,17 +203,18 @@ void title_render(void) {
     double s = w / 960;
     h /= s;
     land_clear(1, 1, 1, 1);
+#line 144
     land_reset_transform();
     land_scale(s, s);
-#line 146
+#line 147
     land_font_set(a->big);
     float th = land_line_height();
     float yw = land_text_get_width("Yellow ");
-#line 150
+#line 151
     land_color(.9, .9, 0.7, 1);
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2;
     land_filled_rectangle(tx + yw, 0, 960, h);
-#line 154
+#line 155
     if (settings) {
         land_font_set(a->medium);
         land_color(0.5, 0, 0, 1);
@@ -224,22 +226,22 @@ void title_render(void) {
             land_print("Jump: touch second finger");
             land_print("Pull/Lift: two finger swipe");
         }
-#line 164
+#line 165
         else if (a->dpad == 4) {
             land_print("Jump: Move then double tap");
             land_print("Pull/Lift: Double tap then move");
         }
-#line 166
+#line 167
         else {
-#line 168
+#line 169
             land_print("Jump: Hold move then jump");
             land_print("Pull/Lift: Hold jump then move");
         }
-#line 170
+#line 171
         land_font_set(a->big);
     }
     volx = tx + yw + 6 * 32;
-#line 174
+#line 175
     for (int i = 0; i < 5; i += 1) {
         float y = (h - 64 * 5) / 2 + i * 64 + (32 - th) / 2;
         float x = tx;
@@ -255,77 +257,77 @@ void title_render(void) {
                     land_color(1, 1, 0, 1);
                 }
             }
-#line 187
+#line 188
             land_print("and Dangerous");
         }
-#line 188
+#line 189
         if (settings) {
             if (i == 0) {
                 if (a->dpad == 0) {
-#line 190
+#line 191
                     land_print("DPad left");
                 }
-#line 191
+#line 192
                 if (a->dpad == 1) {
-#line 191
+#line 192
                     land_print("DPad right");
                 }
-#line 192
+#line 193
                 if (a->dpad == 2) {
-#line 192
+#line 193
                     land_print("DPad left big");
                 }
-#line 193
+#line 194
                 if (a->dpad == 3) {
-#line 193
+#line 194
                     land_print("DPad right big");
                 }
-#line 194
+#line 195
                 if (a->dpad == 4) {
-#line 194
+#line 195
                     land_print("double click swipe");
                 }
-#line 195
+#line 196
                 if (a->dpad == 5) {
-#line 195
+#line 196
                     land_print("two finger swipe");
                 }
             }
-#line 196
+#line 197
             else if (i == 2) {
                 land_print("Music");
                 drawvol(a->music, volx, y);
             }
-#line 199
+#line 200
             else if (i == 3) {
                 land_print("Sound");
                 drawvol(a->sound, volx, y);
             }
-#line 202
+#line 203
             else if (i == 4) {
                 land_print("Back");
             }
         }
-#line 204
+#line 205
         else if (restart) {
             if (i == 0) {
                 land_color(1, 0.75, 0.75, 1);
                 land_print("Are you sure?");
             }
-#line 208
+#line 209
             else if (i == 3) {
                 land_color(1, 0, 0, 1);
                 land_print("Delete savegame!");
             }
-#line 211
+#line 212
             else if (i == 4) {
                 land_color(0, 0.5, 0, 1);
                 land_print("Continue playing");
             }
         }
-#line 213
+#line 214
         else {
-#line 215
+#line 216
             if (i == 0) {
                 land_print("Play");
                 if (global_can_enable_editor) {
@@ -333,28 +335,28 @@ void title_render(void) {
                     land_print("Edit");
                 }
             }
-#line 220
+#line 221
             else if (i == 2) {
                 land_print("Reset room");
             }
-#line 222
+#line 223
             else if (i == 3) {
                 land_print("New game");
             }
-#line 224
+#line 225
             else if (i == 4) {
                 land_print("Settings");
             }
         }
     }
-#line 227
+#line 228
     land_font_set(a->font);
     land_color(0, 0, 0, 1);
-#line 230
+#line 231
     if (! block1) {
         block1 = block_new(game->blocks, 120, 0, 720, Render_Gremlin);
     }
-#line 232
+#line 233
     if (! block2) {
         block2 = block_new(game->blocks, - 660, 0, - 60, Render_Allefant);
     }
@@ -362,43 +364,12 @@ void title_render(void) {
     if (moment > 4) {
         // wait a moment so Android gets a moment to recover and
         // won't crash :P
-        float speed = 60 * 7 / 2.0;
-        for (int i = 0; i < 7; i += 1) {
-            float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed;
-            block1->y = 60 * fabs(sin(ang * 3.5));
-            block1->x = 0 + cos(ang) * 120;
-            block1->z = 600 + sin(ang) * 120;
-            block1->frame = ((land_get_ticks() / 30 + i) % 4) * 4;
-            if (((land_get_ticks() / 60) % 14 >= 7) && i == 0) {
-                a->tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1);
-                a->tint.a = 0.5;
-                a->tint.r *= a->tint.a;
-                a->tint.g *= a->tint.a;
-                a->tint.b *= a->tint.a;
-            }
-#line 251
-            else {
-#line 253
-                a->tint = land_color_premul(1, 1, 1, .2);
-            }
-#line 254
-            if (! blocktype_preload(block1->block_type)) {
-                render_block(block1, game->viewport);
-            }
-        }
-#line 257
-        a->tint = land_color_premul(1, 1, 1, .2);
-#line 259
-        block2->frame = 8 + ((16 * land_get_ticks() / 60) % 8);
-        if (! blocktype_preload(block2->block_type)) {
-            render_block(block2, game->viewport);
-        }
+        draw_title_animation();
     }
-#line 263
     a->tint.a = 0;
-#line 265
+#line 244
     land_font_set(a->font);
-    land_text_pos(w / s, h - land_line_height() * 5);
+    land_text_pos(w / s, h - land_line_height() * 6);
     int t = a->time / 60;
     int f = 0;
     for (int i = 0; i < 8; i += 1) {
@@ -406,12 +377,54 @@ void title_render(void) {
             f++;
         }
     }
-#line 272
+#line 251
+    int tt = 0;
+    for (int i = 0; i < 8; i += 1) {
+        if (game->test_tube [i]) {
+            tt++;
+        }
+    }
+#line 255
     land_print_right("Flowers picked: %d/7", f);
+    land_print_right("Test tubes: %d/7", tt);
     land_print_right("Car keys found: %s", game->key ? "yes" : "no");
     land_print_right("Died %d time%s.", game->deaths, game->deaths != 1 ? "s" : "");
-#line 276
+#line 260
     land_print_right("Playtime on this savegame: %02d:%02d:%02d", t / 3600, (t / 60) % 60, t % 60);
     land_print_right("Version %s", VERSION);
+}
+static void draw_title_animation(void) {
+    All * a = global_a;
+    float speed = 60 * 7 / 2.0;
+    for (int i = 0; i < 7; i += 1) {
+        float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed;
+        block1->y = 60 * fabs(sin(ang * 3.5));
+        block1->x = 0 + cos(ang) * 120;
+        block1->z = 600 + sin(ang) * 120;
+        block1->frame = ((land_get_ticks() / 30 + i) % 4) * 4;
+        if (((land_get_ticks() / 60) % 14 >= 7) && i == 0) {
+            a->tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1);
+            a->tint.a = 0.5;
+            a->tint.r *= a->tint.a;
+            a->tint.g *= a->tint.a;
+            a->tint.b *= a->tint.a;
+        }
+#line 277
+        else {
+#line 279
+            a->tint = land_color_premul(1, 1, 1, .2);
+        }
+#line 280
+        if (! blocktype_preload(block1->block_type)) {
+            render_block(block1, game->viewport);
+        }
+    }
+#line 283
+    a->tint = land_color_premul(1, 1, 1, .2);
+#line 285
+    block2->frame = 8 + ((16 * land_get_ticks() / 60) % 8);
+    if (! blocktype_preload(block2->block_type)) {
+        render_block(block2, game->viewport);
+    }
 }
 /* This file was generated by scramble.py. */

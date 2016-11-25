@@ -140,6 +140,7 @@ def title_render:
     double s = w / 960
     h /= s
     land_clear(1, 1, 1, 1)
+    
     land_reset_transform()
     land_scale(s, s)
 
@@ -236,42 +237,51 @@ def title_render:
     if moment > 4:
         # wait a moment so Android gets a moment to recover and
         # won't crash :P
-        float speed = 60 * 7 / 2.0
-        for int i in range(7):
-            float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed
-            block1.y = 60 * fabs(sin(ang * 3.5))
-            block1.x = 0 + cos(ang) * 120
-            block1.z = 600 + sin(ang) * 120
-            block1.frame = ((land_get_ticks() / 30 + i) % 4) * 4
-            if ((land_get_ticks() / 60) % 14 >= 7) and i == 0:
-                a.tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1)
-                a.tint.a = 0.5
-                a.tint.r *= a.tint.a
-                a.tint.g *= a.tint.a
-                a.tint.b *= a.tint.a
-            else:
-                a.tint = land_color_premul(1, 1, 1, .2)
-            if not blocktype_preload(block1.block_type):
-                render_block(block1, game->viewport)
-
-        a.tint = land_color_premul(1, 1, 1, .2)
-
-        block2.frame = 8 + ((16 * land_get_ticks() / 60) % 8)
-        if not blocktype_preload(block2.block_type):
-            render_block(block2, game->viewport)
+        draw_title_animation()
 
     a.tint.a = 0
 
     land_font_set(a.font)
-    land_text_pos(w / s, h - land_line_height() * 5)
+    land_text_pos(w / s, h - land_line_height() * 6)
     int t = a.time / 60
     int f = 0
     for int i in range(8):
         if game->flower[i]:
             f++
+    int tt = 0
+    for int i in range(8):
+        if game->test_tube[i]:
+            tt++
     land_print_right("Flowers picked: %d/7", f)
+    land_print_right("Test tubes: %d/7", tt)
     land_print_right("Car keys found: %s", game->key ? "yes" : "no")
     land_print_right("Died %d time%s.", game->deaths, game->deaths != 1 ? "s" : "")
     land_print_right("Playtime on this savegame: %02d:%02d:%02d",
         t / 3600, (t / 60) % 60, t % 60)
     land_print_right("Version %s", VERSION)
+
+static def draw_title_animation:
+    All *a = global_a
+    float speed = 60 * 7 / 2.0
+    for int i in range(7):
+        float ang = (land_get_ticks() + i * speed / 7) * 2 * pi / speed
+        block1.y = 60 * fabs(sin(ang * 3.5))
+        block1.x = 0 + cos(ang) * 120
+        block1.z = 600 + sin(ang) * 120
+        block1.frame = ((land_get_ticks() / 30 + i) % 4) * 4
+        if ((land_get_ticks() / 60) % 14 >= 7) and i == 0:
+            a.tint = land_color_hsv((land_get_ticks() * 4) % 360, .25, 1)
+            a.tint.a = 0.5
+            a.tint.r *= a.tint.a
+            a.tint.g *= a.tint.a
+            a.tint.b *= a.tint.a
+        else:
+            a.tint = land_color_premul(1, 1, 1, .2)
+        if not blocktype_preload(block1.block_type):
+            render_block(block1, game->viewport)
+
+    a.tint = land_color_premul(1, 1, 1, .2)
+
+    block2.frame = 8 + ((16 * land_get_ticks() / 60) % 8)
+    if not blocktype_preload(block2.block_type):
+        render_block(block2, game->viewport)

@@ -273,74 +273,78 @@ static void cheat(char unichar) {
                 if (i == 1) {
                     for (int j = 1; j < 8; j += 1) {
                         game->flower [j] = 1;
+                        game->test_tube [j] = 1;
                     }
                 }
-#line 225
+#line 226
                 if (i == 2) {
                     game->key = ! game->key;
                 }
             }
         }
-#line 226
+#line 227
         else {
-#line 228
+#line 229
             a->cheatpos [i] = 0;
         }
     }
 }
-#line 230
+#line 231
 void runner_update(LandRunner * self) {
     All * a = global_a;
-#line 233
+#line 234
     update();
-#line 235
+#line 236
     if (land_closebutton()) {
         save_level(0);
         land_quit();
     }
+    if (land_switched_out()) {
+        save_level(0);
+    }
     if (land_was_halted()) {
-#line 239
+#line 243
         ;
     }
-#line 242
+#line 246
     if (! land_keybuffer_empty()) {
         int k, u;
         land_keybuffer_next(& k, & u);
         cheat(u);
-#line 247
+#line 251
         if (k == LandKeyEscape) {
             save_level(0);
             land_quit();
         }
-#line 250
+#line 254
         else if (k == LandKeyFunction + 1) {
             a->show_fps = ! a->show_fps;
         }
-#line 251
+#line 255
         else {
-#line 253
+#line 257
             if (a->text_input) {
                 if (u == '|') {
                     u = '\n';
                 }
-#line 256
+#line 260
                 if (u == 13) {
                     u = 0;
                 }
-#line 258
+#line 262
                 if (a->text_input == 1) {
                     game->title [a->cursor++] = u;
                 }
-#line 260
+#line 264
                 else if (a->text_input == 2) {
                     game->hint [a->cursor++] = u;
                 }
-#line 262
+#line 266
                 if (u == 0) {
                     a->text_input = 0;
                 }
             }
-#line 264
+#line 268
             else if (! a->title) {
                 if (a->editor_enabled) {
                     game_key(game, k);
@@ -352,58 +356,58 @@ void runner_update(LandRunner * self) {
 //elif k == 'm':
 //    land_stream_set_playing(render_music,
 //        not land_stream_is_playing(render_music))
-#line 272
+#line 276
 void runner_redraw(LandRunner * self) {
     All * a = global_a;
-#line 275
+#line 279
     double t = - land_get_time();
     add_time();
-#line 278
+#line 282
     redraw();
-#line 280
+#line 284
     t += land_get_time();
     a->direct_speed_measure = t;
 }
 int my_main(void) {
     All * a;
     land_alloc(a);
-#line 287
+#line 291
     int w = 960;
     int h = 600;
     a->show_help = 1;
-#line 291
-    land_init();
-#line 293
-    main_data_path = land_strdup(".");
 #line 295
+    land_init();
+#line 297
+    main_data_path = land_strdup(".");
+#line 299
     if (land_argc > 1) {
         if (land_equals(land_argv [1], "test")) {
             return test();
         }
     }
     //land_set_display_parameters(w, h, LAND_OPENGL)
-#line 300
+#line 304
     #ifdef ANDROID
-#line 302
+#line 306
     land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH | LAND_LANDSCAPE);
-#line 302
+#line 306
     #else
-#line 304
+#line 308
     land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE);
-#line 304
+#line 308
     #endif
-#line 312
+#line 316
     LandRunner * game_runner = land_runner_new("Yellow and Dangerous", runner_init, NULL, runner_update, runner_redraw, NULL, runner_done);
     a->w = w;
     a->h = h;
-#line 316
+#line 320
     land_runner_register(game_runner);
     land_set_initial_runner(game_runner);
     land_mainloop();
-#line 320
+#line 324
     land_free(main_data_path);
     land_free(a);
-#line 323
+#line 327
     return 0;
 }
 land_use_main(my_main);
