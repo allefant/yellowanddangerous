@@ -2,82 +2,31 @@
 #line 1 "src/test.py"
 #include "test.h"
 #line 5
-char const * tests = "\n"
-    "record01_091203550756.gz\n"
-    "record02_100800960660.gz\n"
-    "record03_012000960660.gz\n"
-    "record04_056400961008.gz\n"
-    "record05_037200961008.gz\n"
-    "record06_100801920180.gz\n"
-    "record07_075604081008.gz\n"
-    "record08_056400961008.gz\n"
-    "record09_100800960564.gz\n"
-    "record10_056402881008.gz\n"
-    "record11_100800960564.gz\n"
-    "record12_094800961008.gz\n"
-    "record13_012000960948.gz\n"
-    "record14_012000960948.gz\n"
-    "record15_037200961008.gz\n"
-    "record16_012000960564.gz\n"
-    "record17_056402881008.gz\n"
-    "record18_056400960120.gz\n"
-    "record19_100801440756.gz\n"
-    "record20_100801440564.gz\n"
-    "record21_056400961008.gz\n"
-    "record22_037200960120.gz\n"
-    "record23_012000960564.gz\n"
-    "record24_012000960564.gz\n"
-    "record25_012000960564.gz\n"
-    "record26_012000960564.gz\n"
-    "record27_012000960564.gz\n"
-    "record28_066002881008.gz\n"
-    "record29_100800960756.gz\n"
-    "record30_100800960228.gz\n"
-    "record31_066002881008.gz\n"
-    "record32_100800960468.gz\n"
-    "record33_100801920468.gz\n"
-    "record34_075600960120.gz\n"
-    "record35_085204801008.gz\n"
-    "record36_027600960120.gz\n"
-    "record37_012000960708.gz\n"
-    "record38_100800720180.gz\n"
-    "record39_037200720120.gz\n"
-    "record40_094804801008.gz\n"
-    "record41_012004800756.gz\n"
-    "record42_080404801008.gz\n"
-    "record43_075600960120.gz\n"
-    "record44_070800960120.gz\n"
-    "record45_012000960948.gz\n"
-    "record46_012000960564.gz\n"
-    "record47_012004800564.gz\n"
-    "record48_056400960120.gz\n"
-    "record49_012000960948.gz\n"
-    "";
-#line 57
 bool test(void) {
     global_a->test = 1;
     render_setup_path();
     render_load_blocktypes();
     game_setup(1920, 1080);
-#line 63
+#line 11
     char result [50];
     int minduration [50];
     memset(result, ' ', sizeof result);
     memset(minduration, 0, sizeof minduration);
-#line 68
+#line 16
     int ok = 0, n = 0;
-    LandArray * lines = land_split_lines(tests);
+    LandArray * tests = land_filelist("recordings", NULL, LAND_RELATIVE_PATH, NULL);
+#line 19
     {
-#line 70
-        LandArrayIterator __iter0__ = LandArrayIterator_first(lines);
-#line 70
-        for (char * line = LandArrayIterator_item(lines, &__iter0__); LandArrayIterator_next(lines, &__iter0__); line = LandArrayIterator_item(lines, &__iter0__)) {
+#line 19
+        LandArrayIterator __iter0__ = LandArrayIterator_first(tests);
+#line 19
+        for (char * line = LandArrayIterator_item(tests, &__iter0__); LandArrayIterator_next(tests, &__iter0__); line = LandArrayIterator_item(tests, &__iter0__)) {
             if (land_equals(line, "")) {
                 continue;
             }
-#line 73
+#line 22
             int level, x, y, z;
-            sscanf(line, "record%02d_%04d%04d%04d.gz", & level, & x, & y, & z);
+            sscanf(line, "recordings/record%02d_%04d%04d%04d.gz", & level, & x, & y, & z);
             int tick = 0;
             if (test_level(level, x, y, z, & tick)) {
                 ok++;
@@ -85,32 +34,34 @@ bool test(void) {
                     result [level] = 'K';
                 }
             }
-#line 79
+#line 28
             else {
-#line 81
+#line 30
                 result [level] = 'F';
             }
-#line 82
+#line 31
             minduration [level] = tick;
             n++;
         }
     }
-#line 85
+#line 34
+    land_array_destroy_with_strings(tests);
+#line 36
     for (int i = 0; i < 7; i += 1) {
         printf("%2d | ", 1 + i * 7);
         for (int j = 0; j < 7; j += 1) {
             int k = 1 + j + 7 * i;
             int d = minduration [k] / 360;
             if (d > 99) {
-#line 90
+#line 41
                 d = 99;
             }
-#line 91
+#line 42
             char const * col = color_bash(result [k] == 'F' ? "red" : "green");
             char const * end = color_bash("");
             printf("%s%c%s %d.%d | ", col, result [k], end, d / 10, d % 10);
         }
-#line 94
+#line 45
         printf("\n");
     }
     print("%d / %d successful", ok, n);
@@ -127,16 +78,16 @@ bool test_level(int level, int x, int y, int z, int * tick) {
     if (game->record->wait_on_level) {
         game->state = "no recording";
     }
-#line 109
+#line 60
     Block * b = & game->player->super;
     b->x = x;
     b->y = y;
     b->z = z;
-#line 114
+#line 65
     * tick = 0;
     while (* tick < 60 * 60 * 100) {
         // cap at 10 minutes
-#line 116
+#line 67
         game_tick(game);
         if (! land_equals(game->state, "play")) {
             break;
@@ -145,16 +96,16 @@ bool test_level(int level, int x, int y, int z, int * tick) {
         //print("%d %d/%d/%d/%d/%d %f %f %f", tick,
         //    a.left, a.right, a.up, a.down, a.jump,
         //    b.x, b.y, b.z)
-#line 123
+#line 74
         (* tick)++;
     }
-#line 124
+#line 75
     print("%s at tick %d", game->state, * tick);
     if (land_equals(game->state, "done")) {
         print("%sOK%s", color_bash("green"), color_bash(""));
         return 1;
     }
-#line 128
+#line 79
     print("%sFAIL%s", color_bash("red"), color_bash(""));
     return 0;
 }

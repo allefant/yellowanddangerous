@@ -3,7 +3,7 @@
 #include "config.h"
 #line 3
 char const * VERSION = "1.21";
-bool global_can_enable_editor = 0;
+bool global_can_enable_editor = 1;
 #line 17
 Controls controls;
 #line 19

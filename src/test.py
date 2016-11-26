@@ -2,58 +2,6 @@ import game
 type Game *game
 type All *global_a
 
-char const *tests = """
-record01_091203550756.gz
-record02_100800960660.gz
-record03_012000960660.gz
-record04_056400961008.gz
-record05_037200961008.gz
-record06_100801920180.gz
-record07_075604081008.gz
-record08_056400961008.gz
-record09_100800960564.gz
-record10_056402881008.gz
-record11_100800960564.gz
-record12_094800961008.gz
-record13_012000960948.gz
-record14_012000960948.gz
-record15_037200961008.gz
-record16_012000960564.gz
-record17_056402881008.gz
-record18_056400960120.gz
-record19_100801440756.gz
-record20_100801440564.gz
-record21_056400961008.gz
-record22_037200960120.gz
-record23_012000960564.gz
-record24_012000960564.gz
-record25_012000960564.gz
-record26_012000960564.gz
-record27_012000960564.gz
-record28_066002881008.gz
-record29_100800960756.gz
-record30_100800960228.gz
-record31_066002881008.gz
-record32_100800960468.gz
-record33_100801920468.gz
-record34_075600960120.gz
-record35_085204801008.gz
-record36_027600960120.gz
-record37_012000960708.gz
-record38_100800720180.gz
-record39_037200720120.gz
-record40_094804801008.gz
-record41_012004800756.gz
-record42_080404801008.gz
-record43_075600960120.gz
-record44_070800960120.gz
-record45_012000960948.gz
-record46_012000960564.gz
-record47_012004800564.gz
-record48_056400960120.gz
-record49_012000960948.gz
-"""
-
 def test -> bool:
     global_a.test = True
     render_setup_path()
@@ -66,12 +14,13 @@ def test -> bool:
     memset(minduration, 0, sizeof minduration)
 
     int ok = 0, n = 0
-    LandArray *lines = land_split_lines(tests)
-    for char *line in LandArray *lines:
+    LandArray *tests = land_filelist("recordings", None, LAND_RELATIVE_PATH, None)
+
+    for char *line in LandArray *tests:
         if land_equals(line, ""):
             continue
         int level, x, y, z
-        sscanf(line, "record%02d_%04d%04d%04d.gz", &level, &x, &y, &z)
+        sscanf(line, "recordings/record%02d_%04d%04d%04d.gz", &level, &x, &y, &z)
         int tick = 0
         if test_level(level, x, y, z, &tick):
             ok++
@@ -81,6 +30,8 @@ def test -> bool:
             result[level] = 'F'
         minduration[level] = tick
         n++
+
+    land_array_destroy_with_strings(tests)
 
     for int i in range(7):
         printf("%2d | ", 1 + i * 7)
