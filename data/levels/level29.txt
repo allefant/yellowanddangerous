@@ -1,16 +1,16 @@
 hint Lab repairs.
 title Former laboratory
-make 10 41 8 35
+make 10 43 4 33
 make 6 33 12 11
 make 6 33 16 11
 make 6 33 16 15
 make 6 33 20 11
 make 6 33 20 13
 make 6 33 20 15
-make 7 39 10 31
-make 7 39 12 29
-make 7 39 14 27
-make 7 39 16 25
+make 7 39 6 31
+make 7 39 8 29
+make 7 39 10 27
+make 7 39 12 25
 make 4 9 2 9
 make 4 37 2 9
 make 4 9 2 37

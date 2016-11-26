@@ -143,9 +143,10 @@ def map_render:
         mr.test_tube->frame = ti - 1
         LandColor tint = a.tint
         if not game->test_tube[ti]:
+            mr.test_tube->frame = 0
             a.tint.r = 0
             a.tint.g = 0
             a.tint.b = 0
-            a.tint.a = 0.5
+            a.tint.a = 0.1
         render_block_scaled(mr.test_tube, game.viewport, .5)
         a.tint = tint
