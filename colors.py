@@ -1,0 +1,1 @@
+/home/elias/prog/python/colors/bash/colors.py
