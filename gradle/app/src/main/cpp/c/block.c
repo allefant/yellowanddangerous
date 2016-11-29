@@ -28,9 +28,10 @@ void blocks_clear(Blocks * self) {
     blocks_list_destroy(& self->transparent);
     if (self->animated) {
         land_array_destroy(self->animated);
+        self->animated = NULL;
     }
 }
-#line 29
+#line 30
 void blocks_reset(Blocks * self) {
     blocks_clear(self);
     self->fixed = land_array_new();
@@ -42,7 +43,7 @@ void blocks_reset(Blocks * self) {
 }
 Blocks* blocks_new(void) {
     Blocks * b;
-#line 39
+#line 40
     land_alloc(b);
     return b;
 }
@@ -58,9 +59,9 @@ Block* blocks_pick(Blocks * self, float xp, float yp, Viewport * viewport) {
     for (int i = 0; i < 3; i += 1) {
         LandArray * array = arrays [i];
         {
-#line 53
+#line 54
             LandArrayIterator __iter0__ = LandArrayIterator_first(array);
-#line 53
+#line 54
             for (Block * block = LandArrayIterator_item(array, &__iter0__); LandArrayIterator_next(array, &__iter0__); block = LandArrayIterator_item(array, &__iter0__)) {
                 int side = block_is_inside(block, xp, yp, viewport);
                 if (side) {
@@ -69,20 +70,20 @@ Block* blocks_pick(Blocks * self, float xp, float yp, Viewport * viewport) {
                             best = block;
                         }
                     }
-#line 58
+#line 59
                     else {
-#line 60
+#line 61
                         best = block;
                     }
                 }
             }
         }
     }
-#line 62
+#line 63
     return best;
 }
 static int tag = 0;
-#line 84
+#line 85
 void block_init(Block * self, Blocks * blocks, float x, float y, float z, BlockType * block_type) {
     self->blocks = blocks;
     self->x = x;
@@ -94,7 +95,7 @@ void block_init(Block * self, Blocks * blocks, float x, float y, float z, BlockT
         self->ys = block_type->ys;
         self->zs = block_type->zs;
     }
-#line 94
+#line 95
     self->r = 1;
     self->g = 1;
     self->b = 1;
@@ -124,41 +125,41 @@ Block* block_allocate(void) {
     return self;
 }
 void block_post_init(Block * self) {
-#line 122
+#line 123
     return ;
 }
-#line 125
+#line 126
 void block_add(Block * self) {
-#line 127
+#line 128
     self->bid = 1 + land_array_count(self->blocks->fixed) + land_array_count(self->blocks->dynamic);
     if (self->block_type && self->block_type->dynamic) {
         land_array_add(self->blocks->dynamic, self);
     }
-#line 130
+#line 131
     else if (self->block_type && self->block_type->transparent) {
         land_array_add(self->blocks->transparent, self);
     }
-#line 131
+#line 132
     else {
-#line 133
+#line 134
         land_array_add(self->blocks->fixed, self);
     }
     if (self->block_type && self->block_type->animated) {
         land_array_add(self->blocks->animated, self);
     }
 }
-#line 138
+#line 139
 Block* block_change_type(Block * self, int d) {
     int n = land_array_count(block_types);
     int btid = self->block_type->btid + d;
     if (btid >= n) {
         btid -= n;
     }
-#line 143
+#line 144
     if (btid < 0) {
         btid += n;
     }
-#line 145
+#line 146
     BlockType * bt = land_array_get_nth(block_types, btid);
     Blocks * blocks = self->blocks;
     float x = self->x;
@@ -171,16 +172,16 @@ Block* block_change_type(Block * self, int d) {
 }
 Block* block_change_type_to(Block * self, char const * text) {
     {
-#line 156
+#line 157
         LandArrayIterator __iter0__ = LandArrayIterator_first(block_types);
-#line 156
+#line 157
         for (BlockType * bt = LandArrayIterator_item(block_types, &__iter0__); LandArrayIterator_next(block_types, &__iter0__); bt = LandArrayIterator_item(block_types, &__iter0__)) {
             if (land_equals(bt->name, text)) {
                 return block_change_type(self, bt->btid - self->block_type->btid);
             }
         }
     }
-#line 159
+#line 160
     return self;
 }
 void block_del(Block * self) {
@@ -188,32 +189,32 @@ void block_del(Block * self) {
     if (self->block_type && self->block_type->dynamic) {
         array = self->blocks->dynamic;
     }
-#line 165
+#line 166
     else if (self->block_type && self->block_type->transparent) {
         array = self->blocks->transparent;
     }
-#line 166
+#line 167
     else {
-#line 168
+#line 169
         array = self->blocks->fixed;
     }
     int i = land_array_find(array, self);
     if (i < 0) {
-#line 171
+#line 172
         return ;
     }
     land_array_swap(array, i, - 1);
     land_array_pop(array);
-#line 176
+#line 177
     self->blocks->rebuild_static_cache = 1;
     self->blocks->rebuild_dynamic_cache = 1;
-#line 179
+#line 180
     self->block_type->destroy(self);
 }
 bool block_overlaps(Block * self, Block * other) {
-#line 187
+#line 188
     if ((other->x + other->xs > self->x && self->x + self->xs > other->x && other->y + other->ys > self->y && self->y + self->ys > other->y && other->z + other->zs > self->z && self->z + self->zs > other->z)) {
-#line 189
+#line 190
         if (other->block_type == Render_RampLeft) {
             //   __   b +y
             //  |  | /|
@@ -225,12 +226,12 @@ bool block_overlaps(Block * self, Block * other) {
             float ay = other->y;
             float bz = other->z;
             float by = other->y + other->ys;
-#line 201
+#line 202
             if (land_cross2d(self->z - az, self->y - ay, bz - az, by - ay) > 0) {
                 return 0;
             }
         }
-#line 203
+#line 204
         if (other->block_type == Render_RampRight) {
             //   __   b +y
             //  |  | /|
@@ -242,15 +243,15 @@ bool block_overlaps(Block * self, Block * other) {
             float ay = other->y;
             float bx = other->x;
             float by = other->y + other->ys;
-#line 215
+#line 216
             if (land_cross2d(self->x - ax, self->y - ay, bx - ax, by - ay) > 0) {
                 return 0;
             }
         }
-#line 217
+#line 218
         return 1;
     }
-#line 218
+#line 219
     return 0;
 }
 bool block_center_overlaps(Block * super, Block * c) {
@@ -259,7 +260,7 @@ bool block_center_overlaps(Block * super, Block * c) {
     if (cx > c->x && cx < c->x + c->xs && cz > c->z && cz < c->z + c->zs) {
         return 1;
     }
-#line 225
+#line 226
     return 0;
 }
 LandArray* block_colliders(Block * self) {
@@ -271,30 +272,30 @@ LandArray* block_colliders(Block * self) {
     for (int i = 0; i < n1 + n2 + n3; i += 1) {
         Block * other;
         if (i < n1) {
-#line 235
+#line 236
             other = land_array_get_nth(self->blocks->fixed, i);
         }
-#line 236
+#line 237
         else if (i - n1 < n2) {
-#line 236
+#line 237
             other = land_array_get_nth(self->blocks->dynamic, i - n1);
         }
-#line 237
+#line 238
         else if (i - n1 - n2 < n3) {
-#line 237
+#line 238
             other = land_array_get_nth(self->blocks->transparent, i - n1 - n2);
         }
-#line 238
+#line 239
         if (other == self) {
-#line 238
+#line 239
             continue;
         }
-#line 239
+#line 240
         if (block_overlaps(self, other)) {
             land_array_add(r, other);
         }
     }
-#line 241
+#line 242
     return r;
 }
 bool block_move(Block * self, float dx, float dy, float dz) {
@@ -311,9 +312,9 @@ void move_on_top(Block * self, float dx, float dy, float dz) {
     LandArray * top = block_colliders(self);
     self->y = on_top_y;
     {
-#line 256
+#line 257
         LandArrayIterator __iter0__ = LandArrayIterator_first(top);
-#line 256
+#line 257
         for (Block * c = LandArrayIterator_item(top, &__iter0__); LandArrayIterator_next(top, &__iter0__); c = LandArrayIterator_item(top, &__iter0__)) {
             if (c->block_type->dynamic && ! c->block_type->fixed) {
                 if (c->recursion_prevention != tag) {
@@ -323,7 +324,7 @@ void move_on_top(Block * self, float dx, float dy, float dz) {
             }
         }
     }
-#line 261
+#line 262
     land_array_destroy(top);
 }
 float block_distance(Block * self, Block * other) {
@@ -334,50 +335,50 @@ float block_distance(Block * self, Block * other) {
 }
 bool block_push(Block * self, float odx, float ody, float odz) {
     bool r;
-#line 272
+#line 273
     float ox = self->x;
     float oy = self->y;
     float oz = self->z;
-#line 276
+#line 277
     bool first_after_push = 1;
     bool first_ramp_up = 1;
     int first_single_dir = 2;
-#line 280
+#line 281
     retry:;
-#line 282
+#line 283
     float dx = first_single_dir != 0 ? odx : 0;
     float dy = ody;
     float dz = first_single_dir != 1 ? odz : 0;
-#line 286
+#line 287
     self->x += dx;
     if (self->y < 9000) {
         self->y += dy;
     }
-#line 289
+#line 290
     self->z += dz;
-#line 291
+#line 292
     if (self->y < - 9000) {
         self->y = - 9000;
     }
     LandArray * cs = block_colliders(self);
-#line 296
+#line 297
     if (land_array_count(cs)) {
-#line 298
+#line 299
         bool retry_after_push = 0;
-#line 300
+#line 301
         self->x = ox;
         self->y = oy;
         self->z = oz;
-#line 304
+#line 305
         {
-#line 304
+#line 305
             LandArrayIterator __iter0__ = LandArrayIterator_first(cs);
-#line 304
+#line 305
             for (Block * c = LandArrayIterator_item(cs, &__iter0__); LandArrayIterator_next(cs, &__iter0__); c = LandArrayIterator_item(cs, &__iter0__)) {
-#line 306
+#line 307
                 self->block_type->touch(self, c, dx, dy, dz);
                 // don't get stuck at the very top pixel
-#line 309
+#line 310
                 if (self->y <= c->y + c->ys && self->y > c->y + c->ys - 1) {
                     self->y = c->y + c->ys;
                     continue;
@@ -411,15 +412,15 @@ bool block_push(Block * self, float odx, float ody, float odz) {
                 }
             }
         }
-#line 338
+#line 339
         r = 0;
         land_array_destroy(cs);
-#line 341
+#line 342
         if (first_after_push && retry_after_push) {
             first_after_push = 0;
             goto retry;
         }
-#line 344
+#line 345
         else if (first_ramp_up && dy == 0) {
             first_ramp_up = 0;
             self->y += 1;
@@ -427,24 +428,24 @@ bool block_push(Block * self, float odx, float ody, float odz) {
         }
         // only an active mover can do single directions, otherwise
         // pushing in xz will behave very weird
-#line 350
+#line 351
         else if (self->mover && first_single_dir > 0) {
             first_single_dir--;
             goto retry;
         }
     }
-#line 352
+#line 353
     else {
-#line 355
+#line 356
         if (dx || dz) {
             move_on_top(self, dx, dy, dz);
         }
         self->blocks->rebuild_dynamic_cache = 1;
         r = 1;
-#line 361
+#line 362
         land_array_destroy(cs);
     }
-#line 362
+#line 363
     return r;
 }
 int block_recursion_tag(void) {
@@ -466,7 +467,7 @@ bool block_pull(Block * self, float dx, float dy, float dz) {
         self->y = oy;
         self->z = oz;
         land_array_destroy(cs);
-#line 384
+#line 385
         if (first_ramp_up) {
             first_ramp_up = 0;
             self->y += 1;
@@ -475,9 +476,9 @@ bool block_pull(Block * self, float dx, float dy, float dz) {
         return 0;
     }
     land_array_destroy(cs);
-#line 393
+#line 394
     move_on_top(self, dx, dy, dz);
-#line 395
+#line 396
     self->blocks->rebuild_dynamic_cache = 1;
     return 1;
 }
@@ -495,11 +496,11 @@ int block_is_inside(Block * self, float xp, float yp, Viewport * viewport) {
      * 2 left
      * 3 right
      */
-#line 414
+#line 415
     float x2 = self->x + self->xs;
     float y2 = self->y + self->ys;
     float z2 = self->z + self->zs;
-#line 418
+#line 419
     float v [14];
     project(viewport, self->x, y2, self->z, v + 0, v + 1);
     project(viewport, self->x, y2, z2, v + 2, v + 3);
@@ -516,54 +517,54 @@ int block_is_inside(Block * self, float xp, float yp, Viewport * viewport) {
     //  4   2   6
     //    \ | /
     //      5
-#line 436
+#line 437
     if (! is_left(v, xp, yp, 0, 1)) {
-#line 436
+#line 437
         return 0;
     }
-#line 437
+#line 438
     if (self->ys) {
         if (! is_left(v, xp, yp, 1, 4)) {
-#line 438
+#line 439
             return 0;
         }
     }
-#line 439
-    if (! is_left(v, xp, yp, 4, 5)) {
-#line 439
-        return 0;
-    }
 #line 440
-    if (! is_left(v, xp, yp, 5, 6)) {
+    if (! is_left(v, xp, yp, 4, 5)) {
 #line 440
         return 0;
     }
 #line 441
+    if (! is_left(v, xp, yp, 5, 6)) {
+#line 441
+        return 0;
+    }
+#line 442
     if (self->ys) {
         if (! is_left(v, xp, yp, 6, 3)) {
-#line 442
+#line 443
             return 0;
         }
     }
-#line 443
+#line 444
     if (! is_left(v, xp, yp, 3, 0)) {
-#line 443
+#line 444
         return 0;
     }
-#line 444
+#line 445
     if (is_left(v, xp, yp, 1, 2) && is_left(v, xp, yp, 2, 3)) {
-#line 444
+#line 445
         return 1;
     }
-#line 445
+#line 446
     if (is_left(v, xp, yp, 2, 5)) {
-#line 445
+#line 446
         return 3;
     }
-#line 446
+#line 447
     return 2;
 }
-#line 449
+#line 450
 void block_get_bounding_rect(Block * self, Viewport * viewport, float * x1, float * y1, float * x2, float * y2) {
     float _;
     project(viewport, self->x, self->y, self->z + self->zs, x1, & _);
@@ -571,75 +572,75 @@ void block_get_bounding_rect(Block * self, Viewport * viewport, float * x1, floa
     project(viewport, self->x, self->y + self->ys, self->z, & _, y1);
     project(viewport, self->x + self->xs, self->y, self->z + self->zs, & _, y2);
 }
-#line 457
+#line 458
 int block_sort_order(Block * self, Block * other, Viewport * viewport) {
     if (self == other) {
-#line 458
+#line 459
         return 0;
     }
-#line 459
+#line 460
     float e = 0.1;
-#line 461
+#line 462
     float slx, suy, srx, sdy;
     float olx, ouy, orx, ody;
-#line 464
+#line 465
     block_get_bounding_rect(self, viewport, & slx, & suy, & srx, & sdy);
     block_get_bounding_rect(other, viewport, & olx, & ouy, & orx, & ody);
     // bounding box does not overlap -> don't care about order
-#line 468
+#line 469
     if (slx >= orx) {
-#line 468
+#line 469
         return 0;
     }
-#line 469
+#line 470
     if (srx <= olx) {
-#line 469
+#line 470
         return 0;
     }
-#line 470
+#line 471
     if (suy >= ody) {
-#line 470
+#line 471
         return 0;
     }
-#line 471
+#line 472
     if (sdy <= ouy) {
-#line 471
+#line 472
         return 0;
     }
     // Has to be drawn later if completely in front or above.
     if (self->z + e >= other->z + other->zs) {
-#line 474
+#line 475
         return 1;
     }
-#line 475
+#line 476
     if (self->y + e >= other->y + other->ys) {
-#line 475
+#line 476
         return 1;
     }
-#line 476
+#line 477
     if (self->x + e >= other->x + other->xs) {
-#line 476
+#line 477
         return 1;
     }
     // Has to be drawn earlier if completely behind or below.
     if (other->z + e >= self->z + self->zs) {
-#line 479
+#line 480
         return - 1;
     }
-#line 480
+#line 481
     if (other->y + e >= self->y + self->ys) {
-#line 480
+#line 481
         return - 1;
     }
-#line 481
+#line 482
     if (other->x + e >= self->x + self->xs) {
-#line 481
+#line 482
         return - 1;
     }
     // Note: They overlap...
-#line 485
+#line 486
     if (self->y > other->y) {
-#line 485
+#line 486
         return 1;
     }
     //if self->z + self->zs >= other->z + other->zs: return 1
@@ -649,33 +650,33 @@ int block_sort_order(Block * self, Block * other, Viewport * viewport) {
 }
 static float sgn(float a, float x) {
     if (a <= 0) {
-#line 493
+#line 494
         return 0;
     }
-#line 494
+#line 495
     if (x < 0) {
         if (a >= 1) {
-#line 495
+#line 496
             return - 1;
         }
-#line 496
+#line 497
         return - a;
     }
-#line 497
+#line 498
     if (x > 0) {
         if (a >= 1) {
-#line 498
+#line 499
             return 1;
         }
-#line 499
+#line 500
         return a;
     }
-#line 500
+#line 501
     return 0;
 }
 void block_tick(Block * self) {
     if (! self->block_type->animated) {
-#line 503
+#line 504
         return ;
     }
     if (! self->no_fall && ! self->block_type->fixed) {
@@ -684,7 +685,7 @@ void block_tick(Block * self) {
     float ax = fabs(self->dx);
     float ay = fabs(self->dy);
     float az = fabs(self->dz);
-#line 512
+#line 513
     while (ax > 0 || ay > 0 || az > 0) {
         float sx = sgn(ax, self->dx);
         float sy = sgn(ay, self->dy);
@@ -696,13 +697,13 @@ void block_tick(Block * self) {
                     self->ground = 1;
                 }
             }
-#line 520
+#line 521
             else {
-#line 522
+#line 523
                 self->ground = 0;
             }
         }
-#line 523
+#line 524
         if (sx || sz) {
             block_move(self, sx, 0, sz);
         }
@@ -713,28 +714,28 @@ void block_tick(Block * self) {
     self->dx *= 0.4;
     self->dy *= 0.9;
     self->dz *= 0.4;
-#line 534
+#line 535
     if (fabs(self->dx) < 0.1) {
-#line 534
+#line 535
         self->dx = 0;
     }
-#line 535
+#line 536
     if (fabs(self->dy) < 0.1) {
-#line 535
+#line 536
         self->dy = 0;
     }
-#line 536
+#line 537
     if (fabs(self->dz) < 0.1) {
-#line 536
+#line 537
         self->dz = 0;
     }
 }
-#line 538
+#line 539
 void block_touch(Block * self, Block * c, float dx, float dy, float dz) {
-#line 538
+#line 539
     ;
 }
-#line 541
+#line 542
 bool blocks_preload(Blocks * self) {
     int n1, n2, n3;
     n1 = land_array_count(self->fixed);
@@ -743,26 +744,26 @@ bool blocks_preload(Blocks * self) {
     for (int i = 0; i < n1 + n2 + n3; i += 1) {
         Block * other;
         if (i < n1) {
-#line 548
+#line 549
             other = land_array_get_nth(self->fixed, i);
         }
-#line 549
+#line 550
         else if (i - n1 < n2) {
-#line 549
+#line 550
             other = land_array_get_nth(self->dynamic, i - n1);
         }
-#line 550
+#line 551
         else if (i - n1 - n2 < n3) {
-#line 550
+#line 551
             other = land_array_get_nth(self->transparent, i - n1 - n2);
         }
-#line 551
+#line 552
         BlockType * bt = other->block_type;
         if (blocktype_preload(bt)) {
             return 1;
         }
     }
-#line 554
+#line 555
     return 0;
 }
 void blocks_shift(Blocks * self, int dx, int dy, int dz) {
@@ -773,20 +774,20 @@ void blocks_shift(Blocks * self, int dx, int dy, int dz) {
     for (int i = 0; i < n1 + n2 + n3; i += 1) {
         Block * other;
         if (i < n1) {
-#line 563
+#line 564
             other = land_array_get_nth(self->fixed, i);
         }
-#line 564
+#line 565
         else if (i - n1 < n2) {
-#line 564
+#line 565
             other = land_array_get_nth(self->dynamic, i - n1);
         }
-#line 565
+#line 566
         else if (i - n1 - n2 < n3) {
-#line 565
+#line 566
             other = land_array_get_nth(self->transparent, i - n1 - n2);
         }
-#line 566
+#line 567
         other->x += dx;
         other->y += dy;
         other->z += dz;

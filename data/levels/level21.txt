@@ -2,22 +2,22 @@ hint One of the flowers
 title Blocked passage
 make 10 39 6 25
 frame 2
-make 26 17 4 25
+make 26 18 4 25
 make 26 17 4 29
-make 26 17 4 21
-make 26 13 4 21
-make 26 13 4 25
+make 26 17 4 20
+make 26 13 4 20
+make 26 13 4 24
 make 26 13 4 29
-make 26 21 4 21
-make 26 21 4 25
-make 26 21 4 29
+make 26 21 4 20
+make 26 22 4 24
+make 26 22 4 29
 make 26 13 4 33
 make 26 17 4 33
 make 26 21 4 33
-make 26 25 4 21
-make 26 25 4 25
-make 26 25 4 29
-make 26 25 4 33
+make 26 25 4 20
+make 26 26 4 25
+make 26 26 4 29
+make 26 26 4 33
 make 29 15 12 27
 make 29 23 12 21
 make 29 17 12 33

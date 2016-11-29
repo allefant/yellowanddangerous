@@ -352,7 +352,7 @@ void load_level(bool editing) {
         return ;
     }
 #line 280
-    save_load_from_offset(f, 0, 0, 0);
+    save_load_from_offset(f, 0, 0, 0, editing);
 #line 282
     {
 #line 282
@@ -431,7 +431,7 @@ void load_level(bool editing) {
 #line 323
     land_unpause();
 }
-void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz) {
+void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz, bool editing) {
     All * all = global_a;
     LandArray * rows = land_buffer_split(f, '\n');
     land_buffer_destroy(f);
@@ -476,7 +476,7 @@ void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz) {
             if (land_starts_with(row, "hint ")) {
                 char * st = land_strdup(row + 5);
                 land_replace_all(& st, "|", "\n");
-                if (all->dpad == 4 || all->dpad == 5) {
+                if ((! editing) && (all->dpad == 4 || all->dpad == 5)) {
                     land_replace_all(& st, "the D-Pad", "anywhere");
                 }
 #line 363

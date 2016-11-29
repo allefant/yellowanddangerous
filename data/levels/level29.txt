@@ -7,10 +7,10 @@ make 6 33 16 15
 make 6 33 20 11
 make 6 33 20 13
 make 6 33 20 15
-make 7 39 6 31
-make 7 39 8 29
-make 7 39 10 27
-make 7 39 12 25
+make 7 33 6 31
+make 7 33 8 29
+make 7 33 10 27
+make 7 33 12 25
 make 4 9 2 9
 make 4 37 2 9
 make 4 9 2 37
@@ -20,3 +20,4 @@ make 4 29 2 9
 make 19 9 3 45
 make 4 37 2 29
 make 4 9 2 29
+make 4 29 2 29

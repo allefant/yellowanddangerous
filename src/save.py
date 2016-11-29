@@ -277,7 +277,7 @@ def load_level(bool editing):
         land_unpause()
         return
 
-    save_load_from_offset(f, 0, 0, 0)
+    save_load_from_offset(f, 0, 0, 0, editing)
 
     for Block *b in LandArray *blocks.fixed:
         if b.block_type == Render_LeverLeft or\
@@ -322,7 +322,7 @@ def load_level(bool editing):
 
     land_unpause()
 
-def save_load_from_offset(LandBuffer *f, int ox, oy, oz):
+def save_load_from_offset(LandBuffer *f, int ox, oy, oz, bool editing):
     All *all = global_a
     LandArray *rows = land_buffer_split(f, '\n')
     land_buffer_destroy(f)
@@ -358,7 +358,7 @@ def save_load_from_offset(LandBuffer *f, int ox, oy, oz):
         if land_starts_with(row, "hint "):
             char *st = land_strdup(row + 5)
             land_replace_all(&st, "|", "\n")
-            if all.dpad == 4 or all.dpad == 5:
+            if (not editing) and (all.dpad == 4 or all.dpad == 5):
                 land_replace_all(&st, "the D-Pad", "anywhere")
             land_string_copy(game.hint, st, 1024)
             land_free(st)

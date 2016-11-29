@@ -28,7 +28,7 @@ void save_check(int level);
 #line 240
 void load_level(bool editing);
 #line 325
-void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz);
+void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz, bool editing);
 #line 371
 void save_reset_room(int i);
 #line 379

@@ -25,6 +25,7 @@ def blocks_clear(Blocks *self):
     blocks_list_destroy(&self->transparent)
     if self.animated:
         land_array_destroy(self.animated)
+        self.animated = None
 
 def blocks_reset(Blocks *self):
     blocks_clear(self)

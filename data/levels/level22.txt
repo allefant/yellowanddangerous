@@ -1,4 +1,4 @@
-hint Touch anywhere to move.
+hint Touch the D-Pad to move.
 title Laboratory
 make 10 42 4 17
 frame 42

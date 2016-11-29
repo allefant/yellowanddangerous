@@ -1,12 +1,11 @@
 hint Finally at the top!|(Of the trees.)
 title Alley
-make 65 41 20 29
+make 65 41 20 13
 make 13 25 20 21
 make 13 21 20 25
 make 64 29 20 41
 make 10 41 20 41
 make 64 13 20 41
-make 65 41 20 13
 make 4 21 2 5
 make 4 37 2 5
 make 4 5 2 21
@@ -49,3 +48,4 @@ make 4 13 2 37
 make 54 37 4 11
 make 19 37 3 1
 frame 2
+make 38 39 18 31

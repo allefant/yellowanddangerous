@@ -14,10 +14,16 @@ make 0 31 12 33
 make 0 29 4 33
 make 19 31 19 45
 frame 2
-make 19 33 19 1
+make 39 33 12 7
 make 1 31 2 13
 make 1 31 2 29
 make 1 33 2 5
 make 0 31 4 1
-make 39 33 12 7
-make 39 33 12 5
+make 38 27 10 5
+make 18 1 3 21
+make 38 5 2 25
+make 38 5 2 21
+make 38 5 2 13
+make 38 5 2 5
+make 38 13 2 5
+make 38 19 10 5
