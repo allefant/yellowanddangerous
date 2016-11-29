@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "545148216607",
+    "firebase_url": "https://yellow-danger-ads.firebaseio.com",
+    "project_id": "yellow-danger-ads",
+    "storage_bucket": "yellow-danger-ads.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:545148216607:android:aaa382151ad94289",
+        "android_client_info": {
+          "package_name": "com.yellowdanger.ads"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "545148216607-480lbl72ml12qv0rn23kmib25bs96956.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzuCkmk8PavutSej06dIQPzKSY3ktQ8eU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
