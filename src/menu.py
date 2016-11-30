@@ -81,6 +81,7 @@ static def menu_items(Menu *menu):
     S(a.editor ? "Play" : "Edit")
     S("Record")
     S("Replay")
+    S("Godmode")
     S("Exit")
     T
     S("Save")
@@ -236,6 +237,8 @@ def menu_key(int k, bool shift):
             record_set_replaying(game.record)
         else:
             record_set_recording(game.record)
+    elif k == 'g':
+        a.godmode = not a.godmode
 
     if not editor.picked:
         if k == 'x':
@@ -393,6 +396,7 @@ def menu_tick(Menu *menu, float mx, my, click) -> bool:
             a.editor = True
         ON("Record", 'r')
         ON_SHIFT("Replay", 'r')
+        ON("Godmode", 'g')
 
         ON("Save", LandKeyFunction + 2)
         ON("Load", LandKeyFunction + 3)

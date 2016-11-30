@@ -103,6 +103,7 @@ static void menu_items(Menu * menu) {
     S(a->editor ? "Play" : "Edit");
     S("Record");
     S("Replay");
+    S("Godmode");
     S("Exit");
     T;
     S("Save");
@@ -133,13 +134,13 @@ static void menu_items(Menu * menu) {
     for (int i = 0; i < categories_count; i += 1) {
         S(category_name(i));
     }
-#line 113
+#line 114
     for (int i = 0; i < categories_count; i += 1) {
         T;
         {
-#line 115
+#line 116
             LandArrayIterator __iter0__ = LandArrayIterator_first(block_types);
-#line 115
+#line 116
             for (BlockType * bt = LandArrayIterator_item(block_types, &__iter0__); LandArrayIterator_next(block_types, &__iter0__); bt = LandArrayIterator_item(block_types, &__iter0__)) {
                 if (category(bt) == i) {
                     S(bt->name);
@@ -147,7 +148,7 @@ static void menu_items(Menu * menu) {
             }
         }
     }
-#line 119
+#line 120
     T;
     S("0");
     S("1");
@@ -157,9 +158,9 @@ void menu_toggle(void) {
     if (game->menu_on) {
         game->menu_on = 0;
     }
-#line 126
+#line 127
     else {
-#line 128
+#line 129
         game->menu_on = 1;
         Menu * menu = game->menu;
         menu_items(menu);
@@ -169,35 +170,35 @@ void menu_toggle(void) {
         menu->menu [2] = - 1;
     }
 }
-#line 136
+#line 137
 void menu_draw(Menu * menu) {
     All * a = global_a;
     float w = land_display_width();
-#line 140
+#line 141
     land_push_transform();
     land_scale(w / 960.0, w / 960.0);
-#line 143
+#line 144
     float mw = 120;
     float mih = 30;
     float border = 40;
-#line 147
+#line 148
     for (int mi = 0; mi < 3; mi += 1) {
         int m = menu->menu [mi];
         if (m == - 1) {
             break;
         }
-#line 151
+#line 152
         float x0 = 960 - (mw + border) * (1 + mi);
         float y0 = 160;
         land_font_set(a->medium);
         int n = menu->n [m];
         land_premul(1, 1, 1, 0.8);
-#line 157
+#line 158
         land_filled_rectangle(x0 - border, y0 - border, x0 + mw + border, y0 + n * mih + border);
         land_color(1, 1, 0, 1);
         int t = 4;
         land_thickness(t * 2);
-#line 162
+#line 163
         land_rectangle(x0 - border + t, y0 - border + t, x0 + mw + border - t, y0 + n * mih + border - t);
         land_thickness(1);
         for (int i = 0; i < n; i += 1) {
@@ -208,216 +209,219 @@ void menu_draw(Menu * menu) {
                 land_color(1, 1, 0.5, 1);
                 land_filled_rectangle(x, y, x + mw, y + mih);
             }
-#line 171
+#line 172
             land_text_pos(x, y);
             land_color(0, 0, 0, 1);
             land_print("%s", text);
         }
     }
-#line 174
+#line 175
     land_pop_transform();
 }
 void menu_key(int k, bool shift) {
     All * a = global_a;
-#line 179
+#line 180
     if (k == LandKeyFunction + 2) {
         if (game->pristine) {
             save_level(1);
         }
     }
-#line 182
+#line 183
     else if (k == LandKeyFunction + 3) {
         load_level(1);
         a->overview = 0;
-#line 186
+#line 187
         viewport_update(game->viewport, land_display_width(), land_display_height());
         a->editor = 1;
     }
-#line 188
+#line 189
     else if (k == LandKeyFunction + 4) {
         blocks_reset(game->blocks);
         game->player = NULL;
         game->player2 = NULL;
     }
-#line 192
+#line 193
     else if (k == LandKeyFunction + 5) {
         debug_no_mask = ! debug_no_mask;
     }
-#line 194
+#line 195
     else if (k == LandKeyFunction + 6) {
         debug_bounding_boxes++;
         debug_bounding_boxes %= 2;
     }
-#line 197
+#line 198
     else if (k == LandKeyFunction + 7) {
         a->editor = ! a->editor;
     }
-#line 199
+#line 200
     else if (k == LandKeyFunction + 8) {
         if (a->overview) {
             a->overview = 0;
             game->level = game->overview->selected;
             menu_key(LandKeyFunction + 3, 0);
         }
-#line 203
+#line 204
         else {
-#line 205
+#line 206
             overview_update(game->overview);
         }
     }
-#line 206
+#line 207
     else if (k == LandKeyFunction + 10) {
         game->sequence = ! game->sequence;
     }
-#line 208
+#line 209
     else if (k == ' ') {
-#line 208
+#line 209
         ;
     }
     else if (k == LandKeyEnter) {
         a->editor = ! a->editor;
     }
-#line 212
+#line 213
     else if (k == 'q' || k == 'e' || k == 'w' || k == 's') {
         if (k == 'q' || k == 'e' || ! editor->picked) {
             int gox = 0, goz = 0;
             if (k == 'q') {
-#line 215
+#line 216
                 gox--;
             }
-#line 216
+#line 217
             if (k == 'e') {
-#line 216
+#line 217
                 gox++;
             }
-#line 217
+#line 218
             if (k == 'w') {
-#line 217
+#line 218
                 goz--;
             }
-#line 218
+#line 219
             if (k == 's') {
-#line 218
+#line 219
                 goz++;
             }
-#line 219
+#line 220
             game->level = game_neighboring_level(game->level, gox, goz);
             load_level(1);
             a->editor = 1;
         }
     }
-#line 222
+#line 223
     else if (k == 'i') {
         Block * p = editor->picked;
         if (p) {
-#line 227
+#line 228
             print("F%d X%.1f Y%.1f Z%.1f %2d/%2d/%2d", p->frame, p->x, p->y, p->z, (int)(p->x / 24) + 22, (int)(p->y / 24) + 4, (int)(p->z / 24) + 22);
         }
     }
-#line 228
+#line 229
     else if (k == 't') {
         a->text_input = 1;
         a->cursor = 0;
     }
-#line 231
+#line 232
     else if (k == 'h') {
         a->text_input = 2;
         a->cursor = 0;
     }
-#line 234
+#line 235
     else if (k == 'r') {
         if (shift) {
             record_set_replaying(game->record);
         }
-#line 236
+#line 237
         else {
-#line 238
+#line 239
             record_set_recording(game->record);
         }
     }
 #line 240
+    else if (k == 'g') {
+        a->godmode = ! a->godmode;
+    }
     if (! editor->picked) {
         if (k == 'x') {
             blocks_shift(game->blocks, shift ? 24 : - 24, 0, 0);
         }
-#line 243
+#line 246
         else if (k == 'y') {
             blocks_shift(game->blocks, 0, shift ? 24 : - 24, 0);
         }
-#line 245
+#line 248
         else if (k == 'z') {
             blocks_shift(game->blocks, 0, 0, shift ? 24 : - 24);
         }
     }
-#line 248
+#line 251
     double s = 24;
     double s2 = s * 2;
-#line 251
+#line 254
     if (shift) {
         s2 = s;
     }
     if (k == LandKeyInsert) {
         Block * l = editor->picked;
         if (l) {
-#line 258
+#line 261
             editor->picked = block_new(game->blocks, l->x, l->y, l->z, l->block_type);
         }
-#line 258
-        else {
 #line 261
+        else {
+#line 264
             editor->picked = block_new(game->blocks, - s, - s * 2, - s, Render_BlockBottom3);
         }
-#line 262
+#line 265
         block_add(editor->picked);
     }
     Block * p = editor->picked;
-#line 266
+#line 269
     if (! p) {
-#line 266
+#line 269
         return ;
     }
-#line 269
+#line 272
     if (k == LandKeyLeft) {
         p->x -= s2;
         game_recalc();
     }
-#line 272
+#line 275
     else if (k == LandKeyRight) {
         p->x += s2;
         game_recalc();
     }
-#line 275
+#line 278
     else if (k == LandKeyUp) {
         p->z -= s2;
         game_recalc();
     }
-#line 278
+#line 281
     else if (k == LandKeyDown) {
         p->z += s2;
         game_recalc();
     }
-#line 281
+#line 284
     else if (k == 'w') {
         p->y += s2;
         game_recalc();
     }
-#line 284
+#line 287
     else if (k == 's') {
         p->y -= s2;
         game_recalc();
     }
-#line 287
+#line 290
     else if (k == 'x') {
         if (shift) {
             p->y += p->ys;
         }
-#line 289
+#line 292
         else {
-#line 291
+#line 294
             p->y -= p->ys;
         }
     }
-#line 292
+#line 295
     else if (k == 'c') {
         if (shift) {
             p->x = floor(p->x / s) * s;
@@ -426,81 +430,81 @@ void menu_key(int k, bool shift) {
             p->x += (s - p->xs) / 2;
             p->z += (s - p->zs) / 2;
         }
-#line 298
+#line 301
         else {
-#line 300
+#line 303
             p->x = floor(p->x / s + 0.1) * s;
             p->y = floor(p->y / s + 0.1) * s;
             p->z = floor(p->z / s + 0.1) * s;
         }
     }
-#line 303
+#line 306
     else if (k == 'a') {
         editor->picked = p = block_change_type(p, - 1);
     }
-#line 305
+#line 308
     else if (k == 'd') {
         editor->picked = p = block_change_type(p, 1);
     }
-#line 307
+#line 310
     else if (k == 'f') {
         p->frame++;
         if (p->frame >= land_array_count(p->block_type->bitmaps)) {
             p->frame = 0;
         }
     }
-#line 311
+#line 314
     else if (k == LandKeyDelete) {
         block_del(p);
         editor->picked = NULL;
     }
 }
-#line 323
+#line 326
 bool menu_tick(Menu * menu, float mx, float my, float click) {
     All * a = global_a;
     float w = land_display_width();
-#line 327
+#line 330
     float mw = 120 * w / 960;
     float mih = 30 * w / 960;
     float border = 40 * w / 960;
-#line 331
+#line 334
     bool out = 1;
     char * text = NULL;
-#line 334
+#line 337
     int selected = - 1;
     int mi;
     for (mi = 0; mi < 3; mi += 1) {
         float x0 = w - (mw + border) * (1 + mi);
         float y0 = 160 * w / 960;
-#line 340
+#line 343
         if (menu->menu [mi] == - 1) {
             break;
         }
         int n = menu->n [menu->menu [mi]];
-#line 345
+#line 348
         menu->hilite [mi] = - 1;
-#line 347
+#line 350
         if (mx < x0 - border) {
             continue;
         }
-#line 349
+#line 352
         if (mx > x0 + mw + border) {
             continue;
         }
-#line 351
+#line 354
         if (my < y0 - border) {
             continue;
         }
-#line 353
+#line 356
         if (my > y0 + n * mih + border) {
             continue;
         }
         out = 0;
-#line 358
+#line 361
         if (mx < x0 || mx > x0 + mw) {
             continue;
         }
-#line 360
+#line 363
         selected = floor((my - y0) / mih);
         if (selected < 0 || selected >= n) {
             continue;
@@ -521,27 +525,27 @@ bool menu_tick(Menu * menu, float mx, float my, float click) {
             menu->menu [1] = - 1;
         }
         if (land_equals(text, "Mode")) {
-#line 379
+#line 382
             menu->menu [mi] = 1;
         }
-#line 380
+#line 383
         if (land_equals(text, "File")) {
-#line 380
+#line 383
             menu->menu [mi] = 2;
         }
-#line 381
+#line 384
         if (land_equals(text, "View")) {
-#line 381
+#line 384
             menu->menu [mi] = 3;
         }
-#line 382
+#line 385
         if (land_equals(text, "Level")) {
-#line 382
+#line 385
             menu->menu [mi] = 4;
         }
-#line 383
+#line 386
         if (land_equals(text, "Object")) {
-#line 383
+#line 386
             menu->menu [mi] = 5;
         }
         if (land_equals(text, "Exit")) {
@@ -554,18 +558,19 @@ bool menu_tick(Menu * menu, float mx, float my, float click) {
         if (land_equals(text, "Edit")) {
             a->editor = 1;
         }
-#line 394
+#line 397
         ON("Record", 'r');
         ON_SHIFT("Replay", 'r');
-#line 397
+        ON("Godmode", 'g');
+#line 401
         ON("Save", LandKeyFunction + 2);
         ON("Load", LandKeyFunction + 3);
         ON("Clear", LandKeyFunction + 4);
-#line 401
+#line 405
         ON("Bounds", LandKeyFunction + 6);
         ON("Mask", LandKeyFunction + 5);
         ON("Info", 'i');
-#line 405
+#line 409
         ON("Overview", LandKeyFunction + 8);
         ON("Intro", LandKeyFunction + 10);
         ON("Title", 't');
@@ -576,38 +581,38 @@ bool menu_tick(Menu * menu, float mx, float my, float click) {
         ON("Shift Y-", 'y');
         ON_SHIFT("Shift Z+", 'z');
         ON("Shift Z-", 'z');
-#line 416
+#line 420
         ON("Delete", LandKeyDelete);
-#line 418
+#line 422
         if (land_equals(text, "Frame")) {
             menu->menu [0] = menu->sub_frame;
             menu->menu [1] = - 1;
             game->menu_on = 1;
-#line 423
+#line 427
             Block * p = editor->picked;
             if (p) {
                 int n = land_array_count(p->block_type->bitmaps);
                 if (n > 10) {
                     n = 10;
                 }
-#line 428
+#line 432
                 for (int i = 0; i < n; i += 1) {
-#line 430
+#line 434
                     sprintf(menu->items [menu->sub_frame] [i], "Frame %d", 1 + i);
                 }
-#line 431
+#line 435
                 menu->n [menu->sub_frame] = n;
             }
         }
-#line 433
+#line 437
         if (land_equals(text, "Type")) {
             menu->menu [mi] = 6;
             game->menu_on = 1;
         }
-#line 436
+#line 440
         ON("Align", 'c');
         ON("Insert", LandKeyInsert);
-#line 439
+#line 443
         if (land_starts_with(text, "Frame ")) {
             Block * p = editor->picked;
             if (p) {
@@ -617,7 +622,7 @@ bool menu_tick(Menu * menu, float mx, float my, float click) {
                 }
             }
         }
-#line 446
+#line 450
         for (int c = 0; c < categories_count; c += 1) {
             if (land_equals(text, category_name(c))) {
                 menu->menu [0] = 6;
@@ -626,16 +631,16 @@ bool menu_tick(Menu * menu, float mx, float my, float click) {
             }
         }
     }
-#line 450
+#line 454
     else {
-#line 453
+#line 457
         if (mi == 1) {
             if (editor->picked) {
-#line 456
+#line 460
                 editor->picked = block_change_type_to(editor->picked, text);
             }
         }
-#line 458
+#line 462
         menu->hilite [mi] = selected;
     }
     return 1;

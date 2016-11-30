@@ -478,7 +478,7 @@ void player_find_entrance(Block * super) {
         LandArrayIterator __iter0__ = LandArrayIterator_first(super->blocks->fixed);
 #line 312
         for (Block * b = LandArrayIterator_item(super->blocks->fixed, &__iter0__); LandArrayIterator_next(super->blocks->fixed, &__iter0__); b = LandArrayIterator_item(super->blocks->fixed, &__iter0__)) {
-            if (game->gox && b->block_type == Render_ExitLeft) {
+            if (game->gox && b->block_type == Render_ExitLeft && b->frame != 4) {
                 if (game->gox * b->x < 0) {
                     int d = fabs(game->ez - b->z);
                     if (e == NULL || d < mind) {
@@ -488,7 +488,7 @@ void player_find_entrance(Block * super) {
                 }
             }
 #line 319
-            if (game->goz && b->block_type == Render_ExitRight) {
+            if (game->goz && b->block_type == Render_ExitRight && b->frame != 4) {
                 if (game->goz * b->z < 0) {
                     int d = fabs(game->ex - b->x);
                     if (e == NULL || d < mind) {

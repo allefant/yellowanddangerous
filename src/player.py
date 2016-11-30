@@ -310,14 +310,14 @@ def player_find_entrance(Block *super):
     int mind = 0
     Block *e = None
     for Block *b in LandArray *super->blocks->fixed:
-        if game->gox and b->block_type == Render_ExitLeft:
-            if game->gox * b->x < 0:
+        if game.gox and b.block_type == Render_ExitLeft and b.frame != 4:
+            if game->gox * b.x < 0:
                 int d = fabs(game->ez - b->z)
                 if e == None or d < mind:
                     mind = d
                     e = b
-        if game->goz and b->block_type == Render_ExitRight:
-            if game->goz * b->z < 0:
+        if game.goz and b.block_type == Render_ExitRight and b.frame != 4:
+            if game->goz * b.z < 0:
                 int d = fabs(game->ex - b->x)
                 if e == None or d < mind:
                     mind = d
