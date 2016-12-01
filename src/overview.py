@@ -171,22 +171,22 @@ def overview_swap_levels(Overview *self, int level1, level2):
 
     # 2 -> 0
     game.level = level2
-    load_level(True)
+    load_level(True, False)
     game.level = 0
-    save_level(True)
+    save_level(True, False)
     self.screenshot[0] = self.screenshot[level2]
 
     # 1 -> 2
     game.level = level1
-    load_level(True)
+    load_level(True, False)
     game.level = level2
-    save_level(True)
+    save_level(True, False)
     self.screenshot[level2] = self.screenshot[level1]
 
     # 0 -> 1
     game.level = 0
-    load_level(True)
+    load_level(True, False)
     game.level = level1
-    save_level(True)
+    save_level(True, False)
     self.screenshot[level1] = self.screenshot[0]
     

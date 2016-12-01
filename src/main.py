@@ -10,12 +10,12 @@ type Game *game
 def main_switch_to_game:
     All *a = global_a
     a.title = False
-    a.load_after_redraw = 1
+    if not game.state:
+        a.load_after_redraw = 1
 
 def main_switch_to_title(int com):
     All *a = global_a
     a.title = True
-    save_level(False)
     title_com(com)
     
 def all_init(All *self):
@@ -185,7 +185,7 @@ def update():
     if a.load_after_redraw:
         if a.load_after_redraw == 2:
             load_level(a.editor or game.record->is_replaying
-                or game.record->is_recording)
+                or game.record->is_recording, a.find_entrance)
             if a.find_entrance:
                 a.find_entrance = False
                 if game->player:
@@ -234,11 +234,11 @@ def runner_update(LandRunner *self):
     update()
 
     if land_closebutton():
-        save_level(False)
+        save_level(False, False)
         land_quit()
 
     if land_switched_out():
-        save_level(False)
+        save_level(False, False)
 
     if land_was_halted():
         pass
@@ -249,7 +249,7 @@ def runner_update(LandRunner *self):
         cheat(u)
 
         if k == LandKeyEscape:
-            save_level(False)
+            save_level(False, False)
             land_quit()
         elif k == LandKeyFunction + 1:
             a->show_fps = not a->show_fps

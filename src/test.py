@@ -52,7 +52,7 @@ def test_level(int level, x, y, z, int *tick) -> bool
     y = y - 4 * 24
     z = z - 22 * 24
     game.level = level
-    load_level(True)
+    load_level(True, True)
     record_set_replaying(game.record)
     record_load(game.record, game.level, x, y, z)
     if game.record->wait_on_level:

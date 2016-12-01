@@ -100,12 +100,14 @@ def game_level_number_to_xz(int level, *x, *z):
 def game_level_done(Game *self, int gox, goz):
     if land_equals(self->state, "play") :
         record_done(self.record)
-        if not global_a->test:
-            save_level(False)
-        self->state = "done"
-        self->state_tick = self->ticks
         self->gox = gox
         self->goz = goz
+        if not global_a->test:
+            # Save the level (with the player on the exit, so if
+            # re-loaded this level shows then immediately the next
+            save_level(False, True)
+        self->state = "done"
+        self->state_tick = self->ticks
         if self->player:
             self->ex = self->player->super.x
             self->ez = self->player->super.z

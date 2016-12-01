@@ -43,7 +43,6 @@ def title_tick:
             main_switch_to_game()
             restart = False
         else:
-            load_info()
             main_switch_to_game()
 
     for int ti in range(11):
@@ -80,7 +79,6 @@ def title_tick:
             else:
                 if i == 2:
                     # reset the current room
-                    load_info()
                     save_reset_room(game->level)
                     main_switch_to_game()
                     if game->player:
@@ -97,10 +95,8 @@ def title_tick:
                         a.editor_enabled = False
                         
                     # load saved game
-                    load_info()
                     main_switch_to_game()
                 if i == 4:
-                    load_info()
                     settings = True
 
 static int volx = 0

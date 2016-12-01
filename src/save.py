@@ -45,6 +45,8 @@ def save_info:
     char *path = land_get_save_file("com.yellowdanger", "info.txt")
     LandFile *f = land_file_new(path, "w")
     land_file_print(f, "room %d", game.level)
+    land_file_print(f, "gox %d", game.gox)
+    land_file_print(f, "goz %d", game.goz)
     land_file_print(f, "dpad %d", a.dpad)
     land_file_print(f, "music %d", a.music)
     land_file_print(f, "sound %d", a.sound)
@@ -75,6 +77,10 @@ def load_info:
             char *row = land_buffer_finish(rowb)
             if land_starts_with(row, "room "):
                 sscanf(row, "room %d", &game.level)
+            if land_starts_with(row, "gox "):
+                sscanf(row, "gox %d", &game.gox)
+            if land_starts_with(row, "goz "):
+                sscanf(row, "goz %d", &game.goz)
             if land_starts_with(row, "dpad "):
                 sscanf(row, "dpad %d", &a->dpad)
             if land_starts_with(row, "music "):
@@ -122,15 +128,18 @@ def save_get_name(char const *base, int level, char const *suffix, char *out):
     strcpy(out, path)
     land_free(path)
 
-def save_level(bool editing):
+def save_level(bool editing, bool at_entrance):
     char name[1024]
     if editing:
         sprintf(name, "data/levels/level%02d.txt", game.level)
         overview_update_level(game.overview, game.level)
-    else:
+    elif at_entrance:
         save_get_name("save", game.level, ".txt", name)
         save_info()
-        
+    else:
+        save_get_name("save", 0, ".txt", name)
+        save_info()
+
     Blocks *blocks = game.blocks
     LandFile *f = land_file_new(name, "w")
     char *st = land_strdup(game.hint)
@@ -237,7 +246,7 @@ def save_check(int level):
     
     land_array_destroy(rows)
 
-def load_level(bool editing):
+def load_level(bool editing, bool at_entrance):
 
     land_pause()
 
@@ -251,8 +260,12 @@ def load_level(bool editing):
 
     LandBuffer *f = None
     if not editing:
-        save_get_name("save", game.level, ".txt", name)
-        f = land_buffer_read_from_file(name)
+        if not at_entrance:
+            save_get_name("save", 0, ".txt", name)
+            f = land_buffer_read_from_file(name)
+        if not f:
+            save_get_name("save", game.level, ".txt", name)
+            f = land_buffer_read_from_file(name)
     if not f:
         if not editing:
             print("    failed from %s", name)
@@ -375,6 +388,10 @@ def save_reset_room(int i):
         land_log_message("Cannot remove %s.", name)
     SaveInfo *si = g_save_info + i
     si.saved = False
+    game->state = None
+
+    save_get_name("save", 0, ".txt", name)
+    land_file_remove(name)
 
 def save_new:
     for int i in range(1, 50):
@@ -395,3 +412,4 @@ def save_get_level_n(int i) -> int:
 
 def save_get_level_xy(int i) -> float *:
     return g_save_info[i].xy 
+ 

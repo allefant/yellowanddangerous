@@ -179,9 +179,9 @@ def menu_key(int k, bool shift):
 
     if k == LandKeyFunction + 2:
         if game.pristine:
-            save_level(True)
+            save_level(True, False)
     elif k == LandKeyFunction + 3:
-        load_level(True)
+        load_level(True, False)
         a.overview = False
         viewport_update(game.viewport, land_display_width(),
             land_display_height())
@@ -218,7 +218,7 @@ def menu_key(int k, bool shift):
             if k == 'w': goz--
             if k == 's': goz++
             game.level = game_neighboring_level(game.level, gox, goz)
-            load_level(True)
+            load_level(True, False)
             a.editor = True
     elif k == 'i':
         Block *p = editor.picked
