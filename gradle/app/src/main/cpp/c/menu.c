@@ -223,12 +223,12 @@ void menu_key(int k, bool shift) {
 #line 180
     if (k == LandKeyFunction + 2) {
         if (game->pristine) {
-            save_level(1);
+            save_level(1, 0);
         }
     }
 #line 183
     else if (k == LandKeyFunction + 3) {
-        load_level(1);
+        load_level(1, 0);
         a->overview = 0;
 #line 187
         viewport_update(game->viewport, land_display_width(), land_display_height());
@@ -303,7 +303,7 @@ void menu_key(int k, bool shift) {
             }
 #line 220
             game->level = game_neighboring_level(game->level, gox, goz);
-            load_level(1);
+            load_level(1, 0);
             a->editor = 1;
         }
     }

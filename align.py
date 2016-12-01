@@ -5,12 +5,14 @@ path = lambda x: "data/levels/level{:02}.txt".format(x)
 def align(f):
     rows = open(f).read().splitlines()
     rows2 = []
+    make = ""
     watch = False
     for row in rows:
-        if row.startswith("make 12"):
+        if row.startswith("make "):
             watch = True
+            make = row
         elif watch and row.startswith("move"):
-            print("misaligned:", f, row)
+            print("misaligned:", f, make, row)
             continue
         rows2.append(row)
     out = open(f, "w")

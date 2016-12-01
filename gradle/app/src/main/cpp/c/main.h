@@ -14,7 +14,7 @@
 extern char * main_data_path;
 #line 10
 void main_switch_to_game(void);
-#line 15
+#line 16
 void main_switch_to_title(int com);
 #line 21
 void all_init(All * self);

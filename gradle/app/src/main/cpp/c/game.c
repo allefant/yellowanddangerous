@@ -53,24 +53,26 @@ void game_level_number_to_xz(int level, int * x, int * z) {
 void game_level_done(Game * self, int gox, int goz) {
     if (land_equals(self->state, "play")) {
         record_done(self->record);
-        if (! global_a->test) {
-            save_level(0);
-        }
-#line 105
-        self->state = "done";
-        self->state_tick = self->ticks;
         self->gox = gox;
         self->goz = goz;
+        if (! global_a->test) {
+            // Save the level (with the player on the exit, so if
+            // re-loaded this level shows then immediately the next
+            save_level(0, 1);
+        }
+#line 109
+        self->state = "done";
+        self->state_tick = self->ticks;
         if (self->player) {
             self->ex = self->player->super.x;
             self->ez = self->player->super.z;
         }
-#line 112
+#line 114
         self->level = game_neighboring_level(self->level, gox, goz);
         sound(Render_teleport, 1);
     }
 }
-#line 115
+#line 117
 void game_recalc(void) {
     game->blocks->rebuild_static_cache = 1;
     game->blocks->rebuild_dynamic_cache = 1;
@@ -80,20 +82,20 @@ void game_key(Game * self, int k) {
 }
 void game_tick(Game * self) {
     All * a = global_a;
-#line 125
+#line 127
     if (a->show_ad) {
         if (show_ad_done()) {
             land_log_message("show_ad_done");
             a->show_ad = 0;
             song_volume();
         }
-#line 129
+#line 131
         else {
-#line 129
+#line 131
             return ;
         }
     }
-#line 133
+#line 135
     if (land_equals(self->state, "done") || land_equals(self->state, "died")) {
         if (self->ticks > self->state_tick + 30) {
             a->load_after_redraw = 1;
@@ -103,36 +105,36 @@ void game_tick(Game * self) {
                 land_log_message("show_interstitial_ad");
                 show_interstitial_ad();
                 a->show_ad = 1;
-#line 141
+#line 143
                 return ;
             }
         }
     }
-#line 144
+#line 146
     if (a->load_after_redraw) {
-#line 144
+#line 146
         return ;
     }
-#line 147
-    input_tick();
 #line 149
+    input_tick();
+#line 151
     if (a->overview) {
         overview_tick(game->overview);
-#line 150
+#line 152
         return ;
     }
-#line 153
+#line 155
     if (a->show_map) {
         if (land_key_pressed(LandKeyBack)) {
             a->show_map = 0;
         }
-#line 155
+#line 157
         return ;
     }
-#line 158
+#line 160
     int plates_count = 0;
     int plates_on_before = 0;
-#line 161
+#line 163
     if (self->player) {
         if (land_equals(self->state, "play")) {
             if (self->player->dead || self->player->super.y < - 960) {
@@ -140,28 +142,28 @@ void game_tick(Game * self) {
                 self->state = "died";
                 game->deaths++;
                 record_done(self->record);
-#line 170
+#line 172
                 event("join_group group_id=died_x%.0f_y%.0f_z%.0f", self->player->super.x, self->player->super.y, self->player->super.z);
             }
         }
     }
-#line 172
+#line 174
     {
-#line 172
+#line 174
         LandArrayIterator __iter0__ = LandArrayIterator_first(self->blocks->fixed);
-#line 172
+#line 174
         for (Block * b = LandArrayIterator_item(self->blocks->fixed, &__iter0__); LandArrayIterator_next(self->blocks->fixed, &__iter0__); b = LandArrayIterator_item(self->blocks->fixed, &__iter0__)) {
             if (b->block_type == Render_Plate) {
                 if (b->frame == 1) {
                     plates_on_before += 1;
                 }
-#line 176
+#line 178
                 b->frame = 0;
                 plates_count += 1;
             }
         }
     }
-#line 179
+#line 181
     if (land_key_pressed(LandKeyBack)) {
         main_switch_to_title(0);
     }
@@ -175,26 +177,26 @@ void game_tick(Game * self) {
         record_tick(game->record);
         a->time++;
         {
-#line 191
+#line 193
             LandArrayIterator __iter0__ = LandArrayIterator_first(self->blocks->animated);
-#line 191
+#line 193
             for (Block * b = LandArrayIterator_item(self->blocks->animated, &__iter0__); LandArrayIterator_next(self->blocks->animated, &__iter0__); b = LandArrayIterator_item(self->blocks->animated, &__iter0__)) {
                 b->block_type->tick(b);
             }
         }
-#line 194
+#line 196
         int plates_on = 0;
         {
-#line 195
+#line 197
             LandArrayIterator __iter0__ = LandArrayIterator_first(self->blocks->fixed);
-#line 195
+#line 197
             for (Block * b = LandArrayIterator_item(self->blocks->fixed, &__iter0__); LandArrayIterator_next(self->blocks->fixed, &__iter0__); b = LandArrayIterator_item(self->blocks->fixed, &__iter0__)) {
                 if (b->block_type == Render_Plate) {
                     if (b->frame == 1) {
                         plates_on += 1;
                     }
                 }
-#line 199
+#line 201
                 else if (b->block_type == Render_ExitLeft || b->block_type == Render_ExitRight) {
                     if (b->frame == 1) {
                         b->frame = 0;
@@ -202,7 +204,7 @@ void game_tick(Game * self) {
                 }
             }
         }
-#line 203
+#line 205
         if (plates_on > plates_on_before) {
             sound(Render_on, 1);
         }
@@ -211,9 +213,9 @@ void game_tick(Game * self) {
         }
         if (plates_count == plates_on) {
             {
-#line 210
+#line 212
                 LandArrayIterator __iter0__ = LandArrayIterator_first(self->blocks->fixed);
-#line 210
+#line 212
                 for (Block * b = LandArrayIterator_item(self->blocks->fixed, &__iter0__); LandArrayIterator_next(self->blocks->fixed, &__iter0__); b = LandArrayIterator_item(self->blocks->fixed, &__iter0__)) {
                     if (b->block_type == Render_ExitLeft || b->block_type == Render_ExitRight) {
                         if (b->frame == 0) {
@@ -224,7 +226,7 @@ void game_tick(Game * self) {
             }
         }
     }
-#line 215
+#line 217
     self->ticks += 1;
 }
 /* This file was generated by scramble.py. */

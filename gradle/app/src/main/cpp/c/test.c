@@ -72,7 +72,7 @@ bool test_level(int level, int x, int y, int z, int * tick) {
     y = y - 4 * 24;
     z = z - 22 * 24;
     game->level = level;
-    load_level(1);
+    load_level(1, 1);
     record_set_replaying(game->record);
     record_load(game->record, game->level, x, y, z);
     if (game->record->wait_on_level) {

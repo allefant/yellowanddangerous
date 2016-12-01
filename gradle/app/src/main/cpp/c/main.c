@@ -8,12 +8,14 @@ char * main_data_path;
 void main_switch_to_game(void) {
     All * a = global_a;
     a->title = 0;
-    a->load_after_redraw = 1;
+    if (! game->state) {
+        a->load_after_redraw = 1;
+    }
 }
+#line 16
 void main_switch_to_title(int com) {
     All * a = global_a;
     a->title = 1;
-    save_level(0);
     title_com(com);
 }
 void all_init(All * self) {
@@ -221,7 +223,7 @@ void update(void) {
     if (a->load_after_redraw) {
         if (a->load_after_redraw == 2) {
 #line 188
-            load_level(a->editor || game->record->is_replaying || game->record->is_recording);
+            load_level(a->editor || game->record->is_replaying || game->record->is_recording, a->find_entrance);
             if (a->find_entrance) {
                 a->find_entrance = 0;
                 if (game->player) {
@@ -296,11 +298,11 @@ void runner_update(LandRunner * self) {
     update();
 #line 236
     if (land_closebutton()) {
-        save_level(0);
+        save_level(0, 0);
         land_quit();
     }
     if (land_switched_out()) {
-        save_level(0);
+        save_level(0, 0);
     }
     if (land_was_halted()) {
 #line 243
@@ -313,7 +315,7 @@ void runner_update(LandRunner * self) {
         cheat(u);
 #line 251
         if (k == LandKeyEscape) {
-            save_level(0);
+            save_level(0, 0);
             land_quit();
         }
 #line 254

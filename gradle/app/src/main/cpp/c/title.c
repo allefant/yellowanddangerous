@@ -54,11 +54,10 @@ void title_tick(void) {
 #line 44
         else {
 #line 46
-            load_info();
             main_switch_to_game();
         }
     }
-#line 49
+#line 48
     for (int ti = 0; ti < 11; ti += 1) {
         if (land_touch_down(ti) && land_touch_delta(ti)) {
             int i = get_line(land_touch_y(ti));
@@ -69,23 +68,23 @@ void title_tick(void) {
                         a->dpad = 0;
                     }
                 }
-#line 57
+#line 56
                 else if (i == 2) {
                     a->music = volget(land_touch_x(ti));
                     song_volume();
                 }
-#line 60
+#line 59
                 else if (i == 3) {
                     a->sound = volget(land_touch_x(ti));
                     sound(Render_on, 1);
                 }
-#line 63
+#line 62
                 else if (i == 4) {
                     settings = 0;
                     save_info();
                 }
             }
-#line 66
+#line 65
             else if (restart) {
                 if (i == 1) {
                     a->code++;
@@ -94,62 +93,59 @@ void title_tick(void) {
                         a->godmode = 1;
                     }
                 }
-#line 72
+#line 71
                 else if (i == 3) {
                     // start new game
                     save_new();
                     main_switch_to_game();
                     restart = 0;
                 }
-#line 77
+#line 76
                 else if (i == 4) {
                     main_switch_to_game();
                     restart = 0;
                 }
             }
-#line 79
+#line 78
             else {
-#line 81
+#line 80
                 if (i == 2) {
                     // reset the current room
-                    load_info();
                     save_reset_room(game->level);
                     main_switch_to_game();
                     if (game->player) {
                         player_find_entrance(& game->player->super);
                     }
                 }
-#line 88
+#line 86
                 if (i == 3) {
                     a->code = 0;
                     a->godmode = 0;
                     restart = 1;
                 }
-#line 92
+#line 90
                 if (i == 0) {
                     if (global_can_enable_editor && volget(land_touch_x(ti)) > 0) {
                         a->editor_enabled = 1;
                         a->editor = 1;
                     }
-#line 95
+#line 93
                     else {
-#line 97
+#line 95
                         a->editor_enabled = 0;
                     }
                     // load saved game
-                    load_info();
                     main_switch_to_game();
                 }
-#line 102
+#line 99
                 if (i == 4) {
-                    load_info();
                     settings = 1;
                 }
             }
         }
     }
 }
-#line 106
+#line 102
 static int volx = 0;
 static void drawvol(int v, float x, float y) {
     y += 16;
@@ -162,19 +158,19 @@ static void drawvol(int v, float x, float y) {
             if (v == 0) {
                 land_color(0, 0, 0, 1);
             }
-#line 117
+#line 113
             land_filled_rectangle(ix, iy, ix + s * 0.8, iy + s);
         }
-#line 117
+#line 113
         else {
-#line 119
+#line 115
             float cx = ix + s * 0.4;
             float cy = iy + s * 0.5;
             land_filled_circle(cx - 4, cy - 4, cx + 4, cy + 4);
         }
     }
 }
-#line 123
+#line 119
 static int volget(float mx) {
     float w = land_display_width();
     double s = w / 960;
@@ -182,15 +178,15 @@ static int volget(float mx) {
     mx /= s;
     int i = (mx - volx) / sx;
     if (i < 0) {
-#line 129
+#line 125
         i = 0;
     }
-#line 130
+#line 126
     if (i > 6) {
-#line 130
+#line 126
         i = 6;
     }
-#line 131
+#line 127
     return i;
 }
 float align(float x, float s) {
@@ -203,18 +199,18 @@ void title_render(void) {
     double s = w / 960;
     h /= s;
     land_clear(1, 1, 1, 1);
-#line 144
+#line 140
     land_reset_transform();
     land_scale(s, s);
-#line 147
+#line 143
     land_font_set(a->big);
     float th = land_line_height();
     float yw = land_text_get_width("Yellow ");
-#line 151
+#line 147
     land_color(.9, .9, 0.7, 1);
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2;
     land_filled_rectangle(tx + yw, 0, 960, h);
-#line 155
+#line 151
     if (settings) {
         land_font_set(a->medium);
         land_color(0.5, 0, 0, 1);
@@ -226,22 +222,22 @@ void title_render(void) {
             land_print("Jump: touch second finger");
             land_print("Pull/Lift: two finger swipe");
         }
-#line 165
+#line 161
         else if (a->dpad == 4) {
             land_print("Jump: Move then double tap");
             land_print("Pull/Lift: Double tap then move");
         }
-#line 167
+#line 163
         else {
-#line 169
+#line 165
             land_print("Jump: Hold move then jump");
             land_print("Pull/Lift: Hold jump then move");
         }
-#line 171
+#line 167
         land_font_set(a->big);
     }
     volx = tx + yw + 6 * 32;
-#line 175
+#line 171
     for (int i = 0; i < 5; i += 1) {
         float y = (h - 64 * 5) / 2 + i * 64 + (32 - th) / 2;
         float x = tx;
@@ -257,77 +253,77 @@ void title_render(void) {
                     land_color(1, 1, 0, 1);
                 }
             }
-#line 188
+#line 184
             land_print("and Dangerous");
         }
-#line 189
+#line 185
         if (settings) {
             if (i == 0) {
                 if (a->dpad == 0) {
-#line 191
+#line 187
                     land_print("DPad left");
                 }
-#line 192
+#line 188
                 if (a->dpad == 1) {
-#line 192
+#line 188
                     land_print("DPad right");
                 }
-#line 193
+#line 189
                 if (a->dpad == 2) {
-#line 193
+#line 189
                     land_print("DPad left big");
                 }
-#line 194
+#line 190
                 if (a->dpad == 3) {
-#line 194
+#line 190
                     land_print("DPad right big");
                 }
-#line 195
+#line 191
                 if (a->dpad == 4) {
-#line 195
+#line 191
                     land_print("double click swipe");
                 }
-#line 196
+#line 192
                 if (a->dpad == 5) {
-#line 196
+#line 192
                     land_print("two finger swipe");
                 }
             }
-#line 197
+#line 193
             else if (i == 2) {
                 land_print("Music");
                 drawvol(a->music, volx, y);
             }
-#line 200
+#line 196
             else if (i == 3) {
                 land_print("Sound");
                 drawvol(a->sound, volx, y);
             }
-#line 203
+#line 199
             else if (i == 4) {
                 land_print("Back");
             }
         }
-#line 205
+#line 201
         else if (restart) {
             if (i == 0) {
                 land_color(1, 0.75, 0.75, 1);
                 land_print("Are you sure?");
             }
-#line 209
+#line 205
             else if (i == 3) {
                 land_color(1, 0, 0, 1);
                 land_print("Delete savegame!");
             }
-#line 212
+#line 208
             else if (i == 4) {
                 land_color(0, 0.5, 0, 1);
                 land_print("Continue playing");
             }
         }
-#line 214
+#line 210
         else {
-#line 216
+#line 212
             if (i == 0) {
                 land_print("Play");
                 if (global_can_enable_editor) {
@@ -335,28 +331,28 @@ void title_render(void) {
                     land_print("Edit");
                 }
             }
-#line 221
+#line 217
             else if (i == 2) {
                 land_print("Reset room");
             }
-#line 223
+#line 219
             else if (i == 3) {
                 land_print("New game");
             }
-#line 225
+#line 221
             else if (i == 4) {
                 land_print("Settings");
             }
         }
     }
-#line 228
+#line 224
     land_font_set(a->font);
     land_color(0, 0, 0, 1);
-#line 231
+#line 227
     if (! block1) {
         block1 = block_new(game->blocks, 120, 0, 720, Render_Gremlin);
     }
-#line 233
+#line 229
     if (! block2) {
         block2 = block_new(game->blocks, - 660, 0, - 60, Render_Allefant);
     }
@@ -367,7 +363,7 @@ void title_render(void) {
         draw_title_animation();
     }
     a->tint.a = 0;
-#line 244
+#line 240
     land_font_set(a->font);
     land_text_pos(w / s, h - land_line_height() * 6);
     int t = a->time / 60;
@@ -377,19 +373,19 @@ void title_render(void) {
             f++;
         }
     }
-#line 251
+#line 247
     int tt = 0;
     for (int i = 0; i < 8; i += 1) {
         if (game->test_tube [i]) {
             tt++;
         }
     }
-#line 255
+#line 251
     land_print_right("Flowers picked: %d/7", f);
     land_print_right("Test tubes: %d/7", tt);
     land_print_right("Car keys found: %s", game->key ? "yes" : "no");
     land_print_right("Died %d time%s.", game->deaths, game->deaths != 1 ? "s" : "");
-#line 260
+#line 256
     land_print_right("Playtime on this savegame: %02d:%02d:%02d", t / 3600, (t / 60) % 60, t % 60);
     land_print_right("Version %s", VERSION);
 }
@@ -409,19 +405,19 @@ static void draw_title_animation(void) {
             a->tint.g *= a->tint.a;
             a->tint.b *= a->tint.a;
         }
-#line 277
+#line 273
         else {
-#line 279
+#line 275
             a->tint = land_color_premul(1, 1, 1, .2);
         }
-#line 280
+#line 276
         if (! blocktype_preload(block1->block_type)) {
             render_block(block1, game->viewport);
         }
     }
-#line 283
+#line 279
     a->tint = land_color_premul(1, 1, 1, .2);
-#line 285
+#line 281
     block2->frame = 8 + ((16 * land_get_ticks() / 60) % 8);
     if (! blocktype_preload(block2->block_type)) {
         render_block(block2, game->viewport);
