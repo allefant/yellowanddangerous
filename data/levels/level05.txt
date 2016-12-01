@@ -1,15 +1,12 @@
 hint one fell down
 title Kennels
 make 50 10 4 24
-move 99 0 98
 frame 2
 make 50 15 4 25
 frame 2
 make 50 22 4 24
-move 1 0 98
 frame 2
 make 50 30 4 24
-move 1 0 98
 frame 6
 make 10 15 4 39
 frame 2

@@ -3,7 +3,6 @@ title Ventilation duct
 make 10 39 4 15
 frame 2
 make 13 21 4 41
-move 47 0 0
 make 30 35 2 37
 frame 1
 make 37 33 4 11

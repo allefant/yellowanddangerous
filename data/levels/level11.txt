@@ -20,11 +20,8 @@ make 64 37 8 41
 make 64 37 8 37
 make 64 37 8 33
 make 65 35 9 35
-move 0 1 0
 make 65 39 9 35
-move 0 1 0
 make 65 43 9 35
-move 0 1 0
 make 13 7 8 39
 make 13 39 9 7
 make 13 7 8 7

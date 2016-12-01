@@ -1,12 +1,9 @@
 hint enough material?
 title The Gap
 make 7 35 4 17
-move 0 3 0
 make 7 31 20 37
 make 7 34 4 9
-move 0 3 0
 make 7 34 4 25
-move 0 3 0
 make 10 35 21 43
 frame 2
 make 26 31 20 33
