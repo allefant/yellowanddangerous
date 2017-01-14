@@ -10,11 +10,11 @@ android {
             storePassword 'sixtimesseven'
         }
     }
-    compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode = getYellowDangerVersionCode()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -58,10 +58,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
     //compile project(path: ':allegro5')
     compile 'org.liballeg:allegro5-release:5.2.2.0b'
-    compile 'com.google.firebase:firebase-core:9.8.0'
-    compile 'com.google.firebase:firebase-messaging:9.8.0'
-    compile 'com.google.firebase:firebase-crash:9.8.0'
-    adsCompile 'com.google.firebase:firebase-ads:9.8.0'
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
+    adsCompile 'com.google.firebase:firebase-ads:10.0.1'
 
 }
 
