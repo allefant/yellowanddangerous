@@ -467,10 +467,11 @@ def render(Game *g, float w, h):
 
     if not game.sequence and not a.render_screenshot:
 
-        if not a.show_map:
+        if not a.show_map and global_use_touch_input:
             draw_move_controls()
             draw_jump_controls()
-        draw_pause_controls()
+        if global_use_touch_input or a.show_map:
+            draw_pause_controls()
 
         if game.menu_on:
             menu_draw(game.menu)

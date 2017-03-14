@@ -39,8 +39,8 @@ def test -> bool:
             int k = 1 + j + 7 * i
             int d = minduration[k] / 360
             if d > 99: d = 99
-            char const *col = color_bash(result[k] == 'F' ? "red" : "green")
-            char const *end = color_bash("")
+            char const *col = land_color_bash(result[k] == 'F' ? "red" : "green")
+            char const *end = land_color_bash("")
             printf("%s%c%s %d.%d | ", col, result[k], end, d / 10, d % 10)
         printf("\n")
         
@@ -74,7 +74,7 @@ def test_level(int level, x, y, z, int *tick) -> bool
         (*tick)++
     print("%s at tick %d", game.state, *tick)
     if land_equals(game.state, "done"):
-        print("%sOK%s", color_bash("green"), color_bash(""))
+        print("%sOK%s", land_color_bash("green"), land_color_bash(""))
         return True
-    print("%sFAIL%s", color_bash("red"), color_bash(""))
+    print("%sFAIL%s", land_color_bash("red"), land_color_bash(""))
     return False

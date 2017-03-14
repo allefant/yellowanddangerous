@@ -155,6 +155,8 @@ def init():
 
     config_controls_read()
 
+    title_init()
+
     game_setup(land_display_width(), land_display_height())
 
     render_setup()

@@ -2,6 +2,12 @@
 #line 1 "src/intro.py"
 #include "intro.h"
 typedef struct Smoke Smoke;
+#line 3
+LandColor intro_tint;
+LandColor intro_back;
+static Block * test_tube;
+static int ty;
+static int scrolly;
 static void find_test_tube(void);
 static void walls_down(bool final);
 static void move_car(void);
@@ -14,12 +20,6 @@ static void intro(void);
 static void setup_smoke(void);
 static void postprocess1(void);
 static void postprocess2(void);
-#line 3
-LandColor intro_tint;
-LandColor intro_back;
-static Block * test_tube;
-static int ty;
-static int scrolly;
 #line 9
 static void find_test_tube(void) {
     if (test_tube) {

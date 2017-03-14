@@ -148,13 +148,18 @@ def game_tick(Game *self):
 
     input_tick()
 
+    if controls.pressed[ControlMenu]:
+        input_toggle_pause()
+
     if a.overview:
         overview_tick(game.overview)
         return
 
     if a.show_map:
-        if land_key_pressed(LandKeyBack):
-            a.show_map = False
+        if land_key_pressed(LandKeyBack): a.show_map = False
+        if controls.pressed[ControlLeft]: main_switch_to_title(0)
+        if controls.pressed[ControlRight]: input_toggle_pause()
+        if controls.pressed[ControlJump]: input_toggle_pause()
         return
     
     int plates_count = 0

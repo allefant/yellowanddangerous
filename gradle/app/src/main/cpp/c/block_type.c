@@ -2,9 +2,9 @@
 #line 1 "src/block_type.py"
 #include "block_type.h"
 #include "render.h"
-static void fill_in(void);
 #line 24
 LandArray * block_types;
+static void fill_in(void);
 #line 31
 BlockType* blocktype_new(char const * name, float xs, float ys, float zs, void(* tick)(Block *), void(* touch)(Block *, Block *, float, float, float), void(* destroy)(Block *), Block * (* allocate)(void), void(* post_init)(Block *)) {
     BlockType * self;

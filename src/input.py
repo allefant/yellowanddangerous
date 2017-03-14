@@ -35,6 +35,16 @@ static def check_menu(LandFloat mx, my, bool clicked) -> bool:
         return False
     return menu_tick(game.menu, mx, my, clicked)
 
+def input_toggle_pause:
+    All *a = global_a
+    if a.editor_enabled:
+        menu_toggle()
+    else:
+        if a.show_map:
+            a.show_map = False
+        else:
+            a.show_map = True
+
 def input_tick:
     All *a = global_a
 
@@ -53,13 +63,7 @@ def input_tick:
 
         if check_pause_button(mx, my):
             if clicked:
-                if a.editor_enabled:
-                    menu_toggle()
-                else:
-                    if a.show_map:
-                        a.show_map = False
-                    else:
-                        a.show_map = True
+                input_toggle_pause()
             return
 
         if check_title_button(mx, my):

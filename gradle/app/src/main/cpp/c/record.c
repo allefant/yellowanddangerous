@@ -43,19 +43,19 @@ void record_destroy(Record * self) {
 }
 static void recording_tick(Record * self) {
     All * a = global_a;
-    bool controls [5] = {a->left, a->right, a->up, a->down, a->jump};
+    bool rcontrols [5] = {a->left, a->right, a->up, a->down, a->jump};
 #line 52
     for (int i = 0; i < 5; i += 1) {
-        bitstream_add_bit(& self->inputs [i], controls [i] ? 1 : 0);
+        bitstream_add_bit(& self->inputs [i], rcontrols [i] ? 1 : 0);
     }
 }
 #line 55
 static void replaying_tick(Record * self) {
     All * a = global_a;
-    bool * controls [5] = {& a->left, & a->right, & a->up, & a->down, & a->jump};
+    bool * rcontrols [5] = {& a->left, & a->right, & a->up, & a->down, & a->jump};
     for (int i = 0; i < 5; i += 1) {
         int bit = bitstream_get_bit(& self->inputs [i], self->tick);
-        * (controls [i]) = bit;
+        * (rcontrols [i]) = bit;
     }
 #line 61
     self->tick++;

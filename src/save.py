@@ -44,6 +44,7 @@ def save_info:
     All *a = global_a
     char *path = land_get_save_file("com.yellowdanger", "info.txt")
     LandFile *f = land_file_new(path, "w")
+    config_print_controls(f)
     land_file_print(f, "room %d", game.level)
     land_file_print(f, "gox %d", game.gox)
     land_file_print(f, "goz %d", game.goz)
@@ -71,10 +72,11 @@ def load_info:
     a.sound = 7
     LandBuffer *f = land_buffer_read_from_file(path)
     if f:
-        LandArray *rows = land_buffer_split(f, '\n')
+        LandArray *rows = land_buffer_split(f, "\n")
         land_buffer_destroy(f)
         for LandBuffer *rowb in LandArray *rows:
             char *row = land_buffer_finish(rowb)
+            config_read_controls(row)
             if land_starts_with(row, "room "):
                 sscanf(row, "room %d", &game.level)
             if land_starts_with(row, "gox "):
@@ -212,7 +214,7 @@ def save_check(int level):
    
     si.saved = True
 
-    LandArray *rows = land_buffer_split(f, '\n')
+    LandArray *rows = land_buffer_split(f, "\n")
     land_buffer_destroy(f)
    
     for LandBuffer *rowb in LandArray *rows:
@@ -246,8 +248,10 @@ def save_check(int level):
     
     land_array_destroy(rows)
 
+static bool workaround_stupid_bug
 def load_level(bool editing, bool at_entrance):
-
+    workaround_stupid_bug = True
+    label retry
     land_pause()
 
     char name[1024]
@@ -292,7 +296,9 @@ def load_level(bool editing, bool at_entrance):
 
     save_load_from_offset(f, 0, 0, 0, editing)
 
+    int n = 0
     for Block *b in LandArray *blocks.fixed:
+        n++
         if b.block_type == Render_LeverLeft or\
                 b.block_type == Render_LeverRight:
             if b.frame == 1:
@@ -320,6 +326,7 @@ def load_level(bool editing, bool at_entrance):
     if global_a.editor:
         visible = True
     for Block *b in LandArray *blocks.dynamic:
+        n++
         if b.block_type == Render_Key:
             if b.y < 9000:
                 if not visible:
@@ -335,9 +342,16 @@ def load_level(bool editing, bool at_entrance):
 
     land_unpause()
 
+    if n == 0:
+        # FIXME: How does that happen?
+        save_reset_room(game.level)
+        if workaround_stupid_bug:
+            workaround_stupid_bug = False
+            goto retry
+
 def save_load_from_offset(LandBuffer *f, int ox, oy, oz, bool editing):
     All *all = global_a
-    LandArray *rows = land_buffer_split(f, '\n')
+    LandArray *rows = land_buffer_split(f, "\n")
     land_buffer_destroy(f)
     float s = 24
     int t, xi, yi, zi

@@ -47,17 +47,17 @@ def record_destroy(Record *self):
     
 static def recording_tick(Record *self):
     All *a = global_a
-    bool controls[5] = {a.left, a.right, a.up, a.down, a.jump}
+    bool rcontrols[5] = {a.left, a.right, a.up, a.down, a.jump}
     
     for int i in range(5):
-        bitstream_add_bit(&self.inputs[i], controls[i] ? 1 : 0)
+        bitstream_add_bit(&self.inputs[i], rcontrols[i] ? 1 : 0)
 
 static def replaying_tick(Record *self):
     All *a = global_a
-    bool *controls[5] = {&a.left, &a.right, &a.up, &a.down, &a.jump}
+    bool *rcontrols[5] = {&a.left, &a.right, &a.up, &a.down, &a.jump}
     for int i in range(5):
         int bit = bitstream_get_bit(&self.inputs[i], self.tick)
-        *(controls[i]) = bit
+        *(rcontrols[i]) = bit
     self.tick++
     if self.tick >= self.inputs[0].n * 8:
         self.is_replaying = False
