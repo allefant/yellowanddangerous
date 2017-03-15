@@ -251,12 +251,19 @@ def render_setup():
 
     Render_Smoke = loadpic("../smoke.png")
 
+    if global_a.fullscreen:
+        land_display_toggle_fullscreen()
+
 ***scramble
 for name, vname in sdefs:
     parse('    {} = render_loads("{}")\n'.format(vname, name))
 ***
 
     render_load_blocktypes()
+
+def render_load_icon -> LandImage*:
+    render_setup_path()
+    return loadpic("../icon.png")
 
 def render_setup_path:
     if r.path:

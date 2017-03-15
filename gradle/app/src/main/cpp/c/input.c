@@ -118,7 +118,7 @@ void input_tick(void) {
         if (a->dpad == 2 || a->dpad == 3) {
             rr *= 1.5;
         }
-        double dx, dy;
+        double dx = 0, dy = 0;
 #line 96
         if (a->dpad > 3) {
             double p = 0.97;

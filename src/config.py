@@ -1,6 +1,6 @@
 import common
 
-global char const *VERSION = "1.23"
+global char const *VERSION = "1.25"
 global bool global_can_enable_editor = False
 global bool global_use_touch_input = False
 
@@ -24,7 +24,9 @@ class Controls:
     int c[ControlCount][3]
     int down[ControlCount]
     int pressed[ControlCount]
-    int axis[ControlCount][2] # number, inverted
+    int axis[ControlCount][3] # number, threshold (+/-)
+    float detection[LandJoystickAxesCount]
+    float zero[LandJoystickAxesCount]
     int button[ControlCount]
 global Controls controls
 
@@ -41,6 +43,33 @@ def config_controls_read():
     controls.c[ControlJump][1] = LandKeyRightControl
     controls.c[ControlJump][2] = LandKeyEnter
     controls.c[ControlMenu][0] = LandKeyBackspace
+
+    int an = land_joystick_axis_count()
+    for int ai in range(1, an):
+        str axis = land_joystick_axis_name(an)
+        if land_equals("Stick 1 X", axis) or\
+                land_equals("Left Thumbstick X", axis):
+            controls.axis[ControlLeft][0] = ai
+            controls.axis[ControlLeft][1] = -25
+            controls.axis[ControlRight][0] = ai
+            controls.axis[ControlRight][1] = 25
+        if land_equals("Stick 1 Y", axis) or\
+                land_equals("Left Thumbstick Y", axis):
+            controls.axis[ControlUp][0] = ai
+            controls.axis[ControlUp][1] = -25
+            controls.axis[ControlDown][0] = ai
+            controls.axis[ControlDown][1] = 25
+    int bn = land_joystick_button_count()
+    for int bi in range(1, bn):
+        str button = land_joystick_button_name(bn)
+        if land_equals("B1", button):
+            controls.button[ControlJump] = bi
+        if land_equals("B4", button):
+            controls.button[ControlMenu] = bi
+        if land_equals("A", button):
+            controls.button[ControlJump] = bi
+        if land_equals("Y", button):
+            controls.button[ControlMenu] = bi
 
 def config_check_controls(All *a):
     for int j in range(ControlCount):
@@ -62,16 +91,23 @@ def config_check_controls(All *a):
     a.jump = controls.down[ControlJump]
 
 def config_joystick_control(int control, int progress) -> int:
+    int an = land_joystick_axis_count()
+     
     if progress == 0:
         controls.axis[control][0] = 0
         controls.axis[control][1] = 0
+        for int ai in range(1, an):
+            controls.detection[ai] = 0
+            controls.zero[ai] = land_joystick_axis(ai)
         controls.button[control] = 0
 
-    int an = land_joystick_axis_count()
     for int ai in range(1, an):
         float a = land_joystick_axis(ai)
         float d = land_joystick_delta_axis(ai)
-        if fabs(a) > 0.2 and (fabs(d) > 0 or ai == controls.axis[control][0]):
+        controls.detection[ai] += fabs(d)
+        if fabs(a) > 0.2 and\
+                (progress == 0 or controls.detection[ai] > 0.5) and\
+                (fabs(d) > 0 or ai == controls.axis[control][0]):
             if fabs(a * 25) > fabs(controls.axis[control][1]):
                 controls.axis[control][0] = ai
                 controls.axis[control][1] = a * 25

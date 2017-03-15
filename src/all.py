@@ -40,6 +40,8 @@ class All:
     int music
     int sound
 
+    int fullscreen
+
     int load_after_redraw
     bool find_entrance
 

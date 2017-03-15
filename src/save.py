@@ -49,6 +49,7 @@ def save_info:
     land_file_print(f, "gox %d", game.gox)
     land_file_print(f, "goz %d", game.goz)
     land_file_print(f, "dpad %d", a.dpad)
+    land_file_print(f, "fullscreen %d", a.fullscreen)
     land_file_print(f, "music %d", a.music)
     land_file_print(f, "sound %d", a.sound)
     land_file_print(f, "time %d", a.time)
@@ -85,6 +86,8 @@ def load_info:
                 sscanf(row, "goz %d", &game.goz)
             if land_starts_with(row, "dpad "):
                 sscanf(row, "dpad %d", &a->dpad)
+            if land_starts_with(row, "fullscreen "):
+                sscanf(row, "fullscreen %d", &a->fullscreen)
             if land_starts_with(row, "music "):
                 sscanf(row, "music %d", &a->music)
             if land_starts_with(row, "sound "):

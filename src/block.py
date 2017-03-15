@@ -235,7 +235,7 @@ LandArray *def block_colliders(Block *self):
         Block *other
         if i < n1: other = land_array_get_nth(self->blocks->fixed, i)
         elif i - n1 < n2: other = land_array_get_nth(self->blocks->dynamic, i - n1)
-        elif i - n1 - n2 < n3: other = land_array_get_nth(self->blocks->transparent, i - n1 - n2)
+        else: other = land_array_get_nth(self->blocks->transparent, i - n1 - n2)
         if other == self: continue
         if block_overlaps(self, other):
             land_array_add(r, other)
@@ -548,7 +548,7 @@ def blocks_preload(Blocks *self) -> bool:
         Block *other
         if i < n1: other = land_array_get_nth(self->fixed, i)
         elif i - n1 < n2: other = land_array_get_nth(self->dynamic, i - n1)
-        elif i - n1 - n2 < n3: other = land_array_get_nth(self->transparent, i - n1 - n2)
+        else: other = land_array_get_nth(self->transparent, i - n1 - n2)
         BlockType *bt = other.block_type
         if blocktype_preload(bt):
             return True
@@ -563,7 +563,7 @@ def blocks_shift(Blocks *self, int dx, dy, dz):
         Block *other
         if i < n1: other = land_array_get_nth(self->fixed, i)
         elif i - n1 < n2: other = land_array_get_nth(self->dynamic, i - n1)
-        elif i - n1 - n2 < n3: other = land_array_get_nth(self->transparent, i - n1 - n2)
+        else: other = land_array_get_nth(self->transparent, i - n1 - n2)
         other.x += dx
         other.y += dy
         other.z += dz

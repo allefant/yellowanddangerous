@@ -31,16 +31,17 @@ void save_info(void) {
     land_file_print(f, "gox %d", game->gox);
     land_file_print(f, "goz %d", game->goz);
     land_file_print(f, "dpad %d", a->dpad);
+    land_file_print(f, "fullscreen %d", a->fullscreen);
     land_file_print(f, "music %d", a->music);
     land_file_print(f, "sound %d", a->sound);
     land_file_print(f, "time %d", a->time);
     land_file_print(f, "key %d", game->key);
     land_file_print(f, "deaths %d", game->deaths);
     bool * fl = game->flower;
-#line 59
+#line 60
     land_file_print(f, "flower %d %d %d %d %d %d %d", fl [1], fl [2], fl [3], fl [4], fl [5], fl [6], fl [7]);
     bool * tt = game->test_tube;
-#line 62
+#line 63
     land_file_print(f, "testtube %d %d %d %d %d %d %d", tt [1], tt [2], tt [3], tt [4], tt [5], tt [6], tt [7]);
     land_file_destroy(f);
     land_free(path);
@@ -57,36 +58,40 @@ void load_info(void) {
         LandArray * rows = land_buffer_split(f, "\n");
         land_buffer_destroy(f);
         {
-#line 77
+#line 78
             LandArrayIterator __iter0__ = LandArrayIterator_first(rows);
-#line 77
+#line 78
             for (LandBuffer * rowb = LandArrayIterator_item(rows, &__iter0__); LandArrayIterator_next(rows, &__iter0__); rowb = LandArrayIterator_item(rows, &__iter0__)) {
                 char * row = land_buffer_finish(rowb);
                 config_read_controls(row);
                 if (land_starts_with(row, "room ")) {
                     sscanf(row, "room %d", & game->level);
                 }
-#line 82
+#line 83
                 if (land_starts_with(row, "gox ")) {
                     sscanf(row, "gox %d", & game->gox);
                 }
-#line 84
+#line 85
                 if (land_starts_with(row, "goz ")) {
                     sscanf(row, "goz %d", & game->goz);
                 }
-#line 86
+#line 87
                 if (land_starts_with(row, "dpad ")) {
                     sscanf(row, "dpad %d", & a->dpad);
                 }
-#line 88
+#line 89
+                if (land_starts_with(row, "fullscreen ")) {
+                    sscanf(row, "fullscreen %d", & a->fullscreen);
+                }
+#line 91
                 if (land_starts_with(row, "music ")) {
                     sscanf(row, "music %d", & a->music);
                 }
-#line 90
+#line 93
                 if (land_starts_with(row, "sound ")) {
                     sscanf(row, "sound %d", & a->sound);
                 }
-#line 92
+#line 95
                 if (land_starts_with(row, "time ")) {
                     int t;
                     sscanf(row, "time %d", & t);
@@ -99,44 +104,44 @@ void load_info(void) {
                 // will always be higher.
                 // If the game restarts however we want to use
                 // the saved time.
-#line 102
+#line 105
                 if (land_starts_with(row, "key ")) {
                     int i;
                     sscanf(row, "key %d", & i);
                     if (i) {
-#line 105
+#line 108
                         game->key = 1;
                     }
                 }
-#line 106
+#line 109
                 if (land_starts_with(row, "deaths ")) {
                     sscanf(row, "deaths %d", & game->deaths);
                 }
-#line 108
+#line 111
                 if (land_starts_with(row, "flower ")) {
                     int i [8];
                     i [0] = 0;
-#line 112
+#line 115
                     sscanf(row, "flower %d %d %d %d %d %d %d", i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7);
                     for (int j = 0; j < 8; j += 1) {
                         game->flower [j] = i [j];
                     }
                 }
-#line 115
+#line 118
                 if (land_starts_with(row, "testtube ")) {
                     int i [8];
                     i [0] = 0;
-#line 119
+#line 122
                     sscanf(row, "testtube %d %d %d %d %d %d %d", i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7);
                     for (int j = 0; j < 8; j += 1) {
                         game->test_tube [j] = i [j];
                     }
                 }
-#line 122
+#line 125
                 land_free(row);
             }
         }
-#line 123
+#line 126
         land_array_destroy(rows);
     }
     land_free(path);
@@ -153,14 +158,14 @@ void save_level(bool editing, bool at_entrance) {
         sprintf(name, "data/levels/level%02d.txt", game->level);
         overview_update_level(game->overview, game->level);
     }
-#line 138
+#line 141
     else if (at_entrance) {
         save_get_name("save", game->level, ".txt", name);
         save_info();
     }
-#line 140
+#line 143
     else {
-#line 142
+#line 145
         save_get_name("save", 0, ".txt", name);
         save_info();
     }
@@ -179,11 +184,11 @@ void save_level(bool editing, bool at_entrance) {
         if (! array) {
             continue;
         }
-#line 159
+#line 162
         {
-#line 159
+#line 162
             LandArrayIterator __iter0__ = LandArrayIterator_first(array);
-#line 159
+#line 162
             for (Block * block = LandArrayIterator_item(array, &__iter0__); LandArrayIterator_next(array, &__iter0__); block = LandArrayIterator_item(array, &__iter0__)) {
                 float x = block->x / s + 22;
                 float y = block->y / s + 4;
@@ -191,7 +196,7 @@ void save_level(bool editing, bool at_entrance) {
                 int xi = floor(x);
                 int yi = floor(y);
                 int zi = floor(z);
-#line 167
+#line 170
                 land_file_print(f, "make %d %d %d %d", block->block_type->btid, xi, yi, zi);
                 xi = x * 100 - xi * 100;
                 yi = y * 100 - yi * 100;
@@ -199,18 +204,18 @@ void save_level(bool editing, bool at_entrance) {
                 if (xi || yi || zi) {
                     land_file_print(f, "move %d %d %d", xi, yi, zi);
                 }
-#line 173
+#line 176
                 if (block->frame != 0) {
                     land_file_print(f, "frame %d", block->frame);
                 }
-#line 175
+#line 178
                 n++;
             }
         }
     }
-#line 177
+#line 180
     land_file_destroy(f);
-#line 179
+#line 182
     print("save_level %s %d", name, n);
 }
 static void add(SaveInfo * si, float x, float y, float z, float xs, float ys, float zs) {
@@ -218,25 +223,25 @@ static void add(SaveInfo * si, float x, float y, float z, float xs, float ys, fl
     float * p = xy;
     Viewport v = {0, 0, 1};
     project(& v, x + xs, y + ys, z, p + 0, p + 1);
-#line 185
-    p += 2;
-    project(& v, x, y + ys, z, p + 0, p + 1);
-#line 186
-    p += 2;
-    project(& v, x, y + ys, z + zs, p + 0, p + 1);
-#line 187
-    p += 2;
-    project(& v, x, y, z + zs, p + 0, p + 1);
 #line 188
     p += 2;
-    project(& v, x + xs, y, z + zs, p + 0, p + 1);
+    project(& v, x, y + ys, z, p + 0, p + 1);
 #line 189
     p += 2;
-    project(& v, x + xs, y, z, p + 0, p + 1);
+    project(& v, x, y + ys, z + zs, p + 0, p + 1);
 #line 190
     p += 2;
-    project(& v, x + xs, y + ys, z + zs, p + 0, p + 1);
+    project(& v, x, y, z + zs, p + 0, p + 1);
 #line 191
+    p += 2;
+    project(& v, x + xs, y, z + zs, p + 0, p + 1);
+#line 192
+    p += 2;
+    project(& v, x + xs, y, z, p + 0, p + 1);
+#line 193
+    p += 2;
+    project(& v, x + xs, y + ys, z + zs, p + 0, p + 1);
+#line 194
     p += 2;
     si->xy = land_realloc(si->xy, (si->n + 14) * sizeof (float));
     memcpy(si->xy + si->n, xy, sizeof (float) * 14);
@@ -244,10 +249,10 @@ static void add(SaveInfo * si, float x, float y, float z, float xs, float ys, fl
 }
 void save_check(int level) {
     char name [1024];
-#line 199
+#line 202
     LandBuffer * f = NULL;
     SaveInfo * si = g_save_info + level;
-#line 202
+#line 205
     if (level == game->level) {
         sprintf(name, "data/levels/level%02d.txt", level);
         f = land_buffer_read_from_file(name);
@@ -257,33 +262,33 @@ void save_check(int level) {
         f = land_buffer_read_from_file(name);
     }
     if (! f) {
-#line 210
+#line 213
         return ;
     }
-#line 213
+#line 216
     memset(si, 0, sizeof (* si));
-#line 215
+#line 218
     si->saved = 1;
-#line 217
+#line 220
     LandArray * rows = land_buffer_split(f, "\n");
     land_buffer_destroy(f);
-#line 220
+#line 223
     {
-#line 220
+#line 223
         LandArrayIterator __iter0__ = LandArrayIterator_first(rows);
-#line 220
+#line 223
         for (LandBuffer * rowb = LandArrayIterator_item(rows, &__iter0__); LandArrayIterator_next(rows, &__iter0__); rowb = LandArrayIterator_item(rows, &__iter0__)) {
             char * row = land_buffer_finish(rowb);
             if (land_starts_with(row, "make ")) {
                 int t, xi, yi, zi;
                 sscanf(row, "make %d %d %d %d", & t, & xi, & yi, & zi);
-#line 226
+#line 229
                 BlockType * bt = land_array_get_nth(block_types, t);
-#line 228
+#line 231
                 float x = (xi - 22 - 3) * 24;
                 float y = (yi - 4) * 24;
                 float z = (zi - 22 - 3) * 24;
-#line 232
+#line 235
                 if (y < - 5000) {
                     continue;
                 }
@@ -291,36 +296,36 @@ void save_check(int level) {
                     continue;
                 }
                 add(si, x, y, z, bt->xs, bt->ys, bt->zs);
-#line 240
+#line 243
                 if (bt == Render_ExitLeft) {
                     if (xi < 22) {
-#line 241
+#line 244
                         si->exits [0] = 1;
                     }
-#line 242
+#line 245
                     if (xi > 22) {
-#line 242
+#line 245
                         si->exits [1] = 1;
                     }
                 }
-#line 243
+#line 246
                 if (bt == Render_ExitRight) {
                     if (zi < 22) {
-#line 244
+#line 247
                         si->exits [2] = 1;
                     }
-#line 245
+#line 248
                     if (zi > 22) {
-#line 245
+#line 248
                         si->exits [3] = 1;
                     }
                 }
             }
-#line 247
+#line 250
             land_free(row);
         }
     }
-#line 249
+#line 252
     land_array_destroy(rows);
 }
 static bool workaround_stupid_bug;
@@ -328,33 +333,33 @@ void load_level(bool editing, bool at_entrance) {
     workaround_stupid_bug = 1;
     retry:;
     land_pause();
-#line 257
+#line 260
     char name [1024];
     Game * self = game;
     self->pristine = 0;
-#line 261
+#line 264
     print("Loading %d", game->level);
-#line 263
+#line 266
     event("level_up level=%d", game->level);
-#line 265
+#line 268
     LandBuffer * f = NULL;
     if (! editing) {
         if (! at_entrance) {
             save_get_name("save", 0, ".txt", name);
             f = land_buffer_read_from_file(name);
         }
-#line 270
+#line 273
         if (! f) {
             save_get_name("save", game->level, ".txt", name);
             f = land_buffer_read_from_file(name);
         }
     }
-#line 273
+#line 276
     if (! f) {
         if (! editing) {
             print("    failed from %s", name);
         }
-#line 276
+#line 279
         sprintf(name, "data/levels/level%02d.txt", game->level);
         f = land_buffer_read_from_file(name);
         self->pristine = 1;
@@ -367,33 +372,33 @@ void load_level(bool editing, bool at_entrance) {
     editor->picked = NULL;
     self->lever = NULL;
     self->sequence = 0;
-#line 289
+#line 292
     Blocks * blocks = game->blocks;
     blocks_reset(blocks);
-#line 292
+#line 295
     if (! f) {
         printf("    failed from %s", name);
         land_unpause();
-#line 294
+#line 297
         return ;
     }
-#line 297
+#line 300
     save_load_from_offset(f, 0, 0, 0, editing);
-#line 299
+#line 302
     int n = 0;
     {
-#line 300
+#line 303
         LandArrayIterator __iter0__ = LandArrayIterator_first(blocks->fixed);
-#line 300
+#line 303
         for (Block * b = LandArrayIterator_item(blocks->fixed, &__iter0__); LandArrayIterator_next(blocks->fixed, &__iter0__); b = LandArrayIterator_item(blocks->fixed, &__iter0__)) {
             n++;
-#line 303
+#line 306
             if (b->block_type == Render_LeverLeft || b->block_type == Render_LeverRight) {
                 if (b->frame == 1) {
                     self->lever = b;
                 }
             }
-#line 306
+#line 309
             if (b->block_type == Render_Waypoint) {
                 self->waypoints [b->frame] [0] = b->x;
                 self->waypoints [b->frame] [1] = b->y;
@@ -405,7 +410,7 @@ void load_level(bool editing, bool at_entrance) {
             // If a level is reloaded, and a flower is not picked (which
             // sets y to somewhere around -9000), it means we failed or
             // reset the level and so ought to get the flower again.
-#line 315
+#line 318
             int flower = block_type_flower(b->block_type);
             if (flower) {
                 if (b->y > - 8000) {
@@ -414,24 +419,24 @@ void load_level(bool editing, bool at_entrance) {
             }
         }
     }
-#line 321
+#line 324
     bool visible = 1;
     for (int i = 1; i < 8; i += 1) {
         visible = visible && self->flower [i];
     }
-#line 324
+#line 327
     if (self->key) {
         visible = 0;
     }
-#line 326
+#line 329
     if (global_a->editor) {
         visible = 1;
     }
-#line 328
+#line 331
     {
-#line 328
+#line 331
         LandArrayIterator __iter0__ = LandArrayIterator_first(blocks->dynamic);
-#line 328
+#line 331
         for (Block * b = LandArrayIterator_item(blocks->dynamic, &__iter0__); LandArrayIterator_next(blocks->dynamic, &__iter0__); b = LandArrayIterator_item(blocks->dynamic, &__iter0__)) {
             n++;
             if (b->block_type == Render_Key) {
@@ -440,9 +445,9 @@ void load_level(bool editing, bool at_entrance) {
                         b->y += 9000;
                     }
                 }
-#line 333
+#line 336
                 else {
-#line 335
+#line 338
                     if (visible) {
                         b->y -= 9000;
                     }
@@ -450,16 +455,16 @@ void load_level(bool editing, bool at_entrance) {
             }
         }
     }
-#line 338
+#line 341
     if (game->level == game_starting_level) {
         if (! editing && self->pristine) {
             game->sequence = 1;
             game->sequence_ticks = 0;
         }
     }
-#line 343
+#line 346
     land_unpause();
-#line 345
+#line 348
     if (n == 0) {
         // FIXME: How does that happen?
         save_reset_room(game->level);
@@ -469,7 +474,7 @@ void load_level(bool editing, bool at_entrance) {
         }
     }
 }
-#line 352
+#line 355
 void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz, bool editing) {
     All * all = global_a;
     LandArray * rows = land_buffer_split(f, "\n");
@@ -479,57 +484,57 @@ void save_load_from_offset(LandBuffer * f, int ox, int oy, int oz, bool editing)
     Blocks * blocks = game->blocks;
     Block * block;
     {
-#line 360
+#line 363
         LandArrayIterator __iter0__ = LandArrayIterator_first(rows);
-#line 360
+#line 363
         for (LandBuffer * rowb = LandArrayIterator_item(rows, &__iter0__); LandArrayIterator_next(rows, &__iter0__); rowb = LandArrayIterator_item(rows, &__iter0__)) {
             char * row = land_buffer_finish(rowb);
             if (land_starts_with(row, "make ")) {
                 sscanf(row, "make %d %d %d %d", & t, & xi, & yi, & zi);
-#line 365
+#line 368
                 float x = (ox + xi - 22) * s;
                 float y = (oy + yi - 4) * s;
                 float z = (oz + zi - 22) * s;
-#line 369
+#line 372
                 BlockType * bt = land_array_get_nth(block_types, t);
                 //if bt == Render_ExitLeft or bt == Render_ExitRight:
                 //    y -= 0.15 * s
-#line 374
+#line 377
                 block = block_new(blocks, x, y, z, bt);
-#line 376
+#line 379
                 block_add(block);
             }
-#line 377
+#line 380
             if (land_starts_with(row, "move ")) {
                 sscanf(row, "move %d %d %d", & xi, & yi, & zi);
                 block->x += xi * s / 100.0;
                 block->y += yi * s / 100.0;
                 block->z += zi * s / 100.0;
             }
-#line 382
+#line 385
             if (land_starts_with(row, "frame ")) {
                 sscanf(row, "frame %d", & xi);
                 block->frame = xi;
             }
-#line 385
+#line 388
             if (land_starts_with(row, "hint ")) {
                 char * st = land_strdup(row + 5);
                 land_replace_all(& st, "|", "\n");
                 if ((! editing) && (all->dpad == 4 || all->dpad == 5)) {
                     land_replace_all(& st, "the D-Pad", "anywhere");
                 }
-#line 390
+#line 393
                 land_string_copy(game->hint, st, 1024);
                 land_free(st);
             }
-#line 392
+#line 395
             if (land_starts_with(row, "title ")) {
                 land_string_copy(game->title, row + 6, 1024);
             }
             land_free(row);
         }
     }
-#line 396
+#line 399
     land_array_destroy(rows);
 }
 void save_reset_room(int i) {
@@ -538,11 +543,11 @@ void save_reset_room(int i) {
     if (! land_file_remove(name)) {
         land_log_message("Cannot remove %s.", name);
     }
-#line 403
+#line 406
     SaveInfo * si = g_save_info + i;
     si->saved = 0;
     game->state = NULL;
-#line 407
+#line 410
     save_get_name("save", 0, ".txt", name);
     land_file_remove(name);
 }
@@ -550,14 +555,14 @@ void save_new(void) {
     for (int i = 1; i < 50; i += 1) {
         save_reset_room(i);
     }
-#line 413
+#line 416
     game->level = game_starting_level;
     game->deaths = 0;
     game->key = 0;
     for (int i = 0; i < 8; i += 1) {
         game->flower [i] = 0;
     }
-#line 418
+#line 421
     global_a->time = 0;
     save_info();
 }

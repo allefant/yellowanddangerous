@@ -3,6 +3,8 @@ import main
 
 class MenuScreenItem:
     str text
+    LandArray *alternates
+    int choice
     MenuScreen *target
     bool disabled
 
@@ -39,8 +41,14 @@ Settings
             Menu
             Done
         Back
-    Music
-    Sound
+    Audio
+        -Volume
+        Music
+        Sound
+        Back
+    Video
+        Fullscreen|Back to Windowed
+        Back
     Back
 """
 
@@ -64,6 +72,9 @@ def menu_screen_add(MenuScreen *self, str text) -> MenuScreenItem*:
     if land_starts_with(text, "-"):
         item.disabled = True
         text++
+    if land_contains(text, "|"):
+        item.alternates = land_split(text, "|")
+        text = land_array_get_nth(item.alternates, 0)
     if land_equals(text, "Controls"):
         if global_use_touch_input:
             text = "Touch"
@@ -85,15 +96,15 @@ def menu_item_is(str x) -> bool:
     return land_equals(item.text, x)
 
 def menu_screen_back:
-    if menu_is("Settings"):
-        menu_goto("Main")
-        save_info()
-    elif menu_is("New Game"):
+    if menu_is("New Game"):
         main_switch_to_game()
     elif menu_is("Controls"):
         menu_goto("Settings")
     elif menu_is("Main"):
         main_switch_to_game()
+    else:
+        menu_goto("Main")
+        save_info()
 
 def menu_goto(str x):
     if land_equals(x, "Main"):
@@ -121,6 +132,13 @@ def menu_select_next(int d):
         MenuScreenItem *msi = land_array_get_nth(menu.items, menu.selected)
         if msi.disabled: continue
         break
+
+def menu_sideways(int d):
+    if menu_is("Audio"):
+        if menu_item_is("Music"):
+            music_volume(global_a.music + d)
+        if menu_item_is("Sound"):
+            sound_volume(global_a.sound + d)
 
 def menu_select_position(int p):
     menu.selected = p
@@ -152,29 +170,29 @@ def menu_click(float x):
         if menu_item_is("Left"): _find_control(ControlLeft)
         if menu_item_is("Right"): _find_control(ControlRight)
         if menu_item_is("Done"): menu_goup()
-    if menu_is("Up/Down"):
+    elif menu_is("Up/Down"):
         if menu_item_is("Up"): _find_control(ControlUp)
         if menu_item_is("Down"): _find_control(ControlDown)
         if menu_item_is("Done"): menu_goup()
-    if menu_is("Jump/Pull"):
+    elif menu_is("Jump/Pull"):
         if menu_item_is("Jump/Pull"): _find_control(ControlJump)
         if menu_item_is("Menu"): _find_control(ControlMenu)
         if menu_item_is("Done"): menu_goup()
-    if menu_is("Settings"):
+    elif menu_is("Settings"):
         if menu_item_is("Touch"):
             a.dpad++
             if a.dpad == 6:
                 a.dpad = 0
-        elif menu_item_is("Music"):
-            a.music = volget(x)
-            song_volume()
+    elif menu_is("Audio"):
+        if menu_item_is("Music"):
+            music_volume(volget(x))
         elif menu_item_is("Sound"):
-            a.sound = volget(x)
-            sound(Render_on, 1)
-        elif menu_item_is("Back"):
-            menu_goto("Main")
-            save_info()
-    elif menu_is(""):
+            sound_volume(volget(x))
+    elif menu_is("Video"):
+        if menu_item_is("Fullscreen"):
+            land_display_toggle_fullscreen()
+            a.fullscreen = (land_display_flags() & LAND_FULLSCREEN) != 0
+            item.choice = a.fullscreen ? 1 : 0
     elif menu_is("New Game"):
         if menu_item_is("Delete savegame!"):
             # start new game
@@ -183,8 +201,7 @@ def menu_click(float x):
         elif menu_item_is("Continue Playing"):
             main_switch_to_game()
     elif menu_is("Controls"):
-        if menu_item_is("Back"):
-            menu_goto("Settings")
+        pass
     elif menu_is("Main"):
         if menu_item_is("Play"):
             if global_can_enable_editor and volget(x) > 0:
@@ -201,6 +218,9 @@ def menu_click(float x):
             main_switch_to_game()
             if game->player:
                 player_find_entrance(&game->player->super)
+
+    if menu_item_is("Back"):
+        menu_screen_back()
 
 def _indentation(str x) -> int:
     int i = 0
@@ -221,7 +241,8 @@ def title_init:
         if nested > prev_nested:
             menus[nested] = menu_screen_new()
             menus[nested]->name = prev_item.text
-            prev_item.target = menus[nested]
+            if not land_equals(prev_item.text, "Touch"):
+                prev_item.target = menus[nested]
             menus[nested]->parent = prev_menu
         prev_nested = nested
         prev_menu = menus[nested]
@@ -280,10 +301,13 @@ def title_tick:
         menu_screen_back()
 
     if selected_blocking:
-        if not a.up and not a.down:
+        if not a.up and not a.down and not a.left and not a.right:
             selected_blocking = False
     elif a.up or a.down:
         menu_select_next(a.up ? -1 : 1)
+        selected_blocking = True
+    elif a.left or a.right:
+        menu_sideways(a.left ? -1 : 1)
         selected_blocking = True
 
     for int ti in range(12):
@@ -373,7 +397,8 @@ def menu_screen_draw:
                     if a.dpad == 4: land_print("double click swipe")
                     if a.dpad == 5: land_print("two finger swipe")
                     draw = False
-            elif it == 1:
+        elif menu_is("Audio"):
+            if it == 1:
                 drawvol(a.music, volx, y)
             elif it == 2:
                 drawvol(a.sound, volx, y)
@@ -388,7 +413,11 @@ def menu_screen_draw:
                     land_color(0, 0.5, 0, 1)
 
         if draw:
-            land_print(item.text)
+            if item.alternates:
+                land_print(land_array_get_nth(item.alternates,
+                    item.choice))
+            else:
+                land_print(item.text)
 
         if menu_is("Main"):
             if it == 0:
@@ -412,9 +441,11 @@ def menu_screen_draw:
             if it == 3: control = ControlJump
                 
         if control:
+            land_font_set(a.medium)
             land_text_pos(volx + 68, y)
             land_color(0, 0, 0, 0.33)
             land_print(control_name(control))
+            land_font_set(a.big)
             
         it++
 
@@ -424,9 +455,19 @@ static def volget(float mx) -> int:
     float sx = 48
     mx /= s
     int i = (mx - volx) / sx
+    return i
+
+static def music_volume(int i):
     if i < 0: i = 0
     if i > 6: i = 6
-    return i
+    global_a.music = i
+    song_volume()
+
+static def sound_volume(int i):
+    if i < 0: i = 0
+    if i > 6: i = 6
+    global_a.sound = i
+    sound(Render_on, 1)
 
 def align(float x, float s) -> float:
     return floor(x * s) / s
@@ -450,22 +491,26 @@ def title_render:
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2
     land_filled_rectangle(tx + yw, 0, 960, h)
 
-    if menu_is("Settings") and global_use_touch_input::
+    if menu_is("Settings"):
         land_font_set(a.medium)
         land_color(0.5, 0, 0, 1)
         float nh = land_line_height()
         float y = (h - 64 * 5) / 2 + (32 - th) / 2
         float x = tx
         land_text_pos(x + yw, y - nh * 2)
-        if a.dpad == 5:
-            land_print("Jump: touch second finger")
-            land_print("Pull/Lift: two finger swipe")
-        elif a.dpad == 4:
-            land_print("Jump: Move then double tap")
-            land_print("Pull/Lift: Double tap then move")
+        if global_use_touch_input:
+            if a.dpad == 5:
+                land_print("Jump: touch second finger")
+                land_print("Pull/Lift: two finger swipe")
+            elif a.dpad == 4:
+                land_print("Jump: Move then double tap")
+                land_print("Pull/Lift: Double tap then move")
+            else:
+                land_print("Jump: Hold move then jump")
+                land_print("Pull/Lift: Hold jump then move")
         else:
-            land_print("Jump: Hold move then jump")
-            land_print("Pull/Lift: Hold jump then move")
+            land_print("Jump: Press button while moving")
+            land_print("Pull/Lift: Press button first then move")
         land_font_set(a.big)
 
     volx = tx + yw + 6 * 32

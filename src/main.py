@@ -143,6 +143,9 @@ def init():
     All *a = global_a
     all_init(a)
     land_display_title("Yellow and Dangerous")
+    LandImage *icon = render_load_icon()
+    land_display_icon(icon)
+    land_image_destroy(icon)
     reload_fonts()
 
     a.up = False

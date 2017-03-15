@@ -177,31 +177,34 @@ void init(void) {
     All * a = global_a;
     all_init(a);
     land_display_title("Yellow and Dangerous");
+    LandImage * icon = render_load_icon();
+    land_display_icon(icon);
+    land_image_destroy(icon);
     reload_fonts();
-#line 148
+#line 151
     a->up = 0;
     a->down = 0;
     a->left = 0;
     a->right = 0;
     a->jump = 0;
-#line 154
+#line 157
     a->text = (LandColor) {0, 0, 0, 1};
-#line 156
+#line 159
     config_controls_read();
-#line 158
+#line 161
     title_init();
-#line 160
+#line 163
     game_setup(land_display_width(), land_display_height());
-#line 162
+#line 165
     render_setup();
-#line 164
+#line 167
     a->show_fps = 0;
-#line 166
+#line 169
     for (int i = 0; i < 10; i += 1) {
         a->cheatpos [i] = 0;
     }
 }
-#line 169
+#line 172
 void done(void) {
     All * a = global_a;
     game_del(game);
@@ -209,9 +212,9 @@ void done(void) {
 }
 void update(void) {
     All * a = global_a;
-#line 177
+#line 180
     if (land_was_resized()) {
-#line 179
+#line 182
         viewport_update(game->viewport, land_display_width(), land_display_height());
         a->resize_in_ticks = 10;
     }
@@ -221,10 +224,10 @@ void update(void) {
             reload_fonts();
         }
     }
-#line 187
+#line 190
     if (a->load_after_redraw) {
         if (a->load_after_redraw == 2) {
-#line 190
+#line 193
             load_level(a->editor || game->record->is_replaying || game->record->is_recording, a->find_entrance);
             if (a->find_entrance) {
                 a->find_entrance = 0;
@@ -232,30 +235,30 @@ void update(void) {
                     player_find_entrance(& game->player->super);
                 }
             }
-#line 195
+#line 198
             if (game && game->player) {
-#line 197
+#line 200
                 record_load(game->record, game->level, game->player->super.x, game->player->super.y, game->player->super.z);
             }
-#line 198
+#line 201
             a->load_after_redraw++;
         }
-#line 198
+#line 201
         return ;
     }
-#line 201
+#line 204
     config_check_controls(a);
-#line 203
+#line 206
     if (a->title) {
         title_tick();
     }
-#line 204
+#line 207
     else {
-#line 206
+#line 209
         game_tick(game);
     }
 }
-#line 208
+#line 211
 void runner_init(LandRunner * self) {
     init();
 }
@@ -273,32 +276,32 @@ static void cheat(char unichar) {
                 if (i == 0) {
                     a->godmode = ! a->godmode;
                 }
-#line 224
+#line 227
                 if (i == 1) {
                     for (int j = 1; j < 8; j += 1) {
                         game->flower [j] = 1;
                         game->test_tube [j] = 1;
                     }
                 }
-#line 228
+#line 231
                 if (i == 2) {
                     game->key = ! game->key;
                 }
             }
         }
-#line 229
+#line 232
         else {
-#line 231
+#line 234
             a->cheatpos [i] = 0;
         }
     }
 }
-#line 233
+#line 236
 void runner_update(LandRunner * self) {
     All * a = global_a;
-#line 236
+#line 239
     update();
-#line 238
+#line 241
     if (land_closebutton()) {
         save_level(0, 0);
         land_quit();
@@ -307,48 +310,48 @@ void runner_update(LandRunner * self) {
         save_level(0, 0);
     }
     if (land_was_halted()) {
-#line 245
+#line 248
         ;
     }
-#line 248
+#line 251
     if (! land_keybuffer_empty()) {
         int k, u;
         land_keybuffer_next(& k, & u);
         cheat(u);
-#line 253
+#line 256
         if (k == LandKeyEscape) {
             save_level(0, 0);
             land_quit();
         }
-#line 256
+#line 259
         else if (k == LandKeyFunction + 1) {
             a->show_fps = ! a->show_fps;
         }
-#line 257
+#line 260
         else {
-#line 259
+#line 262
             if (a->text_input) {
                 if (u == '|') {
                     u = '\n';
                 }
-#line 262
+#line 265
                 if (u == 13) {
                     u = 0;
                 }
-#line 264
+#line 267
                 if (a->text_input == 1) {
                     game->title [a->cursor++] = u;
                 }
-#line 266
+#line 269
                 else if (a->text_input == 2) {
                     game->hint [a->cursor++] = u;
                 }
-#line 268
+#line 271
                 if (u == 0) {
                     a->text_input = 0;
                 }
             }
-#line 270
+#line 273
             else if (! a->title) {
                 if (a->editor_enabled) {
                     game_key(game, k);
@@ -360,58 +363,58 @@ void runner_update(LandRunner * self) {
 //elif k == 'm':
 //    land_stream_set_playing(render_music,
 //        not land_stream_is_playing(render_music))
-#line 278
+#line 281
 void runner_redraw(LandRunner * self) {
     All * a = global_a;
-#line 281
+#line 284
     double t = - land_get_time();
     add_time();
-#line 284
+#line 287
     redraw();
-#line 286
+#line 289
     t += land_get_time();
     a->direct_speed_measure = t;
 }
 int my_main(void) {
     All * a;
     land_alloc(a);
-#line 293
+#line 296
     int w = 960;
     int h = 600;
     a->show_help = 1;
-#line 297
+#line 300
     land_init();
-#line 299
+#line 302
     main_data_path = land_strdup(".");
-#line 301
+#line 304
     if (land_argc > 1) {
         if (land_equals(land_argv [1], "test")) {
             return test();
         }
     }
     //land_set_display_parameters(w, h, LAND_OPENGL)
-#line 306
+#line 309
     #ifdef ANDROID
-#line 308
+#line 311
     land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH | LAND_LANDSCAPE);
-#line 308
+#line 311
     #else
-#line 310
+#line 313
     land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE);
-#line 310
+#line 313
     #endif
-#line 318
+#line 321
     LandRunner * game_runner = land_runner_new("Yellow and Dangerous", runner_init, NULL, runner_update, runner_redraw, NULL, runner_done);
     a->w = w;
     a->h = h;
-#line 322
+#line 325
     land_runner_register(game_runner);
     land_set_initial_runner(game_runner);
     land_mainloop();
-#line 326
+#line 329
     land_free(main_data_path);
     land_free(a);
-#line 329
+#line 332
     return 0;
 }
 land_use_main(my_main);

@@ -91,7 +91,7 @@ def input_tick:
         if a.dpad == 2 or a.dpad == 3:
             rr *= 1.5
 
-        double dx, dy
+        double dx = 0, dy = 0
 
         if a.dpad > 3:
             double p = 0.97

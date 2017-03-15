@@ -39,23 +39,25 @@ struct All {
     int music;
     int sound;
 #line 43
+    int fullscreen;
+#line 45
     int load_after_redraw;
     bool find_entrance;
-#line 46
+#line 48
     int time;
     bool overview;
     bool render_screenshot;
-#line 50
+#line 52
     int code;
     bool godmode;
-#line 53
+#line 55
     bool swipe;
     double swipex, swipey, swipet, swipej;
-#line 56
+#line 58
     int resize_in_ticks;
     bool show_map;
     bool show_ad;
-#line 60
+#line 62
     bool test;
 };
 #endif

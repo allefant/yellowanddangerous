@@ -280,9 +280,8 @@ LandArray* block_colliders(Block * self) {
 #line 237
             other = land_array_get_nth(self->blocks->dynamic, i - n1);
         }
-#line 238
-        else if (i - n1 - n2 < n3) {
-#line 238
+#line 237
+        else {
             other = land_array_get_nth(self->blocks->transparent, i - n1 - n2);
         }
 #line 239
@@ -752,9 +751,8 @@ bool blocks_preload(Blocks * self) {
 #line 550
             other = land_array_get_nth(self->dynamic, i - n1);
         }
-#line 551
-        else if (i - n1 - n2 < n3) {
-#line 551
+#line 550
+        else {
             other = land_array_get_nth(self->transparent, i - n1 - n2);
         }
 #line 552
@@ -782,9 +780,8 @@ void blocks_shift(Blocks * self, int dx, int dy, int dz) {
 #line 565
             other = land_array_get_nth(self->dynamic, i - n1);
         }
-#line 566
-        else if (i - n1 - n2 < n3) {
-#line 566
+#line 565
+        else {
             other = land_array_get_nth(self->transparent, i - n1 - n2);
         }
 #line 567
