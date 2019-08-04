@@ -6,15 +6,14 @@ android {
         jks {
             keyAlias 'jks'
             keyPassword 'sixtimesseven'
-            storeFile file('/home/elias/stuff/yellowanddangerous/yellowdanger.jks')
+            storeFile file('/home/elias/prog/land/yellowanddangerous/stuff/yellowdanger.jks')
             storePassword 'sixtimesseven'
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion 17
+        compileSdkVersion 28
         versionCode = getYellowDangerVersionCode()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -26,19 +25,23 @@ android {
         signingConfig signingConfigs.jks
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "flavor"
     productFlavors {
         ads {
-            applicationId "com.yellowdanger.ads"
-            versionName getYellowDangerVersionName() + "-ads"
+            dimension "flavor"
+            applicationIdSuffix ".ads"
+            versionNameSuffix "-ads"
         }
         paid {
-            applicationId "com.yellowdanger"
-            versionName getYellowDangerVersionName()
+            dimension "flavor"
         }
     }
     externalNativeBuild {
@@ -46,22 +49,24 @@ android {
             path "CMakeLists.txt"
         }
     }
-    productFlavors {
+
+    aaptOptions {
+        noCompress ""
     }
+
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
-    //compile project(path: ':allegro5')
-    compile 'org.liballeg:allegro5-release:5.2.2.0b'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
-    adsCompile 'com.google.firebase:firebase-ads:10.0.1'
+    testImplementation 'junit:junit:4.13-beta-3'
+    implementation 'org.liballeg:allegro5-debug:5.2.6.0B'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-messaging:19.0.1'
+    implementation 'com.google.firebase:firebase-crash:16.2.1'
+    adsImplementation 'com.google.firebase:firebase-ads:18.1.1'
 
 }
 

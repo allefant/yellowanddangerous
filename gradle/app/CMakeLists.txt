@@ -2,7 +2,7 @@
 # library. You should either keep the default value or only pass a
 # value of 3.4.0 or lower.
 
-#cmake_minimum_required(VERSION 3.6.0-rc2)
+cmake_minimum_required(VERSION 3.6)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -90,4 +90,5 @@ include_directories(
     )
 
 set(NATIVE_LIB native)
-include(build/intermediates/exploded-aar/org.liballeg/allegro5-release/5.2.2.0b/assets/allegro.cmake)
+set(JNI_FOLDER ${PROJECT_SOURCE_DIR}/src/main/allegro_jni_includes) # or wherever you put it
+include(${JNI_FOLDER}/allegro.cmake)

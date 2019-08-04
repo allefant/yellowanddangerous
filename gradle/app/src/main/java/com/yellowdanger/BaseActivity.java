@@ -1,7 +1,6 @@
 package com.yellowdanger;
 
 import android.os.Bundle;
-import android.support.annotation.Keep;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -50,16 +49,13 @@ public class BaseActivity extends AllegroActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
-    @Keep
     public void showInterstitialAd() {
     }
 
-    @Keep
     public int showAdDone() {
         return 1;
     }
 
-    @Keep
     public void postEvent(String message) {
         Log.d("YellowAndDangerous", "event: " + message);
         String[] parameters = message.split(" ");

@@ -2,7 +2,7 @@
 #line 1 "src/title.py"
 #include "title.h"
 #line 17
-str menu_text = "\n"
+static str menu_text = "\n"
     "Play\n"
     "Reset Room\n"
     "New Game\n"

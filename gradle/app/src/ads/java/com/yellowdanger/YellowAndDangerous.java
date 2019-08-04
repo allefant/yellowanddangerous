@@ -3,7 +3,6 @@ package com.yellowdanger;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Keep;
 import android.util.Log;
 
 import com.google.android.gms.ads.AdListener;
@@ -41,7 +40,6 @@ public class YellowAndDangerous extends BaseActivity {
         mInterstitialAd.loadAd(adRequest);
     }
 
-    @Keep
     @Override
     public void showInterstitialAd() {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -58,7 +56,6 @@ public class YellowAndDangerous extends BaseActivity {
         });
     }
 
-    @Keep
     @Override
     public int showAdDone() {
         return showingAd ? 0 : 1;

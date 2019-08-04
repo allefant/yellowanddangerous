@@ -2,12 +2,12 @@
 #line 1 "src/config.py"
 #include "config.h"
 #line 3
-char const * VERSION = "1.25";
+char const * VERSION = "1.26";
 bool global_can_enable_editor = 0;
-bool global_use_touch_input = 0;
-#line 31
+bool global_use_touch_input = 1;
+#line 32
 Controls controls;
-#line 33
+#line 34
 void config_controls_read(void) {
     controls.c [ControlLeft] [0] = LandKeyLeft;
     controls.c [ControlLeft] [1] = 'a';
@@ -21,11 +21,11 @@ void config_controls_read(void) {
     controls.c [ControlJump] [1] = LandKeyRightControl;
     controls.c [ControlJump] [2] = LandKeyEnter;
     controls.c [ControlMenu] [0] = LandKeyBackspace;
-#line 47
+#line 48
     int an = land_joystick_axis_count();
     for (int ai = 1; ai < an; ai += 1) {
-        str axis = land_joystick_axis_name(an);
-#line 51
+        str axis = land_joystick_axis_name(ai);
+#line 52
         if (land_equals("Stick 1 X", axis) || land_equals("Left Thumbstick X", axis)) {
             controls.axis [ControlLeft] [0] = ai;
             controls.axis [ControlLeft] [1] = - 25;
@@ -39,62 +39,69 @@ void config_controls_read(void) {
             controls.axis [ControlDown] [1] = 25;
         }
     }
-#line 62
+#line 63
     int bn = land_joystick_button_count();
     for (int bi = 1; bi < bn; bi += 1) {
-        str button = land_joystick_button_name(bn);
+        str button = land_joystick_button_name(bi);
         if (land_equals("B1", button)) {
             controls.button [ControlJump] = bi;
         }
-#line 67
+#line 68
         if (land_equals("B4", button)) {
             controls.button [ControlMenu] = bi;
         }
-#line 69
+#line 70
         if (land_equals("A", button)) {
             controls.button [ControlJump] = bi;
         }
-#line 71
+#line 72
         if (land_equals("Y", button)) {
             controls.button [ControlMenu] = bi;
         }
     }
 }
-#line 74
+#line 75
 void config_check_controls(All * a) {
     for (int j = 0; j < ControlCount; j += 1) {
         controls.pressed [j] = ! controls.down [j];
         controls.down [j] = 0;
+        controls.strength [j] = 0;
         for (int i = 0; i < 3; i += 1) {
             if (land_key(controls.c [j] [i])) {
-#line 79
                 controls.down [j] = 1;
+                controls.strength [j] = 1;
             }
         }
-#line 80
+#line 84
         float threshold = controls.axis [j] [1] / 100.0;
         if (land_joystick_axis(controls.axis [j] [0]) * threshold > threshold * threshold) {
             controls.down [j] = 1;
+            controls.strength [j] = fabs(land_joystick_axis(controls.axis [j] [0]));
         }
-#line 83
+#line 88
         if (land_joystick_button(controls.button [j])) {
             controls.down [j] = 1;
+            controls.strength [j] = 1;
         }
-#line 85
+#line 91
         if (! controls.down [j]) {
             controls.pressed [j] = 0;
         }
     }
-#line 87
+#line 93
     a->left = controls.down [ControlLeft];
     a->right = controls.down [ControlRight];
     a->up = controls.down [ControlUp];
     a->down = controls.down [ControlDown];
     a->jump = controls.down [ControlJump];
+    a->left_s = controls.strength [ControlLeft];
+    a->right_s = controls.strength [ControlRight];
+    a->up_s = controls.strength [ControlUp];
+    a->down_s = controls.strength [ControlDown];
 }
 int config_joystick_control(int control, int progress) {
     int an = land_joystick_axis_count();
-#line 96
+#line 106
     if (progress == 0) {
         controls.axis [control] [0] = 0;
         controls.axis [control] [1] = 0;
@@ -102,24 +109,24 @@ int config_joystick_control(int control, int progress) {
             controls.detection [ai] = 0;
             controls.zero [ai] = land_joystick_axis(ai);
         }
-#line 102
+#line 112
         controls.button [control] = 0;
     }
     for (int ai = 1; ai < an; ai += 1) {
         float a = land_joystick_axis(ai);
         float d = land_joystick_delta_axis(ai);
         controls.detection [ai] += fabs(d);
-#line 110
+#line 120
         if (fabs(a) > 0.2 && (progress == 0 || controls.detection [ai] > 0.5) && (fabs(d) > 0 || ai == controls.axis [control] [0])) {
             if (fabs(a * 25) > fabs(controls.axis [control] [1])) {
                 controls.axis [control] [0] = ai;
                 controls.axis [control] [1] = a * 25;
             }
-#line 114
+#line 124
             return FoundAxis;
         }
     }
-#line 115
+#line 125
     int bn = land_joystick_button_count();
     for (int bi = 1; bi < bn; bi += 1) {
         if (land_joystick_button_pressed(bi)) {
@@ -130,18 +137,18 @@ int config_joystick_control(int control, int progress) {
             return FoundButton;
         }
     }
-#line 123
+#line 133
     return FoundNothing;
 }
 void config_print_controls(LandFile * f) {
     for (int j = 0; j < ControlCount; j += 1) {
-#line 128
+#line 138
         land_file_print(f, "control %d 0 %d %d", j, controls.axis [j] [0], controls.axis [j] [1]);
-#line 130
+#line 140
         land_file_print(f, "control %d 1 %d 0", j, controls.button [j]);
     }
 }
-#line 132
+#line 142
 void config_read_controls(str row) {
     if (land_starts_with(row, "control ")) {
         int a, b, c, d;
@@ -150,24 +157,24 @@ void config_read_controls(str row) {
             controls.axis [a] [0] = c;
             controls.axis [a] [1] = d;
         }
-#line 139
+#line 149
         else if (b == 1) {
             controls.button [a] = c;
         }
     }
 }
-#line 142
+#line 152
 str control_name(int c) {
     if (controls.button [c]) {
-#line 143
+#line 153
         return land_joystick_button_name(controls.button [c]);
     }
-#line 144
+#line 154
     if (controls.axis [c] [0]) {
-#line 144
+#line 154
         return land_joystick_axis_name(controls.axis [c] [0]);
     }
-#line 145
+#line 155
     return "none";
 }
 /* This file was generated by scramble.py. */

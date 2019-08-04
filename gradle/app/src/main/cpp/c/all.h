@@ -14,50 +14,51 @@ struct All {
     LandFont * big;
 #line 11
     bool up, down, left, right, jump;
-#line 13
+    float up_s, down_s, left_s, right_s;
+#line 14
     int ftpos;
     double frame_times [60];
     float direct_speed_measure;
-#line 17
+#line 18
     bool show_fps;
     bool show_help;
-#line 20
+#line 21
     int cheatpos [10];
-#line 22
+#line 23
     LandColor text;
-#line 24
+#line 25
     bool title;
-#line 26
+#line 27
     bool editor_enabled;
     bool editor;
     int text_input;
     int cursor;
-#line 31
+#line 32
     LandColor tint;
-#line 39
+#line 40
     int dpad;
     int music;
     int sound;
-#line 43
+#line 44
     int fullscreen;
-#line 45
+#line 46
     int load_after_redraw;
     bool find_entrance;
-#line 48
+#line 49
     int time;
     bool overview;
     bool render_screenshot;
-#line 52
+#line 53
     int code;
     bool godmode;
-#line 55
+#line 56
     bool swipe;
     double swipex, swipey, swipet, swipej;
-#line 58
+#line 59
     int resize_in_ticks;
     bool show_map;
     bool show_ad;
-#line 62
+#line 63
     bool test;
 };
 #endif

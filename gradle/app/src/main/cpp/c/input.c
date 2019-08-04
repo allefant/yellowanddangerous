@@ -4,20 +4,20 @@
 static bool check_pause_button(LandFloat mx, LandFloat my);
 static bool check_title_button(LandFloat mx, LandFloat my);
 static bool check_menu(LandFloat mx, LandFloat my, bool clicked);
-#line 9
+#line 6
 static bool check_pause_button(LandFloat mx, LandFloat my) {
     All * a = global_a;
     double rr = land_display_width() / 8 * 0.8;
     if (a->dpad == 2 || a->dpad == 3) {
         rr *= 1.5;
     }
-#line 14
+#line 11
     double ry = rr;
     double rx = land_display_width() - rr;
     if (mx > rx && my < ry && (a->dpad < 4 || ! a->swipe)) {
         return 1;
     }
-#line 18
+#line 15
     return 0;
 }
 static bool check_title_button(LandFloat mx, LandFloat my) {
@@ -25,25 +25,25 @@ static bool check_title_button(LandFloat mx, LandFloat my) {
     if (! a->show_map) {
         return 0;
     }
-#line 24
+#line 21
     double rr = land_display_width() / 8 * 0.8;
     if (a->dpad == 2 || a->dpad == 3) {
         rr *= 1.5;
     }
-#line 27
+#line 24
     double ry = rr;
     double rx = land_display_width() - rr;
     if (mx > rx && my > ry && my < ry + rr && (a->dpad < 4 || ! a->swipe)) {
         return 1;
     }
-#line 31
+#line 28
     return 0;
 }
 static bool check_menu(LandFloat mx, LandFloat my, bool clicked) {
     if (! game->menu_on) {
         return 0;
     }
-#line 36
+#line 33
     return menu_tick(game->menu, mx, my, clicked);
 }
 void input_toggle_pause(void) {
@@ -51,33 +51,33 @@ void input_toggle_pause(void) {
     if (a->editor_enabled) {
         menu_toggle();
     }
-#line 41
+#line 38
     else {
-#line 43
+#line 40
         if (a->show_map) {
             a->show_map = 0;
         }
-#line 44
+#line 41
         else {
-#line 46
+#line 43
             a->show_map = 1;
         }
     }
 }
-#line 48
+#line 45
 void input_tick(void) {
     All * a = global_a;
-#line 51
+#line 48
     int count = 0;
     bool any = 0;
     for (int ti = 0; ti < 11; ti += 1) {
         double mx = land_touch_x(ti);
         double my = land_touch_y(ti);
-#line 57
+#line 54
         bool holding = land_touch_down(ti);
         bool clicked = holding && land_touch_delta(ti);
         bool released = ! land_touch_down(ti) && land_touch_delta(ti);
-#line 61
+#line 58
         if (! holding && ! released) {
             continue;
         }
@@ -85,17 +85,17 @@ void input_tick(void) {
             if (clicked) {
                 input_toggle_pause();
             }
-#line 66
+#line 63
             return ;
         }
-#line 69
+#line 66
         if (check_title_button(mx, my)) {
             a->show_map = 0;
             main_switch_to_title(0);
-#line 71
+#line 68
             return ;
         }
-#line 74
+#line 71
         if (check_menu(mx, my, released)) {
             break;
         }
@@ -110,16 +110,16 @@ void input_tick(void) {
         if (! land_touch_down(ti)) {
             continue;
         }
-#line 87
+#line 84
         any = 1;
         count++;
-#line 90
+#line 87
         double rr = land_display_width() / 8 * 0.8;
         if (a->dpad == 2 || a->dpad == 3) {
             rr *= 1.5;
         }
         double dx = 0, dy = 0;
-#line 96
+#line 93
         if (a->dpad > 3) {
             double p = 0.97;
             if (a->dpad == 4 || (a->dpad == 5 && count == 1)) {
@@ -130,24 +130,24 @@ void input_tick(void) {
             }
             if (! a->swipe) {
                 a->swipe = 1;
-#line 107
+#line 104
                 if (a->dpad == 4) {
                     if (land_get_time() < a->swipet + 0.25) {
                         // double tap
                         if (! a->swipej) {
                             a->swipej = 1;
                         }
-#line 111
+#line 108
                         else {
                             // after heaving, just push
                             // (so can lift+push, not lift+jump)
-#line 115
+#line 112
                             a->swipej = 0;
                         }
                     }
-#line 115
+#line 112
                     else {
-#line 117
+#line 114
                         a->swipex = mx;
                         a->swipey = my;
                         a->swipej = 0;
@@ -155,7 +155,7 @@ void input_tick(void) {
                         dy = 0;
                     }
                 }
-#line 122
+#line 119
                 else if (a->dpad == 5) {
                     a->swipex = mx;
                     a->swipey = my;
@@ -165,37 +165,37 @@ void input_tick(void) {
                 }
                 a->swipet = land_get_time();
             }
-#line 129
+#line 126
             else {
-#line 131
+#line 128
                 if (a->dpad == 5) {
                     if (count == 1) {
                         a->swipej = 0;
                     }
-#line 134
+#line 131
                     if (count > 1) {
                         a->swipej = 1;
                     }
                 }
             }
-#line 137
+#line 134
             if (a->swipej) {
                 a->jump = 1;
             }
         }
-#line 138
+#line 135
         else {
-#line 140
+#line 137
             double rx = rr;
             if (a->dpad == 1 || a->dpad == 3) {
                 rx = land_display_width() - rr;
             }
-#line 143
+#line 140
             double ry = land_display_height() - rr;
             if (a->dpad == 1 || a->dpad == 3) {
                 rx = land_display_width() - rr;
             }
-#line 146
+#line 143
             dx = mx - rx;
             dy = my - ry;
         }
@@ -209,14 +209,14 @@ void input_tick(void) {
         //                6   2
         //                 5 3
         //                  4
-#line 160
+#line 157
         bool move = 0;
         if (a->dpad == 4 || (a->dpad == 5 && count == 1)) {
             if (dx * dx + dy * dy > rr * rr / 256) {
                 move = 1;
             }
         }
-#line 164
+#line 161
         if (a->dpad < 4) {
             if ((fabs(dx) < rr && fabs(dy) < rr)) {
                 if (dx * dx + dy * dy > rr * rr / 16) {
@@ -224,7 +224,7 @@ void input_tick(void) {
                 }
             }
         }
-#line 169
+#line 166
         if (move) {
             double ang = atan2(dy, dx);
             // we use 16 subdivisions, the main directions get 12
@@ -233,40 +233,44 @@ void input_tick(void) {
             if (ang < 0) {
                 ang += pi * 2;
             }
-#line 176
+#line 173
             int i = ang * 8 / pi;
             if (i <= 3 || i >= 0xd) {
                 a->right = 1;
+                a->right_s = 1 /* fixme */;
             }
-#line 179
+#line 177
             if (i >= 1 && i <= 7) {
                 a->down = 1;
+                a->down_s = 1 /* fixme */;
             }
-#line 181
+#line 180
             if (i >= 5 && i <= 0xb) {
                 a->left = 1;
+                a->left_s = 1 /* fixme */;
             }
 #line 183
             if (i >= 9) {
                 a->up = 1;
+                a->up_s = 1 /* fixme */;
             }
-#line 185
+#line 186
             a->swipet = land_get_time();
         }
         // jump control
         if (a->dpad == 4 || a->dpad == 5) {
-#line 188
+#line 189
             ;
         }
-#line 188
+#line 189
         else {
-#line 191
+#line 192
             double rx = land_display_width() - rr;
             double ry = land_display_height() - rr;
             if (a->dpad == 1 || a->dpad == 3) {
                 rx = rr;
             }
-#line 195
+#line 196
             dx = mx - rx;
             dy = my - ry;
             if (dx * dx + dy * dy < rr * rr) {
@@ -274,18 +278,18 @@ void input_tick(void) {
             }
         }
     }
-#line 200
+#line 201
     if (! any) {
         if (a->dpad == 5) {
             a->swipej = 0;
         }
-#line 203
+#line 204
         if (a->dpad == 4) {
             if (a->swipe) {
                 a->swipet = land_get_time();
             }
         }
-#line 206
+#line 207
         a->swipe = 0;
     }
 }

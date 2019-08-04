@@ -4,7 +4,7 @@
 #line 7
 char * main_data_path;
 static void cheat(char unichar);
-#line 10
+#line 9
 void main_switch_to_game(void) {
     All * a = global_a;
     a->title = 0;
@@ -12,7 +12,7 @@ void main_switch_to_game(void) {
         a->load_after_redraw = 1;
     }
 }
-#line 16
+#line 15
 void main_switch_to_title(int com) {
     All * a = global_a;
     a->title = 1;
@@ -22,12 +22,12 @@ void all_init(All * self) {
     memset(self, 0, sizeof (* self));
     self->title = 1;
     self->FPS = 60;
-#line 26
+#line 25
     self->font = NULL;
-#line 28
+#line 27
     self->ftpos = 0;
     self->direct_speed_measure = self->FPS;
-#line 32
+#line 31
     self->show_fps = 0;
 }
 void sound(LandSound * s, float vol) {
@@ -42,7 +42,7 @@ void add_time(void) {
         a->ftpos = 0;
     }
 }
-#line 45
+#line 44
 void get_fps(double * average, double * minmax) {
     All * a = global_a;
     int prev = a->FPS - 1;
@@ -55,76 +55,76 @@ void get_fps(double * average, double * minmax) {
             if (dt < min_dt && dt > 0) {
                 min_dt = dt;
             }
-#line 56
+#line 55
             if (dt > max_dt) {
                 max_dt = dt;
             }
-#line 58
+#line 57
             av += dt;
         }
-#line 59
+#line 58
         prev = i;
     }
-#line 60
+#line 59
     av /= (double) a->FPS - 1;
     * average = ceil(1 / av);
     double d = 1 / min_dt - 1 / max_dt;
     * minmax = floor(d / 2);
 }
 void redraw(void) {
-#line 67
+#line 66
     All * a = global_a;
-#line 69
+#line 68
     if (a->load_after_redraw) {
         if (! a->overview) {
             render_loading_screen();
         }
-#line 72
+#line 71
         if (a->load_after_redraw == 1) {
             a->load_after_redraw = 2;
         }
-#line 74
+#line 73
         else if (a->load_after_redraw == 2) {
             // wait for logic code to advance
-#line 74
+#line 73
             ;
         }
-#line 77
+#line 76
         if (a->load_after_redraw > 2) {
             a->load_after_redraw++;
             double t = land_get_time();
             while (1) {
                 if (! blocks_preload(game->blocks)) {
                     a->load_after_redraw = 0;
-#line 84
+#line 83
                     if (a->overview) {
                         overview_render_next(game->overview);
                     }
-#line 86
+#line 85
                     break;
                 }
-#line 87
+#line 86
                 if (land_get_time() > t + 0.01) {
                     break;
                 }
             }
         }
-#line 90
+#line 89
         if (! a->overview) {
-#line 90
+#line 89
             return ;
         }
     }
     float w = land_display_width();
     float h = land_display_height();
     //float fh = land_font_height(a->font)
-#line 97
+#line 96
     if (a->title) {
         title_render();
     }
-#line 98
+#line 97
     else {
-#line 100
+#line 99
         render(game, w, h);
     }
     if (a->show_fps) {
@@ -137,27 +137,27 @@ void redraw(void) {
         land_print_right("%4d / sec", (int)(1.0 / a->direct_speed_measure));
     }
 }
-#line 111
+#line 110
 void reload_fonts(void) {
     LandBuffer * b = land_buffer_new();
     land_buffer_cat(b, main_data_path);
     //land_buffer_cat(b, "/data/Muli-Regular.ttf")
     land_buffer_cat(b, "/data/JosefinSans-Regular.ttf");
     char * path = land_buffer_finish(b);
-#line 118
+#line 117
     All * a = global_a;
     float w = land_display_width();
     //float h = land_display_height()
     double s = w / 960;
-#line 123
+#line 122
     if (a->font) {
         land_font_destroy(a->font);
     }
-#line 125
+#line 124
     if (a->medium) {
         land_font_destroy(a->medium);
     }
-#line 127
+#line 126
     if (a->big) {
         land_font_destroy(a->big);
     }
@@ -167,15 +167,16 @@ void reload_fonts(void) {
     land_font_scale(a->medium, 1.0 / s);
     a->big = land_font_load(path, 60 * s);
     land_font_scale(a->big, 1.0 / s);
-#line 137
+#line 136
     land_font_set(a->medium);
     land_text_get_width("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-#line 140
+#line 139
     land_free(path);
 }
 void init(void) {
     All * a = global_a;
     all_init(a);
+#line 145
     land_display_title("Yellow and Dangerous");
     LandImage * icon = render_load_icon();
     land_display_icon(icon);
@@ -400,7 +401,7 @@ int my_main(void) {
 #line 311
     #else
 #line 313
-    land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE);
+    land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE | LAND_OPENGL);
 #line 313
     #endif
 #line 321

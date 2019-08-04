@@ -1,52 +1,140 @@
 #include "land.h"
 #define _scramble_min(x, y) ((y) < (x) ? (y) : (x))
 #define _scramble_max(x, y) ((y) > (x) ? (y) : (x))
-typedef enum State State;
-typedef struct LagSimulator LagSimulator;
+typedef struct Waves Waves;
+typedef struct Stick Stick;
+typedef struct Joy Joy;
 typedef enum LandWidgetThemeFlags LandWidgetThemeFlags;
 typedef enum COLUMN_TYPE COLUMN_TYPE;
-typedef struct LandSoundPlatform LandSoundPlatform;
-typedef struct LandStreamPlatform LandStreamPlatform;
+typedef struct LandFontPlatform LandFontPlatform;
+typedef struct LandTrianglesPlatform LandTrianglesPlatform;
+typedef struct TestData TestData;
+typedef struct LandAtlasSprite LandAtlasSprite;
+typedef struct LandAtlasSheet LandAtlasSheet;
+typedef enum State State;
+typedef enum XmlState XmlState;
+typedef struct XmlParser XmlParser;
+typedef struct LagSimulator LagSimulator;
+typedef struct CallbackData CallbackData;
+typedef struct Data Data;
 typedef struct PlatformThread PlatformThread;
 typedef struct PlatformLock PlatformLock;
-typedef struct LandFontPlatform LandFontPlatform;
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_primitives.h>
-static int replacement_main(int argc, char * (* argv));
-static int platform_keycode(int ak);
-static int cb_free(void * data, void * _);
-static int alphacomp(void const * a, void const * b);
+typedef struct LandSoundPlatform LandSoundPlatform;
+typedef struct LandStreamPlatform LandStreamPlatform;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#if ! defined ( LAND_NO_COMPRESS )
+#include <zlib.h>
+#endif
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <sys/time.h>
+#include <stdio.h>
 #include <allegro5/allegro_color.h>
+#if ! defined ( ANDROID )
+#include <allegro5/allegro_native_dialog.h>
+#endif
+#include <assert.h>
+#include <string.h>
+#include <assert.h>
+#include <allegro5/allegro5.h>
+#if defined ( ANDROID )
+#include <allegro5/allegro_android.h>
+#endif
+#include <sys/time.h>
+#include <string.h>
+#include <allegro5/allegro.h>
+#include <stdio.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_primitives.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+#include <stdarg.h>
 #include <ctype.h>
 #include <string.h>
-static char const* bash_mode(char const * x, char const * mode);
-static bool get_data(LandHash * self, LandHashIterator * i, void * (* data));
-static unsigned int hash_function(LandHash * self, char const * thekey);
-static LandHashEntry* land_hash_get_entry(LandHash * self, char const * thekey);
+#include <math.h>
+#include <setjmp.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <allegro5/allegro5.h>
-static void add_files(char const * rel, LandArray * (* array), ALLEGRO_FS_ENTRY * entry, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data);
-static void init_genrand(LandRandom * r, unsigned long s);
-static unsigned long genrand_int32(LandRandom * r);
+#include <allegro5/allegro_primitives.h>
+#include <assert.h>
+#include <math.h>
+#include <math.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_opengl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-static void* _get(LandIniSection * s, char const * key);
-static void _add(LandIniSection * s, char const * key, void * val);
-static void _del(LandIniSection * s);
-static LandIniSection* _new(void);
-static bool is_whitespace(char c);
-#include <assert.h>
+#if defined WINDOWS
+#include <ws2tcpip.h>
+#endif
+#if ! defined ( WINDOWS )
+#include <stdlib.h>
+#endif
+#if ! defined ( WINDOWS )
 #include <string.h>
-static LandImage* _load(char const * filename, bool mem);
-static void _load2(LandImage * self);
-static int callback(const char * filename, int attrib, void * param);
-static int compar(void const * a, void const * b);
-static int filter(char const * name, bool is_dir, void * data);
-static void defcb(LandImage * image, void * p);
+#endif
+#if ! defined ( WINDOWS )
+#include <signal.h>
+#endif
+#if ! defined ( WINDOWS )
+#include <sys/time.h>
+#endif
+#if ! defined ( WINDOWS )
+#include <sys/socket.h>
+#endif
+#if ! defined ( WINDOWS )
+#include <sys/ioctl.h>
+#endif
+#include <errno.h>
+#if ! defined ( WINDOWS )
+#include <arpa/inet.h>
+#endif
+#if ! defined ( WINDOWS )
+#include <netdb.h>
+#endif
+#include <stdlib.h>
+#include <stdio.h>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
 #include <math.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_audio.h>
+#include <math.h>
+#include <stdbool.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_primitives.h>
+#include <assert.h>
+#include <math.h>
+
+#undef land_buffer_new
+#undef land_buffer_destroy
+#undef land_buffer_finish
+#undef land_buffer_read_from_file
+#undef land_buffer_split
+static bool get_data(LandHash * self, LandHashIterator * i, void * (* data));
+static unsigned int hash_function(LandHash * self, char const * thekey);
+static LandHashEntry* land_hash_get_entry(LandHash * self, char const * thekey);
+static void shader_setup(LandGLSLShader * self, char const * name, char const * vertex_glsl, char const * fragment_glsl);
+static void shader_cleanup(LandGLSLShader * self);
 static void get_bounding_box(float l, float t, float r, float b, float angle, float * bl, float * bt, float * br, float * bb);
 static LandPixelMask* pixelmask_create_flip(LandImage * image, int n, int threshold, bool flipped);
 static LandPixelMask* pixelmask_create(LandImage * image, int n, int threshold);
@@ -54,21 +142,62 @@ static void pixelmask_destroy(LandPixelMask * mask);
 static int mask_get_rotation_frame(LandPixelMask * mask, float angle, bool flipped);
 static int pixelmask_part_collision(SinglePixelMask * mask, int x, int y, SinglePixelMask * mask_, int x_, int y_, int w, int h);
 static int pixelmask_collision(SinglePixelMask * mask, int x, int y, int w, int h, SinglePixelMask * mask_, int x_, int y_, int w_, int h_);
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <zlib.h>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_opengl.h>
-static void _platform_load(LandImage * super);
-#include <sys/time.h>
+static void line(int x1, int y1, int x2, int y2);
+static void letter(char glyph, str code);
+static void initial_font(void);
+static int _wordwrap_helper(char const * text, int w, int h, void(* cb)(int a, int b, void * data), void * data);
+static void _print_wordwrap_cb(int a, int b, void * data);
+static void land_wordwrap_text_cb(int a, int b, void * data);
+static float _blend(LandPlasma * self, float c1, float c2, float level);
+static float _plasma_read(LandPlasma * self, int x, int y);
+static void _plasma_write(LandPlasma * self, int x, int y, float value);
+static void _fractal(LandPlasma * self, int x, int y, int w, int h, int i);
+static void _subdivide(LandPlasma * self);
+static void init_genrand(LandRandom * r, unsigned long s);
+static unsigned long genrand_int32(LandRandom * r);
+static LandImage* _load(char const * filename, bool mem);
+static void _load2(LandImage * self);
+static int callback(const char * filename, int attrib, void * param);
+static int compar(void const * a, void const * b);
+static int filter(char const * name, bool is_dir, void * data);
+static void defcb(LandImage * image, void * p);
+static float _no_lerp(float a0, float a1, float w);
+static float _linear_lerp(float a0, float a1, float w);
+static float _cosine_lerp(float a0, float a1, float w);
+static float _smooth_step_lerp(float a0, float a1, float w);
+static float _smoother_step_lerp(float a0, float a1, float w);
+static float _smoothest_step_lerp(float a0, float a1, float w);
+static LandNoiseF2* _gradient(LandPerlin * self, int x, int y);
+static float _dot(LandPerlin * self, int ix, int iy, float x, float y);
+static int _getx(LandOctree * self, LandFloat x);
+static int _gety(LandOctree * self, LandFloat y);
+static int _getz(LandOctree * self, LandFloat z);
+static int _get_i(LandOctree * self, LandFloat x, LandFloat y, LandFloat z);
+static void _smoothen(LandNoise * self);
+static void _smoothen_temp(float * noise, int w, int h, int blur_size, bool wrap);
+static float* _white(LandNoise * self);
+static void _multires_cache(LandNoise * self);
+static float _get_resolution(LandNoise * self, void * sub, int i, int x, int y);
+static void* _waves_create(LandNoise * noise, int w, int h);
+static float _waves_at(Waves * self, float power_modifier, float amplitude, int x, int y);
+static void _add_entry(LandYaml * yaml, LandYamlEntry * entry);
+static void _destroy_entry(LandYamlEntry * self);
+static void _indent(int indent);
+static void land_yaml_dump_entry(LandYamlEntry * self, int indent);
+static void add_files(char const * rel, LandArray * (* array), ALLEGRO_FS_ENTRY * entry, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data);
+static char* _get_app_file(char const * appname, int folder, char const * filename);
 static void land_exit(void);
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <stdarg.h>
+static int read32(FILE * f);
+static int star_match(char const * pattern, char const * name);
+static inline int centered_offset(int size1, int size2);
+static inline void _masked_non_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int _, int __);
+static inline void _masked_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int dw, int dh);
+static inline void blit_column(LandWidgetThemeElement * pat, int bx, int bw, int x, int y, int w, int h, int skip_middle);
+static void draw_bitmap(LandWidgetThemeElement * pat, int x, int y, int w, int h, int skip_middle);
+static void read_int_arg(int argc, LandArray * argv, int * a, int * val);
+static LandWidgetThemeElement* find_element(LandList * list, char const * name);
+static void _theme_recurse(LandWidget * self, LandWidgetTheme * theme);
+static void _layout_recurse(LandWidget * self, LandWidgetTheme * theme);
 static void ERR(char const * format, ...);
 static void update_lookup_grid(LandWidget * self);
 static LandWidget* lookup_box_in_grid(LandWidget * self, int col, int row);
@@ -85,31 +214,42 @@ static int adjust_resize_height(LandWidget * self, int dx);
 static void gul_box_bottom_up(LandWidget * self);
 static void gul_box_top_down(LandWidget * self);
 static void gul_box_fit_children(LandWidget * self);
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-static void shader_setup(LandGLSLShader * self, char const * name, char const * vertex_glsl, char const * fragment_glsl);
-static void shader_cleanup(LandGLSLShader * self);
+static double cielab_f(double x);
+static double cielab_f_inv(double x);
+static char const* bash_mode(char const * x, char const * mode);
+static LandAtlasSheet* atlas_find_sheet(LandAtlas * self, char const * name);
+static LandAtlasSprite* atlas_load_picture(LandAtlas * self, char const * filename);
+static float wrap_distance(float x1, float x2, float wrap);
+static int get_closest(LandVoronoi * self, int x, int y);
+static void _platform_load(LandImage * super);
 static void test(char const * name, int want, int got);
-static void sphere_point(LandArray * vertices, LandFloat i, LandFloat j);
-static void add_quad(LandArray * polygons, LandVector a, LandVector b, LandVector c, LandVector d, void * shared);
-static void add_tri(LandArray * polygons, LandVector a, LandVector b, LandVector c, void * shared);
-static void torus_point(LandArray * vertices, LandFloat i, LandFloat j, LandFloat r);
-#include <setjmp.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/time.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <stdlib.h>
-#include <stdio.h>
+static void _yaml_write(YamlParser * p, char const * s);
+static void yaml_write(YamlParser * p, char const * s);
+static void _pretty_newline(YamlParser * p);
+static bool _save_mapping(LandYamlEntry * e, YamlParser * p);
+static bool _save_sequence(LandYamlEntry * e, YamlParser * p);
+static bool _save_scalar(LandYamlEntry * e, YamlParser * p);
+static bool _save_entry(LandYamlEntry * e, YamlParser * p);
+static int cb_free(void * data, void * _);
+static int alphacomp(void const * a, void const * b);
+static void* _get(LandIniSection * s, char const * key);
+static void _add(LandIniSection * s, char const * key, void * val);
+static void _del(LandIniSection * s);
+static LandIniSection* _new(void);
+static bool is_whitespace(char c);
+static void scalar(XmlParser * x);
+static void opt_scalar(XmlParser * x);
+static void discard_scalar(XmlParser * x);
+static void add_char(XmlParser * x, char c);
+static void create_tag(XmlParser * x);
+static void open_tag(XmlParser * x);
+static void close_tag(XmlParser * x);
+static void xml_write(YamlParser * p, char const * s, bool can_break_before);
+static bool xml_save_mapping(LandYamlEntry * e, YamlParser * p);
+static bool xml_save_sequence(LandYamlEntry * e, YamlParser * p);
+static bool xml_save_scalar(LandYamlEntry * e, YamlParser * p);
+static bool xml_save_entry(LandYamlEntry * e, YamlParser * p);
+static void _xml(LandYaml * yaml);
 static int nonblocking(LandNet * self);
 static void split_address(char const * address, char * (* host), int * port);
 static void _get_address(struct sockaddr_in sock_addr, char * address);
@@ -120,40 +260,33 @@ static void lag_simulator_add(LandNet * net, char const * packet, int size);
 static int _create_datagram_socket(LandNet * self);
 static int _send_datagram(LandNet * self, char const * address, char const * packet, int size);
 static void land_net_poll_recv(LandNet * self);
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <sys/time.h>
-#include <string.h>
-static int read32(FILE * f);
-static int star_match(char const * pattern, char const * name);
-static inline int centered_offset(int size1, int size2);
-static inline void _masked_non_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int _, int __);
-static inline void _masked_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int dw, int dh);
-static inline void blit_column(LandWidgetThemeElement * pat, int bx, int bw, int x, int y, int w, int h, int skip_middle);
-static void draw_bitmap(LandWidgetThemeElement * pat, int x, int y, int w, int h, int skip_middle);
-static void read_int_arg(int argc, LandArray * argv, int * a, int * val);
-static LandWidgetThemeElement* find_element(LandList * list, char const * name);
-static void _theme_recurse(LandWidget * self, LandWidgetTheme * theme);
-static void _layout_recurse(LandWidget * self, LandWidgetTheme * theme);
-#include <math.h>
-#include <assert.h>
-static void land_tilegrid_draw_cell(LandGrid * self, LandView * view, int cell_x, int cell_y, float pixel_x, float pixel_y);
-static void view_x_to_cell_and_pixel_x(LandGrid * self, float view_x, int * cell_x, float * pixel_x);
-static void view_y_to_cell_and_pixel_y(LandGrid * self, float view_y, int * cell_y, float * pixel_y);
-#include <stdio.h>
-static int _wordwrap_helper(char const * text, int w, int h, void(* cb)(int a, int b, void * data), void * data);
-static void _print_wordwrap_cb(int a, int b, void * data);
-static void land_wordwrap_text_cb(int a, int b, void * data);
-#include <math.h>
-#include <allegro5/allegro_audio.h>
-static bool get_params(int channels, int bits, int * chan_conf, int * depth);
-#include <allegro5/allegro5.h>
+static int replacement_main(int argc, char * (* argv));
+static int platform_keycode(int ak);
+static void dummy(LandSprite * self, LandView * view);
+static void dummy_image(LandSprite * self, LandView * view);
+static void dummy_animation(LandSprite * self, LandView * view);
+static void get_grid_extents(LandSprite * self, LandGrid * grid, int * tl, int * tt, int * tr, int * tb);
+static int is_left(float ax, float ay, float bx, float by);
+static int is_in_triangle(float x, float y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y);
+static void grid_place(LandSprite * self, LandSpritesGrid * grid);
+static void grid_unplace(LandSprite * self, LandSpritesGrid * grid);
+static void get_cell_at(LandGrid * self, LandView * view, float view_x, float view_y, float * cell_x, float * cell_y);
+static void sphere_point(LandArray * vertices, LandFloat i, LandFloat j);
+static LandVector _sphere_point(LandVector a, LandVector b);
+static void _sphere_tri(LandArray * polygons, LandVector a, LandVector b, LandVector c, int divisions, void * shared);
+static LandArray* quad_vertices(LandVector a, LandVector b, LandVector c, LandVector d);
+static void add_quad(LandArray * polygons, LandVector a, LandVector b, LandVector c, LandVector d, void * shared);
+static LandArray* triangle_vertices(LandVector a, LandVector b, LandVector c);
+static void add_tri(LandArray * polygons, LandVector a, LandVector b, LandVector c, void * shared);
+static void add_tri_flip(LandArray * polygons, LandVector a, LandVector b, LandVector c, void * shared, bool flip);
+static void add_quad_flip(LandArray * polygons, LandVector a, LandVector b, LandVector c, LandVector d, void * shared, bool flip);
+static void torus_point(LandArray * vertices, LandFloat i, LandFloat j, LandFloat r);
+static void _merge_callback_callback(LandArray * array, void * data);
+static void _lookup_close_polygons(LandCSG * csg, LandVector pos, LandFloat r, void(* callback)(LandCSGPolygon * p, void * data), void * data);
+static void _merge_callback(LandCSGPolygon * p, void * v);
 static void* proc(void * data);
 static void* aproc(ALLEGRO_THREAD * thread, void * arg);
-static void land_widget_really_destroy(LandWidget * self);
+static bool get_params(int channels, int bits, int * chan_conf, int * depth);
 static int collision_code(LandVector * v, LandCSGAABB * b);
 static bool polygon_intersects_aabb(LandCSGPolygon * polygon, LandCSGAABB * box);
 static LandArray* clone_vertices(LandCSG * csg, LandArray * vertices);
@@ -161,10 +294,8 @@ static void remove_vertices(LandArray * vertices, bool is_pooled);
 static void csg_vertex_flip(LandCSGVertex * self);
 static LandCSGVertex* csg_vertex_interpolate(LandCSG * csg, LandCSGVertex * self, LandCSGVertex * other, LandFloat t);
 static LandCSGPlane csg_plane(LandVector normal, LandFloat w);
-static LandCSGPlane csg_plane_from_points(LandVector a, LandVector b, LandVector c);
 static LandCSGPolygon* land_csg_polygon_new_pool(LandMemoryPool * pool, LandArray * vertices, void * shared);
 static void csg_plane_split_polygon(LandCSG * csg, LandCSGPlane * self, LandCSGPolygon * polygon, LandArray * coplanar_front, LandArray * coplanar_back, LandArray * front, LandArray * back);
-static void csg_polygon_flip(LandCSGPolygon * self);
 static LandArray* clone_polygons(LandCSG * csg, LandArray * polygons);
 static void clear_polygons(LandArray * polygons);
 static void csg_node_destroy(LandCSGNode * self);
@@ -177,982 +308,463 @@ static void csg_add_polygons(LandCSG * csg, LandArray * polygons);
 static void csg_node_build(LandCSG * csg, LandCSGNode * self, LandArray * polygons);
 static LandCSGNode* csg_node_new(LandCSG * csg, LandArray * polygons);
 static void csg_split_on_bounding_box(LandCSG const * self, LandCSGAABB * box, LandArray * (* inside), LandArray * (* outside));
-static void dummy(LandSprite * self, LandView * view);
-static void dummy_image(LandSprite * self, LandView * view);
-static void dummy_animation(LandSprite * self, LandView * view);
-static void get_grid_extents(LandSprite * self, LandGrid * grid, int * tl, int * tt, int * tr, int * tb);
-static int is_left(float ax, float ay, float bx, float by);
-static int is_in_triangle(float x, float y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y);
-static void grid_place(LandSprite * self, LandSpritesGrid * grid);
-static void grid_unplace(LandSprite * self, LandSpritesGrid * grid);
-static void get_cell_at(LandGrid * self, LandView * view, float view_x, float view_y, float * cell_x, float * cell_y);
-#include <math.h>
-#include <stdbool.h>
 static LandGrid* new(float cell_w1, float cell_h1, float cell_w2, float cell_h2, int x_cells, int y_cells);
 static void view_to_cell(LandGrid * self, float view_x, float view_y, int * cell_x, int * cell_y);
 static void view_to_cell_wrap(LandGrid * self, float view_x, float view_y, int * cell_x, int * cell_y);
 static void cell_to_view(LandGrid * self, float cell_x, float cell_y, float * view_x, float * view_y);
 static int find_offset(LandGrid * self, float view_x, float view_y, int * cell_x, int * cell_y, float * pixel_x, float * pixel_y);
 static void find_offset_wrap(LandGrid * self, float view_x, float view_y, int * cell_x, int * cell_y, float * pixel_x, float * pixel_y);
-static void placeholder(LandGrid * self, LandView * view, int cell_x, int cell_y, float x, float y);
+static void land_widget_really_destroy(LandWidget * self);
+static void scroll_vertical_cb(LandWidget * self, bool update_target, int * _scramble_min, int * _scramble_max, int * range, int * pos);
+static void scroll_horizontal_cb(LandWidget * self, bool update_target, int * _scramble_min, int * _scramble_max, int * range, int * pos);
+static int get_size(LandWidget * super);
+static void land_tilegrid_draw_cell(LandGrid * self, LandView * view, int cell_x, int cell_y, float pixel_x, float pixel_y);
+static void view_x_to_cell_and_pixel_x(LandGrid * self, float view_x, int * cell_x, float * pixel_x);
+static void view_y_to_cell_and_pixel_y(LandGrid * self, float view_y, int * cell_y, float * pixel_y);
 static int _linedelcb(void * item, void * data);
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
-#include <assert.h>
-#include <math.h>
-static void check_blending_and_transform(void);
-static void uncheck_blending(void);
 static void transfer_mouse_focus(LandWidget * base, LandWidget * child);
 static void transfer_keyboard_focus(LandWidget * base);
 static int get_x_offset(LandWidget * base);
-static void scroll_vertical_cb(LandWidget * self, int set, int * _scramble_min, int * _scramble_max, int * range, int * pos);
-static void scroll_horizontal_cb(LandWidget * self, int set, int * _scramble_min, int * _scramble_max, int * range, int * pos);
-static int get_size(LandWidget * super);
-static void clicked(LandWidget * button);
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
 static void land_widget_vbox_renumber(LandWidget * base);
-static int scrolling_update_layout(LandWidget * widget);
-static void cb_clicked(LandWidget * widget);
+static void _scrolling_layout(LandWidget * self);
+static void clicked(LandWidget * button);
 static void land_widget_hbox_renumber(LandWidget * base);
 static void menubutton_clicked(LandWidget * base);
 static void menuitem_clicked(LandWidget * base);
 static int is_in_menu(LandWidget * self, LandWidget * other);
 static int is_related(LandWidget * self, LandWidget * other);
+static void _cb_clicked(LandWidget * widget);
 static void updated(LandWidget * base);
 static void spinning(LandWidget * widget, float amount);
-#ifdef ANDROID
-#include "allegro5/allegro_android.h"
-#endif
-#ifdef __EMSCRIPTEN__
-#include < emscripten.h>
-#endif
-static bool redraw;
-static LandDisplayPlatform * d;
-static ALLEGRO_EVENT_QUEUE * queue;
-static ALLEGRO_TIMER * timer;
-static void(* global_cb)(void);
-static int replacement_main(int argc, char * (* argv)) {
-    global_cb();
-    return 0;
+#ifdef LAND_MEMLOG
+LandBuffer* land_buffer_new_memlog(char const * f, int l) {
+    LandBuffer * self = land_buffer_new();
+    land_memory_add(self, "buffer", 1, f, l);
+    return self;
 }
-void platform_without_main(void(* cb)(void)) {
-    global_cb = cb;
-    al_run_main(0, NULL, replacement_main);
+void land_buffer_destroy_memlog(LandBuffer * self, char const * f, int l) {
+    land_memory_remove(self, "buffer", 1, f, l);
+    land_buffer_destroy(self);
 }
-double platform_get_time(void) {
-    return al_current_time();
-}
-void platform_halt(void) {
-    platform_sound_halt();
-}
-void platform_resume(void) {
-    platform_sound_resume();
-}
-void platform_init(void) {
-    land_log_message("Compiled against Allegro %s.\n", ALLEGRO_VERSION_STR);
-    if (! al_init()) {
-        land_log_message("Allegro initialization failed.\n");
-        land_exception("Error in allegro_init.");
-    }
-    #ifdef ANDROID
-    al_android_set_apk_file_interface();
-    #endif
-    al_init_image_addon();
-    al_install_keyboard();
-    al_install_mouse();
-    al_init_primitives_addon();
-}
-#define _UnkKey(x) LandKeyUnknown3 + x + 0, LandKeyUnknown3 + x + 1, LandKeyUnknown3 + x + 2, LandKeyUnknown3 + x + 3, LandKeyUnknown3 + x + 4, LandKeyUnknown3 + x + 5, LandKeyUnknown3 + x + 6, LandKeyUnknown3 + x + 7, LandKeyUnknown3 + x + 8, LandKeyUnknown3 + x + 9
-static int keyboard_conversion_table [ALLEGRO_KEY_MAX] = {LandKeyNone, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', LandKeyPad + 0, LandKeyPad + 1, LandKeyPad + 2, LandKeyPad + 3, LandKeyPad + 4, LandKeyPad + 5, LandKeyPad + 6, LandKeyPad + 7, LandKeyPad + 8, LandKeyPad + 9, LandKeyFunction + 1, LandKeyFunction + 2, LandKeyFunction + 3, LandKeyFunction + 4, LandKeyFunction + 5, LandKeyFunction + 6, LandKeyFunction + 7, LandKeyFunction + 8, LandKeyFunction + 9, LandKeyFunction + 10, LandKeyFunction + 11, LandKeyFunction + 12, LandKeyEscape, '~', '-', '=', LandKeyBackspace, LandKeyTab, '[', ']', LandKeyEnter, ';', '\'', '\\', LandKeyUnknown + 0, ',', '.', '/', ' ', LandKeyInsert, LandKeyDelete, LandKeyHome, LandKeyEnd, LandKeyPageUp, LandKeyPageDown, LandKeyLeft, LandKeyRight, LandKeyUp, LandKeyDown, LandKeyPadSlash, LandKeyPadStar, LandKeyPadMinus, LandKeyPadPlus, LandKeyPadDelete, LandKeyPadEnter, LandKeyPrint, LandKeyPause, LandKeyUnknown + 1, LandKeyUnknown + 2, LandKeyUnknown + 3, LandKeyUnknown + 4, LandKeyUnknown + 5, '@', '^', ':', LandKeyUnknown + 6, LandKeyUnknown + 7, LandKeyUnknown + 8, LandKeyUnknown + 9, LandKeyUnknown + 10, LandKeyBack, LandKeyUnknown + 12, LandKeyUnknown2 + 0, LandKeyUnknown2 + 1, LandKeyUnknown2 + 2, LandKeyUnknown2 + 3, LandKeyUnknown2 + 4, LandKeyUnknown2 + 5, LandKeyUnknown3 + 0, LandKeyUnknown3 + 1, LandKeyUnknown3 + 2, LandKeyUnknown3 + 3, LandKeyUnknown3 + 4, LandKeyUnknown3 + 5, _UnkKey(6), _UnkKey(16), _UnkKey(26), _UnkKey(36), _UnkKey(46), _UnkKey(56), _UnkKey(66), _UnkKey(76), _UnkKey(86), LandKeyUnknown3 + 96, LandKeyUnknown3 + 97, LandKeyUnknown3 + 98, LandKeyUnknown3 + 99, LandKeyLeftShift, LandKeyRightShift, LandKeyLeftControl, LandKeyRightControl, LandKeyLeftAlt, LandKeyRightAlt, LandKeyLeftWin, LandKeyRightWin, LandKeyMenu, LandKeyScrollLock, LandKeyNumLock, LandKeyCapsLock};
-char const* platform_key_name(int lk) {
-    int ak = 0;
-    for (int i = 0; i < ALLEGRO_KEY_MAX; i++) {
-        if (keyboard_conversion_table [i] == lk) {
-            ak = i;
-            break;
-        }
-    }
-    char const * s = al_keycode_to_name(ak);
+char* land_buffer_finish_memlog(LandBuffer * self, char const * f, int l) {
+    land_memory_remove(self, "buffer", 1, f, l);
+    char * s = land_buffer_finish(self);
+    land_memory_remove(s, "", 1, f, l);
+    land_memory_add(s, "", strlen(s), f, l);
     return s;
 }
-static int platform_keycode(int ak) {
-    return keyboard_conversion_table [ak];
+LandBuffer* land_buffer_read_from_file_memlog(char const * filename, char const * f, int l) {
+    LandBuffer * self = land_buffer_read_from_file(filename);
+    land_memory_add(self, "buffer", 1, f, l);
+    return self;
 }
-void platform_hide_mouse_cursor(void) {
-    LandDisplayPlatform * d = (void *) _land_active_display;
-    al_hide_mouse_cursor(d->a5);
-}
-void platform_show_mouse_cursor(void) {
-    LandDisplayPlatform * d = (void *) _land_active_display;
-    al_show_mouse_cursor(d->a5);
-}
-void platform_mouse_set_pos(float x, float y) {
-    LandDisplayPlatform * d = (void *) _land_active_display;
-    al_set_mouse_xy(d->a5, x, y);
-}
-void platform_pause(void) {
-    if (timer) {
-        al_stop_timer(timer);
-    }
-}
-void platform_unpause(void) {
-    if (timer) {
-        al_resume_timer(timer);
-    }
-}
-void platform_mainloop(LandParameters * parameters) {
-    d = (void *) _land_active_display;
-    queue = al_create_event_queue();
-    timer = al_create_timer(1.0 / parameters->fps);
-    al_register_event_source(queue, al_get_keyboard_event_source());
-    al_register_event_source(queue, al_get_mouse_event_source());
-    if (al_install_touch_input()) {
-        al_register_event_source(queue, al_get_touch_input_event_source());
-    }
-    al_register_event_source(queue, al_get_display_event_source(d->a5));
-    al_register_event_source(queue, al_get_timer_event_source(timer));
-    al_start_timer(timer);
-    ALLEGRO_MOUSE_STATE s;
-    al_get_mouse_state(& s);
-    land_mouse_move_event(s.x, s.y, s.z);
-    redraw = 0;
-    #ifdef __EMSCRIPTEN__
-    _land_synchronized = 1;
-    emscripten_set_main_loop(platform_frame, 0, true);
-    #else
-    while (! _land_quit) {
-        platform_frame();
-    }
-    #endif
-}
-void platform_frame(void) {
-    if (! _land_quit) {
-        if (redraw && (_land_synchronized || al_event_queue_is_empty(queue))) {
-            if (! _land_halted) {
-                land_draw();
-            }
-            redraw = 0;
-        }
-        while (1) {
-            ALLEGRO_EVENT event;
-            #ifdef __EMSCRIPTEN__
-            if (! al_get_next_event(queue, & event)) {
-                break;
-            }
-            #else
-            al_wait_for_event(queue, & event);
-            #endif
-            switch (event.type) {
-                case ALLEGRO_EVENT_DISPLAY_CLOSE: {
-                    land_closebutton_event();
-                    break;
-                }
-                case ALLEGRO_EVENT_TIMER: {
-                    if (_land_was_halted && _land_halted) {
-                        al_stop_timer(timer);
-                    }
-                    else {
-                        land_tick();
-                        _land_frames++;
-                        redraw = 1;
-                    }
-                    break;
-                }
-                case ALLEGRO_EVENT_KEY_DOWN: {
-                    int lk = platform_keycode(event.keyboard.keycode);
-                    land_key_press_event(lk);
-                    break;
-                }
-                case ALLEGRO_EVENT_KEY_CHAR: {
-                    int lk = platform_keycode(event.keyboard.keycode);
-                    land_keyboard_add_char(lk, event.keyboard.unichar);
-                    break;
-                }
-                case ALLEGRO_EVENT_KEY_UP: {
-                    int lk = platform_keycode(event.keyboard.keycode);
-                    land_key_release_event(lk);
-                    break;
-                }
-                case ALLEGRO_EVENT_MOUSE_AXES: {
-                    land_mouse_move_event(event.mouse.x, event.mouse.y, event.mouse.z);
-                    if (land_mouse_b() & 1) {
-                        land_touch_event(event.mouse.x, event.mouse.y, 10, 0);
-                    }
-                    break;
-                }
-                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN: {
-                    land_mouse_button_down_event(event.mouse.button - 1);
-                    land_touch_event(land_mouse_x(), land_mouse_y(), 10, 1);
-                    break;
-                }
-                case ALLEGRO_EVENT_MOUSE_BUTTON_UP: {
-                    land_mouse_button_up_event(event.mouse.button - 1);
-                    land_touch_event(land_mouse_x(), land_mouse_y(), 10, - 1);
-                    break;
-                }
-                case ALLEGRO_EVENT_TOUCH_BEGIN: {
-                    land_touch_event(event.touch.x, event.touch.y, event.touch.id, 1);
-                    break;
-                }
-                case ALLEGRO_EVENT_TOUCH_END: {
-                    land_touch_event(event.touch.x, event.touch.y, event.touch.id, - 1);
-                    break;
-                }
-                case ALLEGRO_EVENT_TOUCH_MOVE: {
-                    land_touch_event(event.touch.x, event.touch.y, event.touch.id, 0);
-                    break;
-                }
-                case ALLEGRO_EVENT_DISPLAY_RESIZE: {
-                    al_acknowledge_resize((ALLEGRO_DISPLAY *) event.any.source);
-                    land_resize_event(event.display.width, event.display.height);
-                    break;
-                }
-                case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT: {
-                    land_switch_out_event();
-                    break;
-                }
-                case ALLEGRO_EVENT_DISPLAY_HALT_DRAWING: {
-                    land_halt();
-                    al_acknowledge_drawing_halt(d->a5);
-                    break;
-                }
-                case ALLEGRO_EVENT_DISPLAY_SWITCH_IN: {
-                    break;
-                }
-                case ALLEGRO_EVENT_DISPLAY_RESUME_DRAWING: {
-                    land_resume();
-                    al_acknowledge_drawing_resume(d->a5);
-                    al_start_timer(timer);
-                    break;
-                }
-            }
-            #ifdef __EMSCRIPTEN__
-            continue;
-            #endif
-            break;
+LandArray* land_buffer_split_memlog(LandBuffer const * self, char delim, char const * f, int line) {
+    LandArray * a = land_array_new_memlog(f, line);
+    int start = 0;
+    for (int i = 0; i < self->n; i++) {
+        if (self->buffer [i] == delim) {
+            LandBuffer * l = land_buffer_new_memlog(f, line);
+            land_buffer_add(l, self->buffer + start, i - start);
+            land_array_add_memlog(a, l, f, line);
+            start = i + 1;
         }
     }
-}
-char* platform_get_app_settings_file(char const * appname) {
-    al_set_org_name("");
-    al_set_app_name(appname);
-    ALLEGRO_PATH * path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
-    const char * str = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
-    if (! al_filename_exists(str)) {
-        land_log_message("Creating new settings path %s.\n", str);
-        al_make_directory(str);
-    }
-    al_set_path_filename(path, "settings.cfg");
-    str = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
-    land_log_message("Using settings file %s.\n", str);
-    char * dup = land_strdup(str);
-    al_destroy_path(path);
-    return dup;
-}
-void platform_wait(double seconds) {
-    al_rest(seconds);
-}
-#undef _UnkKey
-#ifdef LAND_MEMLOG
-#undef land_array_new
-#undef land_array_destroy
-#undef land_array_add
-#undef land_array_clear
-#undef land_array_merge
-#undef land_array_concat
-#undef land_array_copy
-LandArray* land_array_new_memlog(char const * f, int l) {
-    LandArray * array = land_array_new();
-    land_memory_add(array, "array", 1, f, l);
-    return array;
-}
-void land_array_destroy_memlog(LandArray * self, char const * f, int l) {
-    land_memory_remove(self, "array", 1, f, l);
-    land_array_destroy(self);
-}
-void land_array_add_memlog(LandArray * self, void * data, char const * f, int l) {
-    land_array_add(self, data);
-    land_memory_remove(self, "array", 1, f, l);
-    land_memory_add(self, "array", self->size, f, l);
-}
-LandArray* land_array_copy_memlog(LandArray const * self, char const * f, int l) {
-    LandArray * copy = land_array_copy(self);
-    land_memory_add(copy, "array", copy->size, f, l);
-    return copy;
-}
-void land_array_concat_memlog(LandArray * self, LandArray const * other, char const * f, int l) {
-    land_array_concat(self, other);
-    land_memory_remove(self, "array", 1, f, l);
-    land_memory_add(self, "array", self->size, f, l);
-}
-void land_array_merge_memlog(LandArray * self, LandArray * other, char const * f, int l) {
-    land_array_merge(self, other);
-    land_memory_remove(self, "array", 1, f, l);
-    land_memory_add(self, "array", self->size, f, l);
-    land_memory_remove(other, "array", 1, f, l);
-}
-void land_array_clear_memlog(LandArray * self, char const * f, int l) {
-    land_array_clear(self);
-    land_memory_remove(self, "array", 1, f, l);
-    land_memory_add(self, "array", self->size, f, l);
+    LandBuffer * l = land_buffer_new_memlog(f, line);
+    land_buffer_add(l, self->buffer + start, self->n - start);
+    land_array_add_memlog(a, l, f, line);
+    return a;
 }
 #endif
-LandArrayIterator LandArrayIterator_first(LandArray * a) {
-    LandArrayIterator i = {0};
-    return i;
-}
-void* LandArrayIterator_item(LandArray * a, LandArrayIterator * i) {
-    return i->i < a->count ? a->data [i->i] : NULL;
-}
-bool LandArrayIterator_next(LandArray * a, LandArrayIterator * i) {
-    i->i++;
-    return i->i <= a->count;
-}
-LandArray* land_array_new(void) {
-    /* Create a new empty array.
-     */
-    LandArray * self;
+LandBuffer* land_buffer_new(void) {
+    LandBuffer * self;
     land_alloc(self);
     return self;
 }
-void land_array_add(LandArray * self, void * data) {
-    /* Add data to an array.
-     */
-    int i = self->count++;
-    if (self->count > self->size) {
-        if (self->size == 0) {
+LandBuffer* land_buffer_copy(LandBuffer * other) {
+    LandBuffer * self;
+    land_alloc(self);
+    land_buffer_add(self, other->buffer, other->n);
+    return self;
+}
+LandBuffer* land_buffer_extract(LandBuffer * other, int x, int n) {
+    LandBuffer * self = land_buffer_new();
+    if (n > 0) {
+        land_buffer_add(self, other->buffer + x, n);
+    }
+    return self;
+}
+LandBuffer* land_buffer_copy_from(LandBuffer * other, int x) {
+    LandBuffer * self = land_buffer_new();
+    land_buffer_add(self, other->buffer + x, other->n - x);
+    return self;
+}
+void land_buffer_destroy(LandBuffer * self) {
+    if (self->buffer) {
+        land_free(self->buffer);
+    }
+    land_free(self);
+}
+void land_buffer_grow(LandBuffer * self, int n) {
+    self->n += n;
+    if (self->n > self->size) {
+        if (! self->size) {
             self->size = 1;
         }
-        else {
+        while (self->size < self->n) {
             self->size *= 2;
         }
-        self->data = land_realloc(self->data, self->size * sizeof (* self->data));
+        self->buffer = land_realloc(self->buffer, self->size);
     }
-    self->data [i] = data;
 }
-void land_array_reserve(LandArray * self, int n) {
-    /* Allocate n empty (None) entries for the array. Removes any contents
-     * of the array if it already has any data added to it.
-     */
-    self->count = self->size = n;
-    self->data = land_realloc(self->data, self->size * sizeof (* self->data));
-    memset(self->data, 0, self->count * sizeof (* self->data));
+void land_buffer_insert(LandBuffer * self, int pos, char const * buffer, int n) {
+    land_buffer_grow(self, n);
+    memmove(self->buffer + pos + n, self->buffer + pos, self->n - n - pos);
+    memcpy(self->buffer + pos, buffer, n);
 }
-void* land_array_pop(LandArray * self) {
-    /* Remove the last element in the array and return it. Only the last element
-     * in an array can be removed. To remove another element, you could replace
-     * it with the last (land_array_replace_nth) and remove the last with this
-     * function.
-     */
-    if (self->count == 0) {
-        return NULL;
+void land_buffer_move(LandBuffer * self, int from_pos, int to_pos, int n) {
+    if (from_pos < 0) {
+        from_pos += self->n;
     }
-    int i = --self->count;
-    return self->data [i];
-}
-void land_array_add_data(LandArray * (* array), void * data) {
-    /* *deprecated*
-     * Use land_array_add in new code, as this function might be removed in a
-     * future version.
-     * Given a pointer to a (possibly NULL valued) array pointer, create a new node
-     * with the given data, and add to the (possibly modified) array.
-     */
-    LandArray * self = * array;
-    if (! self) {
-        #if LAND_MEMLOG
-        self = land_array_new_memlog(__FILE__, __LINE__);
-        #else
-        self = land_array_new();
-        #endif
-        * array = self;
+    if (to_pos < 0) {
+        to_pos += self->n;
     }
-    land_array_add(self, data);
+    memmove(self->buffer + to_pos, self->buffer + from_pos, n);
 }
-int land_array_find(LandArray * self, void * data) {
-    /* Searches the array for the given data. If they are contained, return the
-     * first index i so that land_array_get_nth(array, i) == data. If the data
-     * cannot be found, -1 is returned.
+void land_buffer_cut(LandBuffer * self, int pos, int n) {
+    memmove(self->buffer + pos, self->buffer + pos + n, self->n - pos - n);
+    self->n -= n;
+}
+void land_buffer_shorten_left(LandBuffer * self, int n) {
+    land_buffer_cut(self, 0, n);
+}
+void land_buffer_add(LandBuffer * self, char const * b, int n) {
+    land_buffer_insert(self, self->n, b, n);
+}
+void land_buffer_addv(LandBuffer * self, char const * format, va_list args) {
+    va_list args2;
+    va_copy(args2, args);
+    int n = vsnprintf(NULL, 0, format, args2);
+    va_end(args2);
+    if (n < 0) {
+        n = 1023;
+    }
+    char s [n + 1];
+    vsnprintf(s, n + 1, format, args);
+    land_buffer_add(self, s, n);
+}
+void land_buffer_addf(LandBuffer * self, char const * format, ...) {
+    va_list args;
+    va_start(args, format);
+    land_buffer_addv(self, format, args);
+    va_end(args);
+}
+void land_buffer_addl(LandBuffer * self, char const * format, ...) {
+    va_list args;
+    va_start(args, format);
+    land_buffer_addv(self, format, args);
+    va_end(args);
+    land_buffer_add_char(self, '\n');
+}
+void land_buffer_add_uint32_t(LandBuffer * self, uint32_t i) {
+    land_buffer_add_char(self, i & 255);
+    land_buffer_add_char(self, (i >> 8) & 255);
+    land_buffer_add_char(self, (i >> 16) & 255);
+    land_buffer_add_char(self, (i >> 24) & 255);
+}
+uint32_t land_buffer_get_uint32_t(LandBuffer * self, int pos) {
+    uint8_t * uc = (uint8_t *) self->buffer + pos;
+    uint32_t u = * (uc++);
+    u += * (uc++) << 8;
+    u += * (uc++) << 16;
+    u += * (uc++) << 24;
+    return u;
+}
+uint16_t land_buffer_get_uint16_t(LandBuffer * self, int pos) {
+    uint8_t * uc = (uint8_t *) self->buffer + pos;
+    uint16_t u = * (uc++);
+    u += * (uc++) << 8;
+    return u;
+}
+uint8_t land_buffer_get_byte(LandBuffer * self, int pos) {
+    uint8_t * uc = (uint8_t *) self->buffer + pos;
+    return * uc;
+}
+void land_buffer_add_float(LandBuffer * self, float f) {
+    uint32_t * i = (void *) & f;
+    land_buffer_add_uint32_t(self, * i);
+}
+void land_buffer_add_char(LandBuffer * self, char c) {
+    land_buffer_add(self, & c, 1);
+}
+void land_buffer_cat(LandBuffer * self, char const * string) {
+    /* Appends a zero-terminated string (without the 0 byte) to the buffer.
      */
-    for (int i = 0; i < self->count; i++) {
-        if (self->data [i] == data) {
+    land_buffer_add(self, string, strlen(string));
+}
+void land_buffer_clear(LandBuffer * self) {
+    /* Clears the buffer (but keeps any memory allocation for speedy refilling).
+     */
+    self->n = 0;
+}
+void land_buffer_crop(LandBuffer * self) {
+    /* Make the buffer use up only the minimum required amount of memory.
+     */
+    self->buffer = land_realloc(self->buffer, self->n);
+    self->size = self->n;
+}
+char* land_buffer_finish(LandBuffer * self) {
+    /* Destroys the buffer, but returns a C-string constructed from it by appending
+     * a 0 character. You may not access the pointer you pass to this function
+     * anymore after it returns. Also, you have to make sure it does not already
+     * contain any 0 characters. When no longer needed, you should free the string
+     * with land_free.
+     */
+    char c [] = "";
+    land_buffer_add(self, c, 1);
+    char * s = self->buffer;
+    self->buffer = NULL;
+    land_buffer_destroy(self);
+    return s;
+}
+void land_buffer_println(LandBuffer * self) {
+    printf("%.*s\n", self->n, self->buffer);
+}
+bool land_buffer_empty(LandBuffer * self) {
+    return self->n == 0;
+}
+LandArray* land_buffer_split(LandBuffer const * self, str delim) {
+    /* Creates an array of buffers. If there are n occurences of string delim
+     * in the buffer, the array contains n + 1 entries. No buffer in the array
+     * contains the delim string.
+     */
+    LandArray * a = land_array_new();
+    int start = 0;
+    for (int i = 0; i < self->n; i += 1) {
+        bool matches = 1;
+        int j = 0;
+        while (delim [j]) {
+            if (self->buffer [i + j] != delim [j]) {
+                matches = 0;
+                break;
+            }
+            j++;
+        }
+        if (matches) {
+            LandBuffer * l = land_buffer_new();
+            land_buffer_add(l, self->buffer + start, i - start);
+            land_array_add(a, l);
+            start = i + j;
+        }
+    }
+    LandBuffer * l = land_buffer_new();
+    land_buffer_add(l, self->buffer + start, self->n - start);
+    land_array_add(a, l);
+    return a;
+}
+void land_buffer_strip_right(LandBuffer * self, char const * what) {
+    if (self->n == 0) {
+        return ;
+    }
+    int away = 0;
+    char * p = self->buffer + self->n;
+    while (p > self->buffer) {
+        int c = land_utf8_char_back(& p);
+        char const * q = what;
+        while (1) {
+            int d = land_utf8_char_const(& q);
+            if (! d) {
+                goto done;
+            }
+            if (c == d) {
+                away++;
+                break;
+            }
+        }
+    }
+    done:;
+    self->n -= away;
+}
+void land_buffer_strip_left(LandBuffer * self, char const * what) {
+    if (self->n == 0) {
+        return ;
+    }
+    int away = 0;
+    char * p = self->buffer;
+    while (1) {
+        again:;
+        int c = land_utf8_char(& p);
+        if (! c) {
+            break;
+        }
+        char const * q = what;
+        while (1) {
+            int d = land_utf8_char_const(& q);
+            if (! d) {
+                break;
+            }
+            if (c == d) {
+                away++;
+                goto again;
+            }
+        }
+        break;
+    }
+    self->n -= away;
+    memmove(self->buffer, self->buffer + away, self->n);
+}
+void land_buffer_strip(LandBuffer * self, char const * what) {
+    land_buffer_strip_right(self, what);
+    land_buffer_strip_left(self, what);
+}
+bool land_buffer_is(LandBuffer * self, char const * what) {
+    int n = strlen(what);
+    if (n != self->n) {
+        return 0;
+    }
+    return memcmp(self->buffer, what, self->n) == 0;
+}
+void land_buffer_remove_if_start(LandBuffer * self, char const * what) {
+    if (memcmp(self->buffer, what, strlen(what)) == 0) {
+        land_buffer_shorten_left(self, strlen(what));
+    }
+}
+void land_buffer_remove_if_end(LandBuffer * self, char const * what) {
+    if (memcmp(self->buffer + self->n - strlen(what), what, strlen(what)) == 0) {
+        land_buffer_shorten(self, strlen(what));
+    }
+}
+int land_buffer_rfind(LandBuffer * self, char c) {
+    if (self->n == 0) {
+        return - 1;
+    }
+    for (int i = self->n - 1; i >= 0; i--) {
+        if (self->buffer [i] == c) {
             return i;
         }
     }
     return - 1;
 }
-void* land_array_get_nth(LandArray const * array, int i) {
-    if (i < 0) {
-        i += array->count;
+int land_buffer_find(LandBuffer const * self, int offset, char const * what) {
+    int n = strlen(what);
+    for (int i = offset; i < self->n; i += 1) {
+        for (int j = 0; j < n; j += 1) {
+            if (self->buffer [i + j] != what [j]) {
+                goto mismatch;
+            }
+        }
+        return i;
+        mismatch:;
     }
-    return array->data [i];
+    return - 1;
 }
-bool land_array_is_empty(LandArray const * array) {
-    return array->count == 0;
+int land_buffer_replace(LandBuffer * self, int offset, char const * wat, char const * wit) {
+    int x = land_buffer_find(self, offset, wat);
+    if (x < 0) {
+        return x;
+    }
+    land_buffer_cut(self, x, strlen(wat));
+    land_buffer_insert(self, x, wit, strlen(wit));
+    return x + strlen(wit);
 }
-void* land_array_replace_nth(LandArray * array, int i, void * data) {
-    /* Replace the array entry at the given index, and return the previous
-     * contents.
+int land_buffer_replace_all(LandBuffer * self, char const * wat, char const * wit) {
+    int x = 0;
+    int count = 0;
+    while (1) {
+        x = land_buffer_replace(self, x, wat, wit);
+        if (x < 0) {
+            break;
+        }
+        count++;
+    }
+    return count;
+}
+void land_buffer_set_length(LandBuffer * self, int n) {
+    self->n = n;
+}
+void land_buffer_shorten(LandBuffer * self, int n) {
+    self->n -= n;
+}
+LandBuffer* land_buffer_read_from_file(char const * filename) {
+    /* Read a buffer from the given file. If the file cannot be read, return None.
      */
-    if (i >= array->count) {
+    LandFile * pf = land_file_new(filename, "r");
+    if (! pf) {
         return NULL;
     }
-    void * old = array->data [i];
-    array->data [i] = data;
-    return old;
-}
-void land_array_destroy(LandArray * self) {
-    /* Destroys an array. This does not destroy any of the data put into it - loop
-     * through the array before and destroy the data if there are no other
-     * references to them.
-     */
-    if (self->data) {
-        land_free(self->data);
-    }
-    land_free(self);
-}
-static int cb_free(void * data, void * _) {
-    land_free(data);
-    return 0;
-}
-void land_array_destroy_with_strings(LandArray * self) {
-    /* Like [land_array_destroy] but also calls land_free on every
-     * element.
-     */
-    land_array_for_each(self, cb_free, NULL);
-    land_array_destroy(self);
-}
-void land_array_sort(LandArray * self, int(* cmpfnc)(void const * a, void const * b)) {
-    /* Sorts the entries in the array. The given callback function gets passed
-     * two direct pointers to two array elements, and expects a return value
-     * determining the order:
-     * < 0: a is before b
-     * = 0: order is arbitrary
-     * > 0: a is after b
-     */
-    qsort(self->data, self->count, sizeof (void *), cmpfnc);
-}
-static int alphacomp(void const * a, void const * b) {
-    char const * const * as = a;
-    char const * const * bs = b;
-    int r = strcmp(* as, * bs);
-    return r;
-}
-void land_array_sort_alphabetical(LandArray * self) {
-    /* Expects all array members to be strings and sorts alphabetically.
-     */
-    land_array_sort(self, alphacomp);
-}
-int land_array_count(LandArray const * self) {
-    if (! self) {
-        return 0;
-    }
-    return self->count;
-}
-int land_array_for_each(LandArray * self, int(* cb)(void * item, void * data), void * data) {
-    /* Call the given callback for each array element. If the callback returns
-     * anything but 0, the iteration is stopped. The return value is the number
-     * of times the callback was called. The data argument simply is passed as-is
-     * to the callback.
-     */
-    if (! self) {
-        return 0;
-    }
-    int i;
-    for (i = 0; i < self->count; i++) {
-        if (cb(self->data [i], data)) {
+    LandBuffer * self = land_buffer_new();
+    while (1) {
+        char kb [16384];
+        size_t n = land_file_read(pf, kb, 16384);
+        land_buffer_add(self, kb, n);
+        if (n < 16384) {
             break;
         }
     }
-    return i;
-}
-void land_array_clear(LandArray * self) {
-    /* Clear all elements in the array.
-     */
-    self->count = 0;
-}
-void land_array_concat(LandArray * self, LandArray const * other) {
-    int new_count = self->count + other->count;
-    self->size = new_count;
-    self->data = land_realloc(self->data, self->size * sizeof (* self->data));
-    memcpy(self->data + self->count, other->data, other->count * sizeof (* other->data));
-    self->count = self->size;
-}
-void land_array_merge(LandArray * self, LandArray * other) {
-    land_array_concat(self, other);
-    land_array_destroy(other);
-}
-LandArray* land_array_copy(LandArray const * self) {
-    LandArray * copy = land_array_new();
-    land_array_concat(copy, self);
-    return copy;
-}
-void land_array_swap(LandArray * self, int a, int b) {
-    if (a < 0) {
-        a += self->count;
-    }
-    if (b < 0) {
-        b += self->count;
-    }
-    void * temp = self->data [a];
-    self->data [a] = self->data [b];
-    self->data [b] = temp;
-}
-void land_array_move_behind(LandArray * self, int a, int b) {
-    /* Move item at position a so it is behind b. If b is 0 then a is moved to
-     * the beginning. If b is n then a is moved to the end.
-     */
-    void * temp = self->data [a];
-    if (a < b) {
-        for (int i = a; i < b - 1; i++) {
-            self->data [i] = self->data [i + 1];
-        }
-        self->data [b - 1] = temp;
-    }
-    else {
-        for (int i = a; i > b; i--) {
-            self->data [i] = self->data [i - 1];
-        }
-        self->data [b] = temp;
-    }
-}
-void land_array_reverse(LandArray * self) {
-    for (int i = 0; i < self->count / 2; i += 1) {
-        land_array_swap(self, i, self->count - 1 - i);
-    }
-}
-int land_widget_layout_freeze(LandWidget * self) {
-    int nl = self->no_layout;
-    self->no_layout = 1;
-    return ! nl;
-}
-int land_widget_layout_unfreeze(LandWidget * self) {
-    int nl = self->no_layout;
-    self->no_layout = 0;
-    return nl;
-}
-void land_widget_layout_set_grid(LandWidget * self, int columns, int rows) {
-    self->box.rows = rows;
-    self->box.cols = columns;
-    land_widget_layout(self);
-}
-void land_widget_layout_disable(LandWidget * self) {
-    self->box.flags |= GUL_NO_LAYOUT;
-}
-void land_widget_layout_enable(LandWidget * self) {
-    self->box.flags &= ~ GUL_NO_LAYOUT;
-}
-void land_widget_layout_set_grid_position(LandWidget * self, int column, int row) {
-    self->box.col = column;
-    self->box.row = row;
-    if (self->parent) {
-        land_widget_layout(self->parent);
-    }
-}
-void land_widget_layout_set_grid_extra(LandWidget * self, int columns, int rows) {
-    self->box.extra_cols = columns;
-    self->box.extra_rows = rows;
-    if (self->parent) {
-        land_widget_layout(self->parent);
-    }
-}
-void land_widget_layout_set_minimum_size(LandWidget * self, int w, int h) {
-    self->box.min_width = w;
-    self->box.min_height = h;
-    self->box.current_min_width = w;
-    self->box.current_min_height = h;
-}
-void land_widget_layout_set_maximum_size(LandWidget * self, int w, int h) {
-    self->box.max_width = w;
-    self->box.max_height = h;
-}
-void land_widget_layout_set_shrinking(LandWidget * self, int x, int y) {
-    if (x) {
-        self->box.flags |= GUL_SHRINK_X;
-    }
-    if (y) {
-        self->box.flags |= GUL_SHRINK_Y;
-    }
-    if (self->parent && ! self->parent->no_layout) {
-        land_widget_layout(self);
-    }
-}
-void land_widget_layout_set_expanding(LandWidget * self, int x, int y) {
-    if (x) {
-        self->box.flags &= ~ GUL_SHRINK_X;
-    }
-    if (y) {
-        self->box.flags &= ~ GUL_SHRINK_Y;
-    }
-    if (self->parent) {
-        land_widget_layout(self);
-    }
-}
-void land_widget_layout(LandWidget * self) {
-    if (! self->no_layout) {
-        _land_gul_layout_updated(self);
-    }
-}
-void land_widget_layout_initialize(LandWidget * self, int x, int y, int w, int h) {
-    _land_gul_box_initialize(& self->box);
-    self->box.x = x;
-    self->box.y = y;
-    self->box.w = w;
-    self->box.h = h;
-}
-LandColor platform_color_hsv(float hue, float sat, float val) {
-    LandColor c;
-    al_color_hsv_to_rgb(hue, sat, val, & c.r, & c.g, & c.b);
-    c.a = 1;
-    return c;
-}
-LandColor platform_color_name(char const * name) {
-    LandColor c;
-    al_color_name_to_rgb(name, & c.r, & c.g, & c.b);
-    c.a = 1;
-    return c;
-}
-void land_map_draw(LandMap * self, LandView * view) {
-    /* Render the map using the given ''view''.
-     */
-    LandLayer * layer = self->first_layer;
-    while (layer) {
-        land_layer_draw(layer, view);
-        layer = layer->next_in_map;
-    }
-}
-void land_map_add_layer(LandMap * map, LandLayer * layer) {
-    /* Add another layer to the map, on top of any existing layers.
-     */
-    if (map->first_layer) {
-        LandLayer * l = map->first_layer;
-        while (l->next_in_map) {
-            l = l->next_in_map;
-        }
-        l->next_in_map = layer;
-    }
-    else {
-        map->first_layer = layer;
-    }
-}
-LandLayer* land_map_base_layer(LandMap * map) {
-    /* Returns the base layer of the map.
-     */
-    return map->first_layer;
-}
-LandLayer* land_map_find_layer(LandMap * map, char const * name) {
-    for (LandLayer * l = map->first_layer; l; l = l->next_in_map) {
-        if (! strcmp(name, l->name)) {
-            return l;
-        }
-    }
-    return NULL;
-}
-LandMap* land_map_new(void) {
-    /* Create a new map. This is not called directly normally, as you likely want
-     * to use one of the convenience function to already create layers of the
-     * right type along with it.
-     */
-    LandMap * self;
-    land_alloc(self);
+    land_file_destroy(pf);
     return self;
 }
-void land_map_del(LandMap * self) {
-    /* Destroy a map. This also destroys its layers.
-     */
-    if (self->first_layer) {
-        LandLayer * l = self->first_layer;
-        while (l) {
-            LandLayer * next = l->next_in_map;
-            land_layer_del(l);
-            l = next;
-        }
+bool land_buffer_write_to_file(LandBuffer * self, char const * filename) {
+    LandFile * pf = land_file_new(filename, "w");
+    if (! pf) {
+        return 0;
     }
-    land_free(self);
+    int written = land_file_write(pf, self->buffer, self->n);
+    land_file_destroy(pf);
+    return written == self->n;
 }
-void land_map_destroy(LandMap * self) {
-    /* Same as land_map_del.
-     */
-    land_map_del(self);
+#ifndef LAND_NO_COMPRESS
+void land_buffer_compress(LandBuffer * self) {
+    uLongf destlen = self->n * 1.1 + 12;
+    Bytef * dest = land_malloc(destlen);
+    compress(dest, & destlen, (void *) self->buffer, self->n);
+    dest = land_realloc(dest, destlen);
+    land_free(self->buffer);
+    self->buffer = (void *) dest;
+    self->size = self->n = destlen;
 }
-static int key_state [LandKeysCount];
-static int key_pressed [LandKeysCount];
-static int keybuffer_keycode [256];
-static int keybuffer_unicode [256];
-static int keybuffer_first;
-static int keybuffer_last;
-void land_key_press_event(int k) {
-    if (! key_state [k]) {
-        key_pressed [k]++;
-        key_state [k] = 1;
-    }
-}
-void land_key_release_event(int k) {
-    key_state [k] = 0;
-}
-void land_keyboard_init(void) {
-    ;
-}
-int land_key(int k) {
-    return key_state [k];
-}
-int land_key_pressed(int k) {
-    return key_pressed [k];
-}
-void land_keyboard_tick(void) {
-    int i;
-    for (i = 0; i < LandKeysCount; i++) {
-        key_pressed [i] = 0;
-    }
-    keybuffer_first = 0;
-    keybuffer_last = 0;
-}
-void land_keyboard_add_char(int keycode, int unicode) {
-    if (keybuffer_last == 256) {
+void land_buffer_decompress(LandBuffer * self) {
+    z_stream z;
+    z.zalloc = Z_NULL;
+    z.zfree = Z_NULL;
+    z.opaque = Z_NULL;
+    z.next_in = (void *) self->buffer;
+    z.avail_in = self->n;
+    int err = inflateInit2(& z, 15 | 32);
+    if (err != Z_OK) {
         return ;
     }
-    keybuffer_keycode [keybuffer_last] = keycode;
-    keybuffer_unicode [keybuffer_last] = unicode;
-    keybuffer_last++;
-}
-bool land_keybuffer_empty(void) {
-    return keybuffer_last == keybuffer_first;
-}
-void land_keybuffer_next(int * k, int * u) {
-    if (keybuffer_first < keybuffer_last) {
-        * k = keybuffer_keycode [keybuffer_first];
-        * u = keybuffer_unicode [keybuffer_first];
-        keybuffer_first++;
-    }
-}
-char const* land_key_name(int k) {
-    return platform_key_name(k);
-}
-LandView* land_view_new(int x, int y, int w, int h) {
-    /* Specify the view rectangle on the screen.
-     */
-    LandView * self;
-    land_alloc(self);
-    self->x = x;
-    self->y = y;
-    self->w = w;
-    self->h = h;
-    self->scale_x = 1;
-    self->scale_y = 1;
-    self->r = 1;
-    self->g = 1;
-    self->b = 1;
-    self->a = 1;
-    return self;
-}
-void land_view_destroy(LandView * self) {
-    land_free(self);
-}
-void land_view_scroll(LandView * self, float dx, float dy) {
-    /* Scroll the view by the given amount of screen pixels.
-     */
-    self->scroll_x += dx;
-    self->scroll_y += dy;
-}
-void land_view_scroll_to(LandView * self, float x, float y) {
-    self->scroll_x = x;
-    self->scroll_y = y;
-}
-void land_view_scale(LandView * self, float sx, float sy) {
-    float cx = self->scroll_x + (self->w / 2 / self->scale_x);
-    float cy = self->scroll_y + (self->h / 2 / self->scale_y);
-    self->scale_x *= sx;
-    self->scale_y *= sy;
-    self->scroll_x = cx - (self->w / 2 / self->scale_x);
-    self->scroll_y = cy - (self->h / 2 / self->scale_y);
-}
-void land_view_zoom(LandView * self, float zx, float zy) {
-    land_view_scale(self, zx / self->scale_x, zy / self->scale_y);
-}
-void land_view_scroll_center(LandView * self, float x, float y) {
-    /* Given two absolute map coordinates, make them the center of the view.
-     */
-    self->scroll_x = x - self->w / 2;
-    self->scroll_y = y - self->h / 2;
-}
-void land_view_scroll_center_on_screen(LandView * self, float x, float y) {
-    /* Given an on-screen position, make it the new center of the view.
-     */
-    x -= self->x;
-    y -= self->y;
-    x += self->scroll_x;
-    y += self->scroll_y;
-    land_view_scroll_center(self, x, y);
-}
-void land_view_ensure_visible(LandView * self, float x, float y, float bx, float by) {
-    /* Given an absolute map position, scroll the view so it is not within bx/by
-     * pixels to the view's border.
-     */
-    if (x - self->scroll_x < bx) {
-        self->scroll_x = x - bx;
-    }
-    if (x - self->scroll_x > self->w - bx) {
-        self->scroll_x = x - self->w + bx;
-    }
-    if (y - self->scroll_y < by) {
-        self->scroll_y = y - by;
-    }
-    if (y - self->scroll_y > self->h - by) {
-        self->scroll_y = y - self->h + by;
-    }
-}
-void land_view_ensure_visible_on_screen(LandView * self, float x, float y, float bx, float by) {
-    /* land_view_ensure_visible, but the given position is in screen coordinates.
-     */
-    x -= self->x;
-    y -= self->y;
-    x += self->scroll_x;
-    y += self->scroll_y;
-    land_view_ensure_visible(self, x, y, bx, by);
-}
-void land_view_ensure_inside_grid(LandView * self, LandGrid * grid) {
-    /* For a non-wrapped grid, move the view so it lies within the grid.
-     * For a wrapped grid, where the view always is inside the grid, this function
-     * only normalizes the scroll position to lie within the "first quadrant".
-     */
-    if (grid->wrap) {
-        float cx, cy, sx, sy;
-        land_grid_get_cell_at(grid, self, self->x, self->y, & cx, & cy);
-        self->scroll_x = 0;
-        self->scroll_y = 0;
-        land_grid_get_cell_position(grid, self, cx, cy, & sx, & sy);
-        self->scroll_x = sx - self->x;
-        self->scroll_y = sy - self->y;
-    }
-    else {
-        int w = grid->x_cells * grid->cell_w;
-        int h = grid->y_cells * grid->cell_h;
-        if (self->scroll_x < 0) {
-            self->scroll_x = 0;
+    LandBuffer * temp = land_buffer_new();
+    char * out = malloc(8192);
+    while (1) {
+        z.avail_out = 8192;
+        z.next_out = (void *) out;
+        err = inflate(& z, Z_NO_FLUSH);
+        if (err < 0) {
+            goto break2;
         }
-        if (self->scroll_y < 0) {
-            self->scroll_y = 0;
-        }
-        if (self->scroll_x > w - self->w) {
-            self->scroll_x = w - self->w;
-        }
-        if (self->scroll_y > h - self->h) {
-            self->scroll_y = h - self->h;
+        land_buffer_add(temp, out, 8192 - z.avail_out);
+        if (z.avail_out > 0) {
+            break;
         }
     }
+    break2:;
+    land_free(out);
+    land_free(self->buffer);
+    self->buffer = temp->buffer;
+    self->n = temp->n;
+    temp->buffer = NULL;
+    land_buffer_destroy(temp);
 }
-void land_view_clip(LandView * self) {
-    land_clip(self->x, self->y, self->x + self->w, self->y + self->h);
-}
-void land_view_to_world(LandView * self, float vx, float vy, float * wx, float * wy) {
-    * wx = self->scroll_x + (vx - self->x) / self->scale_x;
-    * wy = self->scroll_y + (vy - self->y) / self->scale_y;
-}
-static LandHash * cache;
-LandColor land_color_hsv(float hue, float sat, float val) {
-    return platform_color_hsv(hue, sat, val);
-}
-LandColor land_color_rgba(float r, float g, float b, float a) {
-    LandColor c = {r, g, b, a};
-    return c;
-}
-LandColor land_color_premul(float r, float g, float b, float a) {
-    LandColor c = {r * a, g * a, b * a, a};
-    return c;
-}
-static int hexval(char c) {
-    c = tolower(c);
-    if (c >= '0' && c <= '9') {
-        return (c - '0');
+#endif
+int land_buffer_compare(LandBuffer * self, LandBuffer * other) {
+    if (self->n < other->n) {
+        return - 1;
     }
-    if (c >= 'a' && c <= 'f') {
-        return 10 + (c - 'a');
+    if (self->n > other->n) {
+        return 1;
     }
-    return 0;
+    return memcmp(self->buffer, other->buffer, self->n);
 }
-LandColor land_color_name(char const * name) {
-    if (name && name [0] == '#') {
-        LandColor c;
-        c.r = (hexval(name [1]) * 16 + hexval(name [2])) / 255.0;
-        c.g = (hexval(name [3]) * 16 + hexval(name [4])) / 255.0;
-        c.b = (hexval(name [5]) * 16 + hexval(name [6])) / 255.0;
-        c.a = 1;
-        return c;
-    }
-    return platform_color_name(name);
-}
-LandColor land_color_lerp(LandColor a, LandColor b, float t) {
-    return land_color_rgba(a.r + t * (b.r - a.r), a.g + t * (b.g - a.g), a.b + t * (b.b - a.b), a.a + t * (b.a - a.a));
-}
-char const* color_bash(char const * x) {
-    /* bash("bright red")
-     * bash("back white")
-     * bash("bold blue back bright green")
-     * bash("end")
-     * Note: The return value remains property of the color module and is
-     * not to be freed.
-     */
-    return bash_mode(x, "3");
-}
-#define CAT(X, Y1, Y2) \
-    if (land_equals(c, X)) { \
-        land_concatenate_with_separator(& m, Y1, ";"); \
-        land_concatenate(& m, Y2); \
-    }
-static char const* bash_mode(char const * x, char const * mode) {
-    if (cache == NULL) {
-        cache = land_hash_new();
-    }
-    char * cached = land_hash_get(cache, x);
-    if (cached) {
-        return cached;
-    }
-    char const * back = strstr(x, "back");
-    if (back) {
-        if (back == x) {
-            return bash_mode(x + 4, "4");
-        }
-        char * x2 = land_substring(x, 0, back - x);
-        char const * fg = bash_mode(x2, "3");
-        char const * bg = bash_mode(back, "4");
-        char * r = land_strdup(fg);
-        land_concatenate(& r, bg);
-        land_free(x2);
-        land_hash_insert(cache, x, r);
-        return r;
-    }
-    char * m = land_strdup("");
-    LandArray * a = land_split(x, ' ');
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(a);
-        for (char * c = LandArrayIterator_item(a, &__iter0__); LandArrayIterator_next(a, &__iter0__); c = LandArrayIterator_item(a, &__iter0__)) {
-            if (land_equals(c, "bright")) {
-                if (land_equals(mode, "3")) {
-                    mode = "9";
-                }
-                else {
-                    mode = "10";
-                }
-            }
-            CAT("bold", "", "1");
-            CAT("black", mode, "0");
-            CAT("red", mode, "1");
-            CAT("green", mode, "2");
-            CAT("yellow", mode, "3");
-            CAT("blue", mode, "4");
-            CAT("magenta", mode, "5");
-            CAT("cyan", mode, "6");
-            CAT("white", mode, "7");
-        }
-    }
-    land_array_destroy_with_strings(a);
-    land_prepend(& m, "\x1b[");
-    land_concatenate(& m, "m");
-    land_hash_insert(cache, x, m);
-    return m;
-}
-#undef CAT
 static bool get_data(LandHash * self, LandHashIterator * i, void * (* data)) {
     if (! self->entries) {
         return 0;
@@ -1170,6 +782,9 @@ static bool get_data(LandHash * self, LandHashIterator * i, void * (* data)) {
         i->i++;
     }
     return 0;
+}
+int land_hash_count(LandHash * self) {
+    return self->count;
 }
 LandHashIterator LandHashIterator_first(LandHash * self) {
     LandHashIterator i = {0, 0};
@@ -1329,7 +944,7 @@ void* land_hash_remove(LandHash * self, char const * thekey) {
     return NULL;
 }
 static LandHashEntry* land_hash_get_entry(LandHash * self, char const * thekey) {
-    if (! self->size) {
+    if (! self->size || ! thekey) {
         return NULL;
     }
     int i = self->hash_function(self, thekey);
@@ -1451,635 +1066,267 @@ void land_hash_print_stats(LandHash * hash) {
     }
     printf("hash stats: %d/%d[%d%%] full, %d/%d[%d%%] used, %d/%d[%d%%] colliding, longest chain is %d.\n", hash->count, hash->size, hash->size ? 100 * hash->count / hash->size : 0, u, hash->size, hash->size ? 100 * u / hash->size : 0, c, hash->count, hash->count ? 100 * c / hash->count : 0, l);
 }
-void* platform_fopen(char const * filename, char const * mode) {
-    #ifdef ANDROID
-    land_log_message("open %s", filename);
-    if (land_starts_with(filename, "/")) {
-        al_set_standard_file_interface();
-        ALLEGRO_FILE * f = al_fopen(filename, mode);
-        al_android_set_apk_file_interface();
-        return f;
+#ifdef LAND_MEMLOG
+#undef land_list_new
+#undef land_list_destroy
+#undef land_add_list_data
+LandList* land_list_new_memlog(char const * f, int l) {
+    LandList * list = land_list_new();
+    land_memory_add(list, "list", 1, f, l);
+    return list;
+}
+void land_list_destroy_memlog(LandList * self, char const * f, int l) {
+    land_memory_remove(self, "list", 1, f, l);
+    land_list_destroy(self);
+}
+void land_add_list_data_memlog(LandList * (* list), void * data, char const * f, int l) {
+    if (* list) {
+        land_memory_remove(* list, "list", 1, f, l);
+        land_add_list_data(list, data);
+        land_memory_add(* list, "list", 1, f, l);
     }
-    #endif
-    ALLEGRO_FILE * f = al_fopen(filename, mode);
-    return f;
-}
-void platform_fclose(void * f) {
-    al_fclose(f);
-}
-int platform_fread(void * f, char * buffer, int bytes) {
-    return al_fread(f, buffer, bytes);
-}
-int platform_fwrite(void * f, char const * buffer, int bytes) {
-    return al_fwrite(f, buffer, bytes);
-}
-void platform_ungetc(void * f, int c) {
-    al_fungetc(f, c);
-}
-int platform_fgetc(void * f) {
-    return al_fgetc(f);
-}
-bool platform_feof(void * f) {
-    return al_feof(f);
-}
-void platform_fseek(void * f, int n) {
-    al_fseek(f, n, ALLEGRO_SEEK_CUR);
-}
-static void add_files(char const * rel, LandArray * (* array), ALLEGRO_FS_ENTRY * entry, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data) {
-    if (! al_open_directory(entry)) {
-        land_log_message("Cannot open directory (%d).\n", al_get_fs_entry_mode(entry) & ALLEGRO_FILEMODE_ISDIR);
-        return ;
-    }
-    while (true) {
-        ALLEGRO_FS_ENTRY * next = al_read_directory(entry);
-        if (! next) {
-            break;
-        }
-        ALLEGRO_PATH * path = al_create_path(al_get_fs_entry_name(next));
-        char const * name = al_get_path_filename(path);
-        if (! name [0]) {
-            name = al_get_path_component(path, - 1);
-        }
-        if (strcmp(name, ".") && strcmp(name, "..")) {
-            bool is_dir = al_get_fs_entry_mode(next) & ALLEGRO_FILEMODE_ISDIR;
-            char rel2 [strlen(rel) + strlen("/") + strlen(name) + 1];
-            strcpy(rel2, rel);
-            strcat(rel2, "/");
-            strcat(rel2, name);
-            char const * fpath;
-            if (flags & LAND_FULL_PATH) {
-                fpath = al_path_cstr(path, '/');
-            }
-            else if (flags & LAND_RELATIVE_PATH) {
-                fpath = rel2;
-            }
-            else {
-                fpath = name;
-            }
-            int f = 3;
-            if (filter) {
-                f = filter(fpath, is_dir, data);
-            }
-            if (f & 1) {
-                if (! (* array)) {
-                    * array = land_array_new();
-                }
-                land_array_add(* array, land_strdup(fpath));
-            }
-            if ((f & 2) && is_dir) {
-                add_files(rel2, array, next, filter, flags, data);
-            }
-        }
-        al_destroy_fs_entry(next);
-        al_destroy_path(path);
-    }
-    al_close_directory(entry);
-}
-LandArray* platform_filelist(char const * dir, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data) {
-    land_log_message("platform_filelist %s\n", dir);
-    ALLEGRO_FS_ENTRY * entry = al_create_fs_entry(dir);
-    LandArray * array = NULL;
-    add_files(dir, & array, entry, filter, flags, data);
-    al_destroy_fs_entry(entry);
-    return array;
-}
-bool platform_is_dir(char const * path) {
-    ALLEGRO_FS_ENTRY * fse = al_create_fs_entry(path);
-    bool r = al_get_fs_entry_mode(fse) & ALLEGRO_FILEMODE_ISDIR;
-    al_destroy_fs_entry(fse);
-    return r;
-}
-bool platform_file_exists(char const * path) {
-    return al_filename_exists(path);
-}
-char* platform_get_save_file(char const * appname, char const * name) {
-    al_set_org_name("");
-    al_set_app_name(appname);
-    ALLEGRO_PATH * path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
-    const char * str = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
-    if (! al_filename_exists(str)) {
-        land_log_message("Creating new settings path %s.\n", str);
-        al_make_directory(str);
-    }
-    al_set_path_filename(path, name);
-    str = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
-    land_log_message("Using save file %s.\n", str);
-    char * dup = land_strdup(str);
-    al_destroy_path(path);
-    return dup;
-}
-char* platform_get_current_directory(void) {
-    char * d = al_get_current_directory();
-    char * dup = land_strdup(d);
-    al_free(d);
-    return dup;
-}
-char* platform_get_data_path(void) {
-    ALLEGRO_PATH * path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-    char * dup = land_strdup(al_path_cstr(path, '/'));
-    al_destroy_path(path);
-    return dup;
-}
-bool platform_remove_file(char const * path) {
-    return al_remove_filename(path);
-}
-    /* ![Land!](logo.png)
-     * ## the name
-     * It has no special meaning, it's just that in computer games, you make
-     * virtual worlds or lands - and that inspired it as use as name for this.
-     * The only limits of this land should be your imagination, not programming
-     * language obstacles. But if you insist, it could also be a recursive
-     * acronym for "Land All New Design".
-     * ## history
-     * Well, I really started working on this version only some days ago. But I
-     * made a library called "land", with the very same goals, about 10-20 years
-     * ago. I actually recovered some files of that, but they require a program
-     * called TASM to work. I actually found a copy of that, and tried to
-     * compile it in dosbox, but still, it wouldn't work. Not that the result
-     * would have been interesting for anyone but me :)
-     * ## what it is
-     * Land is, currently, just a simple framework to assist in creating games,
-     * which will work under Windows, Linux and OSX. As well as some others,
-     * basically everything Allegro/SDL/OpenGL can get to run (currently only
-     * Allegro). It doesn't do a lot, just handle a basic game loop for you.
-     * Some may not want this, since it takes control away. But for beginners,
-     * it may make things somewhat simpler. And especially, and that's the only
-     * thing I care about, for me.
-     * ## features/limitations
-     * - Written in C, preprocessed by a Python-like syntax.
-     * - Automated build process using scons.
-     * - Load images as single files, from directories, from .zip files, from
-     * fixed-grid/transparent/color-keyed sheets.
-     * - Free-form multi-layer tilemaps. The layers use no fixed tile-layout,
-     * you can place there what and where you want. (Of course this includes
-     * classic tiles.)
-     * - Pixel-perfect collision between tilemap-sprite and sprite-sprite,
-     * efficient for 1000ds of objects and huge maps. (The algorithm is to
-     * first check a grid-cash for proximity, then do a bounding-box check,
-     * then pixel-perfect with pre-generated bit-masks.)
-     * - Parallax scrolling with arbitrary amount of layers. Define some of the
-     * tilemap layers to be parallax layers - scrolling is handled by Land.
-     * ## source code
-     * Normally, the split into .c/.cpp and .h files is not a problem, either you
-     * work out the API first in he .h and then implement, or write first the
-     * implementation then derive the .h. But in two cases it is very bad: Designing
-     * a new library, and maintaining a library. In the former, it means you need
-     * to make every interface change at multiple locations. In the latter case it
-     * means, you end up with en entangled mess of headers all over the place.
-     * Therefore, in Land, I ended up using preprocessed files from which .c and .h
-     * files are auto-generated. That way, the source always stays clean and
-     * managable. Looking at the changes of the build process would show how hard it
-     * was to end up at the current system (but a lot of that happened before the code
-     * was stable enough to move to SVN).
-     * ## inheritance and polymorphism
-     * What does the technical inplementation of Land look like, given it is
-     * implemented in C? Well, polymorphism is done by using VTables, similar to e.g.
-     * the Allegro drivers. Inheritance is done by manual aggregation (along with
-     * VTables).
-     * For example, let's say, you want to use a tilemap, but have your own drawing
-     * function called for each tile. Simple create a LandGridInterface object,
-     * replace the ->draw_cell method with your own, and replace the ->vt member of your
-     * LandGrid object with your own LandGridInterface.
-     * TODO: Maybe a macro, something like:
-     * LandGridInterface *my_grid_vtable =
-     * land_override(land_grid_vtable_normal, cell_draw, my_cell_draw);
-     * ## user data
-     * Instead of inheriting your own types, it is much easier to simply attach data to
-     * land types. For example:
-     * int index = land_attach_data(sprite, "mydata", mydata);
-     * or
-     * int index = land_attach_data(sprite, NULL, mydata);
-     * In both cases, you can retrieve the data with:
-     * mydata = land_retrieve_data(sprite, index);
-     * In the first case, also with:
-     * mydata = land_retrieve_named_data(sprite, "mydata")
-     * ## containers
-     * LandList - a doubly linked list of items. Fast insertion and deletion of
-     * items.
-     * LandArray - a dynamically growing array. The number of used and allocated
-     * elements can differ, so can allocate items in advance, or not de-allocate
-     * items in case more are added shortly.
-     * LandQueue - like an array but the items are always kept sorted. Useful
-     * for something like a priority queue or if you want to (heap-)sort some
-     * other container.
-     * LandHash - a mapping of strings to the data. Useful if there are many strings
-     * to look up, in which case this is faster than looping through a list/array.
-     * ## maps, layers, tiles, sprites..
-     * One question still is.. what to do about maximum sprite size? Two brute force
-     * approaches:
-     * - render as much overlap cells that the biggest sprite would be catched
-     * This leaves the solution very high-level.. simply draw a bigger area.
-     * Drawback is possibly drawing more than necessary most of the time.
-     * - add a sprite to every cell it covers.. this is somewhat more complicated,
-     * but can have other advantages as well, like easy collision detection
-     * Another solution would be to have a maximum size of the cell size in each
-     * layer - then simply can group large sprites into a layer with a big enough
-     * cell size. This also would deal with collision detection - a sprite simply can
-     * never be outside of its cell and the adjacent ones.
-     * ## graphics primitives
-     * You can directly use all of Allegro's API, as well as OpenGL. Additionally, with
-     * the time, Land got it's own graphics primitives:
-     * land_color(r, g, b) Sets the color
-     * land_transparency(a) Sets transparency
-     * land_thickness(t) Sets thickness of lines/pixels/rectangles
-     * land_line(x, y, x_, y_) Like the one in Allegro
-     * land_move_to(x, y) Sets the cursor position
-     * land_line_to(x, y) Draws from the current position towards x/y, but not on x/y
-     * itself, and sets the cursor to x/y.
-     * land_line_end(x, y) Like land_line_to, but doesn't change the cursor, and also
-     * draws on x/y.
-     * land_pixel(x, y) Draws a single pixel.
-     * land_clip(x, y, w, h)
-     * How can you draw not to the screen, but into an image?
-     * land_target(image)
-     * So far, the state maintained by a LandDisplay thus is:
-     * - color_r, color_g, color_b, color_a
-     * - thickness
-     * - font
-     * - text_x, text_y
-     * - target
-     * - clip_x, clip_y, clip_w, clip_h
-     * ## The land song
-     * + lalalala-land
-     * + Land is "Land All New Design"
-     * + so new so shiny so well designed
-     * + lalalala-land
-     * + Land in sight!
-     * + lalalala-land
-     * + lalalalalala-land
-     * + lal-land
-     * (this chapter is all the progress I made when I tried to work on it drunk)
-     */
-static char const * _version = "1.0.0";
-char const* land_version(void) {
-    return _version;
-}
-static LandArray * exit_functions;
-static int _exitcode;
-void land_without_main(void(* cb)(void)) {
-    platform_without_main(cb);
-}
-void land_set_exitcode(int code) {
-    _exitcode = code;
-}
-int land_get_exitcode(void) {
-    return _exitcode;
-}
-void land_exit_function(void(* function)(void)) {
-    land_array_add_data(& exit_functions, function);
-}
-void land_exit_functions(void) {
-    int i, n = land_array_count(exit_functions);
-    for (i = n - 1; i >= 0; i--) {
-        void(* function)(void) = land_array_get_nth(exit_functions, i);
-        function();
-    }
-    land_array_destroy(exit_functions);
-}
-void land_wait(double seconds) {
-    platform_wait(seconds);
-}
-int land_argc;
-char * (* land_argv);
-LandRunner * shortcut_runner;
-#define N LAND_RANDOM_N
-#define M 397
-#define MATRIX_A 0x9908b0dfUL
-#define UPPER_MASK 0x80000000UL
-#define LOWER_MASK 0x7fffffffUL
-static LandRandom default_state = {.mti = N + 1};
-static void init_genrand(LandRandom * r, unsigned long s) {
-    r->mt [0] = s & 0xffffffffUL;
-    for (r->mti = 1; r->mti < N; r->mti++) {
-        r->mt [r->mti] = (1812433253UL * (r->mt [r->mti - 1] ^ (r->mt [r->mti - 1] >> 30)) + r->mti);
-        r->mt [r->mti] &= 0xffffffffUL;
+    else {
+        * list = land_list_new_memlog(f, l);
+        land_add_list_data(list, data);
     }
 }
-static unsigned long genrand_int32(LandRandom * r) {
-    unsigned long y;
-    static const unsigned long mag01 [2] = {0x0UL, MATRIX_A};
-    if (r->mti >= N) {
-        int kk;
-        if (r->mti == N + 1) {
-            init_genrand(r, 5489UL);
-        }
-        for (kk = 0; kk < N - M; kk++) {
-            y = (r->mt [kk] & UPPER_MASK) | (r->mt [kk + 1] & LOWER_MASK);
-            r->mt [kk] = r->mt [kk + M] ^ (y >> 1) ^ mag01 [y & 0x1UL];
-        }
-        for (; kk < N - 1; kk++) {
-            y = (r->mt [kk] & UPPER_MASK) | (r->mt [kk + 1] & LOWER_MASK);
-            r->mt [kk] = r->mt [kk + (M - N)] ^ (y >> 1) ^ mag01 [y & 0x1UL];
-        }
-        y = (r->mt [N - 1] & UPPER_MASK) | (r->mt [0] & LOWER_MASK);
-        r->mt [N - 1] = r->mt [M - 1] ^ (y >> 1) ^ mag01 [y & 0x1UL];
-        r->mti = 0;
+#endif
+LandListIterator LandListIterator_first(LandList * a) {
+    LandListIterator i = {a->first};
+    return i;
+}
+void* LandListIterator_item(LandList * a, LandListIterator * i) {
+    return i->i ? i->i->data : NULL;
+}
+bool LandListIterator_next(LandList * a, LandListIterator * i) {
+    if (i->i) {
+        i->i = i->i->next;
+        return 1;
     }
-    y = r->mt [r->mti++];
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
-    return y;
+    return 0;
 }
-#define MAX_NUMBER 4294967295U
-void land_seed(int seed) {
-    init_genrand(& default_state, seed);
-}
-double land_rnd(double rmin, double rmax) {
-    /* Random value in the half-open interval [min, max[, that is min is inclusive
-     * but max is exclusive.
-     */
-    if (rmin >= rmax) {
-        return rmin;
-    }
-    return rmin + ((double) genrand_int32(& default_state) / MAX_NUMBER) * (rmax - rmin);
-}
-int land_rand(int rmin, int rmax) {
-    if (rmin >= rmax) {
-        return rmin;
-    }
-    int64_t d = rmax;
-    d++;
-    d -= rmin;
-    return rmin + genrand_int32(& default_state) % d;
-}
-LandRandom* land_random_new(int seed) {
-    LandRandom * self;
+LandList* land_list_new(void) {
+    LandList * self;
     land_alloc(self);
-    init_genrand(self, seed);
     return self;
 }
-void land_random_del(LandRandom * self) {
+void land_list_clear(LandList * list) {
+    LandListItem * item = list->first;
+    while (item) {
+        LandListItem * next = item->next;
+        land_listitem_destroy(item);
+        item = next;
+    }
+    list->first = NULL;
+    list->last = NULL;
+    list->count = 0;
+}
+void land_list_destroy(LandList * list) {
+    land_list_clear(list);
+    land_free(list);
+}
+LandListItem* land_listitem_new(void * data) {
+    LandListItem * self;
+    land_alloc(self);
+    self->data = data;
+    return self;
+}
+void land_listitem_destroy(LandListItem * self) {
     land_free(self);
 }
-int land_random(LandRandom * r, int rmin, int rmax) {
-    if (rmin >= rmax) {
-        return rmin;
+void land_list_insert_item(LandList * list, LandListItem * item) {
+    item->next = NULL;
+    item->prev = list->last;
+    if (list->last) {
+        list->last->next = item;
     }
-    int64_t d = rmax;
-    d++;
-    d -= rmin;
-    return rmin + genrand_int32(r) % d;
-}
-#undef N
-#undef M
-#undef MATRIX_A
-#undef UPPER_MASK
-#undef LOWER_MASK
-#undef MAX_NUMBER
-static void* _get(LandIniSection * s, char const * key) {
-    LandIniEntry * e = land_hash_get(s->lookup, key);
-    if (e) {
-        return e->val;
+    else {
+        list->first = item;
     }
-    return NULL;
+    list->last = item;
+    list->count++;
 }
-static void _add(LandIniSection * s, char const * key, void * val) {
-    LandIniEntry * e = land_hash_get(s->lookup, key);
-    if (e) {
-        land_free(e->val);
-        e->val = val;
-        return ;
-    }
-    e = land_calloc(sizeof (* e));
-    e->key = land_strdup(key);
-    e->val = val;
-    land_array_add(s->entries, e);
-    land_hash_insert(s->lookup, key, e);
-}
-static void _del(LandIniSection * s) {
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(s->entries);
-        for (LandIniEntry * e = LandArrayIterator_item(s->entries, &__iter0__); LandArrayIterator_next(s->entries, &__iter0__); e = LandArrayIterator_item(s->entries, &__iter0__)) {
-            land_free(e->key);
-            if (e->val) {
-                land_free(e->val);
-            }
-            land_free(e);
+void land_list_insert_item_before(LandList * list, LandListItem * insert, LandListItem * before) {
+    if (before) {
+        insert->next = before;
+        insert->prev = before->prev;
+        if (before->prev) {
+            before->prev->next = insert;
         }
-    }
-    land_array_destroy(s->entries);
-    land_hash_destroy(s->lookup);
-    land_free(s);
-}
-static LandIniSection* _new(void) {
-    LandIniSection * s = land_calloc(sizeof (* s));
-    s->lookup = land_hash_new();
-    s->entries = land_array_new();
-    return s;
-}
-void land_ini_set_string(LandIniFile * ini, char const * section, char const * key, char const * val) {
-    LandIniSection * s = _get(ini->sections, section);
-    if (! s) {
-        s = _new();
-        _add(ini->sections, section, s);
-    }
-    _add(s, key, val ? land_strdup(val) : NULL);
-}
-void land_ini_set_int(LandIniFile * ini, char const * section, char const * key, int val) {
-    char temp [100];
-    snprintf(temp, sizeof temp, "%d", val);
-    land_ini_set_string(ini, section, key, temp);
-}
-char const* land_ini_get_string(LandIniFile * ini, char const * section, char const * key, char const * de) {
-    LandIniSection * s = _get(ini->sections, section);
-    if (! s) {
-        return de;
-    }
-    char * v = _get(s, key);
-    if (v) {
-        return v;
-    }
-    return de;
-}
-int land_ini_get_int(LandIniFile * ini, char const * section, char const * key, int de) {
-    char const * s = land_ini_get_string(ini, section, key, NULL);
-    if (s == NULL) {
-        return de;
-    }
-    return strtol(s, NULL, 0);
-}
-int land_ini_get_number_of_entries(LandIniFile * ini, char const * section) {
-    LandIniSection * s = ini->sections;
-    if (! s) {
-        return 0;
-    }
-    if (section) {
-        s = _get(s, section);
-        if (! s) {
-            return 0;
+        else {
+            list->first = insert;
         }
+        before->prev = insert;
+        list->count++;
     }
-    return land_array_count(s->entries);
+    else {
+        land_list_insert_item(list, insert);
+    }
 }
-char const* land_ini_get_nth_entry(LandIniFile * ini, char const * section, int i) {
-    /* Get the n-th entry of an ini section. If section is None get the
-     * n-th section instead.
+void land_list_remove_item(LandList * list, LandListItem * item) {
+    if (item->prev) {
+        item->prev->next = item->next;
+    }
+    else {
+        list->first = item->next;
+    }
+    if (item->next) {
+        item->next->prev = item->prev;
+    }
+    else {
+        list->last = item->prev;
+    }
+    list->count--;
+}
+void land_add_list_data(LandList * (* list), void * data) {
+    LandListItem * item = land_listitem_new(data);
+    if (! (* list)) {
+        * list = land_list_new();
+    }
+    land_list_insert_item(* list, item);
+}
+void land_remove_list_data(LandList * (* list), void * data) {
+    LandListItem * item = (* list)->first;
+    while (item) {
+        LandListItem * next = item->next;
+        if (item->data == data) {
+            land_list_remove_item(* list, item);
+            land_listitem_destroy(item);
+            return ;
+        }
+        item = next;
+    }
+}
+LandFloat land_constrain(LandFloat * v, LandFloat v_min, LandFloat v_max) {
+    if (* v < v_min) {
+        * v = v_min;
+    }
+    if (* v > v_max) {
+        * v = v_max;
+    }
+    return * v;
+}
+float land_constrainf(float v, float v_min, float v_max) {
+    if (v < v_min) {
+        v = v_min;
+    }
+    if (v > v_max) {
+        v = v_max;
+    }
+    return v;
+}
+int land_mod(int x, int d) {
+    /* Version of % that always is positive.
      */
-    LandIniSection * s = ini->sections;
-    if (section) {
-        s = _get(s, section);
+    x %= d;
+    if (x < 0) {
+        x += d;
     }
-    LandIniEntry * e = land_array_get_nth(s->entries, i);
-    return e->key;
+    return x;
 }
-static bool is_whitespace(char c) {
-    if (c == ' ' || c == '\t' || c == '\n') {
-        return true;
+int land_div(int x, int d) {
+    /* Version of / that rounds to negative infinity for negative numbers.
+     */
+    if (x < 0) {
+        x -= d - 1;
     }
-    return false;
+    x /= d;
+    return x;
 }
-#define addc(var, len) \
-    var [len] = c; \
-    if (len < (int) sizeof (var) - 1) { \
-        len++; \
-    } \
-    var [len] = '\0';
-enum State {
-    OUTSIDE,
-    SECTION,
-    KEY,
-    EQUALS,
-    VALUE,
-    COMMENT
-};
-LandIniFile* land_ini_read(char const * filename) {
-    char section_name [1024] = "", key_name [1024] = "", value [1024] = "";
-    int slen = 0, klen = 0, vlen = 0;
-    State state = OUTSIDE;
-    LandIniFile * ini = land_calloc(sizeof (* ini));
-    ini->filename = land_strdup(filename);
-    ini->sections = _new();
-    LandFile * f = land_file_new(filename, "rb");
-    if (! f) {
-        return ini;
+    /* Simple helper object for maintaining a vertex/fragment shader combination
+     * with GLSL.
+     */
+static void shader_setup(LandGLSLShader * self, char const * name, char const * vertex_glsl, char const * fragment_glsl) {
+    if (name) {
+        self->name = land_strdup(name);
     }
-    int done = 0;
-    while (! done) {
-        int c = land_file_getc(f);
-        if (c == EOF) {
-            done = 1;
-            c = '\n';
-        }
-        if (c == '\r') {
-            continue;
-        }
-        if (state == OUTSIDE) {
-            if (c == '[') {
-                slen = 0;
-                state = SECTION;
-            }
-            else if (c == '#') {
-                state = COMMENT;
-            }
-            else if (! is_whitespace(c)) {
-                klen = 0;
-                addc(key_name, klen);
-                state = KEY;
-            }
-        }
-        else if (state == SECTION) {
-            if (c == ']' || c == '\n') {
-                state = OUTSIDE;
-            }
-            else {
-                addc(section_name, slen);
-            }
-        }
-        else if (state == KEY) {
-            if (c == '\n') {
-                state = OUTSIDE;
-            }
-            else if (c == '=') {
-                state = EQUALS;
-            }
-            else if (! is_whitespace(c)) {
-                addc(key_name, klen);
-            }
-        }
-        else if (state == EQUALS) {
-            if (c == '\n') {
-                value [0] = 0;
-                goto got_value;
-            }
-            if (c == '\n' || ! is_whitespace(c)) {
-                state = VALUE;
-                vlen = 0;
-                addc(value, vlen);
-            }
-        }
-        else if (state == VALUE) {
-            if (c == '\n') {
-                got_value:;
-                land_ini_set_string(ini, section_name, key_name, value);
-                state = OUTSIDE;
-            }
-            else {
-                addc(value, vlen);
-            }
-        }
-        else if (state == COMMENT) {
-            if (c == '\n') {
-                state = OUTSIDE;
+    else {
+        name = self->name;
+    }
+    if (vertex_glsl) {
+        self->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(self->vertex_shader, 1, & vertex_glsl, NULL);
+        glCompileShader(self->vertex_shader);
+        GLint success;
+        glGetShaderiv(self->vertex_shader, GL_COMPILE_STATUS, & success);
+        land_log_message("%s: Vertex Shader compilation %s.\n", name, success ? "succeeded" : "failed");
+        if (1) {
+            int size;
+            glGetShaderiv(self->vertex_shader, GL_INFO_LOG_LENGTH, & size);
+            char error [size];
+            glGetShaderInfoLog(self->vertex_shader, size, & size, error);
+            if (size) {
+                land_log_message("%s: Vertex Shader %s:\n%s\n", name, success ? "Warning" : "Error", error);
             }
         }
     }
-    land_file_destroy(f);
-    return ini;
-}
-LandIniFile* land_ini_new(char const * filename) {
-    LandIniFile * ini = land_calloc(sizeof (* ini));
-    ini->filename = land_strdup(filename);
-    ini->sections = _new();
-    return ini;
-}
-void land_ini_destroy(LandIniFile * ini) {
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(ini->sections->entries);
-        for (LandIniEntry * e = LandArrayIterator_item(ini->sections->entries, &__iter0__); LandArrayIterator_next(ini->sections->entries, &__iter0__); e = LandArrayIterator_item(ini->sections->entries, &__iter0__)) {
-            LandIniSection * s = e->val;
-            _del(s);
-            e->val = NULL;
-        }
-    }
-    _del(ini->sections);
-    land_free(ini->filename);
-    land_free(ini);
-}
-void land_ini_writeback(LandIniFile * ini) {
-    FILE * f = fopen(ini->filename, "wb");
-    if (! f) {
-        return ;
-    }
-    LandIniSection * ss = ini->sections;
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(ss->entries);
-        for (LandIniEntry * es = LandArrayIterator_item(ss->entries, &__iter0__); LandArrayIterator_next(ss->entries, &__iter0__); es = LandArrayIterator_item(ss->entries, &__iter0__)) {
-            LandIniSection * s = es->val;
-            char * name = es->key;
-            if (name && name [0]) {
-                fprintf(f, "[%s]\n", name);
-            }
-            {
-                LandArrayIterator __iter1__ = LandArrayIterator_first(s->entries);
-                for (LandIniEntry * e = LandArrayIterator_item(s->entries, &__iter1__); LandArrayIterator_next(s->entries, &__iter1__); e = LandArrayIterator_item(s->entries, &__iter1__)) {
-                    if (e->val) {
-                        fprintf(f, "%s = %s\n", e->key, (char *) e->val);
-                    }
-                }
+    if (fragment_glsl) {
+        self->fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(self->fragment_shader, 1, & fragment_glsl, NULL);
+        glCompileShader(self->fragment_shader);
+        GLint success;
+        glGetShaderiv(self->fragment_shader, GL_COMPILE_STATUS, & success);
+        if (1) {
+            int size;
+            glGetShaderiv(self->fragment_shader, GL_INFO_LOG_LENGTH, & size);
+            char error [size];
+            glGetShaderInfoLog(self->fragment_shader, size, & size, error);
+            if (size) {
+                land_log_message("%s: Fragment Shader %s:\n%s\n", name, success ? "Warning" : "Error", error);
             }
         }
     }
-    fclose(f);
+    if (! self->program_object) {
+        self->program_object = glCreateProgram();
+    }
+    if (self->fragment_shader) {
+        glAttachShader(self->program_object, self->fragment_shader);
+    }
+    if (self->vertex_shader) {
+        glAttachShader(self->program_object, self->vertex_shader);
+    }
+    if (self->fragment_shader && self->vertex_shader) {
+        glLinkProgram(self->program_object);
+        GLint success;
+        glGetProgramiv(self->program_object, GL_LINK_STATUS, & success);
+        if (1) {
+            int size;
+            glGetProgramiv(self->program_object, GL_INFO_LOG_LENGTH, & size);
+            char error [size];
+            glGetProgramInfoLog(self->program_object, size, & size, error);
+            if (size) {
+                land_log_message("%s: Shader Link Error:\n%s\n", name, error);
+            }
+        }
+    }
 }
-LandIniFile* land_ini_app_settings(char const * appname) {
-    char * name = platform_get_app_settings_file(appname);
-    LandIniFile * ini = land_ini_read(name);
-    land_free(name);
-    return ini;
+static void shader_cleanup(LandGLSLShader * self) {
+    land_free(self->name);
+    if (self->program_object) {
+        glDeleteProgram(self->program_object);
+        glDeleteShader(self->vertex_shader);
+        glDeleteShader(self->fragment_shader);
+    }
 }
-#undef addc
+LandGLSLShader* land_glsl_shader_new(char const * name, char const * vertex_glsl, char const * fragment_glsl) {
+    LandGLSLShader * self;
+    land_alloc(self);
+    shader_setup(self, name, vertex_glsl, fragment_glsl);
+    return self;
+}
+LandGLSLShader* land_glsl_shader_new_empty(char const * name) {
+    LandGLSLShader * self;
+    land_alloc(self);
+    shader_setup(self, name, NULL, NULL);
+    return self;
+}
+void land_glsl_shader_set_shaders(LandGLSLShader * self, char const * vertex_glsl, char const * fragment_glsl) {
+    shader_setup(self, NULL, vertex_glsl, fragment_glsl);
+}
+void land_glsl_shader_destroy(LandGLSLShader * self) {
+    shader_cleanup(self);
+    land_free(self);
+}
 static char * prefix;
 LandFile* land_file_new(char const * path, char const * mode) {
     char * path2;
@@ -2091,7 +1338,7 @@ LandFile* land_file_new(char const * path, char const * mode) {
     }
     void * f = platform_fopen(path2, mode);
     if (! f) {
-        land_log_message("Opening file %s (%s) failed.", path2, mode);
+        land_log_message("Opening file %s (%s) failed.\n", path2, mode);
         land_free(path2);
         return NULL;
     }
@@ -2136,6 +1383,9 @@ int land_file_fputs(LandFile * self, char const * string) {
 int land_file_getc(LandFile * self) {
     return platform_fgetc(self->f);
 }
+void land_file_putc(LandFile * self, int x) {
+    return platform_fputc(self->f, x);
+}
 void land_file_ungetc(LandFile * self, int c) {
     platform_ungetc(self->f, c);
 }
@@ -2151,6 +1401,16 @@ uint32_t land_file_get32le(LandFile * self) {
     uint32_t c = platform_fgetc(self->f);
     uint32_t d = platform_fgetc(self->f);
     return a | (b << 8) | (c << 16) | (d << 24);
+}
+void land_file_put32le(LandFile * self, uint32_t x) {
+    uint32_t a = x & 255;
+    uint32_t b = (x >> 8) & 255;
+    uint32_t c = (x >> 16) & 255;
+    uint32_t d = x >> 24;
+    platform_fputc(self->f, a);
+    platform_fputc(self->f, b);
+    platform_fputc(self->f, c);
+    platform_fputc(self->f, d);
 }
 uint16_t land_file_get16le(LandFile * self) {
     uint16_t a = platform_fgetc(self->f);
@@ -2188,6 +1448,9 @@ char* land_get_data_path(void) {
     return platform_get_data_path();
 }
 char* land_path_with_prefix(char const * name) {
+    if (name && name [0] == '/') {
+        return land_strdup(name);
+    }
     int n = strlen(name);
     if (prefix) {
         n += strlen(prefix);
@@ -2206,6 +1469,7 @@ char* land_path_with_prefix(char const * name) {
 void land_set_prefix(char const * path) {
     if (! path) {
         land_free(prefix);
+        prefix = NULL;
         land_log_message("Prefix unset.\n");
     }
     else {
@@ -2244,659 +1508,12 @@ char* land_replace_filename(char const * path, char const * name) {
 bool land_file_remove(char const * path) {
     return platform_remove_file(path);
 }
-#define LOG_COLOR_STATS 0
-extern LandDataFile * _land_datafile;
-static void(* _cb)(char const * path, LandImage * image);
-static int bitmap_count, bitmap_memory;
-void land_image_set_callback(void(* cb)(char const * path, LandImage * image)) {
-    _cb = cb;
+int64_t land_file_time(char const * path) {
+    return platform_file_time(path);
 }
-static LandImage* _load(char const * filename, bool mem) {
-    LandImage * self;
-    char * path = land_path_with_prefix(filename);
-    land_log_message("land_image_load %s..", path);
-    self = platform_image_load(path, mem);
-    land_free(path);
-    bitmap_count++;
-    _load2(self);
-    return self;
+char* land_user_data_path(char const * app, char const * path) {
+    return platform_get_app_data_file(app, path);
 }
-static void _load2(LandImage * self) {
-    if (self->flags & LAND_LOADED) {
-        int w = land_image_width(self);
-        int h = land_image_height(self);
-        land_log_message_nostamp("success (%d x %d)\n", w, h);
-        if (self->flags & LAND_IMAGE_CENTER) {
-            land_image_center(self);
-        }
-        if (self->flags & LAND_AUTOCROP) {
-            land_image_auto_crop(self);
-        }
-        if (! (self->flags & LAND_IMAGE_MEMORY)) {
-            land_image_prepare(self);
-        }
-        land_log_message("prepared l=%.0f, t=%.0f, r=%.0f, b=%.0f\n", self->l, self->t, self->r, self->b);
-        #ifdef LOG_COLOR_STATS
-        float red = 0, green = 0, blue = 0, alpha = 0;
-        int n = 1;
-        n = land_image_color_stats(self, & red, & green, & blue, & alpha);
-        land_log_message(" (%.2f|%.2f|%.2f|%.2f).\n", red / n, green / n, blue / n, alpha / n);
-        #endif
-        bitmap_memory += w * h * 4;
-        land_log_message(" %d bitmaps (%.1fMB).\n", bitmap_count, bitmap_memory / 1024.0 / 1024.0);
-    }
-    else {
-        land_log_message_nostamp("failure\n");
-    }
-    if (_cb) {
-        _cb(self->filename, self);
-    }
-}
-LandImage* land_image_load(char const * filename) {
-    return _load(filename, 0);
-}
-LandImage* land_image_load_memory(char const * filename) {
-    return _load(filename, 1);
-}
-LandImage* land_image_new_deferred(char const * filename) {
-    LandImage * self = land_image_new(0, 0);
-    self->filename = land_path_with_prefix(filename);
-    return self;
-}
-bool land_image_load_on_demand(LandImage * self) {
-    if (self->flags & LAND_LOADED) {
-        return 0;
-    }
-    if (self->flags & LAND_FAILED) {
-        return 0;
-    }
-    land_log_message("land_image_load_on_demand %s..", self->filename);
-    platform_image_load_on_demand(self);
-    _load2(self);
-    return 1;
-}
-LandImage* land_image_memory_new(int w, int h) {
-    /* Creates a new image. If w or h are 0, the image will have no contents at
-     * all (this can be useful if the contents are to be added later).
-     * The image will always be a simple memory rectangle of pixels, with no
-     * driver specific optimizations.
-     */
-    assert(0);
-    return NULL;
-}
-LandImage* land_image_new(int w, int h) {
-    /* Creates a new image. If w and h are 0, the image will have no contents at
-     * all (this can be useful if the contents are to be added later).
-     */
-    LandImage * self = land_display_new_image();
-    self->width = w;
-    self->height = h;
-    if (w || h) {
-        platform_image_empty(self);
-    }
-    bitmap_count++;
-    bitmap_memory += w * h * 4;
-    return self;
-}
-LandImage* land_image_create(int w, int h) {
-    /* Like land_image_new, but clears the image to all 0 initially.
-     */
-    LandImage * self = land_display_new_image();
-    self->width = w;
-    self->height = h;
-    platform_image_empty(self);
-    bitmap_count++;
-    bitmap_memory += w * h * 4;
-    return self;
-}
-void land_image_del(LandImage * self) {
-    if (! self) {
-        return ;
-    }
-    if (! (self->flags & LAND_SUBIMAGE)) {
-        land_image_destroy_pixelmasks(self);
-        if (self->name) {
-            land_free(self->name);
-        }
-        if (self->filename && self->filename != self->name) {
-            land_free(self->filename);
-        }
-        bitmap_count--;
-        bitmap_memory -= self->width * self->height * 4;
-    }
-    land_display_del_image(self);
-}
-void land_image_destroy(LandImage * self) {
-    land_image_del(self);
-}
-void land_image_crop(LandImage * self, int x, int y, int w, int h) {
-    /* Crops an image to the specified rectangle. All image contents outside the
-     * rectangle will be lost. You can also use this to make an image larger, in
-     * which case the additional borders are filled with transparency. The offset
-     * need not lie within the image.
-     */
-    if (self->width == w && self->height == h && x == 0 && y == 0) {
-        return ;
-    }
-    platform_image_crop(self, x, y, w, h);
-}
-void land_image_auto_crop(LandImage * self) {
-    /* This will optimize an image by cropping away any completely transparent
-     * borders it may have.
-     */
-    int w = land_image_width(self);
-    int h = land_image_height(self);
-    unsigned char * rgba = land_malloc(w * h * 4);
-    land_image_get_rgba_data(self, rgba);
-    int mini = w;
-    int maxi = - 1;
-    int minj = h;
-    int maxj = - 1;
-    for (int j = 0; j < h; j++) {
-        uint32_t * row = (void *)(rgba + j * w * 4);
-        for (int i = 0; i < w; i++) {
-            if (row [i] & 0xff000000) {
-                if (i < mini) {
-                    mini = i;
-                }
-                if (i > maxi) {
-                    maxi = i;
-                }
-                if (j < minj) {
-                    minj = j;
-                }
-                if (j > maxj) {
-                    maxj = j;
-                }
-            }
-        }
-    }
-    land_free(rgba);
-    if (maxi == - 1) {
-        mini = maxi = minj = maxj = 0;
-    }
-    self->l = mini;
-    self->t = minj;
-    self->r = w - 1 - maxi;
-    self->b = h - 1 - maxj;
-}
-LandImage* land_image_new_from(LandImage * copy, int x, int y, int w, int h) {
-    /* Create a new image, copying pixel data from a rectangle in an existing
-     * image.
-     */
-    land_log_message("land_image_new_from %s..", copy->name);
-    LandImage * self = land_image_new(w, h);
-    land_set_image_display(self);
-    land_blend(LAND_BLEND_SOLID);
-    land_image_draw_partial(copy, copy->x, copy->y, x, y, w, h);
-    land_unset_image_display();
-    land_log_message_nostamp("success (%d x %d)\n", w, h);
-    #ifdef LOG_COLOR_STATS
-    float red, green, blue, alpha;
-    int n;
-    n = land_image_color_stats(self, & red, & green, & blue, & alpha);
-    land_log_message(" (%.2f|%.2f|%.2f|%.2f).\n", red / n, green / n, blue / n, alpha / n);
-    #endif
-    land_log_message(" %d bitmaps (%.1fMB).\n", bitmap_count, bitmap_memory / 1024.0 / 1024.0);
-    return self;
-}
-int land_image_color_stats(LandImage * self, float * red, float * green, float * blue, float * alpha) {
-    /* Returns the number of pixels in the image, and the average red, green, blue
-     * and alpha component.
-     */
-    int n = 0;
-    int w = land_image_width(self);
-    int h = land_image_height(self);
-    * red = 0;
-    * green = 0;
-    * blue = 0;
-    * alpha = 0;
-    unsigned char * rgba = land_malloc(w * h * 4);
-    land_image_get_rgba_data(self, rgba);
-    int p = 0;
-    for (int j = 0; j < h; j++) {
-        for (int i = 0; i < w; i++) {
-            * red += rgba [p++] * 1.0 / 255.0;
-            * green += rgba [p++] * 1.0 / 255.0;
-            * blue += rgba [p++] * 1.0 / 255.0;
-            * alpha += rgba [p++] * 1.0 / 255.0;
-            n++;
-        }
-    }
-    land_free(rgba);
-    return n;
-}
-void land_image_color_replace(LandImage * self, int r255, int g255, int b255, int a255, int _r255, int _g255, int _b255, int _a255) {
-    /* Replaces a color with another.
-     */
-    assert(0);
-}
-void land_image_colorkey(LandImage * self, int r255, int g255, int b255) {
-    /* Replaces all pixels in the image matching the given RGB triplet (in 0..255
-     * format) with full transparency.
-     */
-    assert(0);
-}
-void land_image_colorkey_hack(LandImage * self, int allegro_color) {
-    /* Like land_image_colorkey, but even more hackish, you directly specify
-     * the color in Allegro's format. The only use for this is if you load
-     * paletted pictures and want to colorkey by index.
-     */
-    assert(0);
-}
-void land_image_colorize(LandImage * self, LandImage * colormask) {
-    /* Colorizes the part of the image specified by the mask with the current
-     * color. The mask uses (1, 0, 1) for transparent, and the intensity is
-     * otherwise used as intensity of the replacement color.
-     */
-    assert(0);
-}
-void land_image_colorize_replace(LandImage * self, int n, int * rgb) {
-    /* This takes a list of colors and replaces all colors in the image
-     * corresponding to one of them with the current color.
-     * The colors use integer 0..255 format, since exact comparison with
-     * the usual floating point colors would be difficult otherwise. The
-     * array ''rgb'' should have 3 * n integers, consisting of consecutive
-     * R, G, B triplets to replace.
-     * The first rgb triplet has a special meaning - it determines the image color
-     * which is mapped to the current color. All matching colors with a larger
-     * rgb sum then are mapped to a color between the first color and pure weight,
-     * depending on their rgb sum. All colors with a smaller rgb sum are mapped
-     * to a range from total black to the first color.
-     */
-    int w = land_image_width(self);
-    int h = land_image_height(self);
-    unsigned char rgba [w * h * 4];
-    land_image_get_rgba_data(self, rgba);
-    unsigned char * p = rgba;
-    float fr, fg, fb, fa;
-    land_get_color(& fr, & fg, & fb, & fa);
-    int red = fr * 255;
-    int green = fg * 255;
-    int blue = fb * 255;
-    int base_red = rgb [0];
-    int base_green = rgb [1];
-    int base_blue = rgb [2];
-    int base_sum = base_red + base_green + base_blue;
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
-            int r = * (p + 0);
-            int g = * (p + 1);
-            int b = * (p + 2);
-            for (int i = 0; i < n; i++) {
-                if (rgb [i * 3 + 0] == r && rgb [i * 3 + 1] == g && rgb [i * 3 + 2] == b) {
-                    int sum = r + g + b;
-                    int nr, ng, nb;
-                    if (sum <= base_sum) {
-                        nr = red * sum / base_sum;
-                        ng = green * sum / base_sum;
-                        nb = blue * sum / base_sum;
-                    }
-                    else {
-                        int isum = 255 * 3 - sum;
-                        int ibase_sum = 255 * 3 - base_sum;
-                        nr = 255 - (255 - red) * isum / ibase_sum;
-                        ng = 255 - (255 - green) * isum / ibase_sum;
-                        nb = 255 - (255 - blue) * isum / ibase_sum;
-                    }
-                    * (p + 0) = nr;
-                    * (p + 1) = ng;
-                    * (p + 2) = nb;
-                }
-            }
-            p += 4;
-        }
-    }
-    land_image_set_rgba_data(self, rgba);
-    land_image_prepare(self);
-}
-LandImage* land_image_split_mask_from_colors(LandImage * self, int n_rgb, int * rgb) {
-    /* Takes the same parameters as land_image_colorize_replace - but instead of
-     * recoloring the image itself, creates a separate image of the same size,
-     * which is transparent except where mask colors have been found in the
-     * given image. Here, it is colored in graylevels with the intensity
-     * corresponding to the mask colors. In the original image, all mask colors
-     * are replaced by transparency.
-     * The use of this function is to always draw the mask over the original
-     * image, but tint the white mask to other colors.
-     */
-    assert(0);
-}
-void land_image_prepare(LandImage * self) {
-    /* This is used to convert image data into a device dependent format, which
-     * is used to display the image (instead of the raw R/G/B/A values). Usually
-     * this is not needed, but it can be useful for certain optimizations, where
-     * the automatic synchronization is circumvented.
-     */
-    platform_image_prepare(self);
-}
-static int callback(const char * filename, int attrib, void * param) {
-    LandArray * (* filenames) = param;
-    land_array_add_data(filenames, land_strdup(filename));
-    return 0;
-}
-static int compar(void const * a, void const * b) {
-    char * an = * (char * *) a;
-    char * bn = * (char * *) b;
-    return strcmp(an, bn);
-}
-static int filter(char const * name, bool is_dir, void * data) {
-    char const * pattern = data;
-    if (is_dir) {
-        return 2;
-    }
-    if (land_fnmatch(pattern, name)) {
-        return 1;
-    }
-    return 0;
-}
-LandArray* land_load_images_cb(char const * pattern, void(* cb)(LandImage * image, void * data), void * data) {
-    /* Load all images matching the file name pattern, and create an array
-     * referencing them all, in alphabetic filename order. The callback function
-     * is called on each image along the way.
-     */
-    LandBuffer * dirbuf = land_buffer_new();
-    int j = 0;
-    for (int i = 0; pattern [i]; i++) {
-        if (pattern [i] == '/' || pattern [i] == '\\') {
-            land_buffer_add(dirbuf, pattern + j, i - j);
-            j = i;
-        }
-        if (pattern [i] == '?' || pattern [i] == '*') {
-            break;
-        }
-    }
-    char * dir = land_buffer_finish(dirbuf);
-    LandArray * filenames = NULL;
-    int count = 0;
-    if (_land_datafile) {
-        count = land_datafile_for_each_entry(_land_datafile, pattern, callback, & filenames);
-    }
-    if (! count) {
-        filenames = land_filelist(dir, filter, LAND_RELATIVE_PATH, (void *) pattern);
-        if (filenames) {
-            count = filenames->count;
-        }
-        else {
-            land_log_message("No files at all match %s.\n", pattern);
-        }
-    }
-    land_free(dir);
-    if (! filenames) {
-        return NULL;
-    }
-    qsort(filenames->data, count, sizeof (void *), compar);
-    LandArray * array = NULL;
-    int i;
-    for (i = 0; i < filenames->count; i++) {
-        char * filename = land_array_get_nth(filenames, i);
-        LandImage * image = land_image_load(filename);
-        land_free(filename);
-        if (image) {
-            if (cb) {
-                cb(image, data);
-            }
-            land_array_add_data(& array, image);
-        }
-    }
-    land_array_destroy(filenames);
-    return array;
-}
-static void defcb(LandImage * image, void * p) {
-    int * data = p;
-    if (data [0]) {
-        land_image_center(image);
-    }
-    if (data [1]) {
-        land_image_auto_crop(image);
-    }
-}
-LandArray* land_load_images(char const * pattern, int center, int auto_crop) {
-    /* Load all images matching the file name pattern, and create an array
-     * referencing them all.
-     */
-    int data [2] = {center, auto_crop};
-    return land_load_images_cb(pattern, defcb, data);
-}
-LandImage* land_image_sub(LandImage * parent, float x, float y, float w, float h) {
-    LandImage * self = platform_image_sub(parent, x, y, w, h);
-    return self;
-}
-LandArray* land_image_load_sheet(char const * filename, int offset_x, int offset_y, int grid_w, int grid_h, int x_gap, int y_gap, int x_count, int y_count, int auto_crop) {
-    LandArray * array = NULL;
-    LandImage * sheet = land_image_load(filename);
-    if (! sheet) {
-        return NULL;
-    }
-    int x, y, i, j;
-    for (j = 0; j < y_count; j++) {
-        for (i = 0; i < x_count; i++) {
-            x = offset_x + i * (grid_w + x_gap);
-            y = offset_y + j * (grid_h + y_gap);
-            LandImage * sub = land_image_sub(sheet, x, y, grid_w, grid_h);
-            if (auto_crop) {
-                land_image_auto_crop(sub);
-            }
-            land_array_add_data(& array, sub);
-        }
-    }
-    if (_cb) {
-        _cb(filename, sheet);
-    }
-    return array;
-}
-LandArray* land_image_load_split_sheet(char const * filename, int offset_x, int offset_y, int grid_w, int grid_h, int x_gap, int y_gap, int x_count, int y_count, int auto_crop) {
-    LandArray * array = NULL;
-    LandImage * sheet = land_image_load_memory(filename);
-    if (! sheet) {
-        return NULL;
-    }
-    int x, y, i, j;
-    for (j = 0; j < y_count; j++) {
-        for (i = 0; i < x_count; i++) {
-            x = offset_x + i * (grid_w + x_gap);
-            y = offset_y + j * (grid_h + y_gap);
-            LandImage * sub = land_image_new_from(sheet, x, y, grid_w, grid_h);
-            land_array_add_data(& array, sub);
-        }
-    }
-    land_image_del(sheet);
-    return array;
-}
-void land_image_draw_scaled_rotated_tinted_flipped(LandImage * self, float x, float y, float sx, float sy, float angle, float r, float g, float b, float alpha, int flip) {
-    platform_image_draw_scaled_rotated_tinted_flipped(self, x, y, sx, sy, angle, r, g, b, alpha, flip);
-}
-void land_image_draw_scaled_rotated_tinted(LandImage * self, float x, float y, float sx, float sy, float angle, float r, float g, float b, float alpha) {
-    land_image_draw_scaled_rotated_tinted_flipped(self, x, y, sx, sy, angle, r, g, b, alpha, 0);
-}
-void land_image_draw_scaled_rotated(LandImage * self, float x, float y, float sx, float sy, float angle) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, sx, sy, angle, 1, 1, 1, 1);
-}
-void land_image_draw_scaled(LandImage * self, float x, float y, float sx, float sy) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, sx, sy, 0, 1, 1, 1, 1);
-}
-void land_image_draw_rotated(LandImage * self, float x, float y, float a) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, a, 1, 1, 1, 1);
-}
-void land_image_draw_rotated_flipped(LandImage * self, float x, float y, float a) {
-    land_image_draw_scaled_rotated_tinted_flipped(self, x, y, 1, 1, a, 1, 1, 1, 1, 1);
-}
-void land_image_draw_rotated_tinted(LandImage * self, float x, float y, float a, float r, float g, float b, float alpha) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, a, r, g, b, alpha);
-}
-void land_image_draw_scaled_tinted(LandImage * self, float x, float y, float sx, float sy, float r, float g, float b, float alpha) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, sx, sy, 0, r, g, b, alpha);
-}
-void land_image_draw(LandImage * self, float x, float y) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, 0, 1, 1, 1, 1);
-}
-void land_image_draw_flipped(LandImage * self, float x, float y) {
-    land_image_draw_scaled_rotated_tinted_flipped(self, x, y, 1, 1, 0, 1, 1, 1, 1, 1);
-}
-void land_image_draw_tinted(LandImage * self, float x, float y, float r, float g, float b, float alpha) {
-    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, 0, r, g, b, alpha);
-}
-void land_image_grab(LandImage * self, int x, int y) {
-    platform_image_grab_into(self, x, y, 0, 0, self->width, self->height);
-}
-void land_image_grab_into(LandImage * self, float x, float y, float tx, float ty, float tw, float th) {
-    platform_image_grab_into(self, x, y, tx, ty, tw, th);
-}
-void land_image_offset(LandImage * self, int x, int y) {
-    self->x = x;
-    self->y = y;
-}
-void land_image_memory_draw(LandImage * self, float x, float y) {
-    assert(0);
-}
-void land_image_center(LandImage * self) {
-    self->x = 0.5 * self->width;
-    self->y = 0.5 * self->height;
-    self->flags |= LAND_IMAGE_WAS_CENTERED;
-}
-void land_image_init(void) {
-    ;
-}
-void land_image_exit(void) {
-    ;
-}
-void land_image_clip(LandImage * self, float x, float y, float x_, float y_) {
-    self->l = x;
-    self->t = y;
-    self->r = self->width - x_;
-    self->b = self->height - y_;
-}
-void land_image_unclip(LandImage * self) {
-    self->l = 0;
-    self->t = 0;
-    self->r = 0;
-    self->b = 0;
-}
-void land_image_draw_partial(LandImage * self, float x, float y, float sx, float sy, float sw, float sh) {
-    float l = self->l;
-    float t = self->t;
-    float r = self->r;
-    float b = self->b;
-    land_image_clip(self, sx, sy, sx + sw, sy + sh);
-    land_image_draw(self, x - sx, y - sy);
-    self->l = l;
-    self->t = t;
-    self->r = r;
-    self->b = b;
-}
-int land_image_height(LandImage * self) {
-    return self->height;
-}
-int land_image_width(LandImage * self) {
-    return self->width;
-}
-void land_image_get_rgba_data(LandImage * self, unsigned char * rgba) {
-    platform_image_get_rgba_data(self, rgba);
-}
-void land_image_set_rgba_data(LandImage * self, unsigned char const * rgba) {
-    /* Copies the rgba data, overwriting the image contents. Since data are copied
-     * rgba can be safely deleted after returning from the function.
-     */
-    platform_image_set_rgba_data(self, rgba);
-}
-void land_image_save(LandImage * self, char const * filename) {
-    platform_image_save(self, filename);
-}
-int land_image_opengl_texture(LandImage * self) {
-    return platform_image_opengl_texture(self);
-}
-void land_image_flip(LandImage * self) {
-    int w = land_image_width(self);
-    int h = land_image_height(self);
-    unsigned char * rgba = land_malloc(w * h * 4);
-    land_image_get_rgba_data(self, rgba);
-    for (int j = 0; j < h; j++) {
-        uint32_t * row = (void *)(rgba + j * w * 4);
-        for (int i = 0; i < w / 2; i++) {
-            uint32_t temp = row [i];
-            row [i] = row [w - 1 - i];
-            row [w - 1 - i] = temp;
-        }
-    }
-    land_image_set_rgba_data(self, rgba);
-    land_free(rgba);
-}
-LandImage* land_image_clone(LandImage * self) {
-    int w = land_image_width(self);
-    int h = land_image_height(self);
-    LandImage * clone = land_image_new(w, h);
-    unsigned char * rgba = land_malloc(w * h * 4);
-    land_image_get_rgba_data(self, rgba);
-    land_image_set_rgba_data(clone, rgba);
-    land_free(rgba);
-    clone->x = self->x;
-    clone->y = self->y;
-    return clone;
-}
-void land_image_fade_to_color(LandImage * self) {
-    int w = land_image_width(self);
-    int h = land_image_height(self);
-    unsigned char * rgba = land_malloc(w * h * 4);
-    land_image_get_rgba_data(self, rgba);
-    float fr, fg, fb, fa;
-    land_get_color(& fr, & fg, & fb, & fa);
-    int red = fr * 255;
-    int green = fg * 255;
-    int blue = fb * 255;
-    int alpha = fa * 255;
-    for (int j = 0; j < h; j++) {
-        unsigned char * row = rgba + j * w * 4;
-        for (int i = 0; i < w; i++) {
-            int a = row [i * 4 + 3];
-            if (! a) {
-                continue;
-            }
-            int ar = row [i * 4 + 0];
-            int ag = row [i * 4 + 1];
-            int ab = row [i * 4 + 2];
-            row [i * 4 + 0] = (red * alpha * a + ar * (255 - alpha) * 255) / (255 * 255);
-            row [i * 4 + 1] = (green * alpha * a + ag * (255 - alpha) * 255) / (255 * 255);
-            row [i * 4 + 2] = (blue * alpha * a + ab * (255 - alpha) * 255) / (255 * 255);
-        }
-    }
-    land_image_set_rgba_data(self, rgba);
-    land_free(rgba);
-}
-LandImage* land_image_from_xpm(char const * (* xpm)) {
-    int w, h, palette_size, pixel_size;
-    sscanf(xpm [0], "%d %d %d %d", & w, & h, & palette_size, & pixel_size);
-    LandColor palette [65536];
-    for (int i = 0; i < palette_size; i += 1) {
-        char const * entry = xpm [1 + i];
-        int p = 0;
-        for (int j = 0; j < pixel_size; j += 1) {
-            p *= 256;
-            p += (unsigned char) entry [j];
-        }
-        palette [p] = land_color_name(entry + pixel_size + 3);
-    }
-    LandImage * self = land_image_new(w, h);
-    unsigned char * rgba = land_malloc(w * h * 4);
-    for (int y = 0; y < h; y += 1) {
-        for (int x = 0; x < w; x += 1) {
-            char const * pos = xpm [1 + palette_size + y] + x * pixel_size;
-            int p = 0;
-            for (int j = 0; j < pixel_size; j += 1) {
-                p *= 256;
-                p += (unsigned char) pos [j];
-            }
-            LandColor c = palette [p];
-            rgba [y * w * 4 + x * 4 + 0] = c.r * 255;
-            rgba [y * w * 4 + x * 4 + 1] = c.g * 255;
-            rgba [y * w * 4 + x * 4 + 2] = c.b * 255;
-            rgba [y * w * 4 + x * 4 + 3] = c.a * 255;
-        }
-    }
-    land_image_set_rgba_data(self, rgba);
-    land_free(rgba);
-    return self;
-}
-#undef LOG_COLOR_STATS
 #define BB(x1, y1, x2, y2, x3, y3, x4, y4) \
     * bl = x1 * cos(angle) + y1 * sin(angle); \
     * bt = y2 * cos(angle) - x2 * sin(angle); \
@@ -3164,1368 +1781,6 @@ int land_image_overlaps(LandImage * self, float x, float y, float angle, float f
     return pixelmask_collision(self->mask->rotation [i], x + ml, y + mt, mr - ml, mb - mt, other->mask->rotation [i_], x_ + ml_, y_ + mt_, mr_ - ml_, mb_ - mt_);
 }
 #undef BB
-LandWidgetInterface * land_widget_box_interface;
-void land_widget_box_draw(LandWidget * self) {
-    land_widget_theme_draw(self);
-}
-LandWidget* land_widget_box_new(LandWidget * parent, int x, int y, int w, int h) {
-    LandWidget * self = land_widget_base_new(parent, x, y, w, h);
-    land_widget_box_interface_initialize();
-    self->vt = land_widget_box_interface;
-    land_widget_theme_initialize(self);
-    land_call_method(parent, update, (parent));
-    return self;
-}
-void land_widget_box_interface_initialize(void) {
-    if (land_widget_box_interface) {
-        return ;
-    }
-    land_widget_box_interface = land_widget_copy_interface(land_widget_base_interface, "box");
-    land_widget_box_interface->id = LAND_WIDGET_ID_BASE;
-    land_widget_box_interface->draw = land_widget_box_draw;
-}
-#ifndef LAND_NO_COMPRESS
-#endif
-#ifdef LAND_MEMLOG
-#undef land_buffer_new
-#undef land_buffer_destroy
-#undef land_buffer_finish
-#undef land_buffer_read_from_file
-#undef land_buffer_split
-LandBuffer* land_buffer_new_memlog(char const * f, int l) {
-    LandBuffer * self = land_buffer_new();
-    land_memory_add(self, "buffer", 1, f, l);
-    return self;
-}
-void land_buffer_destroy_memlog(LandBuffer * self, char const * f, int l) {
-    land_memory_remove(self, "buffer", 1, f, l);
-    land_buffer_destroy(self);
-}
-char* land_buffer_finish_memlog(LandBuffer * self, char const * f, int l) {
-    land_memory_remove(self, "buffer", 1, f, l);
-    char * s = land_buffer_finish(self);
-    land_memory_remove(s, "", 1, f, l);
-    land_memory_add(s, "", strlen(s), f, l);
-    return s;
-}
-LandBuffer* land_buffer_read_from_file_memlog(char const * filename, char const * f, int l) {
-    LandBuffer * self = land_buffer_read_from_file(filename);
-    land_memory_add(self, "buffer", 1, f, l);
-    return self;
-}
-LandArray* land_buffer_split_memlog(LandBuffer const * self, char delim, char const * f, int line) {
-    LandArray * a = land_array_new_memlog(f, line);
-    int start = 0;
-    for (int i = 0; i < self->n; i++) {
-        if (self->buffer [i] == delim) {
-            LandBuffer * l = land_buffer_new_memlog(f, line);
-            land_buffer_add(l, self->buffer + start, i - start);
-            land_array_add_memlog(a, l, f, line);
-            start = i + 1;
-        }
-    }
-    LandBuffer * l = land_buffer_new_memlog(f, line);
-    land_buffer_add(l, self->buffer + start, self->n - start);
-    land_array_add_memlog(a, l, f, line);
-    return a;
-}
-#endif
-LandBuffer* land_buffer_new(void) {
-    LandBuffer * self;
-    land_alloc(self);
-    return self;
-}
-LandBuffer* land_buffer_copy(LandBuffer * other) {
-    LandBuffer * self;
-    land_alloc(self);
-    land_buffer_add(self, other->buffer, other->n);
-    return self;
-}
-LandBuffer* land_buffer_extract(LandBuffer * other, int x, int n) {
-    LandBuffer * self = land_buffer_new();
-    if (n > 0) {
-        land_buffer_add(self, other->buffer + x, n);
-    }
-    return self;
-}
-LandBuffer* land_buffer_copy_from(LandBuffer * other, int x) {
-    LandBuffer * self = land_buffer_new();
-    land_buffer_add(self, other->buffer + x, other->n - x);
-    return self;
-}
-void land_buffer_destroy(LandBuffer * self) {
-    if (self->buffer) {
-        land_free(self->buffer);
-    }
-    land_free(self);
-}
-void land_buffer_insert(LandBuffer * self, int pos, char const * buffer, int n) {
-    self->n += n;
-    if (self->n > self->size) {
-        if (! self->size) {
-            self->size = 1;
-        }
-        while (self->size < self->n) {
-            self->size *= 2;
-        }
-        self->buffer = land_realloc(self->buffer, self->size);
-    }
-    memmove(self->buffer + pos + n, self->buffer + pos, self->n - n - pos);
-    memcpy(self->buffer + pos, buffer, n);
-}
-void land_buffer_cut(LandBuffer * self, int pos, int n) {
-    memmove(self->buffer + pos, self->buffer + pos + n, self->n - pos - n);
-    self->n -= n;
-}
-void land_buffer_shorten_left(LandBuffer * self, int n) {
-    land_buffer_cut(self, 0, n);
-}
-void land_buffer_add(LandBuffer * self, char const * b, int n) {
-    land_buffer_insert(self, self->n, b, n);
-}
-void land_buffer_addv(LandBuffer * self, char const * format, va_list args) {
-    va_list args2;
-    va_copy(args2, args);
-    int n = vsnprintf(NULL, 0, format, args2);
-    va_end(args2);
-    if (n < 0) {
-        n = 1023;
-    }
-    char s [n + 1];
-    vsnprintf(s, n + 1, format, args);
-    land_buffer_add(self, s, n);
-}
-void land_buffer_addf(LandBuffer * self, char const * format, ...) {
-    va_list args;
-    va_start(args, format);
-    land_buffer_addv(self, format, args);
-    va_end(args);
-}
-void land_buffer_addl(LandBuffer * self, char const * format, ...) {
-    va_list args;
-    va_start(args, format);
-    land_buffer_addv(self, format, args);
-    va_end(args);
-    land_buffer_add_char(self, '\n');
-}
-void land_buffer_add_uint32_t(LandBuffer * self, uint32_t i) {
-    land_buffer_add_char(self, i & 255);
-    land_buffer_add_char(self, (i >> 8) & 255);
-    land_buffer_add_char(self, (i >> 16) & 255);
-    land_buffer_add_char(self, (i >> 24) & 255);
-}
-uint32_t land_buffer_get_uint32_t(LandBuffer * self, int pos) {
-    uint8_t * uc = (uint8_t *) self->buffer + pos;
-    uint32_t u = * (uc++);
-    u += * (uc++) << 8;
-    u += * (uc++) << 16;
-    u += * (uc++) << 24;
-    return u;
-}
-uint16_t land_buffer_get_uint16_t(LandBuffer * self, int pos) {
-    uint8_t * uc = (uint8_t *) self->buffer + pos;
-    uint16_t u = * (uc++);
-    u += * (uc++) << 8;
-    return u;
-}
-uint8_t land_buffer_get_byte(LandBuffer * self, int pos) {
-    uint8_t * uc = (uint8_t *) self->buffer + pos;
-    return * uc;
-}
-void land_buffer_add_float(LandBuffer * self, float f) {
-    uint32_t * i = (void *) & f;
-    land_buffer_add_uint32_t(self, * i);
-}
-void land_buffer_add_char(LandBuffer * self, char c) {
-    land_buffer_add(self, & c, 1);
-}
-void land_buffer_cat(LandBuffer * self, char const * string) {
-    /* Appends a zero-terminated string (without the 0 byte) to the buffer.
-     */
-    land_buffer_add(self, string, strlen(string));
-}
-void land_buffer_clear(LandBuffer * self) {
-    /* Clears the buffer (but keeps any memory allocation for speedy refilling).
-     */
-    self->n = 0;
-}
-void land_buffer_crop(LandBuffer * self) {
-    /* Make the buffer use up only the minimum required amount of memory.
-     */
-    self->buffer = land_realloc(self->buffer, self->n);
-    self->size = self->n;
-}
-char* land_buffer_finish(LandBuffer * self) {
-    /* Destroys the buffer, but returns a C-string constructed from it by appending
-     * a 0 character. You may not access the pointer you pass to this function
-     * anymore after it returns. Also, you have to make sure it does not already
-     * contain any 0 characters. When no longer needed, you should free the string
-     * with land_free.
-     */
-    char c [] = "";
-    land_buffer_add(self, c, 1);
-    char * s = self->buffer;
-    self->buffer = NULL;
-    land_buffer_destroy(self);
-    return s;
-}
-void land_buffer_println(LandBuffer * self) {
-    printf("%.*s\n", self->n, self->buffer);
-}
-LandArray* land_buffer_split(LandBuffer const * self, char delim) {
-    /* Creates an array of buffers. If there are n occurences of character delim
-     * in the buffer, the array contains n + 1 entries. No buffer in the array
-     * contains the delim character.
-     */
-    LandArray * a = land_array_new();
-    int start = 0;
-    for (int i = 0; i < self->n; i++) {
-        if (self->buffer [i] == delim) {
-            LandBuffer * l = land_buffer_new();
-            land_buffer_add(l, self->buffer + start, i - start);
-            land_array_add(a, l);
-            start = i + 1;
-        }
-    }
-    LandBuffer * l = land_buffer_new();
-    land_buffer_add(l, self->buffer + start, self->n - start);
-    land_array_add(a, l);
-    return a;
-}
-void land_buffer_strip_right(LandBuffer * self, char const * what) {
-    if (self->n == 0) {
-        return ;
-    }
-    int away = 0;
-    char * p = self->buffer + self->n;
-    while (p > self->buffer) {
-        int c = land_utf8_char_back(& p);
-        char const * q = what;
-        while (1) {
-            int d = land_utf8_char_const(& q);
-            if (! d) {
-                goto done;
-            }
-            if (c == d) {
-                away++;
-                break;
-            }
-        }
-    }
-    done:;
-    self->n -= away;
-}
-void land_buffer_strip_left(LandBuffer * self, char const * what) {
-    if (self->n == 0) {
-        return ;
-    }
-    int away = 0;
-    char * p = self->buffer;
-    while (1) {
-        again:;
-        int c = land_utf8_char(& p);
-        if (! c) {
-            break;
-        }
-        char const * q = what;
-        while (1) {
-            int d = land_utf8_char_const(& q);
-            if (! d) {
-                break;
-            }
-            if (c == d) {
-                away++;
-                goto again;
-            }
-        }
-        break;
-    }
-    self->n -= away;
-    memmove(self->buffer, self->buffer + away, self->n);
-}
-void land_buffer_strip(LandBuffer * self, char const * what) {
-    land_buffer_strip_right(self, what);
-    land_buffer_strip_left(self, what);
-}
-bool land_buffer_is(LandBuffer * self, char const * what) {
-    int n = strlen(what);
-    if (n != self->n) {
-        return 0;
-    }
-    return memcmp(self->buffer, what, self->n) == 0;
-}
-void land_buffer_remove_if_start(LandBuffer * self, char const * what) {
-    if (memcmp(self->buffer, what, strlen(what)) == 0) {
-        land_buffer_shorten_left(self, strlen(what));
-    }
-}
-void land_buffer_remove_if_end(LandBuffer * self, char const * what) {
-    if (memcmp(self->buffer + self->n - strlen(what), what, strlen(what)) == 0) {
-        land_buffer_shorten(self, strlen(what));
-    }
-}
-int land_buffer_rfind(LandBuffer * self, char c) {
-    if (self->n == 0) {
-        return - 1;
-    }
-    for (int i = self->n - 1; i >= 0; i--) {
-        if (self->buffer [i] == c) {
-            return i;
-        }
-    }
-    return - 1;
-}
-int land_buffer_find(LandBuffer const * self, int offset, char const * what) {
-    int n = strlen(what);
-    for (int i = offset; i < self->n; i += 1) {
-        for (int j = 0; j < n; j += 1) {
-            if (self->buffer [i + j] != what [j]) {
-                goto mismatch;
-            }
-        }
-        return i;
-        mismatch:;
-    }
-    return - 1;
-}
-int land_buffer_replace(LandBuffer * self, int offset, char const * wat, char const * wit) {
-    int x = land_buffer_find(self, offset, wat);
-    if (x < 0) {
-        return x;
-    }
-    land_buffer_cut(self, x, strlen(wat));
-    land_buffer_insert(self, x, wit, strlen(wit));
-    return x + strlen(wit);
-}
-int land_buffer_replace_all(LandBuffer * self, char const * wat, char const * wit) {
-    int x = 0;
-    int count = 0;
-    while (1) {
-        x = land_buffer_replace(self, x, wat, wit);
-        if (x < 0) {
-            break;
-        }
-        count++;
-    }
-    return count;
-}
-void land_buffer_set_length(LandBuffer * self, int n) {
-    self->n = n;
-}
-void land_buffer_shorten(LandBuffer * self, int n) {
-    self->n -= n;
-}
-LandBuffer* land_buffer_read_from_file(char const * filename) {
-    /* Read a buffer from the given file. If the file cannot be read, return None.
-     */
-    LandFile * pf = land_file_new(filename, "r");
-    if (! pf) {
-        return NULL;
-    }
-    LandBuffer * self = land_buffer_new();
-    while (1) {
-        char kb [16384];
-        size_t n = land_file_read(pf, kb, 16384);
-        land_buffer_add(self, kb, n);
-        if (n < 16384) {
-            break;
-        }
-    }
-    land_file_destroy(pf);
-    return self;
-}
-bool land_buffer_write_to_file(LandBuffer * self, char const * filename) {
-    LandFile * pf = land_file_new(filename, "w");
-    if (! pf) {
-        return 0;
-    }
-    int written = land_file_write(pf, self->buffer, self->n);
-    land_file_destroy(pf);
-    return written == self->n;
-}
-#ifndef LAND_NO_COMPRESS
-void land_buffer_compress(LandBuffer * self) {
-    uLongf destlen = self->n * 1.1 + 12;
-    Bytef * dest = land_malloc(destlen);
-    compress(dest, & destlen, (void *) self->buffer, self->n);
-    dest = land_realloc(dest, destlen);
-    land_free(self->buffer);
-    self->buffer = (void *) dest;
-    self->size = self->n = destlen;
-}
-void land_buffer_decompress(LandBuffer * self) {
-    z_stream z;
-    z.zalloc = Z_NULL;
-    z.zfree = Z_NULL;
-    z.opaque = Z_NULL;
-    z.next_in = (void *) self->buffer;
-    z.avail_in = self->n;
-    int err = inflateInit2(& z, 15 | 32);
-    if (err != Z_OK) {
-        return ;
-    }
-    LandBuffer * temp = land_buffer_new();
-    char * out = malloc(8192);
-    while (1) {
-        z.avail_out = 8192;
-        z.next_out = (void *) out;
-        err = inflate(& z, Z_NO_FLUSH);
-        if (err < 0) {
-            goto break2;
-        }
-        land_buffer_add(temp, out, 8192 - z.avail_out);
-        if (z.avail_out > 0) {
-            break;
-        }
-    }
-    break2:;
-    land_free(out);
-    land_free(self->buffer);
-    self->buffer = temp->buffer;
-    self->n = temp->n;
-    temp->buffer = NULL;
-    land_buffer_destroy(temp);
-}
-#endif
-int land_buffer_compare(LandBuffer * self, LandBuffer * other) {
-    if (self->n < other->n) {
-        return - 1;
-    }
-    if (self->n > other->n) {
-        return 1;
-    }
-    return memcmp(self->buffer, other->buffer, self->n);
-}
-static LandDisplay * global_previous_display;
-static LandDisplayPlatform global_image_display;
-static ALLEGRO_BITMAP * previous;
-#define SELF LandImagePlatform * self = (void *) super
-LandImage* platform_new_image(void) {
-    LandImagePlatform * self;
-    land_alloc(self);
-    return (void *) self;
-}
-void platform_del_image(LandImage * super) {
-    SELF;
-    if (self->a5) {
-        al_destroy_bitmap(self->a5);
-    }
-    land_free(self);
-}
-void platform_image_empty(LandImage * super) {
-    SELF;
-    if (! self->a5) {
-        self->a5 = al_create_bitmap(super->width, super->height);
-    }
-    int f = al_get_bitmap_format(self->a5);
-    ALLEGRO_LOCKED_REGION * lock = al_lock_bitmap(self->a5, f, ALLEGRO_LOCK_WRITEONLY);
-    int rowbytes = al_get_pixel_size(f) * super->width;
-    for (int i = 0; i < super->height; i++) {
-        memset(lock->data + lock->pitch * i, 0, rowbytes);
-    }
-    al_unlock_bitmap(self->a5);
-}
-LandImage* platform_image_load(char const * filename, bool mem) {
-    LandImage * super = land_display_new_image();
-    super->filename = land_strdup(filename);
-    if (mem) {
-        super->flags |= LAND_IMAGE_MEMORY;
-    }
-    _platform_load(super);
-    return super;
-}
-static void _platform_load(LandImage * super) {
-    super->name = land_strdup(super->filename);
-    ALLEGRO_STATE state;
-    if (super->flags & LAND_IMAGE_MEMORY) {
-        al_store_state(& state, ALLEGRO_STATE_NEW_BITMAP_PARAMETERS);
-        al_set_new_bitmap_flags(ALLEGRO_MEMORY_BITMAP);
-    }
-    #ifdef ANDROID
-    land_log_message("open %s", super->filename);
-    #endif
-    ALLEGRO_BITMAP * bmp;
-    if (strchr(super->filename, '.')) {
-        bmp = al_load_bitmap(super->filename);
-    }
-    else {
-        bmp = al_load_bitmap(super->filename);
-    }
-    if (bmp) {
-        LandImagePlatform * self = (void *) super;
-        self->a5 = bmp;
-        super->width = al_get_bitmap_width(bmp);
-        super->height = al_get_bitmap_height(bmp);
-        super->flags |= LAND_LOADED;
-    }
-    else {
-        super->flags |= LAND_FAILED;
-    }
-    if (super->flags & LAND_IMAGE_MEMORY) {
-        al_restore_state(& state);
-        super->flags |= LAND_FAILED;
-    }
-}
-void platform_image_load_on_demand(LandImage * super) {
-    LandImagePlatform * self = (void *) super;
-    if (self->a5) {
-        return ;
-    }
-    _platform_load(super);
-}
-LandImage* platform_image_sub(LandImage * parent, float x, float y, float w, float h) {
-    LandImage * super = land_display_new_image();
-    super->flags |= LAND_SUBIMAGE;
-    super->filename = parent->filename;
-    super->name = parent->name;
-    LandImagePlatform * self = (void *) super;
-    LandImagePlatform * parentself = (void *) parent;
-    self->a5 = al_create_sub_bitmap(parentself->a5, x, y, w, h);
-    super->width = al_get_bitmap_width(self->a5);
-    super->height = al_get_bitmap_height(self->a5);
-    return super;
-}
-void platform_image_save(LandImage * super, char const * filename) {
-    LandImagePlatform * self = (void *) super;
-    al_save_bitmap(filename, self->a5);
-}
-void platform_image_prepare(LandImage * super) {
-    land_log_message("platform_image_prepare\n");
-}
-void platform_image_draw_scaled_rotated_tinted_flipped(LandImage * super, float x, float y, float sx, float sy, float angle, float r, float g, float b, float alpha, int flip) {
-    SELF;
-    LandDisplay * d = _land_active_display;
-    ALLEGRO_STATE state;
-    land_a5_display_check_transform();
-    bool restore = 0;
-    if (d->blend) {
-        if (d->blend & LAND_BLEND_SOLID) {
-            al_store_state(& state, ALLEGRO_STATE_BLENDER);
-            al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
-            restore = 1;
-        }
-        if (d->blend & LAND_BLEND_ADD) {
-            al_store_state(& state, ALLEGRO_STATE_BLENDER);
-            al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
-            restore = 1;
-        }
-    }
-    int flags = 0;
-    if (flip == 1 || flip == 3) {
-        flags |= ALLEGRO_FLIP_HORIZONTAL;
-    }
-    if (flip == 2 || flip == 3) {
-        flags |= ALLEGRO_FLIP_VERTICAL;
-    }
-    ALLEGRO_COLOR tint = al_map_rgba_f(r, g, b, alpha);
-    al_draw_tinted_scaled_rotated_bitmap_region(self->a5, super->l, super->t, super->width - super->l - super->r, super->height - super->t - super->b, tint, super->x - super->l, super->y - super->t, x, y, sx, sy, - angle, flags);
-    if (restore) {
-        al_restore_state(& state);
-    }
-}
-void platform_set_image_display(LandImage * super) {
-    SELF;
-    global_previous_display = _land_active_display;
-    LandDisplayPlatform * prev = (void *) global_previous_display;
-    LandDisplay * d = (void *) & global_image_display;
-    _land_active_display = d;
-    global_image_display.a5 = prev->a5;
-    global_image_display.c = al_map_rgb_f(1, 1, 1);
-    d->w = super->width;
-    d->h = super->height;
-    d->flags = 0;
-    d->color_r = 1;
-    d->color_g = 1;
-    d->color_b = 1;
-    d->color_a = 1;
-    d->blend = 0;
-    d->clip_off = 0;
-    d->clip_x1 = 0;
-    d->clip_y1 = 0;
-    d->clip_x2 = super->width;
-    d->clip_y2 = super->height;
-    previous = al_get_target_bitmap();
-    al_set_target_bitmap(self->a5);
-}
-void platform_unset_image_display(void) {
-    _land_active_display = global_previous_display;
-    al_set_target_bitmap(previous);
-}
-void platform_image_grab_into(LandImage * super, float x, float y, float tx, float ty, float tw, float th) {
-    SELF;
-    ALLEGRO_STATE state;
-    al_store_state(& state, ALLEGRO_STATE_TARGET_BITMAP);
-    ALLEGRO_BITMAP * from = al_get_target_bitmap();
-    al_set_target_bitmap(self->a5);
-    al_draw_bitmap_region(from, x, y, tw, th, tx, ty, 0);
-    al_restore_state(& state);
-}
-void platform_image_get_rgba_data(LandImage * super, unsigned char * rgba) {
-    SELF;
-    int w = super->width;
-    int h = super->height;
-    unsigned char * p = rgba;
-    ALLEGRO_LOCKED_REGION * lock;
-    lock = al_lock_bitmap(self->a5, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READONLY);
-    unsigned char * p2 = lock->data;
-    for (int y = 0; y < h; y++) {
-        unsigned char * p3 = p2;
-        for (int x = 0; x < w; x++) {
-            unsigned char r, g, b, a;
-            r = * (p3++);
-            g = * (p3++);
-            b = * (p3++);
-            a = * (p3++);
-            * (p++) = r;
-            * (p++) = g;
-            * (p++) = b;
-            * (p++) = a;
-        }
-        p2 += lock->pitch;
-    }
-    al_unlock_bitmap(self->a5);
-}
-void platform_image_set_rgba_data(LandImage * super, unsigned char const * rgba) {
-    SELF;
-    int w = super->width;
-    int h = super->height;
-    unsigned char const * p = rgba;
-    ALLEGRO_LOCKED_REGION * lock;
-    lock = al_lock_bitmap(self->a5, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
-    unsigned char * p2 = lock->data;
-    for (int y = 0; y < h; y++) {
-        unsigned char * p3 = p2;
-        for (int x = 0; x < w; x++) {
-            int r, g, b, a;
-            r = * (p++);
-            g = * (p++);
-            b = * (p++);
-            a = * (p++);
-            * (p3++) = r;
-            * (p3++) = g;
-            * (p3++) = b;
-            * (p3++) = a;
-        }
-        p2 += lock->pitch;
-    }
-    al_unlock_bitmap(self->a5);
-}
-int platform_image_opengl_texture(LandImage * super) {
-    SELF;
-    return al_get_opengl_texture(self->a5);
-}
-void platform_image_crop(LandImage * super, int x, int y, int w, int h) {
-    SELF;
-    ALLEGRO_STATE state;
-    if (x == 0 && y == 0 && w == super->width && h == super->height) {
-        return ;
-    }
-    al_store_state(& state, ALLEGRO_STATE_TARGET_BITMAP | ALLEGRO_STATE_BLENDER);
-    ALLEGRO_BITMAP * cropped = al_create_bitmap(w, h);
-    al_set_target_bitmap(cropped);
-    al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
-    if (self->a5) {
-        al_draw_bitmap(self->a5, - x, - y, 0);
-        al_destroy_bitmap(self->a5);
-    }
-    self->a5 = cropped;
-    al_restore_state(& state);
-    super->width = w;
-    super->height = h;
-}
-#undef SELF
-LandCSGAABB land_csg_aabb_infinite(void) {
-    LandCSGAABB a;
-    a.x1 = - INFINITY;
-    a.x2 = + INFINITY;
-    a.y1 = - INFINITY;
-    a.y2 = + INFINITY;
-    a.z1 = - INFINITY;
-    a.z2 = + INFINITY;
-    return a;
-}
-LandCSGAABB land_csg_aabb_empty(void) {
-    LandCSGAABB a;
-    a.x1 = + INFINITY;
-    a.x2 = - INFINITY;
-    a.y1 = + INFINITY;
-    a.y2 = - INFINITY;
-    a.z1 = + INFINITY;
-    a.z2 = - INFINITY;
-    return a;
-}
-void land_csg_aabb_update(LandCSGAABB * self, LandArray * polygons) {
-    * self = land_csg_aabb_empty();
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
-            {
-                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
-                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
-                    if (v->pos.x < self->x1) {
-                        self->x1 = v->pos.x;
-                    }
-                    if (v->pos.x > self->x2) {
-                        self->x2 = v->pos.x;
-                    }
-                    if (v->pos.y < self->y1) {
-                        self->y1 = v->pos.y;
-                    }
-                    if (v->pos.y > self->y2) {
-                        self->y2 = v->pos.y;
-                    }
-                    if (v->pos.z < self->z1) {
-                        self->z1 = v->pos.z;
-                    }
-                    if (v->pos.z > self->z2) {
-                        self->z2 = v->pos.z;
-                    }
-                }
-            }
-        }
-    }
-}
-LandCSGAABB land_csg_aabb_intersect(LandCSGAABB a, LandCSGAABB b) {
-    LandCSGAABB c = a;
-    if (b.x1 > c.x1) {
-        c.x1 = b.x1;
-    }
-    if (b.x2 < c.x2) {
-        c.x2 = b.x2;
-    }
-    if (b.y1 > c.y1) {
-        c.y1 = b.y1;
-    }
-    if (b.y2 < c.y2) {
-        c.y2 = b.y2;
-    }
-    if (b.z1 > c.z1) {
-        c.z1 = b.z1;
-    }
-    if (b.z2 < c.z2) {
-        c.z2 = b.z2;
-    }
-    return c;
-}
-LandProtobuf* land_protobuf_load(char const * filename) {
-    LandBuffer * b = land_buffer_read_from_file(filename);
-    if (! b) {
-        return NULL;
-    }
-    LandProtobuf * pbuf;
-    land_alloc(pbuf);
-    pbuf->data = b;
-    pbuf->end = b->n;
-    return pbuf;
-}
-static uint64_t varint(LandProtobuf * self) {
-    uint64_t x = 0;
-    int s = 0;
-    while (1) {
-        uint8_t c = self->data->buffer [self->pos++];
-        x += (c & 127) << s;
-        s += 7;
-        if (c & 128) {
-            continue;
-        }
-        return x;
-    }
-}
-int land_protobuf_next(LandProtobuf * self, uint64_t * size) {
-    if (self->pos >= self->end) {
-        return 0;
-    }
-    int x = varint(self);
-    int kind = x & 3;
-    if (kind == 2) {
-        * size = varint(self);
-    }
-    return x >> 3;
-}
-void land_protobuf_sub_start(LandProtobuf * self, uint64_t * size) {
-    uint64_t end = self->end;
-    self->end = self->pos + * size;
-    * size = end;
-}
-void land_protobuf_sub_end(LandProtobuf * self, uint64_t end) {
-    self->pos = self->end;
-    self->end = end;
-}
-#define R(T) \
-    T x = * (T *)(self->data->buffer + self->pos); \
-    self->pos += sizeof (T); \
-    return x;
-double land_protobuf_double(LandProtobuf * self) {
-    double x;
-    void * p = & x;
-    memcpy(p, self->data->buffer + self->pos, 8);
-    self->pos += 8;
-    return x;
-}
-float land_protobuf_float(LandProtobuf * self) {
-    float x;
-    void * p = & x;
-    memcpy(p, self->data->buffer + self->pos, 4);
-    self->pos += 4;
-    return x;
-}
-uint32_t land_protobuf_fixed32(LandProtobuf * self) {
-    R(uint32_t);
-}
-int32_t land_protobuf_sfixed32(LandProtobuf * self) {
-    R(int32_t);
-}
-char* land_protobuf_string(LandProtobuf * self, int size) {
-    self->pos += size;
-    return self->data->buffer + self->pos - size;
-}
-void land_protobuf_destroy(LandProtobuf * self) {
-    land_buffer_del(self->data);
-    land_free(self);
-}
-#undef R
-static bool land_active;
-bool _land_quit;
-static LandParameters * parameters;
-bool _land_halted;
-bool _land_was_halted;
-static bool x_clicked;
-int _land_frames;
-bool _land_synchronized;
-static bool _maximize_fps;
-static void land_exit(void) {
-    if (! land_active) {
-        return ;
-    }
-    land_active = 0;
-    land_free(parameters);
-    land_log_message("land_exit\n");
-}
-void land_halt(void) {
-    platform_halt();
-    _land_halted = 1;
-}
-void land_resume(void) {
-    platform_resume();
-    _land_halted = 0;
-}
-bool land_was_halted(void) {
-    return _land_halted;
-}
-void land_init(void) {
-    /* """Initialize Land. This must be called before anything else."""
-     */
-    if (land_active) {
-        return ;
-    }
-    land_active = 1;
-    land_log_message("land_init\n");
-    land_alloc(parameters);
-    parameters->w = 640;
-    parameters->h = 480;
-    parameters->fps = 60;
-    atexit(land_exit);
-    if (! land_exception_handler) {
-        land_exception_handler_set(land_default_exception_handler);
-    }
-    int seed = time(NULL);
-    land_seed(seed);
-    land_log_message("Random seed is %d.\n", seed);
-    char cd [1024];
-    if (! getcwd(cd, sizeof cd)) {
-        sprintf(cd, "<none>");
-    }
-    land_log_message("Current path: %s\n", cd);
-    platform_init();
-}
-void land_tick(void) {
-    land_display_tick();
-    land_runner_tick_active();
-    land_mouse_tick();
-    land_keyboard_tick();
-    x_clicked = 0;
-    _land_was_halted = _land_halted;
-}
-void land_draw(void) {
-    land_runner_draw_active();
-    land_flip();
-}
-void land_quit(void) {
-    /* Quit the Land application. Call it when you want the program to
-     * exit.
-     */
-    _land_quit = 1;
-}
-void land_closebutton_event(void) {
-    x_clicked = 1;
-}
-int land_closebutton(void) {
-    /* """Check if the closebutton has been clicked.
-     * * Returns: True if yes, else False.
-     */
-    return x_clicked;
-}
-void land_set_fps(int f) {
-    /* """Set the frequency in Hz at which Land should tick. Default is 60."""
-     */
-    land_log_message("land_set_frequency %d\n", f);
-    parameters->fps = f;
-}
-void land_set_display_parameters(int w, int h, int flags) {
-    /* """Set the display parameters to use initially.
-     * * w, h Width and height in pixel.
-     * * flags, a combination of:
-     * ** LAND_WINDOWED
-     * ** LAND_FULLSCREEN
-     * ** LAND_OPENGL
-     * ** LAND_CLOSE_LINES
-     */
-    parameters->w = w;
-    parameters->h = h;
-    parameters->flags = flags;
-}
-void land_set_initial_runner(LandRunner * runner) {
-    /* """Set the initial runner."""
-     */
-    parameters->start = runner;
-}
-double land_get_fps(void) {
-    /* """Return the current frequency."""
-     */
-    return parameters->fps;
-}
-int land_get_ticks(void) {
-    /* """Return the number of ticks Land has executed."""
-     */
-    return _land_frames;
-}
-double land_get_time(void) {
-    /* """Get the time in seconds since Land has started."""
-     */
-    return platform_get_time();
-}
-void land_pause(void) {
-    /* """Stop time. The tick function of the current runner will not be
-     * called any longer and [land_get_ticks] will not advance until the
-     * next call to [land_unpause].
-     */
-    platform_pause();
-}
-void land_unpause(void) {
-    platform_unpause();
-}
-int land_get_flags(void) {
-    return parameters->flags;
-}
-void land_set_synchronized(bool onoff) {
-    _land_synchronized = onoff;
-}
-void land_maximize_fps(bool onoff) {
-    _maximize_fps = onoff;
-}
-void land_mainloop(void) {
-    /* """Run Land. This function will use all the parameters set before to
-     * initialize everything, then run the initial runner. It will return when
-     * you call land_quit() inside the tick function of the active runner.
-     */
-    land_log_message("land_mainloop\n");
-    land_exit_function(land_exit);
-    land_display_init();
-    land_font_init();
-    land_image_init();
-    land_grid_init();
-    LandDisplay * display = land_display_new(parameters->w, parameters->h, parameters->flags);
-    land_log_message("About to create the main window.\n");
-    land_display_set();
-    land_log_message("Video initialized.\n");
-    land_sound_init();
-    land_log_message("Audio initialized.\n");
-    land_mouse_init();
-    land_log_message("Mouse initialized.\n");
-    land_keyboard_init();
-    land_log_message("Keyboard initialized.\n");
-    land_runner_switch_active(parameters->start);
-    land_log_message("Commencing operations.\n");
-    platform_mainloop(parameters);
-    land_runner_switch_active(NULL);
-    land_runner_destroy_all();
-    land_display_destroy(display);
-    land_sound_exit();
-    land_grid_exit();
-    land_font_exit();
-    land_image_exit();
-    land_display_exit();
-    land_exit_functions();
-    land_log_message("exit\n");
-}
-static int gul_debug;
-#define D(_) if(gul_debug) _
-static void ERR(char const * format, ...) {
-    va_list args;
-    va_start(args, format);
-    char str [1024];
-    vsnprintf(str, sizeof str, format, args);
-    strcat(str, "\n");
-    land_log_message(str);
-    va_end(args);
-}
-void _land_gul_box_initialize(LandLayoutBox * self) {
-    memset(self, 0, sizeof (* self));
-}
-void _land_gul_box_deinitialize(LandLayoutBox * self) {
-    if (self->lookup_grid) {
-        land_free(self->lookup_grid);
-        self->lookup_grid = NULL;
-    }
-}
-static void update_lookup_grid(LandWidget * self) {
-    if (self->box.lookup_grid) {
-        land_free(self->box.lookup_grid);
-    }
-    self->box.lookup_grid = NULL;
-    if (self->box.flags & (GUL_NO_LAYOUT | GUL_HIDDEN)) {
-        return ;
-    }
-    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
-        LandWidgetContainer * container = LAND_WIDGET_CONTAINER(self);
-        if (! container->children) {
-            return ;
-        }
-        if (self->box.cols * self->box.rows == 0) {
-            return ;
-        }
-        self->box.lookup_grid = land_calloc(self->box.cols * self->box.rows * sizeof (* self->box.lookup_grid));
-        LandListItem * li = container->children->first;
-        for (; li; li = li->next) {
-            LandWidget * c = li->data;
-            int i, j;
-            if (c->box.flags & GUL_HIDDEN) {
-                continue;
-            }
-            for (i = c->box.col; i <= c->box.col + c->box.extra_cols; i++) {
-                for (j = c->box.row; j <= c->box.row + c->box.extra_rows; j++) {
-                    self->box.lookup_grid [i + j * self->box.cols] = c;
-                }
-            }
-        }
-    }
-}
-static LandWidget* lookup_box_in_grid(LandWidget * self, int col, int row) {
-    if (! self->box.lookup_grid) {
-        update_lookup_grid(self);
-    }
-    if (! self->box.lookup_grid) {
-        return NULL;
-    }
-    assert(col < self->box.cols && row < self->box.rows);
-    return self->box.lookup_grid [row * self->box.cols + col];
-}
-static int row_min_height(LandWidget * self, int row) {
-    int i;
-    int v = 0;
-    for (i = 0; i < self->box.cols; i++) {
-        LandWidget * c = lookup_box_in_grid(self, i, row);
-        if (c && c->box.current_min_height > v) {
-            v = c->box.current_min_height;
-        }
-    }
-    return v;
-}
-static int column_min_width(LandWidget * self, int col) {
-    int i;
-    int v = 0;
-    for (i = 0; i < self->box.rows; i++) {
-        LandWidget * c = lookup_box_in_grid(self, col, i);
-        if (c && c->box.current_min_width > v) {
-            v = c->box.current_min_width;
-        }
-    }
-    return v;
-}
-static int is_column_expanding(LandWidget * self, int col) {
-    int i;
-    for (i = 0; i < self->box.rows; i++) {
-        LandWidget * c = lookup_box_in_grid(self, col, i);
-        if (c && c->box.col == col && ! (c->box.flags & GUL_SHRINK_X)) {
-            return 1;
-        }
-    }
-    return 0;
-}
-static int is_row_expanding(LandWidget * self, int row) {
-    int i;
-    for (i = 0; i < self->box.cols; i++) {
-        LandWidget * c = lookup_box_in_grid(self, i, row);
-        if (c && c->box.row == row && ! (c->box.flags & GUL_SHRINK_Y)) {
-            return 1;
-        }
-    }
-    return 0;
-}
-static int expanding_columns(LandWidget * self) {
-    int i;
-    int v = 0;
-    for (i = 0; i < self->box.cols; i++) {
-        if (is_column_expanding(self, i)) {
-            v++;
-        }
-    }
-    return v;
-}
-static int expanding_rows(LandWidget * self) {
-    int i;
-    int v = 0;
-    for (i = 0; i < self->box.rows; i++) {
-        if (is_row_expanding(self, i)) {
-            v++;
-        }
-    }
-    return v;
-}
-static int min_height(LandWidget * self) {
-    int i;
-    int v = 0;
-    for (i = 0; i < self->box.rows; i++) {
-        v += row_min_height(self, i);
-    }
-    if (self->element) {
-        v += self->element->vgap * (i - 1) + self->element->it + self->element->ib;
-    }
-    return v;
-}
-static int min_width(LandWidget * self) {
-    int i;
-    int v = 0;
-    for (i = 0; i < self->box.cols; i++) {
-        v += column_min_width(self, i);
-    }
-    if (self->element) {
-        v += self->element->hgap * (i - 1) + self->element->il + self->element->ir;
-    }
-    return v;
-}
-static int adjust_resize_width(LandWidget * self, int dx) {
-    int i;
-    for (i = 0; i < self->box.cols; i++) {
-        int j;
-        for (j = 0; j < self->box.rows; j++) {
-            LandWidget * c = lookup_box_in_grid(self, i, j);
-            if (c && c->box.flags & GUL_RESIZE) {
-                c->box.current_min_width += dx;
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-static int adjust_resize_height(LandWidget * self, int dx) {
-    int j;
-    for (j = 0; j < self->box.rows; j++) {
-        int i;
-        for (i = 0; i < self->box.cols; i++) {
-            LandWidget * c = lookup_box_in_grid(self, i, j);
-            if (c && c->box.flags & GUL_RESIZE) {
-                c->box.current_min_height += dx;
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-static void gul_box_bottom_up(LandWidget * self) {
-    if (self->box.flags & GUL_HIDDEN) {
-        self->box.current_min_width = 0;
-        self->box.current_min_height = 0;
-        return ;
-    }
-    if (! (self->box.flags & GUL_NO_LAYOUT)) {
-        if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
-            LandWidgetContainer * container = LAND_WIDGET_CONTAINER(self);
-            if (container->children) {
-                LandListItem * i = container->children->first;
-                for (; i; i = i->next) {
-                    LandWidget * c = i->data;
-                    gul_box_bottom_up(LAND_WIDGET(c));
-                }
-                self->box.current_min_width = _scramble_max(self->box.min_width, min_width(self));
-                self->box.current_min_height = _scramble_max(self->box.min_height, min_height(self));
-                return ;
-            }
-        }
-    }
-    self->box.current_min_width = self->box.min_width;
-    self->box.current_min_height = self->box.min_height;
-}
-static void gul_box_top_down(LandWidget * self) {
-    /* Recursively fit in all child widgets into the given widget.
-     */
-    if (self->box.flags & (GUL_HIDDEN | GUL_NO_LAYOUT)) {
-        return ;
-    }
-    D(printf("Box (%s[%p]): %d[%d] x %d[%d] at %d/%d\n", self->vt->name, self, self->box.w, self->box.cols, self->box.h, self->box.rows, self->box.x, self->box.y));
-    if (self->box.cols == 0 || self->box.rows == 0) {
-        D(printf("    empty.\n"));
-        return ;
-    }
-    int minw = min_width(self);
-    int minh = min_height(self);
-    if (self->box.max_width && minw > self->box.max_width) {
-        if (! adjust_resize_width(self, self->box.max_width - minw)) {
-            ERR("Fatal: Minimum width of children (%d) ""exceeds available space (%d).", minw, self->box.max_width);
-        }
-    }
-    if (self->box.max_height && minh > self->box.max_height) {
-        if (! adjust_resize_height(self, self->box.max_height - minh)) {
-            ERR("Fatal: Minimum height of children (%d) ""exceeds available space (%d).", minh, self->box.max_height);
-        }
-    }
-    LandWidgetThemeElement * element = self->element;
-    int available_width = self->box.w - minw;
-    int available_height = self->box.h - minh;
-    int want_width = expanding_columns(self);
-    int want_height = expanding_rows(self);
-    D(printf("    Children: %d (%d exp) x %d (%d exp)\n", self->box.cols, want_width, self->box.rows, want_height));
-    D(printf("              %d x %d min\n", minw, minh));
-    int i, j;
-    int x = self->box.x;
-    if (self->element) {
-        x += element->il;
-    }
-    int share = 0;
-    if (want_width) {
-        share = available_width / want_width;
-    }
-    available_width -= share * want_width;
-    D(printf("    Columns:"));
-    int hgap = self->element ? element->hgap : 0;
-    for (i = 0; i < self->box.cols; i++) {
-        int cw = column_min_width(self, i);
-        int cx = x;
-        if (is_column_expanding(self, i)) {
-            cw += share;
-            if (available_width) {
-                cw += 1;
-                available_width -= 1;
-            }
-            D(printf(" <->%d", cw));
-        }
-        else {
-            D(printf(" [-]%d", cw));
-        }
-        x += cw + hgap;
-        for (j = 0; j < self->box.rows; j++) {
-            LandWidget * c = lookup_box_in_grid(self, i, j);
-            if (c && c->box.row == j) {
-                if (c->box.col == i) {
-                    c->box.w = cw;
-                    land_widget_move(c, cx - c->box.x, 0);
-                }
-                else {
-                    c->box.w += cw + hgap;
-                }
-            }
-        }
-    }
-    D(printf("\n"));
-    D(printf("    Rows:"));
-    int y = self->box.y;
-    if (self->element) {
-        y += element->it;
-    }
-    share = 0;
-    if (want_height) {
-        share = available_height / want_height;
-    }
-    available_height -= share * want_height;
-    int vgap = self->element ? element->vgap : 0;
-    for (j = 0; j < self->box.rows; j++) {
-        int ch = row_min_height(self, j);
-        int cy = y;
-        if ((is_row_expanding(self, j))) {
-            ch += share;
-            if (available_height) {
-                ch += 1;
-                available_height -= 1;
-            }
-            D(printf(" <->%d", ch));
-        }
-        else {
-            D(printf(" [-]%d", ch));
-        }
-        y += ch;
-        y += vgap;
-        for (i = 0; i < self->box.cols; i++) {
-            LandWidget * c = lookup_box_in_grid(self, i, j);
-            if (c && c->box.col == i) {
-                if (c->box.row == j) {
-                    c->box.h = ch;
-                    land_widget_move(c, 0, cy - c->box.y);
-                }
-                else {
-                    c->box.h += ch + vgap;
-                }
-            }
-        }
-    }
-    D(printf("\n"));
-    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
-        LandWidgetContainer * container = LAND_WIDGET_CONTAINER(self);
-        if (container->children) {
-            LandListItem * li = container->children->first;
-            for (; li; li = li->next) {
-                LandWidget * c = li->data;
-                if (c->box.w != c->box.ow || c->box.h != c->box.oh) {
-                    land_call_method(c, layout_changing, (c));
-                }
-                gul_box_top_down(c);
-                if (c->box.w != c->box.ow || c->box.h != c->box.oh) {
-                    land_call_method(c, layout_changed, (c));
-                    c->box.ow = c->box.w;
-                    c->box.oh = c->box.h;
-                }
-                if (c->layout_hack) {
-                    c->layout_hack = 0;
-                    gul_box_top_down(c);
-                }
-            }
-        }
-    }
-}
-static void gul_box_fit_children(LandWidget * self) {
-    D(printf("gul_box_fit_children %s[%p]\n", self->vt->name, self));
-    gul_box_bottom_up(self);
-    self->box.w = self->box.current_min_width;
-    self->box.h = self->box.current_min_height;
-    land_call_method(self, layout_changing, (self));
-    gul_box_top_down(self);
-    land_call_method(self, layout_changed, (self));
-}
-void _land_gul_layout_updated(LandWidget * self) {
-    /* This is used if the size of a widget may have changed and therefore its own
-     * as well as its parent's layout needs updating.
-     */
-    D(printf("gul_layout_updated %s[%p]\n", self->vt->name, self));
-    update_lookup_grid(self);
-    if (self->parent && ! (self->parent->box.flags & GUL_NO_LAYOUT)) {
-        if (self->no_layout_notify == 0) {
-            self->no_layout_notify = 1;
-            _land_gul_layout_updated(self->parent);
-            self->no_layout_notify = 0;
-        }
-    }
-    else {
-        gul_box_fit_children(self);
-    }
-}
-void _land_gul_layout_updated_during_layout(LandWidget * self) {
-    /* FIXME: What the hell is this? Can't we do it the proper way?
-     * If widgets are added or removed in the middle of a layout algorithm run,
-     * this function should be called from within the layout_changed event.
-     */
-    update_lookup_grid(self);
-    gul_box_bottom_up(self);
-}
-#undef D
 static LandList * runners;
 static LandRunner * active_runner;
 void land_runner_register(LandRunner * self) {
@@ -4602,8 +1857,4830 @@ void land_runner_destroy_all(void) {
     }
     land_list_destroy(runners);
 }
-#ifdef LAND_HAVE_EXECINFO_h
+char const * land_sample_vertex_shader = "\n"
+    "attribute vec4 al_pos;\n"
+    "attribute vec4 al_color;\n"
+    "attribute vec2 al_texcoord;\n"
+    "uniform mat4 al_projview_matrix;\n"
+    "uniform bool al_use_tex_matrix;\n"
+    "uniform mat4 al_tex_matrix;\n"
+    "varying vec4 varying_color;\n"
+    "varying vec2 varying_texcoord;\n"
+    "void main()\n"
+    "{\n"
+    "  varying_color = al_color;\n"
+    "  if (al_use_tex_matrix) {\n"
+    "    vec4 uv = al_tex_matrix * vec4(al_texcoord, 0, 1);\n"
+    "    varying_texcoord = vec2(uv.x, uv.y);\n"
+    "  }\n"
+    "  else\n"
+    "    varying_texcoord = al_texcoord;\n"
+    "  gl_Position = al_projview_matrix * al_pos;\n"
+    "}\n"
+    "";
+char const * land_sample_fragment_shader = "\n"
+    "//precision lowp float;\n"
+    "uniform sampler2D al_tex;\n"
+    "uniform bool al_use_tex;\n"
+    "varying vec4 varying_color;\n"
+    "varying vec2 varying_texcoord;\n"
+    "void main()\n"
+    "{\n"
+    "  vec4 c;\n"
+    "  if (al_use_tex)\n"
+    "    c = varying_color * texture2D(al_tex, varying_texcoord);\n"
+    "  else\n"
+    "    c = varying_color;\n"
+    "  if (c.a < 0.01) discard;\n"
+    "  else gl_FragColor = c;\n"
+    "}\n"
+    "";
+LandShader* land_shader_new(char const * name, char const * vertex_glsl, char const * fragment_glsl) {
+    LandShader * self;
+    self = platform_shader_new(name, vertex_glsl, fragment_glsl);
+    return self;
+}
+void land_shader_destroy(LandShader * self) {
+    platform_shader_destroy(self);
+}
+LandTriangles* land_triangles_new(void) {
+    LandTriangles * self;
+    land_alloc(self);
+    platform_triangles_init(self);
+    return self;
+}
+LandTriangles* land_triangles_new_with_normals(void) {
+    LandTriangles * self;
+    land_alloc(self);
+    self->has_normals = 1;
+    platform_triangles_init(self);
+    return self;
+}
+void land_triangles_add_csg(LandTriangles * self, LandCSG * csg) {
+    /* Note: All polygons contained in the CSG must be triangles.
+     * Note: No reference to the CSG is kept so you can safely destroy it
+     * after this function returns.
+     */
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(csg->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(csg->polygons, &__iter0__); LandArrayIterator_next(csg->polygons, &__iter0__); p = LandArrayIterator_item(csg->polygons, &__iter0__)) {
+            for (int j = 0; j < 3; j += 1) {
+                LandCSGVertex * v = land_array_get_nth(p->vertices, j);
+                land_add_vertex(self, v->pos.x, v->pos.y, v->pos.z, 0, 0, v->rgba.r, v->rgba.g, v->rgba.b, v->rgba.a);
+                land_set_vertex_normal(self, v->normal.x, v->normal.y, v->normal.z);
+                land_set_vertex_index(self, j);
+            }
+        }
+    }
+}
+void land_triangles_destroy(LandTriangles * self) {
+    return platform_triangles_deinit(self);
+}
+void land_triangles_clear(LandTriangles * self) {
+    self->n = 0;
+}
+void land_triangles_texture(LandTriangles * self, LandImage * texture) {
+    self->image = texture;
+}
+void land_add_vertex(LandTriangles * self, float x, float y, float z, float u, float v, float r, float g, float b, float a) {
+    self->n++;
+    if (! self->buf) {
+        self->buf = land_buffer_new();
+    }
+    land_buffer_grow(self->buf, self->size);
+    land_update_vertex(self, self->n - 1, x, y, z, u, v, r, g, b, a);
+}
+void land_set_vertex_normal(LandTriangles * self, float x, float y, float z) {
+    platform_set_vertex_normal(self, x, y, z);
+}
+void land_set_vertex_index(LandTriangles * self, float i) {
+    platform_set_vertex_index(self, i);
+}
+void land_duplicate_vertex(LandTriangles * self, int i) {
+    self->n++;
+    land_buffer_grow(self->buf, self->size);
+    land_buffer_move(self->buf, self->size * (- 1 + i), - self->size, self->size);
+}
+void land_update_vertex(LandTriangles * self, int i, float x, float y, float z, float u, float v, float r, float g, float b, float a) {
+    platform_update_vertex(self, i, x, y, z, u, v, r, g, b, a);
+}
+void land_triangles_draw(LandTriangles * self) {
+    platform_triangles_draw(self);
+}
+void* land_triangles_get_vertex(LandTriangles * self, int i) {
+    char * pointer = self->buf->buffer;
+    pointer += i * self->size;
+    return pointer;
+}
+float land_norm2d(float x, float y) {
+    return sqrt(x * x + y * y);
+}
+float land_dot2d(float ax, float ay, float bx, float by) {
+    /* Given two vectors ax/ay and bx/by, returns the dot product.
+     * If the result is 0, the two vectors are orthogonal. If the result is
+     * > 0, they point into the same general direction. If the result is < 0,
+     * they point into opposite directions.
+     * This can be geometrically interpreted as "how far one vector goes along the
+     * direction of the other vector".
+     * For example, if we have two vectors a = (4, -3) and b = (4, 0). Then:
+     * |a| = 5
+     * |b| = 4
+     * a.b = 16
+     * cos = a.b / |a| / |b| = 0.8 (36.87°)
+     * length of a projected onto b: a.b / |b| = 4
+     * length of b projected onto a: a.b / |a| = 3.2
+     */
+    return ax * bx + ay * by;
+}
+float land_cross2d(float ax, float ay, float bx, float by) {
+    /* Given two vectors ax/ay and bx/by, returns the cross product.
+     * If the result is 0, the two vectors are parallel. If the result
+     * is > 0, b points more to the left than a (if y goes up). If the
+     * result is < 0, b points more to the right than a (if y goes up).
+     * Geometrically, this is "how far away does one vector go from the other".
+     * For example, if we have two vectors a = (4, -3) and b = (4, 0). Then:
+     * |a| = 5
+     * |b| = 4
+     * axb = 4 * 0 - -3 * 4 = 12
+     * sin = axb / |a| / |b| = 0.6 (36.87°)
+     * distance of a from b: axb / |b| = 3
+     * distance of b from a: axb / |a| = 2.4
+     */
+    return ax * by - ay * bx;
+}
+void land_ortho2d(float ax, float ay, float * bx, float * by) {
+    /* Returns a vector orthogonal to ax/ay. More specifically, returns a
+     * vector rotated 90 degree to the right (with y axis going down).
+     */
+    * bx = - ay;
+    * by = ax;
+}
+bool land_line_line_collision2d(LandFloat l1x1, LandFloat l1y1, LandFloat l1x2, LandFloat l1y2, LandFloat l2x1, LandFloat l2y1, LandFloat l2x2, LandFloat l2y2) {
+    /* Checks if two line segments collide.
+     */
+    LandFloat ax = l1x2 - l1x1;
+    LandFloat ay = l1y2 - l1y1;
+    LandFloat bx = l2x2 - l2x1;
+    LandFloat by = l2y2 - l2y1;
+    LandFloat cx = l2x1 - l1x1;
+    LandFloat cy = l2y1 - l1y1;
+    LandFloat ab = land_cross2d(ax, ay, bx, by);
+    LandFloat ca = land_cross2d(cx, cy, ax, ay);
+    LandFloat cb = land_cross2d(cx, cy, bx, by);
+    if (ab == 0) {
+        if (ca == 0) {
+            LandFloat dac = land_dot2d(ax, ay, cx, cy);
+            LandFloat dx = l2x2 - l1x1;
+            LandFloat dy = l2y2 - l1y1;
+            LandFloat dad = land_dot2d(ax, ay, dx, dy);
+            if (dac < 0) {
+                if (dad < 0) {
+                    return 0;
+                }
+                return 1;
+            }
+            if (dad < 0) {
+                return 1;
+            }
+            LandFloat daa = land_dot2d(ax, ay, ax, ay);
+            if (dac * dac > daa * daa && dad * dad > daa * daa) {
+                return 0;
+            }
+            return 1;
+        }
+        return 0;
+    }
+    if (ab < 0) {
+        if (ca > 0 || cb > 0) {
+            return 0;
+        }
+        if (ca < ab || cb < ab) {
+            return 0;
+        }
+    }
+    else {
+        if (ca < 0 || cb < 0) {
+            return 0;
+        }
+        if (ca > ab || cb > ab) {
+            return 0;
+        }
+    }
+    return 1;
+}
+bool circle_circle_collision2d(LandFloat c1x1, LandFloat c1y1, LandFloat c1r, LandFloat c2x1, LandFloat c2y1, LandFloat c2r) {
+    LandFloat ax = c2x1 - c1x1;
+    LandFloat ay = c2y1 - c1y1;
+    LandFloat r = c1r + c2r;
+    return ax * ax + ay * ay <= r * r;
+}
+bool land_line_circle_collision2d(LandFloat lx1, LandFloat ly1, LandFloat lx2, LandFloat ly2, LandFloat cx1, LandFloat cy1, LandFloat cr) {
+    LandFloat ax = lx2 - lx1;
+    LandFloat ay = ly2 - ly1;
+    LandFloat bx = cx1 - lx1;
+    LandFloat by = cy1 - ly1;
+    LandFloat cx = cx1 - lx2;
+    LandFloat cy = cy1 - ly2;
+    LandFloat c = land_cross2d(ax, ay, bx, by);
+    LandFloat a = ax * ax + ay * ay;
+    if (a == 0) {
+        if (bx * bx + by * by <= cr * cr) {
+            return 1;
+        }
+        return 0;
+    }
+    if (c * c / a > cr * cr) {
+        return 0;
+    }
+    LandFloat ab = land_dot2d(ax, ay, bx, by);
+    LandFloat ac = land_dot2d(ax, ay, cx, cy);
+    if (ab >= 0 && ac <= 0) {
+        return 1;
+    }
+    if (bx * bx + by * by <= cr * cr) {
+        return 1;
+    }
+    if (cx * cx + cy * cy <= cr * cr) {
+        return 1;
+    }
+    return 0;
+}
+#ifdef ANDROID
+#include "android/log.h"
 #endif
+static char * logname = NULL;
+void land_log_overwrite(char const * name) {
+    FILE * f;
+    if (logname) {
+        land_free(logname);
+    }
+    logname = land_strdup(name);
+    f = fopen(logname, "w");
+    if (f) {
+        fclose(f);
+    }
+}
+void land_log_set(char const * name) {
+    if (logname) {
+        land_free(logname);
+    }
+    logname = land_strdup(name);
+}
+void land_log_del(void) {
+    if (logname) {
+        land_free(logname);
+    }
+    logname = NULL;
+}
+void land_log_new(char const * base, int unique) {
+    static int once = 0;
+    if (logname) {
+        land_free(logname);
+    }
+    logname = land_malloc(strlen(base) + 10);
+    if (! once) {
+        atexit(land_log_del);
+        once++;
+    }
+    #ifdef ANDROID
+    sprintf(logname, "%s.log", base);
+    __android_log_print(ANDROID_LOG_INFO, "land", "%s", "******* new log *******\n");
+    #else
+    FILE * f;
+    int i = 0;
+    if (unique) {
+        while (1) {
+            sprintf(logname, "%s%04d.log", base, i);
+            f = fopen(logname, "r");
+            if (f) {
+                fclose(f);
+            }
+            i++;
+            if (! f) {
+                break;
+            }
+        }
+    }
+    else {
+        sprintf(logname, "%s.log", base);
+    }
+    f = fopen(logname, "w");
+    if (f) {
+        fprintf(f, "******* new log *******\n");
+        fclose(f);
+    }
+    #endif
+}
+void land_log_message_nostamp(char const * format, ...) {
+    if (! logname) {
+        land_log_new("land", 0);
+    }
+    va_list va_args;
+    va_start(va_args, format);
+    #ifdef ANDROID
+    char s [16382];
+    vsprintf(s, format, va_args);
+    __android_log_print(ANDROID_LOG_INFO, "land", "%s", s);
+    #else
+    FILE * logfile = fopen(logname, "a");
+    vfprintf(logfile, format, va_args);
+    fclose(logfile);
+    #endif
+    va_end(va_args);
+}
+void land_log_message(char const * format, ...) {
+    if (! logname) {
+        land_log_new("land", 0);
+    }
+    va_list va_args;
+    va_start(va_args, format);
+    #ifdef ANDROID
+    char s [16382];
+    vsprintf(s, format, va_args);
+    __android_log_print(ANDROID_LOG_INFO, "land", "%s", s);
+    #else
+    struct timeval tv;
+    #ifdef WINDOWS
+    tv.tv_usec = 0;
+    #else
+    gettimeofday(& tv, NULL);
+    #endif
+    time_t t;
+    struct tm tm;
+    time(& t);
+    tm = * gmtime(& t);
+    FILE * logfile = fopen(logname, "a");
+    fprintf(logfile, "%04d/%02d/%02d %02d:%02d:%02d.%06ld ", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, tv.tv_usec);
+    vfprintf(logfile, format, va_args);
+    fclose(logfile);
+    #endif
+    va_end(va_args);
+}
+static LandFontState * land_font_state;
+static LandFont * initial;
+static int active;
+static void line(int x1, int y1, int x2, int y2) {
+    float px = x1;
+    float py = y1;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    int d = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+    if (x1 == x2 && y1 == y2) {
+        land_filled_rectangle(x1, y1, x1 + 1, y1 + 1);
+        return ;
+    }
+    for (int i = 0; i < d + 1; i += 1) {
+        float fx = px + i * dx / (float) d;
+        float fy = py + i * dy / (float) d;
+        int x = fx;
+        int y = fy;
+        land_filled_rectangle(x, y, x + 1, y + 1);
+    }
+}
+static void letter(char glyph, str code) {
+    int x = glyph * 16;
+    int y = 0;
+    int n = strlen(code);
+    int v [2] = {0, 0};
+    int vi = 0;
+    int vc = 0;
+    int vs = 0;
+    int vn = 0;
+    land_color(0, 0, 0, 0);
+    land_filled_rectangle(x + 1, y + 1, x + 11, y + 10);
+    land_color(1, 1, 1, 1);
+    for (int i = 0; i < n; i += 1) {
+        char c = code [i];
+        if (c >= '0' && c <= '9') {
+            vc = vc * 10;
+            vc += c - '0';
+            vn++;
+        }
+        else if (c == '-') {
+            vs = - 1;
+        }
+        else {
+            if (vn) {
+                if (vs) {
+                    vc = - vc;
+                }
+                v [vi] = vc;
+                vi++;
+            }
+            vc = vs = vn = 0;
+        }
+        if (c == 'm') {
+            x += v [0];
+            y += v [1];
+            vi = 0;
+        }
+        else if (c == 'l') {
+            line(1 + x, 1 + y, 1 + x + v [0], 1 + y + v [1]);
+            x += v [0];
+            y += v [1];
+            vi = 0;
+        }
+    }
+}
+static void initial_font(void) {
+    LandImage * i = land_image_new(128 * 16, 16);
+    land_set_image_display(i);
+    land_blend(LAND_BLEND_SOLID);
+    land_clear(1, 1, 0, 1);
+    for (int i = 0; i < 128; i += 1) {
+        letter(i, "");
+    }
+    letter('A', "0 8 m 0 -8 l 8 0 l 0 8 l 0 -3 m -8 0 l");
+    letter('B', "0 8 l 6 0 l 2 -2 l -2 -2 l 2 -2 l -2 -2 l -6 0 l 0 4 m 6 0 l");
+    letter('C', "8 0 m -8 0 l 0 8 l 8 0 l");
+    letter('D', "0 8 l 4 0 l 4 -4 l -4 -4 l -4 0 l");
+    letter('E', "0 8 l 8 0 l -8 -4 m 8 0 l -8 -4 m 8 0 l");
+    letter('F', "0 8 l 0 -4 m 8 0 l -8 -4 m 8 0 l");
+    letter('G', "8 0 m -8 0 l 0 8 l 8 0 l 0 -4 l -4 0 l");
+    letter('H', "0 8 l 8 0 m 0 -8 l -8 4 m 8 0 l");
+    letter('I', "8 0 l -4 0 m 0 8 l -4 0 m 8 0 l");
+    letter('J', "0 8 m 8 0 l 0 -8 l");
+    letter('K', "0 8 l 0 -4 m 4 0 l 4 -4 l -4 4 m 4 4 l");
+    letter('L', "0 8 l 8 0 l");
+    letter('M', "0 8 m 0 -8 l 8 0 l 0 8 l -4 0 m 0 -8 l");
+    letter('N', "0 8 m 0 -8 l 8 0 l 0 8 l");
+    letter('O', "8 0 l 0 8 l -8 0 l 0 -8 l");
+    letter('P', "0 8 l 0 -8 m 6 0 l 2 2 l -2 2 l -6 0 l");
+    letter('Q', "8 0 l 0 8 l -8 0 l 0 -8 l 4 4 m 4 4 l");
+    letter('R', "0 8 l 0 -8 m 6 0 l 2 2 l -2 2 l -6 0 l 4 0 m 4 4 l");
+    letter('S', "8 0 m -8 0 l 0 4 l 8 0 l 0 4 l -8 0 l");
+    letter('T', "8 0 l -4 0 m 0 8 l");
+    letter('U', "0 8 l 8 0 l 0 -8 l");
+    letter('V', "0 4 l 4 4 l 4 -4 l 0 -4 l");
+    letter('W', "0 8 l 8 0 l 0 -8 l -4 0 m 0 8 l");
+    letter('X', "8 8 l -8 0 m 8 -8 l");
+    letter('Y', "4 4 l 0 4 l 0 -4 m 4 -4 l");
+    letter('Z', "8 0 l -8 8 l 8 0 l");
+    letter('a', "1 2 m 6 0 l 0 6 l -6 0 l 0 -3 l 6 0 l");
+    letter('b', "1 0 m 0 8 l 3 0 l 3 -3 l -3 -3 l -3 0 l");
+    letter('c', "7 8 m -6 -3 l 6 -3 l");
+    letter('d', "7 0 m 0 8 l -3 0 l -3 -3 l 3 -3 l 3 0 l");
+    letter('e', "7 8 m -3 0 l -3 -3 l 3 -3 l 3 3 l -6 0 l");
+    letter('f', "3 0 m 0 8 l -2 -4 m 4 0 l -2 -4 m 4 0 l 0 4 l");
+    letter('g', "1 2 m 6 0 l 0 6 l -6 0 l 0 -2 m 6 0 l -6 0 m 0 -4 l");
+    letter('h', "1 0 m 0 8 l 0 -6 m 6 0 l 0 6 l");
+    letter('i', "1 4 m 3 0 l 0 4 l 3 0 l -3 -6 m 0 0 l");
+    letter('j', "5 4 m 0 4 l -4 0 l 4 -6 m 0 0 l");
+    letter('k', "1 0 m 0 8 l 0 -3 m 3 0 l 3 3 l -3 -3 m 3 -3 l");
+    letter('l', "1 0 m 3 0 l 0 8 l 3 0 l");
+    letter('m', "1 8 m 0 -6 l 6 0 l 0 6 l -3 0 m 0 -6 l");
+    letter('n', "1 8 m 0 -6 l 6 0 l 0 6 l");
+    letter('o', "1 2 m 6 0 l 0 6 l -6 0 l 0 -6 l");
+    letter('p', "1 2 m 6 0 l 0 4 l -6 0 l 0 2 m 0 -6 l");
+    letter('q', "1 2 m 6 0 l 0 6 l 0 -2 m -6 0 l 0 -4 l");
+    letter('r', "1 2 m 0 6 l 0 -3 m 3 -3 l 3 0 l");
+    letter('s', "7 2 m -3 0 l -3 3 l 6 0 l -3 3 l -3 0 l");
+    letter('t', "4 0 m 0 8 l -3 -6 m 6 0 l");
+    letter('u', "1 2 m 0 6 l 6 0 l 0 -6 l");
+    letter('v', "1 2 m 0 3 l 3 3 l 3 -3 l 0 -3 l");
+    letter('w', "1 2 m 0 6 l 6 0 l 0 -6 l -3 0 m 0 6 l");
+    letter('x', "1 2 m 6 6 l -6 0 m 6 -6 l");
+    letter('y', "1 2 m 3 3 l 3 -3 m -6 6 l");
+    letter('z', "1 2 m 6 0 l -6 6 l 6 0 l");
+    letter('.', "4 8 m 0 0 l");
+    letter('/', "0 8 m 8 -8 l");
+    letter('\\', "8 8 l");
+    letter('-', "1 4 m 6 0 l");
+    letter('+', "1 4 m 6 0 l -3 -3 m 0 6 l");
+    land_unset_image_display();
+    int r [] = {0, 127};
+    LandFont * f = land_font_from_image(i, 1, r);
+    land_font_state->font = initial = f;
+    land_image_destroy(i);
+}
+void land_font_init(void) {
+    if (active) {
+        return ;
+    }
+    land_log_message("land_font_init\n");
+    land_alloc(land_font_state);
+    platform_font_init();
+    active = 1;
+    initial_font();
+}
+void land_font_exit(void) {
+    if (! active) {
+        return ;
+    }
+    land_free(land_font_state);
+    platform_font_exit();
+    active = 0;
+}
+int land_font_active(void) {
+    return active;
+}
+LandFont* land_font_load(char const * filename, float size) {
+    /* Load the given font file, with the given size. The size usually is the pixel
+     * height of a line in the font. But some fonts, e.g. bitmap fonts, will
+     * ignore it. The font also us made the current font if successfully loaded.
+     */
+    char * path = land_path_with_prefix(filename);
+    LandFont * self = platform_font_load(path, size);
+    land_free(path);
+    if (self->flags & LAND_LOADED) {
+        land_font_state->font = self;
+    }
+    return self;
+}
+void land_font_destroy(LandFont * self) {
+    platform_font_destroy(self);
+}
+LandFont* land_font_new(void) {
+    LandFont * f = platform_font_new();
+    return f;
+}
+void land_font_scale(LandFont * f, double scaling) {
+    f->xscaling = f->yscaling = scaling;
+}
+void land_font_yscale(LandFont * f, double scaling) {
+    f->yscaling = scaling;
+}
+void land_font_set(LandFont * self) {
+    land_font_state->font = self;
+}
+void land_text_pos(float x, float y) {
+    land_font_state->x_pos = x;
+    land_font_state->y_pos = y;
+}
+void land_text_set_width(float w) {
+    land_font_state->adjust_width = w;
+}
+float land_text_x_pos(void) {
+    return land_font_state->x_pos;
+}
+float land_text_y_pos(void) {
+    return land_font_state->y_pos;
+}
+float land_text_x(void) {
+    return land_font_state->x;
+}
+float land_text_y(void) {
+    return land_font_state->y;
+}
+float land_text_width(void) {
+    return land_font_state->w;
+}
+float land_text_height(void) {
+    return land_font_state->h;
+}
+int land_text_state(void) {
+    return land_font_state->off;
+}
+float land_font_height(LandFont * self) {
+    return self->size * self->yscaling;
+}
+LandFont* land_font_current(void) {
+    return land_font_state->font;
+}
+float land_line_height(void) {
+    return land_font_height(land_font_current());
+}
+void land_text_off(void) {
+    land_font_state->off = 1;
+}
+void land_text_on(void) {
+    land_font_state->off = 0;
+}
+void land_print_string(char const * str, int newline, int alignment) {
+    platform_font_print(land_font_state, str, alignment);
+    if (newline) {
+        land_font_state->y_pos = land_font_state->y + land_font_state->h;
+    }
+    else {
+        land_font_state->x_pos = land_font_state->x + land_font_state->w;
+    }
+}
+float land_text_get_width(char const * str) {
+    int onoff = land_font_state->off;
+    land_font_state->off = 1;
+    platform_font_print(land_font_state, str, 0);
+    land_font_state->off = onoff;
+    return land_font_state->w;
+}
+int land_text_get_char_offset(char const * str, int nth) {
+    char * u = land_strdup(str);
+    char * p = u;
+    for (int i = 0; i < nth; i++) {
+        land_utf8_char(& p);
+    }
+    * p = 0;
+    int x = land_text_get_width(u);
+    land_free(u);
+    return x;
+}
+int land_text_get_char_index(char const * str, int x) {
+    if (x < 0) {
+        return 0;
+    }
+    int l = 0;
+    char * p = (char *) str;
+    while (land_utf8_char(& p)) {
+        l++;
+    }
+    for (int i = 0; i <= l; i++) {
+        if (land_text_get_char_offset(str, i) > x) {
+            return i - 1;
+        }
+    }
+    return l;
+}
+void land_print(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 1, 0);
+}
+void land_print_right(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 1, LandAlignRight);
+}
+void land_print_center(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 1, LandAlignCenter);
+}
+void land_print_middle(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 1, LandAlignCenter | LandAlignMiddle);
+}
+void land_write(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 0, 0);
+}
+void land_write_right(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 0, LandAlignRight);
+}
+void land_write_center(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 0, LandAlignCenter);
+}
+void land_write_middle(char const * text, ...) {
+    VPRINT;
+    land_print_string(s, 0, LandAlignCenter | LandAlignMiddle);
+}
+void land_printv(char const * text, va_list args) {
+    va_list args2;
+    va_copy(args2, args);
+    int n = vsnprintf(NULL, 0, text, args2);
+    va_end(args2);
+    if (n < 0) {
+        n = 1023;
+    }
+    char s [n + 1];
+    vsnprintf(s, n + 1, text, args);
+    land_print_string(s, 1, 0);
+}
+static int _wordwrap_helper(char const * text, int w, int h, void(* cb)(int a, int b, void * data), void * data) {
+    int y = land_text_y_pos();
+    float fh = land_font_state->font->size;
+    char const * line_start_p = text;
+    land_font_state->adjust_width = w;
+    while (1) {
+        if (h > 0 && land_text_y_pos() >= y + h) {
+            break;
+        }
+        float width_of_line = 0;
+        int word_end_glyphs = 0;
+        char const * word_end_p = line_start_p;
+        char const * prev_word_end_p = line_start_p;
+        char const * ptr;
+        int c;
+        while (1) {
+            bool inside_leading_whitespace = 1;
+            ptr = word_end_p;
+            int glyphs = word_end_glyphs;
+            while (1) {
+                c = land_utf8_char_const(& ptr);
+                if (c == 0) {
+                    break;
+                }
+                if (c == '\n') {
+                    break;
+                }
+                if (c == ' ') {
+                    if (! inside_leading_whitespace) {
+                        break;
+                    }
+                }
+                else {
+                    inside_leading_whitespace = 0;
+                }
+                if (inside_leading_whitespace && word_end_glyphs == 0) {
+                    line_start_p = ptr;
+                }
+                else {
+                    glyphs++;
+                    word_end_p = ptr;
+                }
+            }
+            int x = land_text_get_char_offset(line_start_p, glyphs);
+            if (x > w) {
+                if (word_end_glyphs == 0) {
+                    word_end_glyphs = glyphs;
+                    width_of_line = x;
+                }
+                else {
+                    c = ' ';
+                    ptr = word_end_p = prev_word_end_p;
+                }
+                break;
+            }
+            width_of_line = x;
+            word_end_glyphs = glyphs;
+            prev_word_end_p = word_end_p;
+            if (c == 0 || c == '\n') {
+                break;
+            }
+        }
+        if (width_of_line > land_font_state->wordwrap_width) {
+            land_font_state->wordwrap_width = width_of_line;
+        }
+        land_font_state->wordwrap_height += fh;
+        if (word_end_p < line_start_p) {
+            cb(line_start_p - text, line_start_p - text, data);
+        }
+        else {
+            cb(line_start_p - text, word_end_p - text, data);
+        }
+        line_start_p = ptr;
+        if (c == 0) {
+            break;
+        }
+    }
+    return line_start_p - text;
+}
+static void _print_wordwrap_cb(int a, int b, void * data) {
+    void * (* p) = data;
+    char * text = p [0];
+    int * alignment = p [1];
+    char s [b - a + 1];
+    strncpy(s, text + a, b - a + 1);
+    s [b - a] = 0;
+    land_print_string(s, 1, * alignment);
+}
+int land_print_string_wordwrap(char const * text, int w, int h, int alignment) {
+    /* Print text inside, and starts a new line whenever the text goes over the
+     * given width, wrapping at whitespace. If a single word is bigger than w, it
+     * will be printed in its own line and exceed w. If h is 0, the whole text is
+     * printed. Otherwise, only as many lines as fit into h pixels are printed.
+     * The return value is the offset into text in bytes of one past the last
+     * printed character.
+     */
+    void * data [] = {(void *) text, & alignment};
+    return _wordwrap_helper(text, w, h, _print_wordwrap_cb, data);
+}
+int land_print_wordwrap(int w, int h, char const * text, ...) {
+    VPRINT;
+    return land_print_string_wordwrap(s, w, h, 0);
+}
+int land_print_wordwrap_right(int w, int h, char const * text, ...) {
+    VPRINT;
+    return land_print_string_wordwrap(s, w, h, 1);
+}
+int land_print_wordwrap_center(int w, int h, char const * text, ...) {
+    VPRINT;
+    return land_print_string_wordwrap(s, w, h, 2);
+}
+static void land_wordwrap_text_cb(int a, int b, void * data) {
+    void * (* p) = data;
+    char const * text = p [0];
+    LandArray * lines = p [1];
+    char * s = land_malloc(b - a + 1);
+    strncpy(s, text + a, b - a + 1);
+    s [b - a] = 0;
+    land_array_add(lines, s);
+}
+LandArray* land_wordwrap_text(int w, int h, char const * str) {
+    /* Splits the given string into multiple lines no longer than w pixels. The
+     * returned array will have a newly allocated string for each line. You are
+     * responsible for freeing those strings again.
+     * The calculations will use the current font. Note that for large texts, this
+     * can take a while, so you should do calculations on demand and only for the
+     * visible text.
+     * You can call land_wordwrap_extents after this functions to get the
+     * dimensions of a box which will be able to hold all the text.
+     */
+    LandArray * lines = land_array_new();
+    land_font_state->wordwrap_width = 0;
+    land_font_state->wordwrap_height = 0;
+    if (str) {
+        void * data [] = {(void *) str, lines};
+        _wordwrap_helper(str, w, h, land_wordwrap_text_cb, data);
+    }
+    return lines;
+}
+void land_text_destroy_lines(LandArray * lines) {
+    if (! lines) {
+        return ;
+    }
+    land_array_destroy_with_strings(lines);
+}
+LandArray* land_text_splitlines(char const * str) {
+    /* Splits the text into lines, and updates the wordwrap extents.
+     */
+    land_font_state->wordwrap_width = 0;
+    LandArray * lines = land_array_new();
+    while (1) {
+        char const * p = strchr(str, '\n');
+        if (! p) {
+            p = str + strlen(str);
+        }
+        char * s = land_malloc(p - str + 1);
+        strncpy(s, str, p - str);
+        s [p - str] = 0;
+        int w = land_text_get_width(s);
+        if (w > land_font_state->wordwrap_width) {
+            land_font_state->wordwrap_width = w;
+        }
+        land_array_add(lines, s);
+        if (p [0] == 0) {
+            break;
+        }
+        str = p + 1;
+    }
+    land_font_state->wordwrap_height = land_font_state->font->size * land_array_count(lines);
+    return lines;
+}
+void land_wordwrap_extents(float * w, float * h) {
+    if (w) {
+        * w = land_font_state->wordwrap_width;
+    }
+    if (h) {
+        * h = land_font_state->wordwrap_height;
+    }
+}
+void land_print_lines(LandArray * lines, int alignment) {
+    /* Given an array of lines, print the visible ones.
+     */
+    float cl, ct, cr, cb;
+    land_get_clip(& cl, & ct, & cr, & cb);
+    float fh = land_line_height();
+    float ty = land_text_y_pos();
+    int first = (ct - ty) / fh;
+    int last = (cb - ty) / fh;
+    int n = land_array_count(lines);
+    if (first < 0) {
+        first = 0;
+    }
+    if (last > n - 1) {
+        last = n - 1;
+    }
+    if (alignment & LandAlignMiddle) {
+        alignment ^= LandAlignMiddle;
+        land_font_state->y_pos -= n * fh / 2;
+    }
+    land_font_state->y_pos += fh * first;
+    for (int i = first; i <= last; i++) {
+        char * s = land_array_get_nth(lines, i);
+        land_print_string(s, 1, alignment);
+    }
+}
+LandFont* land_font_from_image(LandImage * image, int n_ranges, int * ranges) {
+    LandFont * self = platform_font_from_image(image, n_ranges, ranges);
+    land_font_state->font = self;
+    return self;
+}
+void land_print_multiline(char const * text, ...) {
+    VPRINT;
+    LandArray * a = land_text_splitlines(s);
+    land_print_lines(a, 0);
+    land_array_destroy_with_strings(a);
+}
+static float _blend(LandPlasma * self, float c1, float c2, float level) {
+    float rnd = land_random_f(self->rndgen, - 1, 1);
+    float scale = pow(2 + self->power_modifier, - level + self->amplitude);
+    float ret = (c1 + c2 + rnd * scale) / 2;
+    if (ret < - 1) {
+        ret = - 1;
+    }
+    if (ret > 1) {
+        ret = 1;
+    }
+    return ret;
+}
+LandPlasma* land_plasma_new(LandRandom * rndgen, int w, int h, float power_modifier, float amplitude) {
+    LandPlasma * self;
+    land_alloc(self);
+    self->w = w;
+    self->h = h;
+    self->power_modifier = power_modifier;
+    self->amplitude = amplitude;
+    self->rndgen = rndgen;
+    self->cache = land_calloc(w * h * sizeof (* self->cache));
+    return self;
+}
+static float _plasma_read(LandPlasma * self, int x, int y) {
+    x = land_mod(x, self->w);
+    y = land_mod(y, self->h);
+    return self->cache [y * self->w + x];
+}
+static void _plasma_write(LandPlasma * self, int x, int y, float value) {
+    x = land_mod(x, self->w);
+    y = land_mod(y, self->h);
+    self->cache [y * self->w + x] = value;
+}
+static void _fractal(LandPlasma * self, int x, int y, int w, int h, int i) {
+    float c1 = _plasma_read(self, x, y);
+    float c2 = _plasma_read(self, x + w, y);
+    float c3 = _plasma_read(self, x + w, y + h);
+    float c4 = _plasma_read(self, x, y + h);
+    float n2 = _blend(self, c1, c2, i);
+    float n4 = _blend(self, c1, c4, i);
+    float n3 = _blend(self, (c1 + c2) / 2, (c3 + c4) / 2, i);
+    w /= 2;
+    h /= 2;
+    _plasma_write(self, x + w, y, n2);
+    _plasma_write(self, x + w, y + h, n3);
+    _plasma_write(self, x, y + h, n4);
+}
+static void _subdivide(LandPlasma * self) {
+    int dx = self->w;
+    int dy = self->h;
+    int x = 0;
+    int y = 0;
+    int i = 0;
+    while (dx > 1 && dy > 1) {
+        while (x < self->w) {
+            while (y < self->h) {
+                _fractal(self, x, y, dx, dy, i);
+                y += dy;
+            }
+            y = 0;
+            x += dx;
+        }
+        x = 0;
+        dx /= 2;
+        dy /= 2;
+        i++;
+    }
+}
+void land_plasma_generate(LandPlasma * self) {
+    _plasma_write(self, 0, 0, 0);
+    _subdivide(self);
+}
+void land_plasma_del(LandPlasma * self) {
+    land_free(self);
+}
+float land_plasma_at(LandPlasma * self, int x, int y) {
+    x %= self->w;
+    if (x < 0) {
+        x += self->w;
+    }
+    y %= self->h;
+    if (y < 0) {
+        y += self->h;
+    }
+    float value = self->cache [x + self->w * y];
+    return value;
+}
+#define N LAND_RANDOM_N
+#define M 397
+#define MATRIX_A 0x9908b0dfUL
+#define UPPER_MASK 0x80000000UL
+#define LOWER_MASK 0x7fffffffUL
+static LandRandom default_state = {.mti = N + 1};
+static void init_genrand(LandRandom * r, unsigned long s) {
+    r->mt [0] = s & 0xffffffffUL;
+    for (r->mti = 1; r->mti < N; r->mti++) {
+        r->mt [r->mti] = (1812433253UL * (r->mt [r->mti - 1] ^ (r->mt [r->mti - 1] >> 30)) + r->mti);
+        r->mt [r->mti] &= 0xffffffffUL;
+    }
+}
+static unsigned long genrand_int32(LandRandom * r) {
+    unsigned long y;
+    static const unsigned long mag01 [2] = {0x0UL, MATRIX_A};
+    if (r->mti >= N) {
+        int kk;
+        if (r->mti == N + 1) {
+            init_genrand(r, 5489UL);
+        }
+        for (kk = 0; kk < N - M; kk++) {
+            y = (r->mt [kk] & UPPER_MASK) | (r->mt [kk + 1] & LOWER_MASK);
+            r->mt [kk] = r->mt [kk + M] ^ (y >> 1) ^ mag01 [y & 0x1UL];
+        }
+        for (; kk < N - 1; kk++) {
+            y = (r->mt [kk] & UPPER_MASK) | (r->mt [kk + 1] & LOWER_MASK);
+            r->mt [kk] = r->mt [kk + (M - N)] ^ (y >> 1) ^ mag01 [y & 0x1UL];
+        }
+        y = (r->mt [N - 1] & UPPER_MASK) | (r->mt [0] & LOWER_MASK);
+        r->mt [N - 1] = r->mt [M - 1] ^ (y >> 1) ^ mag01 [y & 0x1UL];
+        r->mti = 0;
+    }
+    y = r->mt [r->mti++];
+    y ^= (y >> 11);
+    y ^= (y << 7) & 0x9d2c5680UL;
+    y ^= (y << 15) & 0xefc60000UL;
+    y ^= (y >> 18);
+    return y;
+}
+#define MAX_NUMBER 4294967295U
+void land_seed(int seed) {
+    init_genrand(& default_state, seed);
+}
+double land_rnd(double rmin, double rmax) {
+    return land_random_f(& default_state, rmin, rmax);
+}
+int land_rand(int rmin, int rmax) {
+    return land_random(& default_state, rmin, rmax);
+}
+LandRandom* land_random_new(int seed) {
+    LandRandom * self;
+    land_alloc(self);
+    init_genrand(self, seed);
+    return self;
+}
+void land_random_del(LandRandom * self) {
+    land_free(self);
+}
+int land_random(LandRandom * r, int rmin, int rmax) {
+    /* rmax is inclusive, so there are (rmax - rmin + 1) total values
+     */
+    if (rmin >= rmax) {
+        return rmin;
+    }
+    int64_t d = rmax;
+    d++;
+    d -= rmin;
+    return rmin + genrand_int32(r) % d;
+}
+double land_random_f(LandRandom * r, double rmin, double rmax) {
+    /* Random value in the half-open interval [min, max[, that is min is inclusive
+     * but max is exclusive.
+     */
+    if (rmin >= rmax) {
+        return rmin;
+    }
+    return rmin + ((double) genrand_int32(r) / MAX_NUMBER) * (rmax - rmin);
+}
+void land_shuffle(int * a, int n) {
+    for (int i = 0; i < n; i += 1) {
+        a [i] = i;
+    }
+    for (int i = 0; i < n - 1; i += 1) {
+        int j = land_rand(i, n - 1);
+        int t = a [i];
+        a [i] = a [j];
+        a [j] = t;
+    }
+}
+#undef N
+#undef M
+#undef MATRIX_A
+#undef UPPER_MASK
+#undef LOWER_MASK
+#undef MAX_NUMBER
+char* land_read_text(char const * filename) {
+    LandBuffer * bytebuffer = land_buffer_read_from_file(filename);
+    if (! bytebuffer) {
+        return NULL;
+    }
+    return land_buffer_finish(bytebuffer);
+}
+int land_utf8_char(char * (* pos)) {
+    /* Return the unicode value at the given pointer position, and advance the
+     * pointer to the start of the next code point.
+     */
+    unsigned char * upos = (unsigned char *) * pos;
+    int remain;
+    int c = * upos++;
+    if (c < 128) {
+        * pos = (char *) upos;
+        return c;
+    }
+    if (c < 194) {
+        return 0;
+    }
+    if (c < 224) {
+        c &= 31;
+        remain = 1;
+    }
+    else if (c < 240) {
+        c &= 15;
+        remain = 2;
+    }
+    else if (c < 245) {
+        c &= 7;
+        remain = 3;
+    }
+    else {
+        return 0;
+    }
+    while (remain--) {
+        int d = * upos++;
+        c = (c << 6) | (d & 63);
+    }
+    * pos = (char *) upos;
+    return c;
+}
+int land_utf8_char_back(char * (* pos)) {
+    /* Adjust the pointer back to the previous code point and return its value.
+     */
+    unsigned char * upos = (unsigned char *) * pos;
+    while (((* (--upos) & 0xc0) == 0x80)) {
+    }
+    * pos = (char *) upos;
+    int c = land_utf8_char((char * *) & upos);
+    return c;
+}
+int land_utf8_char_const(char const * (* pos)) {
+    char * (* p) = (char * *) pos;
+    return land_utf8_char(p);
+}
+int land_utf8_encode(int c, char * s) {
+    uint32_t uc = c;
+    if (uc <= 0x7f) {
+        if (s) {
+            s [0] = uc;
+        }
+        return 1;
+    }
+    if (uc <= 0x7ff) {
+        if (s) {
+            s [0] = 0xC0 | ((uc >> 6) & 0x1F);
+            s [1] = 0x80 | (uc & 0x3F);
+        }
+        return 2;
+    }
+    if (uc <= 0xffff) {
+        if (s) {
+            s [0] = 0xE0 | ((uc >> 12) & 0x0F);
+            s [1] = 0x80 | ((uc >> 6) & 0x3F);
+            s [2] = 0x80 | (uc & 0x3F);
+        }
+        return 3;
+    }
+    if (uc <= 0x10ffff) {
+        if (s) {
+            s [0] = 0xF0 | ((uc >> 18) & 0x07);
+            s [1] = 0x80 | ((uc >> 12) & 0x3F);
+            s [2] = 0x80 | ((uc >> 6) & 0x3F);
+            s [3] = 0x80 | (uc & 0x3F);
+        }
+        return 4;
+    }
+    return 0;
+}
+char* land_utf8_realloc_insert(char * s, int pos, int c) {
+    /* (abc, 3, d) -> abcd
+     */
+    int l = strlen(s);
+    int clen = land_utf8_encode(c, NULL);
+    s = land_realloc(s, l + clen + 1);
+    char * p = s;
+    if (pos >= 0) {
+        for (int i = 0; i < pos; i++) {
+            land_utf8_char(& p);
+        }
+    }
+    else {
+        p += l;
+    }
+    memmove(p + clen, p, l + 1 - (p - s));
+    land_utf8_encode(c, p);
+    return s;
+}
+char* land_utf8_realloc_remove(char * s, int pos) {
+    /* (abc, 1) -> ac
+     */
+    int l = strlen(s);
+    char * p = s;
+    for (int i = 0; i < pos; i++) {
+        land_utf8_char(& p);
+    }
+    char * p2 = p;
+    land_utf8_char(& p2);
+    memmove(p, p2, l - (p2 - s) + 1);
+    s = land_realloc(s, l - (p2 - p) + 1);
+    return s;
+}
+int land_utf8_count(char const * s) {
+    int n = 0;
+    while (land_utf8_char_const(& s)) {
+        n++;
+    }
+    return n;
+}
+void land_utf8_copy(char * target, int size, char const * source) {
+    int i = 0;
+    char const * ptr = source;
+    char const * prev = source;
+    while (land_utf8_char_const(& ptr)) {
+        int s = ptr - prev;
+        if (i + s < size) {
+            memcpy(target + i, prev, s);
+            i += s;
+        }
+        else {
+            break;
+        }
+        prev = ptr;
+    }
+    target [i] = 0;
+}
+bool land_fnmatch(char const * pattern, char const * name) {
+    int i = 0, j = 0;
+    while (1) {
+        switch (pattern [i]) {
+            case 0: {
+                return name [j] == 0;
+            }
+            case '?': {
+                if (name [j] == 0) {
+                    return 0;
+                }
+                break;
+            }
+            case '*': {
+                while (pattern [i] == '*') {
+                    i++;
+                }
+                if (pattern [i] == 0) {
+                    return 1;
+                }
+                while (name [j] != 0) {
+                    if (land_fnmatch(pattern + i, name + j)) {
+                        return 1;
+                    }
+                    j++;
+                }
+                return false;
+            }
+            default: {
+                if (pattern [i] != name [j]) {
+                    return 0;
+                }
+            }
+        }
+        i++;
+        j++;
+    }
+}
+char* land_string_copy(char * target, char const * source, int size) {
+    /* size is the size of target in bytes (including the terminating 0)
+     * Returns target.
+     */
+    strncpy(target, source, size - 1);
+    target [size - 1] = 0;
+    return target;
+}
+bool land_equals(char const * s, char const * s2) {
+    if (s == NULL) {
+        return s2 == NULL;
+    }
+    if (s2 == NULL) {
+        return 0;
+    }
+    return strcmp(s, s2) == 0;
+}
+bool land_ends_with(char const * s, char const * end) {
+    size_t n = strlen(end);
+    return strncmp(s + strlen(s) - n, end, n) == 0;
+}
+bool land_starts_with(char const * s, char const * start) {
+    size_t n = strlen(start);
+    return strncmp(s, start, n) == 0;
+}
+void land_concatenate(char * (* s), char const * cat) {
+    int sn = strlen(* s);
+    int n = sn + strlen(cat) + 1;
+    char * re = land_realloc(* s, n);
+    memmove(re + sn, cat, strlen(cat));
+    re [n - 1] = 0;
+    * s = re;
+}
+void land_appendv(char * (* s), str format, va_list args) {
+    va_list args2;
+    va_copy(args2, args);
+    int n = vsnprintf(NULL, 0, format, args2);
+    va_end(args2);
+    if (n < 0) {
+        n = 1023;
+    }
+    char f [n + 1];
+    vsnprintf(f, n + 1, format, args);
+    land_concatenate(s, f);
+}
+void land_append(char * (* s), str format, ...) {
+    va_list args;
+    va_start(args, format);
+    land_appendv(s, format, args);
+    va_end(args);
+}
+void land_concatenate_with_separator(char * (* s), char const * cat, char const * sep) {
+    if (! (* s) || land_equals(* s, "")) {
+        land_concatenate(s, cat);
+    }
+    else {
+        land_concatenate(s, sep);
+        land_concatenate(s, cat);
+    }
+}
+void land_prepend(char * (* s), char const * pre) {
+    int n = strlen(* s) + strlen(pre) + 1;
+    char * re = land_realloc(* s, n);
+    memmove(re + strlen(pre), re, strlen(* s));
+    memmove(re, pre, strlen(pre));
+    re [n - 1] = 0;
+    * s = re;
+}
+int land_replace(char * (* s), int off, char const * wat, char const * wit) {
+    /* Given a pointer to a string, replaces the string with a new string
+     * and deletes the original one. The new string will have the
+     * first occurence of "wat" replaced with "wit", starting at byte
+     * offset off.
+     */
+    char * r = strstr(* s + off, wat);
+    if (! r) {
+        return strlen(* s);
+    }
+    int pn = r - * s;
+    int sn = strlen(* s);
+    int n = sn + strlen(wit) - strlen(wat) + 1;
+    char * re = land_malloc(n);
+    memmove(re, * s, r - * s);
+    memmove(re + pn, wit, strlen(wit));
+    memmove(re + pn + strlen(wit), r + strlen(wat), sn - pn - strlen(wat));
+    re [n - 1] = 0;
+    land_free(* s);
+    * s = re;
+    return pn + strlen(wit);
+}
+bool land_contains(str hay, str needle) {
+    return strstr(hay, needle) != NULL;
+}
+int land_find(str hay, str needle) {
+    str x = strstr(hay, needle);
+    if (! x) {
+        return - 1;
+    }
+    return x - hay;
+}
+int land_find_from_back(str hay, str needle) {
+    int hn = strlen(hay);
+    int nn = strlen(needle);
+    int i = hn - nn;
+    while (i >= 0) {
+        if (strncmp(hay + i, needle, nn) == 0) {
+            return i;
+        }
+        i--;
+    }
+    return - 1;
+}
+int land_replace_all(char * (* s), char const * wat, char const * wit) {
+    /* Like land_replace but replaces all occurences. Returns the number
+     * of replacements performed.
+     */
+    int off = 0;
+    int c = 0;
+    while (1) {
+        off = land_replace(s, off, wat, wit);
+        if (! (* s) [off]) {
+            return c;
+        }
+        c++;
+    }
+}
+char* land_lowercase_copy(str s) {
+    char const * pos = s;
+    char * news = land_strdup("");
+    while (1) {
+        int c = land_utf8_char_const(& pos);
+        if (! c) {
+            break;
+        }
+        news = land_utf8_realloc_insert(news, - 1, tolower(c));
+    }
+    return news;
+}
+void land_shorten(char * (* s), int start, int end) {
+    char * replace = land_substring(* s, start, strlen(* s) - end);
+    land_free(* s);
+    * s = replace;
+}
+char* land_substring(char const * s, int a, int b) {
+    if (a < 0) {
+        a += strlen(s);
+    }
+    if (b < 0) {
+        b += strlen(s);
+    }
+    char * r = land_malloc(b - a + 1);
+    memmove(r, s + a, b - a);
+    r [b - a] = 0;
+    return r;
+}
+void land_strip(char * (* s)) {
+    LandBuffer * b = land_buffer_new();
+    land_buffer_cat(b, * s);
+    land_buffer_strip(b, " \t\n\r");
+    land_free(* s);
+    * s = land_buffer_finish(b);
+}
+LandArray* land_filelist(char const * dir, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data) {
+    /* Returns an array of files in the given directory. Before a file is added,
+     * the filter function is called, with the name about to be added and an
+     * indication whether it is a filename or a directory.
+     * If flags is LAND_FULL_PATH files are returned as a full path, if
+     * LAND_RELATIVE_PATH relative to dir, otherwise as
+     * only the filename.
+     * The return value of the filter decides what is done with the name:
+     * 0 - Discard it.
+     * 1 - Append it to the returned list.
+     * 2 - If it is a directory, recurse into it.
+     * 3 - Like 1 and 2 combined.
+     */
+    return platform_filelist(dir, filter, flags, data);
+}
+LandArray* land_split_path_name_ext(char const * filename) {
+    /* Returns a LandArray with three elements, for example:
+     * data/blah/tree.png -> ["data/blah", "tree", "png"]
+     * test.txt -> [None, "test", "txt"]
+     * /etc/passwd -> ["/etc", "passwd", None]
+     * The return value can most conveniently be freed like this:
+     * a = land_split_path_name_ext(filename)
+     * ...
+     * land_array_destroy_with_strings(a)
+     */
+    LandArray * a = land_array_new();
+    char * path = land_strdup(filename);
+    char * name;
+    char * ext;
+    char * slash = strrchr(path, '/');
+    if (slash) {
+        * slash = 0;
+        name = land_strdup(slash + 1);
+    }
+    else {
+        name = path;
+        path = NULL;
+    }
+    char * dot = strrchr(name, '.');
+    if (dot) {
+        * dot = 0;
+        ext = land_strdup(dot + 1);
+    }
+    else {
+        ext = NULL;
+    }
+    land_array_add(a, path);
+    land_array_add(a, name);
+    land_array_add(a, ext);
+    return a;
+}
+LandArray* land_split(char const * text, str c) {
+    /* Returns an array of strings which you should destroy with
+     * land_array_destroy_with_strings
+     */
+    LandArray * split = land_array_new();
+    LandBuffer * buf = land_buffer_new();
+    land_buffer_cat(buf, text);
+    LandArray * lines = land_buffer_split(buf, c);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(lines);
+        for (LandBuffer * line = LandArrayIterator_item(lines, &__iter0__); LandArrayIterator_next(lines, &__iter0__); line = LandArrayIterator_item(lines, &__iter0__)) {
+            char * x = land_buffer_finish(line);
+            land_array_add(split, x);
+        }
+    }
+    land_array_destroy(lines);
+    land_buffer_destroy(buf);
+    return split;
+}
+bool land_split_two(str text, str sep, char * (* a), char * (* b)) {
+    int x = land_find(text, sep);
+    if (x < 0) {
+        return 0;
+    }
+    * a = land_substring(text, 0, x);
+    * b = land_substring(text, x + strlen(sep), strlen(text));
+    return 1;
+}
+LandArray* land_split_lines(char const * text) {
+    return land_split(text, "\n");
+}
+LandColor platform_color_hsv(float hue, float sat, float val) {
+    LandColor c;
+    al_color_hsv_to_rgb(hue, sat, val, & c.r, & c.g, & c.b);
+    c.a = 1;
+    return c;
+}
+LandColor platform_color_name(char const * name) {
+    LandColor c;
+    if (land_equals(name, "sequoia")) {
+        c.r = 0x90 / 255.0;
+        c.g = 0x50 / 255.0;
+        c.b = 0x60 / 255.0;
+        c.a = 1;
+        return c;
+    }
+    int i = 0;
+    while (name [i]) {
+        if (name [i] == ' ') {
+            char name2 [strlen(name)];
+            strncpy(name2, name, i);
+            int j = i;
+            i++;
+            while (name [i]) {
+                if (name [i] == ' ') {
+                    continue;
+                }
+                name2 [j++] = name [i];
+                i++;
+            }
+            name2 [j] = 0;
+            return platform_color_name(name2);
+        }
+        i++;
+    }
+    al_color_name_to_rgb(name, & c.r, & c.g, & c.b);
+    c.a = 1;
+    return c;
+}
+void platform_popup(str title, str text) {
+    #ifdef ANDROID
+    #else
+    al_show_native_message_box(al_get_current_display(), title, title, text, NULL, ALLEGRO_MESSAGEBOX_ERROR);
+    #endif
+}
+#define LOG_COLOR_STATS 0
+static void(* _cb)(char const * path, LandImage * image);
+static int bitmap_count, bitmap_memory;
+void land_image_set_callback(void(* cb)(char const * path, LandImage * image)) {
+    _cb = cb;
+}
+static LandImage* _load(char const * filename, bool mem) {
+    LandImage * self;
+    char * path = land_path_with_prefix(filename);
+    land_log_message("land_image_load %s..", path);
+    self = platform_image_load(path, mem);
+    land_free(path);
+    bitmap_count++;
+    _load2(self);
+    return self;
+}
+static void _load2(LandImage * self) {
+    if (self->flags & LAND_LOADED) {
+        int w = land_image_width(self);
+        int h = land_image_height(self);
+        land_log_message_nostamp("success (%d x %d)\n", w, h);
+        if (self->flags & LAND_IMAGE_CENTER) {
+            land_image_center(self);
+        }
+        if (self->flags & LAND_AUTOCROP) {
+            land_image_auto_crop(self);
+        }
+        if (! (self->flags & LAND_IMAGE_MEMORY)) {
+            land_image_prepare(self);
+        }
+        land_log_message("prepared l=%.0f, t=%.0f, r=%.0f, b=%.0f\n", self->l, self->t, self->r, self->b);
+        #ifdef LOG_COLOR_STATS
+        float red = 0, green = 0, blue = 0, alpha = 0;
+        int n = 1;
+        n = land_image_color_stats(self, & red, & green, & blue, & alpha);
+        land_log_message(" (%.2f|%.2f|%.2f|%.2f).\n", red / n, green / n, blue / n, alpha / n);
+        #endif
+        bitmap_memory += w * h * 4;
+        land_log_message(" %d bitmaps (%.1fMB).\n", bitmap_count, bitmap_memory / 1024.0 / 1024.0);
+    }
+    else {
+        land_log_message_nostamp("failure\n");
+    }
+    if (_cb) {
+        _cb(self->filename, self);
+    }
+}
+LandImage* land_image_load(char const * filename) {
+    return _load(filename, 0);
+}
+bool land_image_was_loaded(LandImage * self) {
+    return (self->flags & LAND_LOADED) != 0;
+}
+LandImage* land_image_load_memory(char const * filename) {
+    return _load(filename, 1);
+}
+LandImage* land_image_new_deferred(char const * filename) {
+    LandImage * self = land_image_new(0, 0);
+    self->filename = land_path_with_prefix(filename);
+    return self;
+}
+bool land_image_load_on_demand(LandImage * self) {
+    if (self->flags & LAND_LOADED) {
+        return 0;
+    }
+    if (self->flags & LAND_FAILED) {
+        return 0;
+    }
+    land_log_message("land_image_load_on_demand %s..", self->filename);
+    platform_image_load_on_demand(self);
+    _load2(self);
+    return 1;
+}
+bool land_image_exists(LandImage * self) {
+    return platform_image_exists(self);
+}
+LandImage* land_image_memory_new(int w, int h) {
+    /* Creates a new image. If w or h are 0, the image will have no contents at
+     * all (this can be useful if the contents are to be added later).
+     * The image will always be a simple memory rectangle of pixels, with no
+     * driver specific optimizations.
+     */
+    assert(0);
+    return NULL;
+}
+LandImage* land_image_new_flags(int w, int h, int flags) {
+    /* Creates a new image. If w and h are 0, the image will have no contents at
+     * all (this can be useful if the contents are to be added later).
+     */
+    LandImage * self = land_display_new_image();
+    self->flags = flags;
+    self->width = w;
+    self->height = h;
+    if (w || h) {
+        platform_image_empty(self);
+    }
+    bitmap_count++;
+    bitmap_memory += w * h * 4;
+    return self;
+}
+LandImage* land_image_new(int w, int h) {
+    return land_image_new_flags(w, h, 0);
+}
+LandImage* land_image_create(int w, int h) {
+    /* Like land_image_new, but clears the image to all 0 initially.
+     */
+    LandImage * self = land_display_new_image();
+    self->width = w;
+    self->height = h;
+    platform_image_empty(self);
+    bitmap_count++;
+    bitmap_memory += w * h * 4;
+    return self;
+}
+void land_image_del(LandImage * self) {
+    if (! self) {
+        return ;
+    }
+    if (! (self->flags & LAND_SUBIMAGE)) {
+        land_image_destroy_pixelmasks(self);
+        if (self->name) {
+            land_free(self->name);
+        }
+        if (self->filename && self->filename != self->name) {
+            land_free(self->filename);
+        }
+        bitmap_count--;
+        bitmap_memory -= self->width * self->height * 4;
+    }
+    land_display_del_image(self);
+}
+void land_image_destroy(LandImage * self) {
+    land_image_del(self);
+}
+void land_image_crop(LandImage * self, int x, int y, int w, int h) {
+    /* Crops an image to the specified rectangle. All image contents outside the
+     * rectangle will be lost. You can also use this to make an image larger, in
+     * which case the additional borders are filled with transparency. The offset
+     * need not lie within the image.
+     */
+    if (self->width == w && self->height == h && x == 0 && y == 0) {
+        return ;
+    }
+    platform_image_crop(self, x, y, w, h);
+}
+void land_image_auto_crop(LandImage * self) {
+    /* This will optimize an image by cropping away any completely transparent
+     * borders it may have.
+     */
+    int w = land_image_width(self);
+    int h = land_image_height(self);
+    unsigned char * rgba = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba);
+    int mini = w;
+    int maxi = - 1;
+    int minj = h;
+    int maxj = - 1;
+    for (int j = 0; j < h; j++) {
+        uint32_t * row = (void *)(rgba + j * w * 4);
+        for (int i = 0; i < w; i++) {
+            if (row [i] & 0xff000000) {
+                if (i < mini) {
+                    mini = i;
+                }
+                if (i > maxi) {
+                    maxi = i;
+                }
+                if (j < minj) {
+                    minj = j;
+                }
+                if (j > maxj) {
+                    maxj = j;
+                }
+            }
+        }
+    }
+    land_free(rgba);
+    if (maxi == - 1) {
+        mini = maxi = minj = maxj = 0;
+    }
+    self->l = mini;
+    self->t = minj;
+    self->r = w - 1 - maxi;
+    self->b = h - 1 - maxj;
+}
+void land_image_resize(LandImage * self, int new_w, int new_h, int flags) {
+    float old_w = self->width - self->l - self->r;
+    float old_h = self->height - self->t - self->b;
+    if (new_w == 0) {
+        new_w = old_w;
+    }
+    if (new_h == 0) {
+        new_h = old_h;
+    }
+    float xs = 1.0 * new_w / old_w;
+    float ys = 1.0 * new_h / old_h;
+    float xo = 0;
+    float yo = 0;
+    if (flags & LandImageFit) {
+        if (xs > 1) {
+            xs = 1;
+        }
+        if (ys > 1) {
+            ys = 1;
+        }
+        if (xs < ys) {
+            ys = xs;
+        }
+        else {
+            xs = ys;
+        }
+        xo = new_w * 0.5 - old_w * xs * 0.5;
+        yo = new_h * 0.5 - old_h * ys * 0.5;
+    }
+    LandImage * resized = land_image_new(new_w, new_h);
+    land_set_image_display(resized);
+    land_image_draw_scaled(self, xo - self->l * xs, yo - self->t * ys, xs, ys);
+    land_unset_image_display();
+    platform_image_merge(self, resized);
+}
+LandImage* land_image_new_from(LandImage * copy, int x, int y, int w, int h) {
+    /* Create a new image, copying pixel data from a rectangle in an existing
+     * image.
+     */
+    land_log_message("land_image_new_from %s..", copy->name);
+    LandImage * self = land_image_new(w, h);
+    land_set_image_display(self);
+    land_blend(LAND_BLEND_SOLID);
+    land_image_draw_partial(copy, copy->x, copy->y, x, y, w, h);
+    land_unset_image_display();
+    land_log_message_nostamp("success (%d x %d)\n", w, h);
+    #ifdef LOG_COLOR_STATS
+    float red, green, blue, alpha;
+    int n;
+    n = land_image_color_stats(self, & red, & green, & blue, & alpha);
+    land_log_message(" (%.2f|%.2f|%.2f|%.2f).\n", red / n, green / n, blue / n, alpha / n);
+    #endif
+    land_log_message(" %d bitmaps (%.1fMB).\n", bitmap_count, bitmap_memory / 1024.0 / 1024.0);
+    return self;
+}
+int land_image_color_stats(LandImage * self, float * red, float * green, float * blue, float * alpha) {
+    /* Returns the number of pixels in the image, and the average red, green, blue
+     * and alpha component.
+     */
+    int n = 0;
+    int w = land_image_width(self);
+    int h = land_image_height(self);
+    * red = 0;
+    * green = 0;
+    * blue = 0;
+    * alpha = 0;
+    unsigned char * rgba = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba);
+    int p = 0;
+    for (int j = 0; j < h; j++) {
+        for (int i = 0; i < w; i++) {
+            * red += rgba [p++] * 1.0 / 255.0;
+            * green += rgba [p++] * 1.0 / 255.0;
+            * blue += rgba [p++] * 1.0 / 255.0;
+            * alpha += rgba [p++] * 1.0 / 255.0;
+            n++;
+        }
+    }
+    land_free(rgba);
+    return n;
+}
+void land_image_color_replace(LandImage * self, int r255, int g255, int b255, int a255, int _r255, int _g255, int _b255, int _a255) {
+    /* Replaces a color with another.
+     */
+    assert(0);
+}
+void land_image_colorkey(LandImage * self, int r255, int g255, int b255) {
+    /* Replaces all pixels in the image matching the given RGB triplet (in 0..255
+     * format) with full transparency.
+     */
+    assert(0);
+}
+void land_image_colorkey_hack(LandImage * self, int allegro_color) {
+    /* Like land_image_colorkey, but even more hackish, you directly specify
+     * the color in Allegro's format. The only use for this is if you load
+     * paletted pictures and want to colorkey by index.
+     */
+    assert(0);
+}
+void land_image_colorize(LandImage * self, LandImage * colormask) {
+    /* Colorizes the part of the image specified by the mask with the current
+     * color. The mask uses (1, 0, 1) for transparent, and the intensity is
+     * otherwise used as intensity of the replacement color.
+     */
+    assert(0);
+}
+void land_image_colorize_replace(LandImage * self, int n, int * rgb) {
+    /* This takes a list of colors and replaces all colors in the image
+     * corresponding to one of them with the current color.
+     * The colors use integer 0..255 format, since exact comparison with
+     * the usual floating point colors would be difficult otherwise. The
+     * array ''rgb'' should have 3 * n integers, consisting of consecutive
+     * R, G, B triplets to replace.
+     * The first rgb triplet has a special meaning - it determines the image color
+     * which is mapped to the current color. All matching colors with a larger
+     * rgb sum then are mapped to a color between the first color and pure weight,
+     * depending on their rgb sum. All colors with a smaller rgb sum are mapped
+     * to a range from total black to the first color.
+     */
+    int w = land_image_width(self);
+    int h = land_image_height(self);
+    unsigned char rgba [w * h * 4];
+    land_image_get_rgba_data(self, rgba);
+    unsigned char * p = rgba;
+    float fr, fg, fb, fa;
+    land_get_color(& fr, & fg, & fb, & fa);
+    int red = fr * 255;
+    int green = fg * 255;
+    int blue = fb * 255;
+    int base_red = rgb [0];
+    int base_green = rgb [1];
+    int base_blue = rgb [2];
+    int base_sum = base_red + base_green + base_blue;
+    for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+            int r = * (p + 0);
+            int g = * (p + 1);
+            int b = * (p + 2);
+            for (int i = 0; i < n; i++) {
+                if (rgb [i * 3 + 0] == r && rgb [i * 3 + 1] == g && rgb [i * 3 + 2] == b) {
+                    int sum = r + g + b;
+                    int nr, ng, nb;
+                    if (sum <= base_sum) {
+                        nr = red * sum / base_sum;
+                        ng = green * sum / base_sum;
+                        nb = blue * sum / base_sum;
+                    }
+                    else {
+                        int isum = 255 * 3 - sum;
+                        int ibase_sum = 255 * 3 - base_sum;
+                        nr = 255 - (255 - red) * isum / ibase_sum;
+                        ng = 255 - (255 - green) * isum / ibase_sum;
+                        nb = 255 - (255 - blue) * isum / ibase_sum;
+                    }
+                    * (p + 0) = nr;
+                    * (p + 1) = ng;
+                    * (p + 2) = nb;
+                }
+            }
+            p += 4;
+        }
+    }
+    land_image_set_rgba_data(self, rgba);
+    land_image_prepare(self);
+}
+LandImage* land_image_split_mask_from_colors(LandImage * self, int n_rgb, int * rgb) {
+    /* Takes the same parameters as land_image_colorize_replace - but instead of
+     * recoloring the image itself, creates a separate image of the same size,
+     * which is transparent except where mask colors have been found in the
+     * given image. Here, it is colored in graylevels with the intensity
+     * corresponding to the mask colors. In the original image, all mask colors
+     * are replaced by transparency.
+     * The use of this function is to always draw the mask over the original
+     * image, but tint the white mask to other colors.
+     */
+    assert(0);
+}
+void land_image_prepare(LandImage * self) {
+    /* This is used to convert image data into a device dependent format, which
+     * is used to display the image (instead of the raw R/G/B/A values). Usually
+     * this is not needed, but it can be useful for certain optimizations, where
+     * the automatic synchronization is circumvented.
+     */
+    platform_image_prepare(self);
+}
+static int callback(const char * filename, int attrib, void * param) {
+    LandArray * (* filenames) = param;
+    land_array_add_data(filenames, land_strdup(filename));
+    return 0;
+}
+static int compar(void const * a, void const * b) {
+    char * an = * (char * *) a;
+    char * bn = * (char * *) b;
+    return strcmp(an, bn);
+}
+static int filter(char const * name, bool is_dir, void * data) {
+    char const * pattern = data;
+    if (is_dir) {
+        return 2;
+    }
+    if (land_fnmatch(pattern, name)) {
+        return 1;
+    }
+    return 0;
+}
+LandArray* land_load_images_cb(char const * pattern, void(* cb)(LandImage * image, void * data), void * data) {
+    /* Load all images matching the file name pattern, and create an array
+     * referencing them all, in alphabetic filename order. The callback function
+     * is called on each image along the way.
+     */
+    LandBuffer * dirbuf = land_buffer_new();
+    int j = 0;
+    for (int i = 0; pattern [i]; i++) {
+        if (pattern [i] == '/' || pattern [i] == '\\') {
+            land_buffer_add(dirbuf, pattern + j, i - j);
+            j = i;
+        }
+        if (pattern [i] == '?' || pattern [i] == '*') {
+            break;
+        }
+    }
+    char * dir = land_buffer_finish(dirbuf);
+    LandArray * filenames = NULL;
+    int count = 0;
+    if (land_datafile) {
+        count = land_datafile_for_each_entry(land_datafile, pattern, callback, & filenames);
+    }
+    if (! count) {
+        filenames = land_filelist(dir, filter, LAND_RELATIVE_PATH, (void *) pattern);
+        if (filenames) {
+            count = filenames->count;
+        }
+        else {
+            land_log_message("No files at all match %s.\n", pattern);
+        }
+    }
+    land_free(dir);
+    if (! filenames) {
+        return NULL;
+    }
+    qsort(filenames->data, count, sizeof (void *), compar);
+    LandArray * array = NULL;
+    int i;
+    for (i = 0; i < filenames->count; i++) {
+        char * filename = land_array_get_nth(filenames, i);
+        LandImage * image = land_image_load(filename);
+        land_free(filename);
+        if (image) {
+            if (cb) {
+                cb(image, data);
+            }
+            land_array_add_data(& array, image);
+        }
+    }
+    land_array_destroy(filenames);
+    return array;
+}
+static void defcb(LandImage * image, void * p) {
+    int * data = p;
+    if (data [0]) {
+        land_image_center(image);
+    }
+    if (data [1]) {
+        land_image_auto_crop(image);
+    }
+}
+LandArray* land_load_images(char const * pattern, int center, int auto_crop) {
+    /* Load all images matching the file name pattern, and create an array
+     * referencing them all.
+     */
+    int data [2] = {center, auto_crop};
+    return land_load_images_cb(pattern, defcb, data);
+}
+LandImage* land_image_sub(LandImage * parent, float x, float y, float w, float h) {
+    LandImage * self = platform_image_sub(parent, x, y, w, h);
+    return self;
+}
+LandArray* land_image_load_sheet(char const * filename, int offset_x, int offset_y, int grid_w, int grid_h, int x_gap, int y_gap, int x_count, int y_count, int auto_crop) {
+    LandArray * array = NULL;
+    LandImage * sheet = land_image_load(filename);
+    if (! sheet) {
+        return NULL;
+    }
+    int x, y, i, j;
+    for (j = 0; j < y_count; j++) {
+        for (i = 0; i < x_count; i++) {
+            x = offset_x + i * (grid_w + x_gap);
+            y = offset_y + j * (grid_h + y_gap);
+            LandImage * sub = land_image_sub(sheet, x, y, grid_w, grid_h);
+            if (auto_crop) {
+                land_image_auto_crop(sub);
+            }
+            land_array_add_data(& array, sub);
+        }
+    }
+    if (_cb) {
+        _cb(filename, sheet);
+    }
+    return array;
+}
+LandArray* land_image_load_split_sheet(char const * filename, int offset_x, int offset_y, int grid_w, int grid_h, int x_gap, int y_gap, int x_count, int y_count, int auto_crop) {
+    LandArray * array = NULL;
+    LandImage * sheet = land_image_load_memory(filename);
+    if (! sheet) {
+        return NULL;
+    }
+    int x, y, i, j;
+    for (j = 0; j < y_count; j++) {
+        for (i = 0; i < x_count; i++) {
+            x = offset_x + i * (grid_w + x_gap);
+            y = offset_y + j * (grid_h + y_gap);
+            LandImage * sub = land_image_new_from(sheet, x, y, grid_w, grid_h);
+            land_array_add_data(& array, sub);
+        }
+    }
+    land_image_del(sheet);
+    return array;
+}
+void land_image_draw_scaled_rotated_tinted_flipped(LandImage * self, float x, float y, float sx, float sy, float angle, float r, float g, float b, float alpha, int flip) {
+    platform_image_draw_scaled_rotated_tinted_flipped(self, x, y, sx, sy, angle, r, g, b, alpha, flip);
+}
+void land_image_draw_scaled_rotated_tinted(LandImage * self, float x, float y, float sx, float sy, float angle, float r, float g, float b, float alpha) {
+    land_image_draw_scaled_rotated_tinted_flipped(self, x, y, sx, sy, angle, r, g, b, alpha, 0);
+}
+void land_image_draw_scaled_rotated(LandImage * self, float x, float y, float sx, float sy, float angle) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, sx, sy, angle, 1, 1, 1, 1);
+}
+void land_image_draw_scaled(LandImage * self, float x, float y, float sx, float sy) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, sx, sy, 0, 1, 1, 1, 1);
+}
+void land_image_draw_rotated(LandImage * self, float x, float y, float a) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, a, 1, 1, 1, 1);
+}
+void land_image_draw_rotated_flipped(LandImage * self, float x, float y, float a) {
+    land_image_draw_scaled_rotated_tinted_flipped(self, x, y, 1, 1, a, 1, 1, 1, 1, 1);
+}
+void land_image_draw_rotated_tinted(LandImage * self, float x, float y, float a, float r, float g, float b, float alpha) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, a, r, g, b, alpha);
+}
+void land_image_draw_scaled_tinted(LandImage * self, float x, float y, float sx, float sy, float r, float g, float b, float alpha) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, sx, sy, 0, r, g, b, alpha);
+}
+void land_image_draw(LandImage * self, float x, float y) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, 0, 1, 1, 1, 1);
+}
+void land_image_draw_flipped(LandImage * self, float x, float y) {
+    land_image_draw_scaled_rotated_tinted_flipped(self, x, y, 1, 1, 0, 1, 1, 1, 1, 1);
+}
+void land_image_draw_tinted(LandImage * self, float x, float y, float r, float g, float b, float alpha) {
+    land_image_draw_scaled_rotated_tinted(self, x, y, 1, 1, 0, r, g, b, alpha);
+}
+void land_image_grab(LandImage * self, int x, int y) {
+    platform_image_grab_into(self, x, y, 0, 0, self->width, self->height);
+}
+void land_image_grab_into(LandImage * self, float x, float y, float tx, float ty, float tw, float th) {
+    platform_image_grab_into(self, x, y, tx, ty, tw, th);
+}
+void land_image_offset(LandImage * self, int x, int y) {
+    self->x = x;
+    self->y = y;
+}
+void land_image_memory_draw(LandImage * self, float x, float y) {
+    assert(0);
+}
+void land_image_center(LandImage * self) {
+    self->x = 0.5 * self->width;
+    self->y = 0.5 * self->height;
+    self->flags |= LAND_IMAGE_WAS_CENTERED | LAND_IMAGE_CENTER;
+}
+void land_image_init(void) {
+    ;
+}
+void land_image_exit(void) {
+    ;
+}
+void land_image_clip(LandImage * self, float x, float y, float x_, float y_) {
+    self->l = x;
+    self->t = y;
+    self->r = self->width - x_;
+    self->b = self->height - y_;
+}
+void land_image_unclip(LandImage * self) {
+    self->l = 0;
+    self->t = 0;
+    self->r = 0;
+    self->b = 0;
+}
+void land_image_draw_partial(LandImage * self, float x, float y, float sx, float sy, float sw, float sh) {
+    float l = self->l;
+    float t = self->t;
+    float r = self->r;
+    float b = self->b;
+    land_image_clip(self, sx, sy, sx + sw, sy + sh);
+    land_image_draw(self, x - sx, y - sy);
+    self->l = l;
+    self->t = t;
+    self->r = r;
+    self->b = b;
+}
+int land_image_height(LandImage * self) {
+    return self->height;
+}
+int land_image_width(LandImage * self) {
+    return self->width;
+}
+void land_image_get_rgba_data(LandImage * self, unsigned char * rgba) {
+    /* Copies rgba data into the specified buffer. It has to be large
+     * enough (w * h * 4 bytes) to hold all the data.
+     */
+    platform_image_get_rgba_data(self, rgba);
+}
+void land_image_set_rgba_data(LandImage * self, unsigned char const * rgba) {
+    /* Copies the rgba data, overwriting the image contents. Since data are copied
+     * rgba can be safely deleted after returning from the function.
+     */
+    platform_image_set_rgba_data(self, rgba);
+}
+void land_image_save(LandImage * self, char const * filename) {
+    platform_image_save(self, filename);
+}
+int land_image_opengl_texture(LandImage * self) {
+    return platform_image_opengl_texture(self);
+}
+void land_image_flip(LandImage * self) {
+    int w = land_image_width(self);
+    int h = land_image_height(self);
+    unsigned char * rgba = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba);
+    for (int j = 0; j < h; j++) {
+        uint32_t * row = (void *)(rgba + j * w * 4);
+        for (int i = 0; i < w / 2; i++) {
+            uint32_t temp = row [i];
+            row [i] = row [w - 1 - i];
+            row [w - 1 - i] = temp;
+        }
+    }
+    land_image_set_rgba_data(self, rgba);
+    land_free(rgba);
+}
+LandImage* land_image_clone(LandImage * self) {
+    int w = land_image_width(self);
+    int h = land_image_height(self);
+    LandImage * clone = land_image_new(w, h);
+    unsigned char * rgba = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba);
+    land_image_set_rgba_data(clone, rgba);
+    land_free(rgba);
+    clone->x = self->x;
+    clone->y = self->y;
+    return clone;
+}
+void land_image_fade_to_color(LandImage * self) {
+    int w = land_image_width(self);
+    int h = land_image_height(self);
+    unsigned char * rgba = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba);
+    float fr, fg, fb, fa;
+    land_get_color(& fr, & fg, & fb, & fa);
+    int red = fr * 255;
+    int green = fg * 255;
+    int blue = fb * 255;
+    int alpha = fa * 255;
+    for (int j = 0; j < h; j++) {
+        unsigned char * row = rgba + j * w * 4;
+        for (int i = 0; i < w; i++) {
+            int a = row [i * 4 + 3];
+            if (! a) {
+                continue;
+            }
+            int ar = row [i * 4 + 0];
+            int ag = row [i * 4 + 1];
+            int ab = row [i * 4 + 2];
+            row [i * 4 + 0] = (red * alpha * a + ar * (255 - alpha) * 255) / (255 * 255);
+            row [i * 4 + 1] = (green * alpha * a + ag * (255 - alpha) * 255) / (255 * 255);
+            row [i * 4 + 2] = (blue * alpha * a + ab * (255 - alpha) * 255) / (255 * 255);
+        }
+    }
+    land_image_set_rgba_data(self, rgba);
+    land_free(rgba);
+}
+LandImage* land_image_from_xpm(char const * (* xpm)) {
+    int w, h, palette_size, pixel_size;
+    sscanf(xpm [0], "%d %d %d %d", & w, & h, & palette_size, & pixel_size);
+    LandColor palette [65536];
+    for (int i = 0; i < palette_size; i += 1) {
+        char const * entry = xpm [1 + i];
+        int p = 0;
+        for (int j = 0; j < pixel_size; j += 1) {
+            p *= 256;
+            p += (unsigned char) entry [j];
+        }
+        palette [p] = land_color_name(entry + pixel_size + 3);
+    }
+    LandImage * self = land_image_new(w, h);
+    unsigned char * rgba = land_malloc(w * h * 4);
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            char const * pos = xpm [1 + palette_size + y] + x * pixel_size;
+            int p = 0;
+            for (int j = 0; j < pixel_size; j += 1) {
+                p *= 256;
+                p += (unsigned char) pos [j];
+            }
+            LandColor c = palette [p];
+            rgba [y * w * 4 + x * 4 + 0] = c.r * 255;
+            rgba [y * w * 4 + x * 4 + 1] = c.g * 255;
+            rgba [y * w * 4 + x * 4 + 2] = c.b * 255;
+            rgba [y * w * 4 + x * 4 + 3] = c.a * 255;
+        }
+    }
+    land_image_set_rgba_data(self, rgba);
+    land_free(rgba);
+    return self;
+}
+void land_image_write_callback(LandImage * self, void(* cb)(int x, int y, unsigned char * rgba, void * user), void * user) {
+    /* Run a callback for each pixel of a picture. The pointer passed to
+     * the callback must be assigned 4 8-bit values in the range 0..255.
+     * It must not be read from.
+     */
+    int w = self->width;
+    int h = self->height;
+    unsigned char * rgba = land_malloc(w * h * 4);
+    unsigned char * p = rgba;
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            cb(x, y, p, user);
+            p += 4;
+        }
+    }
+    land_image_set_rgba_data(self, rgba);
+    land_free(rgba);
+}
+void land_image_read_write_callback(LandImage * self, void(* cb)(int x, int y, unsigned char * rgba, void * user), void * user) {
+    /* Run a callback for each pixel of a picture. The rgba pointer passed
+     * to the callback will contain the current color as 4 consecutive
+     * bytes and may be modified.
+     */
+    int w = self->width;
+    int h = self->height;
+    unsigned char * rgba = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba);
+    unsigned char * p = rgba;
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            cb(x, y, p, user);
+            p += 4;
+        }
+    }
+    land_image_set_rgba_data(self, rgba);
+    land_free(rgba);
+}
+void land_image_read_backup_write_callback(LandImage * self, void(* cb)(int x, int y, int w, int h, unsigned char * rgba_in, unsigned char * rgba_out, void * user), void * user) {
+    /* Same as land_image_read_write_callback but the previous image is
+     * kept in a backup buffer and a separate pointer for reading is
+     * provided. This is useful if you also want to read from neighboring
+     * pixels. As a convenience the width and height of the buffers is
+     * also passed to the callback to allow handling border conditions.
+     */
+    int w = self->width;
+    int h = self->height;
+    unsigned char * rgba_in = land_malloc(w * h * 4);
+    land_image_get_rgba_data(self, rgba_in);
+    unsigned char * p_in = rgba_in;
+    unsigned char * rgba_out = land_malloc(w * h * 4);
+    unsigned char * p_out = rgba_out;
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            cb(x, y, w, h, p_in, p_out, user);
+            p_in += 4;
+            p_out += 4;
+        }
+    }
+    land_image_set_rgba_data(self, rgba_out);
+    land_free(rgba_in);
+    land_free(rgba_out);
+}
+#undef LOG_COLOR_STATS
+    /* 0 is the left mouse button
+     * 1 is the right mouse button
+     * 2 is the middle mouse button
+     * 3,4,... are extra mouse buttons
+     */
+static int mx, my, mz, mb;
+static int omx, omy, omz, omb;
+static int buttons [5], obuttons [5], clicks [5];
+static float tx [11], ty [11], tb [11], otb [11];
+void land_mouse_init(void) {
+    land_show_mouse_cursor();
+}
+void land_mouse_tick(void) {
+    omx = mx;
+    omy = my;
+    omz = mz;
+    omb = mb;
+    for (int i = 0; i < 5; i++) {
+        obuttons [i] = buttons [i];
+        if (buttons [i] == 2) {
+            buttons [i] = 0;
+        }
+        clicks [i] = 0;
+    }
+    for (int i = 0; i < 11; i += 1) {
+        otb [i] = tb [i];
+    }
+}
+void land_mouse_move_event(int x, int y, int z) {
+    mx = x;
+    my = y;
+    mz = z;
+}
+void land_touch_event(float x, float y, int n, int d) {
+    if (n > 10) {
+        return ;
+    }
+    tx [n] = x;
+    ty [n] = y;
+    if (d == 1) {
+        tb [n] = 1;
+    }
+    if (d == - 1) {
+        tb [n] = 0;
+    }
+}
+float land_touch_x(int n) {
+    if (n > 10) {
+        return 0;
+    }
+    return tx [n];
+}
+float land_touch_y(int n) {
+    if (n > 10) {
+        return 0;
+    }
+    return ty [n];
+}
+bool land_touch_down(int n) {
+    if (n > 10) {
+        return 0;
+    }
+    return tb [n];
+}
+bool land_touch_delta(int n) {
+    if (n > 10) {
+        return 0;
+    }
+    return otb [n] != tb [n];
+}
+void land_mouse_button_down_event(int b) {
+    mb |= 1 << b;
+    if (! (buttons [b] & 1)) {
+        clicks [b]++;
+    }
+    buttons [b] |= 1 + 2;
+}
+void land_mouse_button_up_event(int b) {
+    mb &= ~ (1 << b);
+    buttons [b] &= ~ 1;
+}
+int land_mouse_x(void) {
+    /* """Return the mouse X coordinate for the current tick."""
+     */
+    return mx;
+}
+int land_mouse_y(void) {
+    /* """Return the mouse Y coordinate for the current tick."""
+     */
+    return my;
+}
+int land_mouse_z(void) {
+    /* """Return the mouse wheel coordinate for the current tick."""
+     */
+    return mz;
+}
+int land_mouse_b(void) {
+    /* """Short for land_mouse_button."""
+     */
+    return mb;
+}
+int land_mouse_button(int i) {
+    /* """Return the mouse button state for the current tick."""
+     */
+    return buttons [i] & 1;
+}
+int land_mouse_delta_x(void) {
+    return mx - omx;
+}
+int land_mouse_delta_y(void) {
+    return my - omy;
+}
+int land_mouse_delta_z(void) {
+    return mz - omz;
+}
+int land_mouse_delta_b(void) {
+    return mb ^ omb;
+}
+int land_mouse_delta_button(int i) {
+    return (buttons [i] & 1) ^ (obuttons [i] & 1);
+}
+int land_mouse_button_clicked(int i) {
+    return clicks [i];
+}
+void land_mouse_set_pos(int x, int y) {
+    platform_mouse_set_pos(x, y);
+    mx = x;
+    my = y;
+}
+bool land_hide_mouse_cursor(void) {
+    platform_hide_mouse_cursor();
+    return true;
+}
+bool land_show_mouse_cursor(void) {
+    platform_show_mouse_cursor();
+    return true;
+}
+    /* ![Land!](logo.png)
+     * ## the name
+     * It has no special meaning, it's just that in computer games, you make
+     * virtual worlds or lands - and that inspired it as use as name for this.
+     * The only limits of this land should be your imagination, not programming
+     * language obstacles. But if you insist, it could also be a recursive
+     * acronym for "Land All New Design".
+     * ## history
+     * Well, I really started working on this version only some days ago. But I
+     * made a library called "land", with the very same goals, about 10-20 years
+     * ago. I actually recovered some files of that, but they require a program
+     * called TASM to work. I actually found a copy of that, and tried to
+     * compile it in dosbox, but still, it wouldn't work. Not that the result
+     * would have been interesting for anyone but me :)
+     * ## what it is
+     * Land is, currently, just a simple framework to assist in creating games,
+     * which will work under Windows, Linux and OSX. As well as some others,
+     * basically everything Allegro/SDL/OpenGL can get to run (currently only
+     * Allegro). It doesn't do a lot, just handle a basic game loop for you.
+     * Some may not want this, since it takes control away. But for beginners,
+     * it may make things somewhat simpler. And especially, and that's the only
+     * thing I care about, for me.
+     * ## features/limitations
+     * - Written in C, preprocessed by a Python-like syntax.
+     * - Automated build process using scons.
+     * - Load images as single files, from directories, from .zip files, from
+     * fixed-grid/transparent/color-keyed sheets.
+     * - Free-form multi-layer tilemaps. The layers use no fixed tile-layout,
+     * you can place there what and where you want. (Of course this includes
+     * classic tiles.)
+     * - Pixel-perfect collision between tilemap-sprite and sprite-sprite,
+     * efficient for 1000ds of objects and huge maps. (The algorithm is to
+     * first check a grid-cash for proximity, then do a bounding-box check,
+     * then pixel-perfect with pre-generated bit-masks.)
+     * - Parallax scrolling with arbitrary amount of layers. Define some of the
+     * tilemap layers to be parallax layers - scrolling is handled by Land.
+     * ## source code
+     * Normally, the split into .c/.cpp and .h files is not a problem, either you
+     * work out the API first in he .h and then implement, or write first the
+     * implementation then derive the .h. But in two cases it is very bad: Designing
+     * a new library, and maintaining a library. In the former, it means you need
+     * to make every interface change at multiple locations. In the latter case it
+     * means, you end up with en entangled mess of headers all over the place.
+     * Therefore, in Land, I ended up using preprocessed files from which .c and .h
+     * files are auto-generated. That way, the source always stays clean and
+     * managable. Looking at the changes of the build process would show how hard it
+     * was to end up at the current system (but a lot of that happened before the code
+     * was stable enough to move to SVN).
+     * ## inheritance and polymorphism
+     * What does the technical inplementation of Land look like, given it is
+     * implemented in C? Well, polymorphism is done by using VTables, similar to e.g.
+     * the Allegro drivers. Inheritance is done by manual aggregation (along with
+     * VTables).
+     * For example, let's say, you want to use a tilemap, but have your own drawing
+     * function called for each tile. Simple create a LandGridInterface object,
+     * replace the ->draw_cell method with your own, and replace the ->vt member of your
+     * LandGrid object with your own LandGridInterface.
+     * TODO: Maybe a macro, something like:
+     * LandGridInterface *my_grid_vtable =
+     * land_override(land_grid_vtable_normal, cell_draw, my_cell_draw);
+     * ## user data
+     * Instead of inheriting your own types, it is much easier to simply attach data to
+     * land types. For example:
+     * int index = land_attach_data(sprite, "mydata", mydata);
+     * or
+     * int index = land_attach_data(sprite, NULL, mydata);
+     * In both cases, you can retrieve the data with:
+     * mydata = land_retrieve_data(sprite, index);
+     * In the first case, also with:
+     * mydata = land_retrieve_named_data(sprite, "mydata")
+     * ## containers
+     * LandList - a doubly linked list of items. Fast insertion and deletion of
+     * items.
+     * LandArray - a dynamically growing array. The number of used and allocated
+     * elements can differ, so can allocate items in advance, or not de-allocate
+     * items in case more are added shortly.
+     * LandQueue - like an array but the items are always kept sorted. Useful
+     * for something like a priority queue or if you want to (heap-)sort some
+     * other container.
+     * LandHash - a mapping of strings to the data. Useful if there are many strings
+     * to look up, in which case this is faster than looping through a list/array.
+     * ## maps, layers, tiles, sprites..
+     * One question still is.. what to do about maximum sprite size? Two brute force
+     * approaches:
+     * - render as much overlap cells that the biggest sprite would be catched
+     * This leaves the solution very high-level.. simply draw a bigger area.
+     * Drawback is possibly drawing more than necessary most of the time.
+     * - add a sprite to every cell it covers.. this is somewhat more complicated,
+     * but can have other advantages as well, like easy collision detection
+     * Another solution would be to have a maximum size of the cell size in each
+     * layer - then simply can group large sprites into a layer with a big enough
+     * cell size. This also would deal with collision detection - a sprite simply can
+     * never be outside of its cell and the adjacent ones.
+     * ## graphics primitives
+     * You can directly use all of Allegro's API, as well as OpenGL. Additionally, with
+     * the time, Land got it's own graphics primitives:
+     * land_color(r, g, b) Sets the color
+     * land_transparency(a) Sets transparency
+     * land_thickness(t) Sets thickness of lines/pixels/rectangles
+     * land_line(x, y, x_, y_) Like the one in Allegro
+     * land_move_to(x, y) Sets the cursor position
+     * land_line_to(x, y) Draws from the current position towards x/y, but not on x/y
+     * itself, and sets the cursor to x/y.
+     * land_line_end(x, y) Like land_line_to, but doesn't change the cursor, and also
+     * draws on x/y.
+     * land_pixel(x, y) Draws a single pixel.
+     * land_clip(x, y, w, h)
+     * How can you draw not to the screen, but into an image?
+     * land_target(image)
+     * So far, the state maintained by a LandDisplay thus is:
+     * - color_r, color_g, color_b, color_a
+     * - thickness
+     * - font
+     * - text_x, text_y
+     * - target
+     * - clip_x, clip_y, clip_w, clip_h
+     * ## The land song
+     * + lalalala-land
+     * + Land is "Land All New Design"
+     * + so new so shiny so well designed
+     * + lalalala-land
+     * + Land in sight!
+     * + lalalala-land
+     * + lalalalalala-land
+     * + lal-land
+     * (this chapter is all the progress I made when I tried to work on it drunk)
+     */
+static str _version = "1.0.0";
+char const* land_version(void) {
+    return _version;
+}
+static LandArray * exit_functions;
+static int _exitcode;
+void land_without_main(void(* cb)(void)) {
+    platform_without_main(cb);
+}
+void land_set_exitcode(int code) {
+    _exitcode = code;
+}
+int land_get_exitcode(void) {
+    return _exitcode;
+}
+void land_exit_function(void(* function)(void)) {
+    land_array_add_data(& exit_functions, function);
+}
+void land_exit_functions(void) {
+    int i, n = land_array_count(exit_functions);
+    for (i = n - 1; i >= 0; i--) {
+        void(* function)(void) = land_array_get_nth(exit_functions, i);
+        function();
+    }
+    land_array_destroy(exit_functions);
+}
+void land_wait(double seconds) {
+    platform_wait(seconds);
+}
+void land_callbacks(VoidFunction * init, VoidFunction * tick, VoidFunction * draw, VoidFunction * done) {
+    shortcut_runner = land_runner_new("shortcut", (void *) init, NULL, (void *) tick, (void *) draw, NULL, (void *) done);
+    land_runner_register(shortcut_runner);
+    land_set_initial_runner(shortcut_runner);
+}
+int land_argc;
+char * (* land_argv);
+LandRunner * shortcut_runner;
+static float _no_lerp(float a0, float a1, float w) {
+    return a0;
+}
+static float _linear_lerp(float a0, float a1, float w) {
+    return a0 + (a1 - a0) * w;
+}
+static float _cosine_lerp(float a0, float a1, float w) {
+    float ft = w * LAND_PI;
+    float f = (1 - cos(ft)) * 0.5;
+    return a0 * (1 - f) + a1 * f;
+}
+static float _smooth_step_lerp(float a0, float a1, float w) {
+    float f = w * w * (3 - 2 * w);
+    return a0 * (1 - f) + a1 * f;
+}
+static float _smoother_step_lerp(float a0, float a1, float w) {
+    float f = 6 * pow(w, 5) - 15 * pow(w, 4) + 10 * pow(w, 3);
+    return a0 * (1 - f) + a1 * f;
+}
+static float _smoothest_step_lerp(float a0, float a1, float w) {
+    float f = - 20 * pow(w, 7) + 70 * pow(w, 6) - 84 * pow(w, 5) + 35 * pow(w, 4);
+    return a0 * (1 - f) + a1 * f;
+}
+LandPerlin* land_perlin_create(LandRandom * seed, int w, int h) {
+    /* Create a Perlin noise of the given resolution.
+     * The noise at any integer coordinate is always 0. Other coordinates
+     * return a random value in the range -1..1.
+     * If w and h are 1, each noise sample will have the identical vector
+     * at each corner.
+     * For point 0.5/0.5 this means:
+     * a = 0.5 * u + 0.5 * v
+     * b = -0.5 * u + 0.5 * v
+     * c = 0.5 * u + -0.5 * v
+     * d = -0.5 * u + -0.5 * v
+     * a + b + c + d = 0
+     * result = 0
+     * Also any other point:
+     * a = x * u + y * v
+     * b = -X * u + y * v
+     * c = x * u + -Y * v
+     * d = -X * u + -Y * v
+     * e = X * a + x * b = xX * u + yX * v + -xX * u + xy * v
+     * f = X * c + x * d = xX * u + -XY * v + -xX * u + -xY * v
+     * result = Y * e + y * f =
+     * xXY * u + yXY * v + -xXY * u + xyY * v + xXy * u + -XYy * v + -xXy * u + -xYy * v
+     * u * (xXY - xXY + xXy - xXy) + v * (yXY + xyY - XYy - xYy)
+     * u * 0 + v * 0
+     * 0
+     * Note that this is not necessarily true for non-linear interpolation.
+     */
+    LandPerlin * self;
+    land_alloc(self);
+    self->w = w;
+    self->h = h;
+    self->xy = land_calloc(w * h * sizeof (* self->xy));
+    for (int j = 0; j < h; j += 1) {
+        for (int i = 0; i < w; i += 1) {
+            float a = land_random_f(seed, 0, LAND_PI * 2);
+            self->xy [i + j * w].x = cos(a);
+            self->xy [i + j * w].y = sin(a);
+        }
+    }
+    self->lerp = _cosine_lerp;
+    return self;
+}
+void land_perlin_set_lerp_callback(LandPerlin * self, float(* lerp)(float a, float b, float p)) {
+    self->lerp = lerp;
+}
+void land_perlin_set_lerp(LandPerlin * self, LandPerlinLerp lerp) {
+    if (lerp == LandPerlinLerpNone) {
+        self->lerp = _no_lerp;
+    }
+    if (lerp == LandPerlinLerpLinear) {
+        self->lerp = _linear_lerp;
+    }
+    if (lerp == LandPerlinLerpCosine) {
+        self->lerp = _cosine_lerp;
+    }
+    if (lerp == LandPerlinLerpSmoothStep) {
+        self->lerp = _smooth_step_lerp;
+    }
+    if (lerp == LandPerlinLerpSmootherStep) {
+        self->lerp = _smoother_step_lerp;
+    }
+    if (lerp == LandPerlinLerpSmoothestStep) {
+        self->lerp = _smoothest_step_lerp;
+    }
+}
+void land_perlin_destroy(LandPerlin * self) {
+    land_free(self->xy);
+    land_free(self);
+}
+static LandNoiseF2* _gradient(LandPerlin * self, int x, int y) {
+    x %= self->w;
+    if (x < 0) {
+        x += self->w;
+    }
+    y %= self->h;
+    if (y < 0) {
+        y += self->h;
+    }
+    return self->xy + x + y * self->w;
+}
+static float _dot(LandPerlin * self, int ix, int iy, float x, float y) {
+    float dx = x - ix;
+    float dy = y - iy;
+    LandNoiseF2 * g = _gradient(self, ix, iy);
+    return dx * g->x + dy * g->y;
+}
+float land_perlin_at(LandPerlin * self, float x, float y) {
+    /* Get a noise value from a Perlin noise. If x/y are not from inside
+     * the resolution of the noise they will wrap around.
+     */
+    int x0 = floor(x);
+    int x1 = x0 + 1;
+    int y0 = floor(y);
+    int y1 = y0 + 1;
+    float sx = x - x0;
+    float sy = y - y0;
+    float(* lerp)(float, float, float) = self->lerp;
+    float n0 = _dot(self, x0, y0, x, y);
+    float n1 = _dot(self, x1, y0, x, y);
+    float v0 = lerp(n0, n1, sx);
+    float n2 = _dot(self, x0, y1, x, y);
+    float n3 = _dot(self, x1, y1, x, y);
+    float v1 = lerp(n2, n3, sx);
+    float value = lerp(v0, v1, sy);
+    return value;
+}
+void land_perlin_displace(LandPerlin * self, float x, float y, float * xd, float * yd) {
+    /* Instead of getting the result of the Perlin noise at x/y, directly
+     * get the random displacement vector xd/yd.
+     */
+    int x0 = floor(x);
+    int x1 = x0 + 1;
+    int y0 = floor(y);
+    int y1 = y0 + 1;
+    float sx = x - x0;
+    float sy = y - y0;
+    float(* lerp)(float, float, float) = self->lerp;
+    LandNoiseF2 * g00 = _gradient(self, x0, y0);
+    LandNoiseF2 * g10 = _gradient(self, x1, y0);
+    LandNoiseF2 * g01 = _gradient(self, x0, y1);
+    LandNoiseF2 * g11 = _gradient(self, x1, y1);
+    float ix0, ix1;
+    ix0 = lerp(g00->x, g10->x, sx);
+    ix1 = lerp(g01->x, g11->x, sx);
+    * xd = lerp(ix0, ix1, sy);
+    ix0 = lerp(g00->y, g10->y, sx);
+    ix1 = lerp(g01->y, g11->y, sx);
+    * yd = lerp(ix0, ix1, sy);
+}
+static int active;
+LandSound* land_sound_load(char const * filename) {
+    LandSound * sound = platform_sound_load(filename);
+    return sound;
+}
+LandSound* land_sound_new(int samples, float frequency, int bits, int channels) {
+    LandSound * sound = platform_sound_new(samples, frequency, bits, channels);
+    return sound;
+}
+void* land_sound_sample_pointer(LandSound * self) {
+    return platform_sound_sample_pointer(self);
+}
+int land_sound_length(LandSound * self) {
+    return platform_sound_length(self);
+}
+double land_sound_seconds(LandSound * self) {
+    return platform_sound_seconds(self);
+}
+void land_sound_play(LandSound * s, float volume, float pan, float frequency) {
+    if (! s) {
+        return ;
+    }
+    platform_sound_play(s, volume, pan, frequency, false);
+}
+void land_sound_loop(LandSound * s, float volume, float pan, float frequency) {
+    if (! s) {
+        return ;
+    }
+    platform_sound_play(s, volume, pan, frequency, true);
+}
+void land_sound_stop(LandSound * s) {
+    if (! s) {
+        return ;
+    }
+    platform_sound_stop(s);
+}
+void land_sound_destroy(LandSound * s) {
+    if (! s) {
+        return ;
+    }
+    platform_sound_destroy(s);
+}
+void land_sound_init(void) {
+    platform_sound_init();
+    active = 1;
+}
+void land_sound_exit(void) {
+    platform_sound_exit();
+    active = 0;
+}
+LandStream* land_stream_new(int samples, int fragments, float frequency, int bits, int channels) {
+    return platform_stream_new(samples, fragments, frequency, bits, channels);
+}
+void land_stream_destroy(LandStream * self) {
+    land_free(self->filename);
+    platform_stream_destroy(self);
+}
+void* land_stream_buffer(LandStream * self) {
+    return platform_stream_buffer(self);
+}
+void land_stream_fill(LandStream * self) {
+    platform_stream_fill(self);
+}
+void land_stream_music(LandStream * self, char const * filename) {
+    self->filename = land_strdup(filename);
+    platform_stream_music(self, filename, true);
+}
+void land_stream_music_once(LandStream * self, char const * filename) {
+    self->filename = land_strdup(filename);
+    platform_stream_music(self, filename, false);
+}
+void land_stream_volume(LandStream * self, float volume) {
+    platform_stream_volume(self, volume);
+}
+bool land_stream_is_playing(LandStream * self) {
+    return platform_stream_is_playing(self);
+}
+void land_stream_set_playing(LandStream * self, bool onoff) {
+    platform_stream_set_playing(self, onoff);
+}
+LandView* land_view_new(int x, int y, int w, int h) {
+    /* Specify the view rectangle on the screen.
+     */
+    LandView * self;
+    land_alloc(self);
+    self->x = x;
+    self->y = y;
+    self->w = w;
+    self->h = h;
+    self->scale_x = 1;
+    self->scale_y = 1;
+    self->r = 1;
+    self->g = 1;
+    self->b = 1;
+    self->a = 1;
+    return self;
+}
+void land_view_destroy(LandView * self) {
+    land_free(self);
+}
+void land_view_scroll(LandView * self, float dx, float dy) {
+    /* Scroll the view by the given amount of screen pixels.
+     */
+    self->scroll_x += dx;
+    self->scroll_y += dy;
+}
+void land_view_scroll_to(LandView * self, float x, float y) {
+    self->scroll_x = x;
+    self->scroll_y = y;
+}
+void land_view_scale(LandView * self, float sx, float sy) {
+    float cx = self->scroll_x + (self->w / 2 / self->scale_x);
+    float cy = self->scroll_y + (self->h / 2 / self->scale_y);
+    self->scale_x *= sx;
+    self->scale_y *= sy;
+    self->scroll_x = cx - (self->w / 2 / self->scale_x);
+    self->scroll_y = cy - (self->h / 2 / self->scale_y);
+}
+void land_view_zoom(LandView * self, float zx, float zy) {
+    land_view_scale(self, zx / self->scale_x, zy / self->scale_y);
+}
+void land_view_scroll_center(LandView * self, float x, float y) {
+    /* Given two absolute map coordinates, make them the center of the view.
+     */
+    self->scroll_x = x - self->w / 2;
+    self->scroll_y = y - self->h / 2;
+}
+void land_view_scroll_center_on_screen(LandView * self, float x, float y) {
+    /* Given an on-screen position, make it the new center of the view.
+     */
+    x -= self->x;
+    y -= self->y;
+    x += self->scroll_x;
+    y += self->scroll_y;
+    land_view_scroll_center(self, x, y);
+}
+void land_view_ensure_visible(LandView * self, float x, float y, float bx, float by) {
+    /* Given an absolute map position, scroll the view so it is not within bx/by
+     * pixels to the view's border.
+     */
+    if (x - self->scroll_x < bx) {
+        self->scroll_x = x - bx;
+    }
+    if (x - self->scroll_x > self->w - bx) {
+        self->scroll_x = x - self->w + bx;
+    }
+    if (y - self->scroll_y < by) {
+        self->scroll_y = y - by;
+    }
+    if (y - self->scroll_y > self->h - by) {
+        self->scroll_y = y - self->h + by;
+    }
+}
+void land_view_ensure_visible_on_screen(LandView * self, float x, float y, float bx, float by) {
+    /* land_view_ensure_visible, but the given position is in screen coordinates.
+     */
+    x -= self->x;
+    y -= self->y;
+    x += self->scroll_x;
+    y += self->scroll_y;
+    land_view_ensure_visible(self, x, y, bx, by);
+}
+void land_view_ensure_inside_grid(LandView * self, LandGrid * grid) {
+    /* For a non-wrapped grid, move the view so it lies within the grid.
+     * For a wrapped grid, where the view always is inside the grid, this function
+     * only normalizes the scroll position to lie within the "first quadrant".
+     */
+    if (grid->wrap) {
+        float cx, cy, sx, sy;
+        land_grid_get_cell_at(grid, self, self->x, self->y, & cx, & cy);
+        self->scroll_x = 0;
+        self->scroll_y = 0;
+        land_grid_get_cell_position(grid, self, cx, cy, & sx, & sy);
+        self->scroll_x = sx - self->x;
+        self->scroll_y = sy - self->y;
+    }
+    else {
+        int w = grid->x_cells * grid->cell_w;
+        int h = grid->y_cells * grid->cell_h;
+        if (self->scroll_x < 0) {
+            self->scroll_x = 0;
+        }
+        if (self->scroll_y < 0) {
+            self->scroll_y = 0;
+        }
+        if (self->scroll_x > w - self->w) {
+            self->scroll_x = w - self->w;
+        }
+        if (self->scroll_y > h - self->h) {
+            self->scroll_y = h - self->h;
+        }
+    }
+}
+void land_view_clip(LandView * self) {
+    land_clip(self->x, self->y, self->x + self->w, self->y + self->h);
+}
+void land_view_to_world(LandView * self, float vx, float vy, float * wx, float * wy) {
+    * wx = self->scroll_x + (vx - self->x) / self->scale_x;
+    * wy = self->scroll_y + (vy - self->y) / self->scale_y;
+}
+void land_world_to_view(LandView * self, float wx, float wy, float * vx, float * vy) {
+    * vx = (wx - self->scroll_x) * self->scale_x + self->x;
+    * vy = (wy - self->scroll_y) * self->scale_y + self->y;
+}
+LandOctree* land_octree_new(int xs, int ys, int zs, int xo, int yo, int zo, int cx, int cy, int cz) {
+    LandOctree * self;
+    land_alloc(self);
+    self->data = land_calloc(xs * ys * zs * sizeof (* self->data));
+    self->xs = xs;
+    self->ys = ys;
+    self->zs = zs;
+    self->xo = xo;
+    self->yo = yo;
+    self->zo = zo;
+    self->cx = cx;
+    self->cy = cy;
+    self->cz = cz;
+    return self;
+}
+LandOctree* land_octree_new_from_aabb(LandCSGAABB * aabb, int count) {
+    return land_octree_new(count, count, count, aabb->x1, aabb->y1, aabb->z1, (aabb->x2 - aabb->x1) / count, (aabb->y2 - aabb->y1) / count, (aabb->z2 - aabb->z1) / count);
+}
+void land_octree_del(LandOctree * self) {
+    int n = self->xs * self->ys * self->zs;
+    for (int i = 0; i < n; i += 1) {
+        if (self->data [i]) {
+            land_array_destroy(self->data [i]);
+        }
+    }
+    land_free(self->data);
+    land_free(self);
+}
+int between(int x, int a, int b) {
+    if (x < a) {
+        return a;
+    }
+    if (x > b) {
+        return b;
+    }
+    return x;
+}
+static int _getx(LandOctree * self, LandFloat x) {
+    return between((x - self->xo) / self->cx, 0, self->xs - 1);
+}
+static int _gety(LandOctree * self, LandFloat y) {
+    return between((y - self->yo) / self->cy, 0, self->ys - 1);
+}
+static int _getz(LandOctree * self, LandFloat z) {
+    return between((z - self->zo) / self->cz, 0, self->zs - 1);
+}
+static int _get_i(LandOctree * self, LandFloat x, LandFloat y, LandFloat z) {
+    int xi = _getx(self, x);
+    int yi = _getx(self, y);
+    int zi = _getx(self, z);
+    return xi + yi * self->xs + zi * self->xs * self->ys;
+}
+void land_octree_insert(LandOctree * self, LandFloat x, LandFloat y, LandFloat z, void * data) {
+    int i = _get_i(self, x, y, z);
+    LandArray * array = self->data [i];
+    if (! array) {
+        array = self->data [i] = land_array_new();
+    }
+    land_array_add(array, data);
+}
+LandArray* land_octree_get(LandOctree * self, LandFloat x, LandFloat y, LandFloat z) {
+    int i = _get_i(self, x, y, z);
+    return self->data [i];
+}
+void land_octree_callback_in_cube(LandOctree * self, LandFloat x1, LandFloat y1, LandFloat z1, LandFloat x2, LandFloat y2, LandFloat z2, void(* callback)(LandArray * array, void * data), void * data) {
+    int ix1 = _getx(self, x1);
+    int ix2 = _getx(self, x2);
+    int iy1 = _gety(self, y1);
+    int iy2 = _gety(self, y2);
+    int iz1 = _getz(self, z1);
+    int iz2 = _getz(self, z2);
+    for (int ix = ix1; ix < ix2 + 1; ix += 1) {
+        for (int iy = iy1; iy < iy2 + 1; iy += 1) {
+            for (int iz = iz1; iz < iz2 + 1; iz += 1) {
+                callback(self->data [ix + iy * self->xs + iz * self->xs * self->ys], data);
+            }
+        }
+    }
+}
+struct Waves {
+    int count;
+    float * xy;
+};
+LandNoise* land_noise_new(LandNoiseType t, int seed) {
+    LandNoise * self;
+    land_alloc(self);
+    self->t = t;
+    self->noise = land_array_new();
+    self->count = 1;
+    self->levels = 1;
+    self->lerp = LandPerlinLerpCosine;
+    self->z_scale = 1;
+    self->minval = - 1e9;
+    self->maxval = + 1e9;
+    self->wrap = 1;
+    self->seed = land_random_new(seed);
+    return self;
+}
+void land_noise_set_random(LandNoise * self, LandRandom * random) {
+    /* Note: Ownership of the LandRandom object remains at the caller who
+     * must make sure it lives as long as the noise is being used.
+     */
+    if (self->seed && ! self->use_external_seed) {
+        land_random_del(self->seed);
+    }
+    self->seed = random;
+    self->use_external_seed = 1;
+}
+void land_noise_set_size(LandNoise * self, int w, int h) {
+    self->w = w;
+    self->h = h;
+}
+void land_noise_set_lerp(LandNoise * self, LandPerlinLerp lerp) {
+    self->lerp = lerp;
+}
+void land_noise_set_count(LandNoise * self, int n) {
+    self->count = n;
+}
+void land_noise_set_levels(LandNoise * self, int n) {
+    self->levels = n;
+}
+void land_noise_set_amplitude(LandNoise * self, float amplitude) {
+    self->amplitude = amplitude;
+}
+void land_noise_set_power_modifier(LandNoise * self, float power_modifier) {
+    self->power_modifier = power_modifier;
+}
+void land_noise_set_randomness(LandNoise * self, float randomness) {
+    self->randomness = randomness;
+}
+void land_noise_set_minmax(LandNoise * self, float minval, float maxval) {
+    self->minval = minval;
+    self->maxval = maxval;
+}
+void land_noise_set_warp(LandNoise * self, LandNoise * warp, float x, float y, float sx, float sy) {
+    self->warp = 1;
+    self->warp_x = x;
+    self->warp_y = y;
+    self->warp_sx = sx;
+    self->warp_sy = sy;
+    land_array_add(self->noise, warp);
+}
+void land_noise_set_blur(LandNoise * self, LandNoise * blur, int size) {
+    self->blur = 1;
+    self->blur_size = size;
+    self->w = blur->w;
+    self->h = blur->h;
+    land_array_add(self->noise, blur);
+}
+void land_noise_set_wrap(LandNoise * self, bool wrap) {
+    self->wrap = wrap;
+}
+static void _smoothen(LandNoise * self) {
+    int w = self->w;
+    int h = self->h;
+    self->cache = land_malloc(w * h * sizeof (* self->cache));
+    for (int y = 0; y < self->h; y += 1) {
+        for (int x = 0; x < self->w; x += 1) {
+            self->cache [x + y * self->w] = land_noise_at(land_array_get_nth(self->noise, 0), x, y);
+        }
+    }
+    _smoothen_temp(self->cache, w, h, self->blur_size, self->wrap);
+}
+static void _smoothen_temp(float * noise, int w, int h, int blur_size, bool wrap) {
+    float * cache2 = land_malloc(w * h * sizeof (* cache2));
+    double sigma = blur_size;
+    int fs = sigma * 6 + 1;
+    double filteri [fs];
+    double sigma2 = sigma * sigma;
+    double f = 1.0 / sqrt(2 * LAND_PI * sigma2);
+    for (int y = 0; y < fs; y += 1) {
+        int y2 = y - fs / 2;
+        filteri [y] = f * exp(y2 * y2 / sigma2 / (- 2));
+    }
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            double s = 0, a = 0;
+            for (int v = 0; v < fs; v += 1) {
+                int tx = x;
+                int ty = y + v - fs / 2;
+                double b = filteri [v];
+                a += b;
+                if (ty < 0) {
+                    if (wrap) {
+                        ty += h;
+                    }
+                    else {
+                        ty = 0;
+                    }
+                }
+                if (ty > h - 1) {
+                    if (wrap) {
+                        ty -= h;
+                    }
+                    else {
+                        ty = h - 1;
+                    }
+                }
+                s += noise [ty * w + tx] * b;
+            }
+            cache2 [x + w * y] = s / a;
+        }
+    }
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            double s = 0, a = 0;
+            for (int u = 0; u < fs; u += 1) {
+                int tx = x + u - fs / 2;
+                int ty = y;
+                double b = filteri [u];
+                a += b;
+                if (tx < 0) {
+                    if (wrap) {
+                        tx += w;
+                    }
+                    else {
+                        tx = 0;
+                    }
+                }
+                if (tx > w - 1) {
+                    if (wrap) {
+                        tx -= w;
+                    }
+                    else {
+                        tx = w - 1;
+                    }
+                }
+                s += cache2 [ty * w + tx] * b;
+            }
+            noise [x + w * y] = s / a;
+        }
+    }
+    land_free(cache2);
+}
+static float* _white(LandNoise * self) {
+    float * noise = land_malloc(self->w * self->h * sizeof (* noise));
+    for (int y = 0; y < self->h; y += 1) {
+        for (int x = 0; x < self->w; x += 1) {
+            noise [x + self->w * y] = land_random_f(self->seed, - 1, 1);
+        }
+    }
+    return noise;
+}
+void land_noise_prepare(LandNoise * self) {
+    if (self->warp) {
+        land_noise_prepare(land_array_get_nth(self->noise, 0));
+        return ;
+    }
+    if (self->blur) {
+        land_noise_prepare(land_array_get_nth(self->noise, 0));
+        _smoothen(self);
+        return ;
+    }
+    if (self->t == LandNoiseWhite) {
+        int w = self->w;
+        int h = self->h;
+        int n = self->levels;
+        int size = _scramble_max(w, h) / 8;
+        for (int i = 0; i < n; i += 1) {
+            float * noise = _white(self);
+            _smoothen_temp(noise, w, h, size, self->wrap);
+            land_array_add(self->noise, noise);
+            size /= 2;
+            if (size < 1) {
+                size = 1;
+            }
+        }
+        _multires_cache(self);
+    }
+    if (self->t == LandNoiseVoronoi) {
+        void * noise = land_voronoi_create(self->seed, self->w, self->h, self->count, self->randomness);
+        land_array_add(self->noise, noise);
+    }
+    if (self->t == LandNoiseWaves) {
+        void * noise = _waves_create(self, self->w, self->h);
+        land_array_add(self->noise, noise);
+    }
+    if (self->t == LandNoisePerlin) {
+        int n = self->levels;
+        int w = 2;
+        int h = 2;
+        if (self->h < self->w) {
+            w = h * self->w / self->h;
+        }
+        for (int i = 0; i < n; i += 1) {
+            LandPerlin * noise = land_perlin_create(self->seed, w, h);
+            land_perlin_set_lerp(noise, self->lerp);
+            land_array_add(self->noise, noise);
+            if (w < self->w && h < self->h) {
+                w *= 2;
+                h *= 2;
+            }
+        }
+        _multires_cache(self);
+    }
+    if (self->t == LandNoisePlasma) {
+        void * noise = land_plasma_new(self->seed, self->w, self->h, self->power_modifier, self->amplitude);
+        land_plasma_generate(noise);
+        land_array_add(self->noise, noise);
+    }
+    if (self->t == LandNoiseValue) {
+        self->cache = land_calloc(self->w * self->h * sizeof (* self->cache));
+    }
+}
+static void _multires_cache(LandNoise * self) {
+    self->cache = land_malloc(self->w * self->h * sizeof (* self->cache));
+    for (int y = 0; y < self->h; y += 1) {
+        for (int x = 0; x < self->w; x += 1) {
+            float v = 0.0;
+            int i = 0;
+            {
+                LandArrayIterator __iter0__ = LandArrayIterator_first(self->noise);
+                for (void * noise = LandArrayIterator_item(self->noise, &__iter0__); LandArrayIterator_next(self->noise, &__iter0__); noise = LandArrayIterator_item(self->noise, &__iter0__)) {
+                    float val = _get_resolution(self, noise, i, x, y);
+                    float s = pow(2 + self->power_modifier, - i + self->amplitude);
+                    if (s < 1.0 / 128) {
+                        break;
+                    }
+                    v += val * s;
+                    i++;
+                }
+            }
+            self->cache [x + self->w * y] = v;
+        }
+    }
+}
+static float _get_resolution(LandNoise * self, void * sub, int i, int x, int y) {
+    if (self->t == LandNoisePerlin) {
+        LandPerlin * sub2 = sub;
+        return land_perlin_at(sub2, (float) x * sub2->w / self->w, (float) y * sub2->h / self->h);
+    }
+    if (self->t == LandNoiseWhite) {
+        float * sub2 = sub;
+        float j = pow(self->w * self->h, 0.9) / pow(2, 10 + i);
+        return sub2 [x + self->w * y] * j;
+    }
+    return 0;
+}
+void land_noise_callback(LandNoise * self, float(* cb)(float x)) {
+    for (int y = 0; y < self->h; y += 1) {
+        for (int x = 0; x < self->w; x += 1) {
+            self->cache [x + self->w * y] = cb(self->cache [x + self->w * y]);
+        }
+    }
+}
+void land_noise_destroy(LandNoise * self) {
+    if (self->seed && ! self->use_external_seed) {
+        land_random_del(self->seed);
+    }
+    land_free(self);
+}
+float land_noise_at(LandNoise * self, float x, float y) {
+    float v = land_noise_at_raw(self, x, y);
+    float v2 = v * self->z_scale + self->z_offset;
+    if (self->z_ease > 0.0000001) {
+        float v3 = 1 - cos(v2 * LAND_PI / 2);
+        if (v2 < 0) {
+            v3 = - v3;
+        }
+        v2 = v2 * (1 - self->z_ease) + v3 * self->z_ease;
+    }
+    if (v2 < self->minval) {
+        v2 = self->minval;
+    }
+    if (v2 > self->maxval) {
+        v2 = self->maxval;
+    }
+    return v2;
+}
+float land_noise_at_raw(LandNoise * self, float x, float y) {
+    if (self->warp) {
+        LandNoise * warp = land_array_get_nth(self->noise, 0);
+        float qx = land_noise_at(warp, x, y);
+        float qy = land_noise_at(warp, x + self->warp_x, y + self->warp_y);
+        float v = land_noise_at(warp, x + self->warp_sx * qx, y + self->warp_sy * qy);
+        return v;
+    }
+    if (self->blur || self->t == LandNoiseWhite || self->t == LandNoisePerlin || self->t == LandNoiseValue) {
+        int ix = floor(x);
+        int iy = floor(y);
+        if (self->wrap) {
+            ix %= self->w;
+            if (ix < 0) {
+                ix += self->w;
+            }
+            iy %= self->h;
+            if (iy < 0) {
+                iy += self->h;
+            }
+        }
+        else {
+            if (ix < 0) {
+                ix = 0;
+            }
+            if (iy < 0) {
+                iy = 0;
+            }
+            if (ix > self->w - 1) {
+                ix = self->w - 1;
+            }
+            if (iy > self->h - 1) {
+                iy = self->h - 1;
+            }
+        }
+        return self->cache [ix + iy * self->w];
+    }
+    if (self->t == LandNoiseVoronoi) {
+        return land_voronoi_at(land_array_get_nth(self->noise, 0), x, y);
+    }
+    if (self->t == LandNoisePlasma) {
+        return land_plasma_at(land_array_get_nth(self->noise, 0), x, y);
+    }
+    if (self->t == LandNoiseWaves) {
+        return _waves_at(land_array_get_nth(self->noise, 0), self->power_modifier, self->amplitude, x, y);
+    }
+    return 0;
+}
+static void* _waves_create(LandNoise * noise, int w, int h) {
+    Waves * waves;
+    land_alloc(waves);
+    waves->count = noise->count;
+    waves->xy = land_calloc(noise->count * 2 * sizeof (* waves->xy));
+    for (int i = 0; i < noise->count; i += 1) {
+        waves->xy [i + i + 0] = land_random_f(noise->seed, 0, w);
+        waves->xy [i + i + 1] = land_random_f(noise->seed, 0, h);
+    }
+    return waves;
+}
+static float _waves_at(Waves * self, float power_modifier, float amplitude, int x, int y) {
+    float v = 0;
+    for (int i = 0; i < self->count; i += 1) {
+        float dx = self->xy [i + i + 0] - x;
+        float dy = self->xy [i + i + 1] - y;
+        v += power_modifier * sin(amplitude * sqrt(dx * dx + dy * dy));
+    }
+    return v;
+}
+void land_noise_z_transform(LandNoise * self, float scale, float offset) {
+    self->z_scale = scale;
+    self->z_offset = offset;
+}
+void land_noise_z_ease(LandNoise * self, float x) {
+    self->z_ease = x;
+}
+LandHash* land_yaml_get_mapping(LandYamlEntry * self) {
+    assert(self->type == YamlMapping);
+    return self->mapping;
+}
+LandHash* land_yaml_get_if_mapping(LandYamlEntry * self) {
+    if (! self || self->type != YamlMapping) {
+        return NULL;
+    }
+    return self->mapping;
+}
+LandArray* land_yaml_get_sequence(LandYamlEntry * self) {
+    assert(self->type == YamlSequence);
+    return self->sequence;
+}
+LandArray* land_yaml_get_if_sequence(LandYamlEntry * self) {
+    if (! self || self->type != YamlSequence) {
+        return NULL;
+    }
+    return self->sequence;
+}
+char const* land_yaml_get_scalar(LandYamlEntry * self) {
+    assert(self->type == YamlScalar);
+    return self->scalar;
+}
+char const* land_yaml_get_if_scalar(LandYamlEntry * self) {
+    if (! self || self->type != YamlScalar) {
+        return NULL;
+    }
+    return self->scalar;
+}
+int land_yaml_get_scalar_int(LandYamlEntry * self) {
+    if (! self) {
+        return 0;
+    }
+    return strtol(self->scalar, NULL, 0);
+}
+double land_yaml_get_scalar_double(LandYamlEntry * self) {
+    return strtod(self->scalar, NULL);
+}
+char const* land_yaml_get_scalar_nth(LandArray * s, int i) {
+    return land_yaml_get_scalar(land_array_get_nth(s, i));
+}
+double land_yaml_get_scalar_nth_double(LandArray * s, int i) {
+    return land_yaml_get_scalar_double(land_array_get_nth(s, i));
+}
+LandYamlEntry* land_yaml_get_entry(LandYamlEntry * self, char const * name) {
+    return land_hash_get(self->mapping, name);
+}
+char const* land_yaml_get_entry_scalar(LandYamlEntry * self, char const * name) {
+    return land_yaml_get_if_scalar(land_yaml_get_entry(self, name));
+}
+int land_yaml_get_entry_int(LandYamlEntry * self, char const * name) {
+    return land_yaml_get_scalar_int(land_yaml_get_entry(self, name));
+}
+double land_yaml_get_entry_double(LandYamlEntry * self, char const * name) {
+    return land_yaml_get_scalar_double(land_yaml_get_entry(self, name));
+}
+LandYamlEntry* land_yaml_get_nth(LandYamlEntry * self, int i) {
+    return land_array_get_nth(land_yaml_get_sequence(self), i);
+}
+int land_yaml_get_nth_int(LandYamlEntry * self, int i) {
+    return land_yaml_get_scalar_int(land_array_get_nth(land_yaml_get_sequence(self), i));
+}
+double land_yaml_get_nth_double(LandYamlEntry * self, int i) {
+    return land_yaml_get_scalar_double(land_array_get_nth(land_yaml_get_sequence(self), i));
+}
+char const* land_yaml_get_nth_scalar(LandYamlEntry * self, int i) {
+    return land_yaml_get_scalar(land_array_get_nth(land_yaml_get_sequence(self), i));
+}
+LandArray* land_yaml_get_entry_sequence(LandYamlEntry * self, char const * name) {
+    return land_yaml_get_sequence(land_yaml_get_entry(self, name));
+}
+LandYaml* land_yaml_new(char const * filename) {
+    LandYaml * yaml;
+    land_alloc(yaml);
+    yaml->filename = land_strdup(filename);
+    yaml->parents = land_array_new();
+    return yaml;
+}
+static void _add_entry(LandYaml * yaml, LandYamlEntry * entry) {
+    if (yaml->parent) {
+        if (yaml->parent->type == YamlSequence) {
+            land_array_add(yaml->parent->sequence, entry);
+        }
+        else if (yaml->parent->type == YamlMapping) {
+            land_hash_insert(yaml->parent->mapping, yaml->key, entry);
+            land_array_add(yaml->parent->sequence, land_strdup(yaml->key));
+            yaml->expect_key = 1;
+            land_free(yaml->key);
+            yaml->key = NULL;
+        }
+    }
+    else {
+        yaml->root = entry;
+    }
+    if (entry->type == YamlSequence) {
+        land_array_add(yaml->parents, yaml->parent);
+        yaml->parent = entry;
+        yaml->expect_key = 0;
+    }
+    else if (entry->type == YamlMapping) {
+        land_array_add(yaml->parents, yaml->parent);
+        yaml->parent = entry;
+        yaml->expect_key = 1;
+    }
+}
+void land_yaml_add_mapping(LandYaml * yaml) {
+    /* After calling this, use land_yaml_add_scalar to add a key, and then
+     * land_yaml_add_* to add a value. Repeat to add the 2nd and more map entries.
+     * Use land_yaml_done when done.
+     */
+    LandYamlEntry * entry;
+    land_alloc(entry);
+    entry->type = YamlMapping;
+    entry->mapping = land_hash_new();
+    entry->sequence = land_array_new();
+    _add_entry(yaml, entry);
+}
+void land_yaml_done(LandYaml * yaml) {
+    /* Call this when done with a mapping or sequence.
+     */
+    yaml->expect_key = 0;
+    yaml->parent = land_array_pop(yaml->parents);
+    if (yaml->parent && yaml->parent->type == YamlMapping) {
+        yaml->expect_key = 1;
+    }
+}
+void land_yaml_add_sequence(LandYaml * yaml) {
+    /* After calling this, use land_yaml_add_* to add sequence items,
+     * then land_yaml_done when the sequence is done.
+     */
+    LandYamlEntry * entry;
+    land_alloc(entry);
+    entry->type = YamlSequence;
+    entry->sequence = land_array_new();
+    _add_entry(yaml, entry);
+}
+void land_yaml_add_scalar(LandYaml * yaml, char const * v) {
+    /* Call this to add an item to a sequence, a key to a mapping, or a value to
+     * a mapping.
+     */
+    if (yaml->expect_key) {
+        yaml->expect_key = 0;
+        yaml->key = strdup(v);
+    }
+    else {
+        LandYamlEntry * entry;
+        land_alloc(entry);
+        entry->type = YamlScalar;
+        entry->scalar = land_strdup(v);
+        _add_entry(yaml, entry);
+    }
+}
+void land_yaml_add_scalar_v(LandYaml * yaml, char const * v, va_list args) {
+    va_list args2;
+    va_copy(args2, args);
+    int n = vsnprintf(NULL, 0, v, args2);
+    va_end(args2);
+    if (n < 0) {
+        n = 1023;
+    }
+    char s [n + 1];
+    vsnprintf(s, n + 1, v, args);
+    land_yaml_add_scalar(yaml, s);
+}
+void land_yaml_add_scalar_f(LandYaml * yaml, char const * v, ...) {
+    va_list args;
+    va_start(args, v);
+    land_yaml_add_scalar_v(yaml, v, args);
+    va_end(args);
+}
+static void _destroy_entry(LandYamlEntry * self) {
+    if (self->type == YamlScalar) {
+        land_free(self->scalar);
+    }
+    else if (self->type == YamlSequence) {
+        for (int i = 0; i < land_array_count(self->sequence); i++) {
+            _destroy_entry(land_array_get_nth(self->sequence, i));
+        }
+        land_array_destroy(self->sequence);
+    }
+    else if (self->type == YamlMapping) {
+        {
+            LandArrayIterator __iter0__ = LandArrayIterator_first(self->sequence);
+            for (char * key = LandArrayIterator_item(self->sequence, &__iter0__); LandArrayIterator_next(self->sequence, &__iter0__); key = LandArrayIterator_item(self->sequence, &__iter0__)) {
+                _destroy_entry(land_hash_get(self->mapping, key));
+                land_free(key);
+            }
+        }
+        land_array_destroy(self->sequence);
+        land_hash_destroy(self->mapping);
+    }
+    land_free(self);
+}
+static void _indent(int indent) {
+    for (int i = 0; i < indent; i += 1) {
+        printf("    ");
+    }
+}
+static void land_yaml_dump_entry(LandYamlEntry * self, int indent) {
+    if (! self) {
+        return ;
+    }
+    if (self->type == YamlScalar) {
+        _indent(indent);
+        printf("%s\n", self->scalar);
+    }
+    else if (self->type == YamlSequence) {
+        for (int i = 0; i < land_array_count(self->sequence); i++) {
+            _indent(indent);
+            printf("-\n");
+            land_yaml_dump_entry(land_array_get_nth(self->sequence, i), indent + 1);
+        }
+    }
+    else if (self->type == YamlMapping) {
+        LandArray * keys = self->sequence;
+        for (int i = 0; i < land_array_count(keys); i++) {
+            char const * key = land_array_get_nth(keys, i);
+            _indent(indent);
+            printf("%s:\n", key);
+            land_yaml_dump_entry(land_hash_get(self->mapping, key), indent + 1);
+        }
+    }
+}
+void land_yaml_destroy(LandYaml * self) {
+    _destroy_entry(self->root);
+    land_array_destroy(self->parents);
+    land_free(self->filename);
+    land_free(self);
+}
+void land_yaml_dump(LandYaml * self) {
+    land_yaml_dump_entry(self->root, 0);
+}
+void land_yaml_rename(LandYaml * self, str filename) {
+    land_free(self->filename);
+    self->filename = land_strdup(filename);
+}
+void* platform_fopen(char const * filename, char const * mode) {
+    #ifdef ANDROID
+    land_log_message("open %s", filename);
+    if (land_starts_with(filename, "/")) {
+        al_set_standard_file_interface();
+        ALLEGRO_FILE * f = al_fopen(filename, mode);
+        al_android_set_apk_file_interface();
+        return f;
+    }
+    #endif
+    ALLEGRO_FILE * f = al_fopen(filename, mode);
+    return f;
+}
+void platform_fclose(void * f) {
+    al_fclose(f);
+}
+int platform_fread(void * f, char * buffer, int bytes) {
+    return al_fread(f, buffer, bytes);
+}
+int platform_fwrite(void * f, char const * buffer, int bytes) {
+    return al_fwrite(f, buffer, bytes);
+}
+void platform_ungetc(void * f, int c) {
+    al_fungetc(f, c);
+}
+int platform_fgetc(void * f) {
+    return al_fgetc(f);
+}
+void platform_fputc(void * f, int c) {
+    al_fputc(f, c);
+}
+bool platform_feof(void * f) {
+    return al_feof(f);
+}
+void platform_fseek(void * f, int n) {
+    al_fseek(f, n, ALLEGRO_SEEK_CUR);
+}
+static void add_files(char const * rel, LandArray * (* array), ALLEGRO_FS_ENTRY * entry, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data) {
+    if (! al_open_directory(entry)) {
+        land_log_message("Cannot open directory (%d).\n", al_get_fs_entry_mode(entry) & ALLEGRO_FILEMODE_ISDIR);
+        return ;
+    }
+    while (true) {
+        ALLEGRO_FS_ENTRY * next = al_read_directory(entry);
+        if (! next) {
+            break;
+        }
+        ALLEGRO_PATH * path = al_create_path(al_get_fs_entry_name(next));
+        char const * name = al_get_path_filename(path);
+        if (! name [0]) {
+            name = al_get_path_component(path, - 1);
+        }
+        if (strcmp(name, ".") && strcmp(name, "..")) {
+            bool is_dir = al_get_fs_entry_mode(next) & ALLEGRO_FILEMODE_ISDIR;
+            char rel2 [strlen(rel) + strlen("/") + strlen(name) + 1];
+            strcpy(rel2, rel);
+            strcat(rel2, "/");
+            strcat(rel2, name);
+            char const * fpath;
+            if (flags & LAND_FULL_PATH) {
+                #ifdef ANDROID
+                fpath = rel2;
+                #else
+                fpath = al_path_cstr(path, '/');
+                #endif
+            }
+            else if (flags & LAND_RELATIVE_PATH) {
+                fpath = rel2;
+            }
+            else {
+                fpath = name;
+            }
+            int f = 3;
+            if (filter) {
+                f = filter(fpath, is_dir, data);
+            }
+            if (f & 1) {
+                if (! (* array)) {
+                    * array = land_array_new();
+                }
+                land_array_add(* array, land_strdup(fpath));
+            }
+            if ((f & 2) && is_dir) {
+                add_files(rel2, array, next, filter, flags, data);
+            }
+        }
+        al_destroy_fs_entry(next);
+        al_destroy_path(path);
+    }
+    al_close_directory(entry);
+}
+LandArray* platform_filelist(char const * dir, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data) {
+    land_log_message("platform_filelist %s\n", dir);
+    ALLEGRO_FS_ENTRY * entry = al_create_fs_entry(dir);
+    LandArray * array = NULL;
+    add_files(dir, & array, entry, filter, flags, data);
+    al_destroy_fs_entry(entry);
+    return array;
+}
+bool platform_is_dir(char const * path) {
+    ALLEGRO_FS_ENTRY * fse = al_create_fs_entry(path);
+    bool r = al_get_fs_entry_mode(fse) & ALLEGRO_FILEMODE_ISDIR;
+    al_destroy_fs_entry(fse);
+    return r;
+}
+bool platform_file_exists(char const * path) {
+    return al_filename_exists(path);
+}
+static char* _get_app_file(char const * appname, int folder, char const * filename) {
+    al_set_org_name("");
+    al_set_app_name(appname);
+    ALLEGRO_PATH * path = al_get_standard_path(folder);
+    const char * str = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
+    if (! al_filename_exists(str)) {
+        land_log_message("Creating new path %s.\n", str);
+        al_make_directory(str);
+    }
+    al_set_path_filename(path, filename);
+    str = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
+    land_log_message("Using file %s.\n", str);
+    char * dup = land_strdup(str);
+    al_destroy_path(path);
+    return dup;
+}
+char* platform_get_save_file(char const * appname, char const * name) {
+    return _get_app_file(appname, ALLEGRO_USER_SETTINGS_PATH, name);
+}
+char* platform_get_app_settings_file(char const * appname) {
+    return _get_app_file(appname, ALLEGRO_USER_SETTINGS_PATH, "settings.cfg");
+}
+char* platform_get_app_data_file(char const * appname, char const * filename) {
+    return _get_app_file(appname, ALLEGRO_USER_DATA_PATH, filename);
+}
+char* platform_get_current_directory(void) {
+    char * d = al_get_current_directory();
+    char * dup = land_strdup(d);
+    al_free(d);
+    return dup;
+}
+char* platform_get_data_path(void) {
+    ALLEGRO_PATH * path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+    char * dup = land_strdup(al_path_cstr(path, '/'));
+    al_destroy_path(path);
+    return dup;
+}
+bool platform_remove_file(char const * path) {
+    return al_remove_filename(path);
+}
+void land_android_apk_filesystem(bool onoff) {
+    #ifdef ANDROID
+    if (onoff) {
+        al_android_set_apk_fs_interface();
+        al_change_directory("/");
+    }
+    else {
+        al_set_standard_fs_interface();
+    }
+    #endif
+}
+int64_t platform_file_time(char const * path) {
+    ALLEGRO_FS_ENTRY * e = al_create_fs_entry(path);
+    time_t t = al_get_fs_entry_mtime(e);
+    al_destroy_fs_entry(e);
+    return t;
+}
+void land_thread_run(void(* cb)(void * data), void * data) {
+    platform_thread_run(cb, data);
+}
+LandThread* land_thread_new(void(* cb)(void * data), void * data) {
+    return platform_thread_new(cb, data);
+}
+void land_thread_destroy(LandThread * t) {
+    platform_thread_destroy(t);
+}
+LandLock* land_thread_new_lock(void) {
+    return platform_thread_new_lock();
+}
+void land_thread_delete_lock(LandLock * l) {
+    return platform_thread_delete_lock(l);
+}
+void land_thread_lock(LandLock * l) {
+    platform_thread_lock(l);
+}
+void land_thread_unlock(LandLock * l) {
+    platform_thread_unlock(l);
+}
+static bool land_active;
+bool _land_quit;
+static LandParameters * parameters;
+bool _land_halted;
+bool _land_was_halted;
+static bool x_clicked;
+int _land_frames;
+bool _land_synchronized;
+static bool _maximize_fps;
+static int skip_counter;
+static void land_exit(void) {
+    if (! land_active) {
+        return ;
+    }
+    land_active = 0;
+    land_free(parameters);
+    land_log_message("land_exit\n");
+}
+void land_halt(void) {
+    platform_halt();
+    _land_halted = 1;
+}
+void land_resume(void) {
+    platform_resume();
+    _land_halted = 0;
+}
+bool land_was_halted(void) {
+    return _land_halted;
+}
+void land_init(void) {
+    /* """Initialize Land. This must be called before anything else."""
+     */
+    if (land_active) {
+        return ;
+    }
+    land_active = 1;
+    land_log_message("land_init\n");
+    land_alloc(parameters);
+    parameters->w = 640;
+    parameters->h = 480;
+    parameters->fps = 60;
+    atexit(land_exit);
+    if (! land_exception_handler) {
+        land_exception_handler_set(land_default_exception_handler);
+    }
+    int seed = time(NULL);
+    land_seed(seed);
+    land_log_message("Random seed is %d.\n", seed);
+    char cd [1024];
+    if (! getcwd(cd, sizeof cd)) {
+        sprintf(cd, "<none>");
+    }
+    land_log_message("Current path: %s\n", cd);
+    platform_init();
+}
+void land_tick(void) {
+    land_display_tick();
+    land_runner_tick_active();
+    land_mouse_tick();
+    land_keyboard_tick();
+    land_joystick_tick();
+    x_clicked = 0;
+    _land_was_halted = _land_halted;
+}
+void land_draw(void) {
+    if (parameters->skip) {
+        skip_counter++;
+        if (skip_counter <= parameters->skip) {
+            return ;
+        }
+        skip_counter = 0;
+    }
+    land_runner_draw_active();
+    land_flip();
+}
+void land_quit(void) {
+    /* Quit the Land application. Call it when you want the program to
+     * exit.
+     */
+    _land_quit = 1;
+}
+void land_closebutton_event(void) {
+    x_clicked = 1;
+}
+int land_closebutton(void) {
+    /* """Check if the closebutton has been clicked.
+     * * Returns: True if yes, else False.
+     */
+    return x_clicked;
+}
+void land_set_fps(int f) {
+    /* """Set the frequency in Hz at which Land should tick. Default is 60."""
+     */
+    land_log_message("land_set_frequency %d\n", f);
+    parameters->fps = f;
+}
+void land_skip_render(int skip) {
+    parameters->skip = skip;
+}
+void land_set_display_parameters(int w, int h, int flags) {
+    /* """Set the display parameters to use initially.
+     * * w, h Width and height in pixel.
+     * * flags, a combination of:
+     * ** LAND_WINDOWED
+     * ** LAND_FULLSCREEN
+     * ** LAND_OPENGL
+     * ** LAND_CLOSE_LINES
+     */
+    parameters->w = w;
+    parameters->h = h;
+    parameters->flags = flags;
+}
+void land_set_initial_runner(LandRunner * runner) {
+    /* """Set the initial runner."""
+     */
+    parameters->start = runner;
+}
+double land_get_fps(void) {
+    /* """Return the current frequency."""
+     */
+    return parameters->fps;
+}
+int land_get_ticks(void) {
+    /* """Return the number of ticks Land has executed."""
+     */
+    return _land_frames;
+}
+double land_get_time(void) {
+    /* """Get the time in seconds since Land has started."""
+     */
+    return platform_get_time();
+}
+void land_pause(void) {
+    /* """Stop time. The tick function of the current runner will not be
+     * called any longer and [land_get_ticks] will not advance until the
+     * next call to [land_unpause].
+     */
+    platform_pause();
+}
+void land_unpause(void) {
+    platform_unpause();
+}
+int land_get_flags(void) {
+    return parameters->flags;
+}
+void land_set_synchronized(bool onoff) {
+    _land_synchronized = onoff;
+}
+void land_maximize_fps(bool onoff) {
+    _maximize_fps = onoff;
+}
+void land_mainloop_prepare(void) {
+    land_exit_function(land_exit);
+    land_display_init();
+    land_font_init();
+    land_image_init();
+    land_grid_init();
+}
+void land_mainloop(void) {
+    /* """Run Land. This function will use all the parameters set before to
+     * initialize everything, then run the initial runner. It will return when
+     * you call land_quit() inside the tick function of the active runner.
+     */
+    land_log_message("land_mainloop\n");
+    land_mainloop_prepare();
+    LandDisplay * display = land_display_new(parameters->w, parameters->h, parameters->flags);
+    land_log_message("About to create the main window.\n");
+    land_display_set();
+    land_log_message("Video initialized.\n");
+    land_sound_init();
+    land_log_message("Audio initialized.\n");
+    land_mouse_init();
+    land_log_message("Mouse initialized.\n");
+    land_keyboard_init();
+    land_log_message("Keyboard initialized.\n");
+    land_runner_switch_active(parameters->start);
+    land_log_message("Commencing operations.\n");
+    platform_mainloop(parameters);
+    land_log_message("Ceasing operations.\n");
+    land_runner_switch_active(NULL);
+    land_runner_destroy_all();
+    land_display_destroy(display);
+    land_sound_exit();
+    land_grid_exit();
+    land_font_exit();
+    land_image_exit();
+    land_display_exit();
+    land_exit_functions();
+    land_log_message("exit\n");
+}
+LandMemoryPool* land_pool_new_initial(int initial) {
+    LandMemoryPool * self;
+    land_alloc(self);
+    self->allocated = initial;
+    self->memory = land_calloc(self->allocated);
+    self->prev = self;
+    return self;
+}
+LandMemoryPool* land_pool_new(void) {
+    return land_pool_new_initial(1024);
+}
+void land_pool_destroy(LandMemoryPool * self) {
+    LandMemoryPool * last = self->prev;
+    while (1) {
+        LandMemoryPool * prev = last->prev;
+        land_free(last->memory);
+        land_free(last);
+        if (last == self) {
+            break;
+        }
+        last = prev;
+    }
+}
+void* land_pool_alloc(LandMemoryPool * self, int size) {
+    LandMemoryPool * last = self->prev;
+    while (last->used + size > last->allocated) {
+        LandMemoryPool * another = land_pool_new_initial(last->allocated * 2);
+        another->prev = last;
+        self->prev = another;
+        last = another;
+    }
+    void * p = last->memory + last->used;
+    last->used += size;
+    return p;
+}
+LandDataFile * land_datafile;
+static int read32(FILE * f) {
+    unsigned int u = fgetc(f);
+    u += fgetc(f) << 8;
+    u += fgetc(f) << 16;
+    u += fgetc(f) << 24;
+    return u;
+}
+LandDataFile* land_read_datafile(FILE * file) {
+    LandDataFile * self;
+    land_alloc(self);
+    self->file = file;
+    int count = read32(self->file);
+    int i;
+    char name [1024];
+    land_log_message("Data listing:\n");
+    for (i = 0; i < count; i++) {
+        int s = 0;
+        while (s < 1024) {
+            int c = fgetc(self->file);
+            name [s++] = c;
+            if (c == '\0') {
+                break;
+            }
+        }
+        LandDataEntry * entry;
+        land_alloc(entry);
+        entry->name = land_strdup(name);
+        entry->offset = read32(self->file);
+        entry->size = read32(self->file);
+        land_array_add_data(& self->entries, entry);
+        land_log_message(" %8d %8d %s\n", entry->offset, entry->size, entry->name);
+    }
+    return self;
+}
+LandDataFile* land_open_datafile(char const * filename) {
+    FILE * file = fopen(filename, "rb");
+    if (! file) {
+        return NULL;
+    }
+    return land_read_datafile(file);
+}
+LandDataFile* land_open_appended_datafile(char const * filename, char const * marker) {
+    FILE * file = fopen(filename, "rb");
+    if (! file) {
+        return NULL;
+    }
+    fseek(file, - 4, SEEK_END);
+    int size = read32(file);
+    land_log_message("Embedded data size: %d\n", size);
+    fseek(file, - size - strlen(marker), SEEK_END);
+    int i;
+    for (i = 0; i < (int) strlen(marker); i++) {
+        if (fgetc(file) != marker [i]) {
+            fclose(file);
+            return NULL;
+        }
+    }
+    int offset = ftell(file);
+    LandDataFile * data = land_read_datafile(file);
+    for (i = 0; i < data->entries->count; i++) {
+        LandDataEntry * entry = land_array_get_nth(data->entries, i);
+        entry->offset += offset;
+    }
+    return data;
+}
+void* land_datafile_read_entry(LandDataFile * self, char const * filename, int * size) {
+    int i;
+    for (i = 0; i < self->entries->count; i++) {
+        LandDataEntry * entry = land_array_get_nth(self->entries, i);
+        if (! strcmp(entry->name, filename)) {
+            fseek(self->file, entry->offset, 0);
+            unsigned char * buffer = land_calloc(entry->size);
+            int r = fread(buffer, entry->size, 1, self->file);
+            entry->size = r;
+            if (size) {
+                * size = entry->size;
+            }
+            return buffer;
+        }
+    }
+    return NULL;
+}
+static int star_match(char const * pattern, char const * name) {
+    int i = 0;
+    int j = 0;
+    while (1) {
+        char c = pattern [i];
+        char d = name [j];
+        if (c == '*') {
+            int k;
+            if (pattern [i + 1] == '\0') {
+                return 1;
+            }
+            for (k = j; k < (int) strlen(name); k++) {
+                int r = star_match(pattern + i + 1, name + k);
+                if (r) {
+                    return r;
+                }
+            }
+            return 0;
+        }
+        else if (c == '?') {
+            ;
+        }
+        else if (c != d) {
+            return 0;
+        }
+        if (c == '\0') {
+            return 1;
+        }
+        i++;
+        j++;
+    }
+}
+int land_datafile_for_each_entry(LandDataFile * self, char const * pattern, int(* callback)(const char * filename, int attrib, void * param), void * param) {
+    int i;
+    int n = 0;
+    for (i = 0; i < self->entries->count; i++) {
+        LandDataEntry * entry = land_array_get_nth(self->entries, i);
+        if (star_match(pattern, entry->name)) {
+            if (callback(entry->name, 0, param)) {
+                break;
+            }
+            n++;
+        }
+    }
+    return n;
+}
+void land_set_datafile(LandDataFile * datafile) {
+    land_datafile = datafile;
+}
+LandDataFile* land_get_datafile(void) {
+    return land_datafile;
+}
+static LandArray * joys;
+struct Stick {
+    int first_axis;
+    int axes;
+};
+struct Joy {
+    ALLEGRO_JOYSTICK * allegro;
+    int allegro_button;
+    int first_axis;
+    int axes;
+    int first_button;
+    int buttons;
+    LandArray * sticks;
+};
+static LandArray * button_names;
+static LandArray * axis_names;
+void a5_joystick_create_mapping(void) {
+    if (joys) {
+        {
+            LandArrayIterator __iter0__ = LandArrayIterator_first(joys);
+            for (Joy * joy = LandArrayIterator_item(joys, &__iter0__); LandArrayIterator_next(joys, &__iter0__); joy = LandArrayIterator_item(joys, &__iter0__)) {
+                land_array_destroy_with_free(joy->sticks);
+            }
+        }
+        land_array_destroy_with_free(joys);
+        land_array_destroy_with_free(button_names);
+        land_array_destroy_with_free(axis_names);
+    }
+    joys = land_array_new();
+    button_names = land_array_new();
+    land_array_add(button_names, land_strdup("none"));
+    axis_names = land_array_new();
+    land_array_add(axis_names, land_strdup("none"));
+    int jn = al_get_num_joysticks();
+    int axes = 1;
+    int buttons = 1;
+    for (int j = 0; j < jn; j += 1) {
+        ALLEGRO_JOYSTICK * allegro = al_get_joystick(j);
+        Joy * joy = land_calloc(sizeof (* joy));
+        joy->allegro = allegro;
+        joy->buttons = al_get_joystick_num_buttons(allegro);
+        joy->sticks = land_array_new();
+        joy->first_axis = axes;
+        joy->first_button = buttons;
+        joy->axes = 0;
+        land_array_add(joys, joy);
+        int sn = al_get_joystick_num_sticks(allegro);
+        for (int s = 0; s < sn; s += 1) {
+            Stick * stick = land_calloc(sizeof (* stick));
+            stick->first_axis = axes;
+            stick->axes = al_get_joystick_num_axes(allegro, s);
+            land_array_add(joy->sticks, stick);
+            for (int a = 0; a < stick->axes; a += 1) {
+                char * name = land_strdup(al_get_joystick_stick_name(allegro, s));
+                land_concatenate_with_separator(& name, al_get_joystick_axis_name(allegro, s, a), " ");
+                land_log_message("joystick axis %d: %s\n", axes + a, name);
+                land_array_add(axis_names, name);
+            }
+            joy->axes += stick->axes;
+            axes += stick->axes;
+            if (axes > LandJoystickAxesCount - 1) {
+                axes = LandJoystickAxesCount - 1;
+                land_log_message("Error: too many joystick axes!\n");
+            }
+        }
+        for (int b = 0; b < joy->buttons; b += 1) {
+            char * name = land_strdup(al_get_joystick_button_name(allegro, b));
+            land_log_message("joystick button %d: %s\n", buttons + b, name);
+            land_array_add(button_names, name);
+        }
+        buttons += joy->buttons;
+        if (buttons > LandJoystickButtonsCount - 1) {
+            buttons = LandJoystickButtonsCount - 1;
+            land_log_message("Error: too many joystick buttons!");
+        }
+    }
+}
+int a5_joystick_axis_to_land(ALLEGRO_JOYSTICK * allegro, int s, int a) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(joys);
+        for (Joy * joy = LandArrayIterator_item(joys, &__iter0__); LandArrayIterator_next(joys, &__iter0__); joy = LandArrayIterator_item(joys, &__iter0__)) {
+            if (joy->allegro == allegro) {
+                Stick * stick = land_array_get_nth(joy->sticks, s);
+                return stick->first_axis + a;
+            }
+        }
+    }
+    return 0;
+}
+int a5_joystick_button_to_land(ALLEGRO_JOYSTICK * allegro, int b) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(joys);
+        for (Joy * joy = LandArrayIterator_item(joys, &__iter0__); LandArrayIterator_next(joys, &__iter0__); joy = LandArrayIterator_item(joys, &__iter0__)) {
+            if (joy->allegro == allegro) {
+                return joy->first_button + b;
+            }
+        }
+    }
+    return 0;
+}
+int platform_joystick_axis_count(void) {
+    return LandArray__len__(axis_names);
+}
+int platform_joystick_button_count(void) {
+    return LandArray__len__(button_names);
+}
+str platform_joystick_button_name(int b) {
+    if (b >= LandArray__len__(button_names)) {
+        return "none";
+    }
+    return land_array_get_nth(button_names, b);
+}
+str platform_joystick_axis_name(int a) {
+    if (a >= LandArray__len__(axis_names)) {
+        return "none";
+    }
+    return land_array_get_nth(axis_names, a);
+}
+enum LandWidgetThemeFlags {
+    TILE_H=0,
+    TILE_V=0,
+    STRETCH_H=1,
+    STRETCH_V=2,
+    CENTER_H=4,
+    CENTER_V=8,
+    ALIGN_H=16,
+    ALIGN_V=32
+};
+static LandWidgetTheme * default_theme;
+LandWidgetTheme* land_widget_theme_default(void) {
+    return default_theme;
+}
+void land_widget_theme_set_default(LandWidgetTheme * self) {
+    default_theme = self;
+}
+static inline int centered_offset(int size1, int size2) {
+    int center1, center2, o;
+    if (! size1 || ! size2) {
+        return 0;
+    }
+    center1 = size1 / 2;
+    center2 = size2 / 2;
+    o = (center1 - center2) % size2;
+    if (o > 0) {
+        o -= size2;
+    }
+    return o;
+}
+static inline void _masked_non_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int _, int __) {
+    land_image_clip(s, sx, sy, sx + w, sy + h);
+    land_image_draw(s, dx - sx, dy - sy);
+}
+static inline void _masked_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int dw, int dh) {
+    land_image_clip(s, sx, sy, sx + w, sy + h);
+    land_image_draw_scaled(s, dx - sx, dy - sy, (float) dw / w, (float) dh / h);
+}
+enum COLUMN_TYPE {
+    COLUMN_CENTER=1,
+    COLUMN_STRETCH,
+    COLUMN_LEFT,
+    COLUMN_MIDDLE,
+    COLUMN_RIGHT
+};
+static inline void blit_column(LandWidgetThemeElement * pat, int bx, int bw, int x, int y, int w, int h, int skip_middle) {
+    int oy;
+    int j;
+    int bh = land_image_height(pat->bmp);
+    int bm = bh - pat->bt - pat->bb;
+    void(* bfunc)(LandImage *, int, int, int, int, int, int, int, int);
+    bfunc = _masked_non_stretched_blit;
+    if (bm < 1) {
+        return ;
+    }
+    if (pat->flags & ALIGN_V) {
+        oy = (y / bm) * bm - y;
+    }
+    else {
+        oy = centered_offset(h, bm);
+    }
+    if (w != bw) {
+        bfunc = _masked_stretched_blit;
+    }
+    if (pat->flags & CENTER_V) {
+        bfunc(pat->bmp, bx, 0, bw, land_image_height(pat->bmp), x, y + h / 2 - land_image_height(pat->bmp) / 2, w, land_image_height(pat->bmp));
+    }
+    else if (pat->flags & STRETCH_V) {
+        _masked_stretched_blit(pat->bmp, bx, 0, bw, land_image_height(pat->bmp), x, y, w, h);
+    }
+    else {
+        int bt = pat->bt;
+        int bb = pat->bb;
+        if (bt + bb > h) {
+            bt = h / 2;
+            bb = h - bt;
+        }
+        if (bt && y + bt >= _land_active_display->clip_y1) {
+            land_clip_push();
+            land_clip_intersect(0, y, land_display_width(), _scramble_min(y + h, y + bt));
+            bfunc(pat->bmp, bx, 0, bw, bt, x, y, w, bt);
+            land_clip_pop();
+        }
+        if (h - pat->bt - pat->bb > 0 && ! skip_middle) {
+            land_clip_push();
+            land_clip_intersect(0, _scramble_min(y + h, y + pat->bt), land_display_width(), _scramble_max(y, y + h - pat->bb));
+            int start = _scramble_max(0, (_land_active_display->clip_y1 - (y + oy)) / bm);
+            start = y + oy + start * bm;
+            int end = _scramble_min(_land_active_display->clip_y2, y + h);
+            for (j = start; j < end; j += bm) {
+                bfunc(pat->bmp, bx, pat->bt, bw, bm, x, j, w, bm);
+            }
+            land_clip_pop();
+        }
+        if (bb && y + h - bb < _land_active_display->clip_y2) {
+            land_clip_push();
+            land_clip_intersect(0, _scramble_max(y, y + h - bb), land_display_width(), y + h);
+            bfunc(pat->bmp, bx, land_image_height(pat->bmp) - bb, bw, bb, x, y + h - bb, w, bb);
+            land_clip_pop();
+        }
+    }
+}
+static void draw_bitmap(LandWidgetThemeElement * pat, int x, int y, int w, int h, int skip_middle) {
+    int i;
+    int bw = land_image_width(pat->bmp);
+    int bm = bw - pat->bl - pat->br;
+    if (w < 1 || h < 1 || bm < 1) {
+        return ;
+    }
+    land_clip_push();
+    land_clip_intersect(x, y, x + w, y + h);
+    if (pat->flags & CENTER_H) {
+        blit_column(pat, 0, bw, x + w / 2 - bw / 2, y, bw, h, 0);
+    }
+    else if (pat->flags & STRETCH_H) {
+        blit_column(pat, 0, bw, x, y, w, h, 0);
+    }
+    else {
+        int ox;
+        if (pat->flags & ALIGN_H) {
+            ox = (x / bm) * bm - x;
+        }
+        else {
+            ox = centered_offset(w, bm);
+        }
+        int bl = pat->bl;
+        int br = pat->br;
+        if (bl + br > w) {
+            bl = w / 2;
+            br = w - bl;
+        }
+        if (bl && x + bl >= _land_active_display->clip_x1) {
+            land_clip_push();
+            land_clip_intersect(x, 0, _scramble_min(x + w, x + bl), land_display_height());
+            blit_column(pat, 0, bl, x, y, bl, h, 0);
+            land_clip_pop();
+        }
+        if (w - pat->bl - pat->br > 0) {
+            land_clip_push();
+            land_clip_intersect(_scramble_min(x + w, x + pat->bl), 0, _scramble_max(x, x + w - pat->br), land_display_height());
+            int start = _scramble_max(0, (_land_active_display->clip_x1 - (x + ox)) / bm);
+            start = x + ox + start * bm;
+            int end = _scramble_min(_land_active_display->clip_x2, x + w - pat->br);
+            for (i = start; i < end; i += bm) {
+                blit_column(pat, pat->bl, bm, i, y, bm, h, skip_middle);
+            }
+            land_clip_pop();
+        }
+        if (br && x + w - br < _land_active_display->clip_x2) {
+            land_clip_push();
+            land_clip_intersect(_scramble_max(x, x + w - br), 0, x + w, land_display_height());
+            blit_column(pat, bw - br, br, x + w - br, y, br, h, 0);
+            land_clip_pop();
+        }
+    }
+    land_clip_pop();
+}
+static void read_int_arg(int argc, LandArray * argv, int * a, int * val) {
+    (* a)++;
+    if (* a < argc) {
+        LandBuffer * buf = land_array_get_nth(argv, * a);
+        char * arg = land_buffer_finish(buf);
+        * val = strtoul(arg, NULL, 0);
+        land_free(arg);
+    }
+}
+LandWidgetThemeElement* land_widget_theme_element_new(struct LandWidgetTheme * theme, char const * name, char const * argline) {
+    LandWidgetThemeElement * self;
+    land_alloc(self);
+    self->name = land_strdup(name);
+    self->a = 1;
+    self->minw = 4;
+    self->minh = 4;
+    self->font = land_font_current();
+    self->theme = theme;
+    LandBuffer * argbuf = land_buffer_new();
+    land_buffer_cat(argbuf, argline);
+    land_buffer_strip(argbuf, " ");
+    LandArray * argv = land_buffer_split(argbuf, " ");
+    land_buffer_del(argbuf);
+    int argc = land_array_count(argv);
+    LandImage * img = NULL;
+    if (argc) {
+        char iname [2048];
+        LandBuffer * buf = land_array_get_nth(argv, 0);
+        char * arg = land_buffer_finish(buf);
+        snprintf(iname, sizeof iname, "%s%s%s", theme->prefix, arg, theme->suffix);
+        land_free(arg);
+        img = land_image_load(iname);
+        if (img) {
+            for (int a = 1; a < argc; a++) {
+                buf = land_array_get_nth(argv, a);
+                arg = land_buffer_finish(buf);
+                if (! strcmp(arg, "cut")) {
+                    int cx = 0, cy = 0, cw = 0, ch = 0;
+                    read_int_arg(argc, argv, & a, & cx);
+                    read_int_arg(argc, argv, & a, & cy);
+                    read_int_arg(argc, argv, & a, & cw);
+                    read_int_arg(argc, argv, & a, & ch);
+                    if (cw <= 0) {
+                        cw += land_image_width(img);
+                    }
+                    if (ch <= 0) {
+                        ch += land_image_height(img);
+                    }
+                    self->bmp = land_image_new_from(img, cx, cy, cw, ch);
+                }
+                else if (! strcmp(arg, "halign")) {
+                    self->flags |= ALIGN_H;
+                }
+                else if ((! strcmp(arg, "valign"))) {
+                    self->flags |= ALIGN_V;
+                }
+                else if ((! strcmp(arg, "min"))) {
+                    read_int_arg(argc, argv, & a, & self->minw);
+                    read_int_arg(argc, argv, & a, & self->minh);
+                }
+                else if ((! strcmp(arg, "border"))) {
+                    read_int_arg(argc, argv, & a, & self->bl);
+                    read_int_arg(argc, argv, & a, & self->bt);
+                    read_int_arg(argc, argv, & a, & self->br);
+                    read_int_arg(argc, argv, & a, & self->bb);
+                    self->il = self->bl;
+                    self->it = self->bt;
+                    self->ir = self->br;
+                    self->ib = self->bb;
+                }
+                else if ((! strcmp(arg, "inner"))) {
+                    read_int_arg(argc, argv, & a, & self->il);
+                    read_int_arg(argc, argv, & a, & self->it);
+                    read_int_arg(argc, argv, & a, & self->ir);
+                    read_int_arg(argc, argv, & a, & self->ib);
+                }
+                else if (! strcmp(arg, "gap")) {
+                    read_int_arg(argc, argv, & a, & self->hgap);
+                    read_int_arg(argc, argv, & a, & self->vgap);
+                }
+                else if (! strcmp(arg, "color")) {
+                    int c = 0;
+                    read_int_arg(argc, argv, & a, & c);
+                    self->a = (c & 255) / 255.0;
+                    c >>= 8;
+                    self->b = (c & 255) / 255.0;
+                    c >>= 8;
+                    self->g = (c & 255) / 255.0;
+                    c >>= 8;
+                    self->r = (c & 255) / 255.0;
+                    c >>= 8;
+                }
+                else if ((! strcmp(arg, "transparent"))) {
+                    self->transparent = 1;
+                }
+                land_free(arg);
+            }
+            if (! self->bmp) {
+                self->bmp = land_image_new_from(img, 0, 0, land_image_width(img), land_image_height(img));
+            }
+            land_log_message("element %s: %d x %d, %d/%d/%d/%d %.1f/%.1f/%.1f/%.1f\n", name, land_image_width(self->bmp), land_image_height(self->bmp), self->bl, self->bt, self->br, self->bb, self->r, self->g, self->b, self->a);
+        }
+        else {
+            land_log_message("element: Error: %s not found!\n", name);
+        }
+    }
+    land_array_destroy(argv);
+    if (img) {
+        land_image_destroy(img);
+    }
+    return self;
+}
+LandWidgetTheme* land_widget_theme_new(char const * filename) {
+    /* Load a new theme and make it the default theme.
+     */
+    LandWidgetTheme * self;
+    land_alloc(self);
+    LandIniFile * config = land_ini_read(filename);
+    LandBuffer * prefix = land_buffer_new();
+    land_buffer_cat(prefix, filename);
+    int slash = land_buffer_rfind(prefix, '/');
+    if (slash >= 0) {
+        land_buffer_set_length(prefix, slash + 1);
+    }
+    else {
+        land_buffer_set_length(prefix, 0);
+    }
+    land_buffer_cat(prefix, land_ini_get_string(config, "agup.cfg", "prefix", ""));
+    self->name = land_strdup(land_ini_get_string(config, "agup.cfg", "name", ""));
+    self->prefix = land_buffer_finish(prefix);
+    self->suffix = land_strdup(land_ini_get_string(config, "agup.cfg", "suffix", ""));
+    int n = land_ini_get_number_of_entries(config, "agup.cfg/elements");
+    for (int i = 0; i < n; i++) {
+        char const * v = land_ini_get_nth_entry(config, "agup.cfg/elements", i);
+        char const * k = land_ini_get_string(config, "agup.cfg/elements", v, "");
+        LandWidgetThemeElement * elem = land_widget_theme_element_new(self, v, k);
+        land_add_list_data(& self->elements, elem);
+    }
+    land_ini_destroy(config);
+    land_widget_theme_set_default(self);
+    return self;
+}
+void land_widget_theme_destroy(LandWidgetTheme * self) {
+    LandListItem * item;
+    for (item = self->elements->first; item; item = item->next) {
+        LandWidgetThemeElement * elem = item->data;
+        land_free(elem->name);
+        land_image_destroy(elem->bmp);
+        land_free(elem);
+    }
+    land_list_destroy(self->elements);
+    land_free(self->name);
+    land_free(self->prefix);
+    land_free(self->suffix);
+    land_free(self);
+}
+static LandWidgetThemeElement* find_element(LandList * list, char const * name) {
+    if (! list) {
+        return NULL;
+    }
+    LandListItem * item = list->first;
+    while (item) {
+        LandWidgetThemeElement * elem = item->data;
+        if (! strcmp(elem->name, name)) {
+            return elem;
+        }
+        item = item->next;
+    }
+    return NULL;
+}
+LandWidgetThemeElement* land_widget_theme_find_element(LandWidgetTheme * theme, LandWidget * widget) {
+    if (! theme) {
+        return NULL;
+    }
+    LandWidgetThemeElement * element;
+    element = find_element(theme->elements, widget->vt->name);
+    if (! element) {
+        element = find_element(theme->elements, "base");
+    }
+    if (! element) {
+        land_alloc(element);
+        element->name = land_strdup("");
+        element->theme = theme;
+    }
+    if (! element->selected) {
+        char name [1024];
+        strncpy(name, widget->vt->name, sizeof name);
+        strncat(name, ".selected", sizeof name - strlen(name) - 1);
+        element->selected = find_element(theme->elements, name);
+        if (! element->selected) {
+            strncpy(name, element->name, sizeof name);
+            strncat(name, ".selected", sizeof name - strlen(name) - 1);
+            element->selected = find_element(theme->elements, name);
+        }
+        if (! element->selected) {
+            element->selected = element;
+        }
+    }
+    if (! element->disabled) {
+        char name [1024];
+        strncpy(name, widget->vt->name, sizeof name);
+        strncat(name, ".disabled", sizeof name - strlen(name) - 1);
+        element->disabled = find_element(theme->elements, name);
+        if (! element->disabled) {
+            element->disabled = element;
+        }
+    }
+    return element;
+}
+LandWidgetThemeElement* land_widget_theme_element(LandWidget * self) {
+    if (self->selected) {
+        return self->element->selected;
+    }
+    if (self->disabled) {
+        return self->element->disabled;
+    }
+    return self->element;
+}
+void land_widget_theme_draw(LandWidget * self) {
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    if (! element) {
+        return ;
+    }
+    if (self->no_decoration) {
+        return ;
+    }
+    if (element->transparent) {
+        return ;
+    }
+    draw_bitmap(element, self->box.x, self->box.y, self->box.w, self->box.h, self->only_border);
+}
+void land_widget_theme_color(LandWidget * self) {
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    if (! element) {
+        return ;
+    }
+    land_color(element->r, element->g, element->b, element->a);
+}
+void land_widget_theme_font(LandWidget * self) {
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    if (! element) {
+        return ;
+    }
+    land_font_set(element->font);
+}
+void land_widget_theme_set_minimum_size_for_contents(LandWidget * self, int w, int h) {
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    if (! element) {
+        return ;
+    }
+    self->inner_w = w;
+    self->inner_h = h;
+    w += element->il + element->ir;
+    h += element->it + element->ib;
+    if (w < element->minw) {
+        w = element->minw;
+    }
+    if (h < element->minh) {
+        h = element->minh;
+    }
+    land_widget_layout_set_minimum_size(self, w, h);
+}
+void land_widget_theme_set_minimum_size_for_text(LandWidget * self, char const * text) {
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    if (! element) {
+        return ;
+    }
+    land_font_set(element->font);
+    int w = land_text_get_width(text);
+    int h = land_font_height(land_font_current());
+    land_widget_theme_set_minimum_size_for_contents(self, w, h);
+}
+void land_widget_theme_set_minimum_size_for_image(LandWidget * self, LandImage * image) {
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    if (! element) {
+        return ;
+    }
+    int w = land_image_width(image);
+    int h = land_image_height(image);
+    land_widget_theme_set_minimum_size_for_contents(self, w, h);
+}
+void land_widget_theme_initialize(LandWidget * self) {
+    /* Initialize theming of an item. Must only called once at item creation,
+     * as it also calculates the minimum size.
+     */
+    if (! self->element) {
+        return ;
+    }
+    self->element = land_widget_theme_find_element(self->element->theme, self);
+    int w = self->box.min_width - self->element->il - self->element->ir;
+    int h = self->box.min_height - self->element->it - self->element->ib;
+    land_widget_theme_set_minimum_size_for_contents(self, w, h);
+}
+void land_widget_theme_update(LandWidget * self) {
+    /* Adjust the widget's theme to its class (widgets all start off as "base"
+     * otherwise).
+     */
+    if (! self->element) {
+        return ;
+    }
+    self->element = land_widget_theme_find_element(self->element->theme, self);
+    land_widget_theme_set_minimum_size_for_contents(self, self->inner_w, self->inner_h);
+}
+static void _theme_recurse(LandWidget * self, LandWidgetTheme * theme) {
+    if (! self->element) {
+        return ;
+    }
+    self->element = land_widget_theme_find_element(theme, self);
+    land_widget_theme_set_minimum_size_for_contents(self, self->inner_w, self->inner_h);
+    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
+        LandWidgetContainer * c = (void *) self;
+        LandListItem * i = c->children ? c->children->first : NULL;
+        while (i) {
+            LandWidget * w = i->data;
+            _theme_recurse(w, theme);
+            i = i->next;
+        }
+    }
+}
+static void _layout_recurse(LandWidget * self, LandWidgetTheme * theme) {
+    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
+        LandWidgetContainer * c = (void *) self;
+        LandListItem * i = c->children ? c->children->first : NULL;
+        while (i) {
+            LandWidget * w = i->data;
+            _layout_recurse(w, theme);
+            i = i->next;
+        }
+        if (self->parent && (self->parent->box.flags & GUL_NO_LAYOUT)) {
+            land_widget_layout(self);
+        }
+    }
+}
+void land_widget_theme_apply(LandWidget * self, LandWidgetTheme * theme) {
+    /* Applies the given theme to the widget and all its children.
+     */
+    _theme_recurse(self, theme);
+    _layout_recurse(self, theme);
+    land_widget_layout(self);
+}
+void land_widget_theme_change_font(LandWidgetTheme * theme) {
+    {
+        LandListIterator __iter0__ = LandListIterator_first(theme->elements);
+        for (LandWidgetThemeElement * element = LandListIterator_item(theme->elements, &__iter0__); LandListIterator_next(theme->elements, &__iter0__); element = LandListIterator_item(theme->elements, &__iter0__)) {
+            element->font = land_font_current();
+            if (element->selected) {
+                element->selected->font = land_font_current();
+            }
+            if (element->disabled) {
+                element->disabled->font = land_font_current();
+            }
+        }
+    }
+}
 #ifdef LAND_MEMLOG
 static char const * LOGFILE = "memlog.log";
 static LandLock * lock;
@@ -4763,8 +6840,8 @@ void* land_realloc_memlog(void * ptr, int size, char const * f, int l) {
     land_memory_add(p, "", size, f, l);
     return p;
 }
-char* land_strdup_memlog(char const * str, char const * f, int l) {
-    void * p = strdup(str);
+char* land_strdup_memlog(char const * s, char const * f, int l) {
+    void * p = strdup(s);
     land_memory_add(p, "", strlen(p), f, l);
     return p;
 }
@@ -4782,822 +6859,1188 @@ void* land_calloc(int size) {
 void* land_realloc(void * ptr, int size) {
     return realloc(ptr, size);
 }
-char* land_strdup(char const * str) {
-    return strdup(str);
+char* land_strdup(char const * s) {
+    return strdup(s);
 }
 void land_free(void * ptr) {
     free(ptr);
 }
 #endif
 #undef MAX_BLOCKS
-    /* Simple helper object for maintaining a vertex/fragment shader combination
-     * with GLSL.
-     */
-static void shader_setup(LandGLSLShader * self, char const * name, char const * vertex_glsl, char const * fragment_glsl) {
-    if (vertex_glsl) {
-        self->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(self->vertex_shader, 1, & vertex_glsl, NULL);
-        glCompileShader(self->vertex_shader);
-        GLint success;
-        glGetShaderiv(self->vertex_shader, GL_COMPILE_STATUS, & success);
-        if (1) {
-            int size;
-            glGetShaderiv(self->vertex_shader, GL_INFO_LOG_LENGTH, & size);
-            char error [size];
-            glGetShaderInfoLog(self->vertex_shader, size, & size, error);
-            if (size) {
-                land_log_message("%s: Vertex Shader %s:\n%s\n", name, success ? "Warning" : "Error", error);
-            }
-        }
-    }
-    if (fragment_glsl) {
-        self->fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(self->fragment_shader, 1, & fragment_glsl, NULL);
-        glCompileShader(self->fragment_shader);
-        GLint success;
-        glGetShaderiv(self->fragment_shader, GL_COMPILE_STATUS, & success);
-        if (1) {
-            int size;
-            glGetShaderiv(self->fragment_shader, GL_INFO_LOG_LENGTH, & size);
-            char error [size];
-            glGetShaderInfoLog(self->fragment_shader, size, & size, error);
-            if (size) {
-                land_log_message("%s: Fragment Shader %s:\n%s\n", name, success ? "Warning" : "Error", error);
-            }
-        }
-    }
-    if (! self->program_object) {
-        self->program_object = glCreateProgram();
-    }
-    if (self->fragment_shader) {
-        glAttachShader(self->program_object, self->fragment_shader);
-    }
-    if (self->vertex_shader) {
-        glAttachShader(self->program_object, self->vertex_shader);
-    }
-    if (self->fragment_shader && self->vertex_shader) {
-        glLinkProgram(self->program_object);
-        GLint success;
-        glGetProgramiv(self->program_object, GL_LINK_STATUS, & success);
-        if (1) {
-            int size;
-            glGetProgramiv(self->program_object, GL_INFO_LOG_LENGTH, & size);
-            char error [size];
-            glGetProgramInfoLog(self->program_object, size, & size, error);
-            if (size) {
-                land_log_message("%s: Shader Link Error:\n%s\n", name, error);
-            }
-        }
-    }
+struct LandFontPlatform {
+    LandFont super;
+    ALLEGRO_FONT * a5;
+};
+void platform_font_init(void) {
+    al_init_font_addon();
+    al_init_ttf_addon();
 }
-static void shader_cleanup(LandGLSLShader * self) {
-    if (self->program_object) {
-        glDeleteProgram(self->program_object);
-        glDeleteShader(self->vertex_shader);
-        glDeleteShader(self->fragment_shader);
-    }
+void platform_font_exit(void) {
+    ;
 }
-LandGLSLShader* land_glsl_shader_new(char const * name, char const * vertex_glsl, char const * fragment_glsl) {
-    LandGLSLShader * self;
+LandFont* platform_font_load(char const * filename, float size) {
+    land_log_message("Loading font %s..", filename);
+    LandFontPlatform * self;
     land_alloc(self);
-    shader_setup(self, name, vertex_glsl, fragment_glsl);
-    return self;
+    self->a5 = al_load_font(filename, size, 0);
+    land_log_message_nostamp("%s.\n", self->a5 ? "success" : "failure");
+    LandFont * super = (void *) self;
+    if (self->a5) {
+        super->size = al_get_font_line_height(self->a5);
+        super->flags |= LAND_LOADED;
+    }
+    super->xscaling = 1.0;
+    super->yscaling = 1.0;
+    return super;
 }
-LandGLSLShader* land_glsl_shader_new_empty(char const * name) {
-    LandGLSLShader * self;
+LandFont* platform_font_from_image(LandImage * image, int n_ranges, int * ranges) {
+    LandFontPlatform * self;
+    LandImagePlatform * i = (void *) image;
     land_alloc(self);
-    shader_setup(self, name, NULL, NULL);
-    return self;
+    self->a5 = al_grab_font_from_bitmap(i->a5, n_ranges, ranges);
+    LandFont * super = (void *) self;
+    if (self->a5) {
+        super->size = al_get_font_line_height(self->a5);
+    }
+    super->xscaling = 1.0;
+    super->yscaling = 1.0;
+    return super;
 }
-void land_glsl_shader_set_shaders(LandGLSLShader * self, char const * vertex_glsl, char const * fragment_glsl) {
-    shader_setup(self, NULL, vertex_glsl, fragment_glsl);
-}
-void land_glsl_shader_destroy(LandGLSLShader * self) {
-    shader_cleanup(self);
-    land_free(self);
-}
-char* land_read_text(char const * filename) {
-    FILE * pf = fopen(filename, "rb");
-    if (! pf) {
-        return NULL;
+void platform_font_print(LandFontState * lfs, char const * str, int alignment) {
+    LandFont * super = lfs->font;
+    LandFontPlatform * self = (void *) super;
+    if (! self->a5) {
+        return ;
     }
-    int s = 1;
-    char * buf = land_malloc(s);
-    int n = 0;
-    while (1) {
-        int c = fgetc(pf);
-        if (c <= 0) {
-            break;
-        }
-        buf [n] = c;
-        n++;
-        if (n >= s) {
-            s *= 2;
-            buf = land_realloc(buf, s);
-        }
+    double xscaling = super->xscaling;
+    double yscaling = super->yscaling;
+    float x = lfs->x = lfs->x_pos;
+    float y = lfs->y = lfs->y_pos;
+    lfs->w = al_get_text_width(self->a5, str) * xscaling;
+    lfs->h = al_get_font_line_height(self->a5) * yscaling;
+    if (lfs->off) {
+        return ;
     }
-    fclose(pf);
-    buf [n] = 0;
-    n++;
-    buf = land_realloc(buf, n);
-    return buf;
-}
-int land_utf8_char(char * (* pos)) {
-    /* Return the unicode value at the given pointer position, and advance the
-     * pointer to the start of the next code point.
-     */
-    unsigned char * upos = (unsigned char *) * pos;
-    int remain;
-    int c = * upos++;
-    if (c < 128) {
-        * pos = (char *) upos;
-        return c;
+    if (xscaling != 1 || yscaling != 1) {
+        land_push_transform();
+        land_translate(x, y);
+        land_scale(xscaling, yscaling);
+        land_translate(- x, - y);
     }
-    if (c < 194) {
-        return 0;
+    ALLEGRO_STATE state;
+    al_store_state(& state, ALLEGRO_STATE_BLENDER);
+    LandDisplay * d = _land_active_display;
+    al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_INVERSE_ALPHA);
+    land_a5_display_check_transform();
+    ALLEGRO_COLOR c = al_map_rgba_f(d->color_r, d->color_g, d->color_b, d->color_a);
+    int a = ALLEGRO_ALIGN_INTEGER;
+    if (alignment & LandAlignMiddle) {
+        y -= lfs->h / 2 / yscaling;
+        lfs->y -= lfs->h / 2 / yscaling;
     }
-    if (c < 224) {
-        c &= 31;
-        remain = 1;
+    else if (alignment & LandAlignBottom) {
+        y -= lfs->h / yscaling;
+        lfs->y -= lfs->h / yscaling;
     }
-    else if (c < 240) {
-        c &= 15;
-        remain = 2;
+    if (alignment & LandAlignAdjust) {
+        al_draw_justified_text(self->a5, c, x, x + lfs->adjust_width, y, lfs->adjust_width * 0.5, a | ALLEGRO_ALIGN_CENTRE, str);
     }
-    else if (c < 245) {
-        c &= 7;
-        remain = 3;
+    else if (alignment & LandAlignCenter) {
+        al_draw_text(self->a5, c, x, y, a | ALLEGRO_ALIGN_CENTRE, str);
+        lfs->x -= lfs->w / 2;
+    }
+    else if (alignment & LandAlignRight) {
+        al_draw_text(self->a5, c, x, y, a | ALLEGRO_ALIGN_RIGHT, str);
+        lfs->x -= lfs->w;
     }
     else {
-        return 0;
+        al_draw_text(self->a5, c, x, y, a, str);
     }
-    while (remain--) {
-        int d = * upos++;
-        c = (c << 6) | (d & 63);
+    al_restore_state(& state);
+    if (xscaling != 1 || yscaling != 1) {
+        land_pop_transform();
     }
-    * pos = (char *) upos;
-    return c;
 }
-int land_utf8_char_back(char * (* pos)) {
-    /* Adjust the pointer back to the previous code point and return its value.
-     */
-    unsigned char * upos = (unsigned char *) * pos;
-    while (((* (--upos) & 0xc0) == 0x80)) {
-    }
-    * pos = (char *) upos;
-    int c = land_utf8_char((char * *) & upos);
-    return c;
+LandFont* platform_font_new(void) {
+    return NULL;
 }
-int land_utf8_char_const(char const * (* pos)) {
-    char * (* p) = (char * *) pos;
-    return land_utf8_char(p);
+void platform_font_destroy(LandFont * super) {
+    LandFontPlatform * self = (void *) super;
+    al_destroy_font(self->a5);
+    land_free(self);
 }
-int land_utf8_encode(int c, char * s) {
-    uint32_t uc = c;
-    if (uc <= 0x7f) {
-        if (s) {
-            s [0] = uc;
-        }
-        return 1;
+static int key_state [LandKeysCount];
+static int key_pressed [LandKeysCount];
+static int keybuffer_keycode [256];
+static int keybuffer_unicode [256];
+static int keybuffer_first;
+static int keybuffer_last;
+void land_key_press_event(int k) {
+    if (! key_state [k]) {
+        key_pressed [k]++;
+        key_state [k] = 1;
     }
-    if (uc <= 0x7ff) {
-        if (s) {
-            s [0] = 0xC0 | ((uc >> 6) & 0x1F);
-            s [1] = 0x80 | (uc & 0x3F);
-        }
-        return 2;
+}
+void land_key_release_event(int k) {
+    key_state [k] = 0;
+}
+void land_keyboard_init(void) {
+    ;
+}
+int land_key(int k) {
+    return key_state [k];
+}
+int land_key_pressed(int k) {
+    return key_pressed [k];
+}
+void land_keyboard_tick(void) {
+    int i;
+    for (i = 0; i < LandKeysCount; i++) {
+        key_pressed [i] = 0;
     }
-    if (uc <= 0xffff) {
-        if (s) {
-            s [0] = 0xE0 | ((uc >> 12) & 0x0F);
-            s [1] = 0x80 | ((uc >> 6) & 0x3F);
-            s [2] = 0x80 | (uc & 0x3F);
-        }
-        return 3;
+    keybuffer_first = 0;
+    keybuffer_last = 0;
+}
+void land_keyboard_add_char(int keycode, int unicode) {
+    if (keybuffer_last == 256) {
+        return ;
     }
-    if (uc <= 0x10ffff) {
-        if (s) {
-            s [0] = 0xF0 | ((uc >> 18) & 0x07);
-            s [1] = 0x80 | ((uc >> 12) & 0x3F);
-            s [2] = 0x80 | ((uc >> 6) & 0x3F);
-            s [3] = 0x80 | (uc & 0x3F);
+    keybuffer_keycode [keybuffer_last] = keycode;
+    keybuffer_unicode [keybuffer_last] = unicode;
+    keybuffer_last++;
+}
+bool land_keybuffer_empty(void) {
+    return keybuffer_last == keybuffer_first;
+}
+void land_keybuffer_next(int * k, int * u) {
+    if (keybuffer_first < keybuffer_last) {
+        * k = keybuffer_keycode [keybuffer_first];
+        * u = keybuffer_unicode [keybuffer_first];
+        keybuffer_first++;
+    }
+}
+char const* land_key_name(int k) {
+    return platform_key_name(k);
+}
+int land_key_get_pressed(int first) {
+    for (int i = first; i < LandKeysCount; i += 1) {
+        if (key_pressed [i]) {
+            return i;
         }
-        return 4;
     }
     return 0;
 }
-char* land_utf8_realloc_insert(char * s, int pos, int c) {
-    /* (abc, 3, d) -> abcd
-     */
-    int len = strlen(s);
-    int clen = land_utf8_encode(c, NULL);
-    s = land_realloc(s, len + clen + 1);
-    char * p = s;
-    for (int i = 0; i < pos; i++) {
-        land_utf8_char(& p);
+LandProtobuf* land_protobuf_load(char const * filename) {
+    LandBuffer * b = land_buffer_read_from_file(filename);
+    if (! b) {
+        return NULL;
     }
-    memmove(p + clen, p, len + 1 - (p - s));
-    land_utf8_encode(c, p);
-    return s;
+    LandProtobuf * pbuf;
+    land_alloc(pbuf);
+    pbuf->data = b;
+    pbuf->end = b->n;
+    return pbuf;
 }
-char* land_utf8_realloc_remove(char * s, int pos) {
-    /* (abc, 1) -> ac
-     */
-    int len = strlen(s);
-    char * p = s;
-    for (int i = 0; i < pos; i++) {
-        land_utf8_char(& p);
-    }
-    char * p2 = p;
-    land_utf8_char(& p2);
-    memmove(p, p2, len - (p2 - s) + 1);
-    s = land_realloc(s, len - (p2 - p) + 1);
-    return s;
-}
-int land_utf8_count(char const * s) {
-    int n = 0;
-    while (land_utf8_char_const(& s)) {
-        n++;
-    }
-    return n;
-}
-void land_utf8_copy(char * target, int size, char const * source) {
-    int i = 0;
-    char const * ptr = source;
-    char const * prev = source;
-    while (land_utf8_char_const(& ptr)) {
-        int s = ptr - prev;
-        if (i + s < size) {
-            memcpy(target + i, prev, s);
-            i += s;
-        }
-        else {
-            break;
-        }
-        prev = ptr;
-    }
-    target [i] = 0;
-}
-bool land_fnmatch(char const * pattern, char const * name) {
-    int i = 0, j = 0;
+static uint64_t varint(LandProtobuf * self) {
+    uint64_t x = 0;
+    int s = 0;
     while (1) {
-        switch (pattern [i]) {
-            case 0: {
-                return name [j] == 0;
-            }
-            case '?': {
-                if (name [j] == 0) {
-                    return 0;
-                }
-                break;
-            }
-            case '*': {
-                while (pattern [i] == '*') {
-                    i++;
-                }
-                if (pattern [i] == 0) {
-                    return 1;
-                }
-                while (name [j] != 0) {
-                    if (land_fnmatch(pattern + i, name + j)) {
-                        return 1;
-                    }
-                    j++;
-                }
-                return false;
-            }
-            default: {
-                if (pattern [i] != name [j]) {
-                    return 0;
-                }
-            }
+        uint8_t c = self->data->buffer [self->pos++];
+        x += (c & 127) << s;
+        s += 7;
+        if (c & 128) {
+            continue;
         }
-        i++;
-        j++;
+        return x;
     }
 }
-char* land_string_copy(char * target, char const * source, int size) {
-    /* size is the size of target in bytes (including the terminating 0)
-     * Returns target.
-     */
-    strncpy(target, source, size - 1);
-    target [size - 1] = 0;
-    return target;
-}
-bool land_equals(char const * s, char const * s2) {
-    return strcmp(s, s2) == 0;
-}
-bool land_ends_with(char const * s, char const * end) {
-    size_t n = strlen(end);
-    if (strlen(end) > n) {
+int land_protobuf_next(LandProtobuf * self, uint64_t * size) {
+    if (self->pos >= self->end) {
         return 0;
     }
-    return strncmp(s + strlen(s) - n, end, n) == 0;
-}
-bool land_starts_with(char const * s, char const * start) {
-    size_t n = strlen(start);
-    if (strlen(start) > n) {
-        return 0;
+    int x = varint(self);
+    int kind = x & 3;
+    if (kind == 2) {
+        * size = varint(self);
     }
-    return strncmp(s, start, n) == 0;
+    return x >> 3;
 }
-void land_concatenate(char * (* s), char const * cat) {
-    int sn = strlen(* s);
-    int n = sn + strlen(cat) + 1;
-    char * re = land_realloc(* s, n);
-    memmove(re + sn, cat, strlen(cat));
-    re [n - 1] = 0;
-    * s = re;
+void land_protobuf_sub_start(LandProtobuf * self, uint64_t * size) {
+    uint64_t end = self->end;
+    self->end = self->pos + * size;
+    * size = end;
 }
-void land_concatenate_with_separator(char * (* s), char const * cat, char const * sep) {
-    if (! (* s) || land_equals(* s, "")) {
-        land_concatenate(s, cat);
+void land_protobuf_sub_end(LandProtobuf * self, uint64_t end) {
+    self->pos = self->end;
+    self->end = end;
+}
+#define R(T) \
+    T x = * (T *)(self->data->buffer + self->pos); \
+    self->pos += sizeof (T); \
+    return x;
+double land_protobuf_double(LandProtobuf * self) {
+    double x;
+    void * p = & x;
+    memcpy(p, self->data->buffer + self->pos, 8);
+    self->pos += 8;
+    return x;
+}
+float land_protobuf_float(LandProtobuf * self) {
+    float x;
+    void * p = & x;
+    memcpy(p, self->data->buffer + self->pos, 4);
+    self->pos += 4;
+    return x;
+}
+uint32_t land_protobuf_fixed32(LandProtobuf * self) {
+    R(uint32_t);
+}
+int32_t land_protobuf_sfixed32(LandProtobuf * self) {
+    R(int32_t);
+}
+char* land_protobuf_string(LandProtobuf * self, int size) {
+    self->pos += size;
+    return self->data->buffer + self->pos - size;
+}
+void land_protobuf_destroy(LandProtobuf * self) {
+    land_buffer_del(self->data);
+    land_free(self);
+}
+#undef R
+struct LandTrianglesPlatform {
+    ALLEGRO_VERTEX_DECL * decl;
+    ALLEGRO_VERTEX_BUFFER * vb;
+};
+void platform_update_vertex_with_normals(LandTriangles * t, int i, float x, float y, float z, float tu, float tv, float r, float g, float b, float a) {
+    LandVertexAllegro * v = land_triangles_get_vertex(t, i);
+    v->x = x;
+    v->y = y;
+    v->z = z;
+    v->u = tu;
+    v->v = tv;
+    v->r = r;
+    v->g = g;
+    v->b = b;
+    v->a = a;
+}
+void platform_update_vertex_allegro(LandTriangles * t, int i, float x, float y, float z, float tu, float tv, float r, float g, float b, float a) {
+    LandVertexAllegro * v = land_triangles_get_vertex(t, i);
+    v->x = x;
+    v->y = y;
+    v->z = z;
+    v->u = tu;
+    v->v = tv;
+    v->r = r;
+    v->g = g;
+    v->b = b;
+    v->a = a;
+}
+void platform_update_vertex(LandTriangles * t, int i, float x, float y, float z, float tu, float tv, float r, float g, float b, float a) {
+    if (t->has_normals) {
+        platform_update_vertex_with_normals(t, i, x, y, z, tu, tv, r, g, b, a);
     }
     else {
-        land_concatenate(s, sep);
-        land_concatenate(s, cat);
+        platform_update_vertex_allegro(t, i, x, y, z, tu, tv, r, g, b, a);
     }
 }
-void land_prepend(char * (* s), char const * pre) {
-    int n = strlen(* s) + strlen(pre) + 1;
-    char * re = land_realloc(* s, n);
-    memmove(re + strlen(pre), re, strlen(* s));
-    memmove(re, pre, strlen(pre));
-    re [n - 1] = 0;
-    * s = re;
-}
-int land_replace(char * (* s), int off, char const * wat, char const * wit) {
-    char * r = strstr(* s + off, wat);
-    if (! r) {
-        return strlen(* s);
-    }
-    int pn = r - * s;
-    int sn = strlen(* s);
-    int n = sn + strlen(wit) - strlen(wat) + 1;
-    char * re = land_malloc(n);
-    memmove(re, * s, r - * s);
-    memmove(re + pn, wit, strlen(wit));
-    memmove(re + pn + strlen(wit), r + strlen(wat), sn - pn - strlen(wat));
-    re [n - 1] = 0;
-    land_free(* s);
-    * s = re;
-    return pn + strlen(wit);
-}
-int land_replace_all(char * (* s), char const * wat, char const * wit) {
-    int off = 0;
-    int c = 0;
-    while (1) {
-        off = land_replace(s, off, wat, wit);
-        if (! (* s) [off]) {
-            return c;
-        }
-        c++;
+void platform_set_vertex_normal(LandTriangles * t, float x, float y, float z) {
+    if (t->has_normals) {
+        LandVertexWithNormal * v = land_triangles_get_vertex(t, t->n - 1);
+        v->nx = x;
+        v->ny = y;
+        v->nz = z;
     }
 }
-char* land_substring(char const * s, int a, int b) {
-    if (a < 0) {
-        a += strlen(s);
+void platform_set_vertex_index(LandTriangles * t, float i) {
+    if (t->has_normals) {
+        LandVertexWithNormal * v = land_triangles_get_vertex(t, t->n - 1);
+        v->i = i;
     }
-    if (b < 0) {
-        b += strlen(s);
-    }
-    char * r = land_malloc(b - a + 1);
-    memmove(r, s + a, b - a);
-    r [b - a] = 0;
-    return r;
 }
-LandArray* land_filelist(char const * dir, int(* filter)(char const *, bool is_dir, void * data), int flags, void * data) {
-    /* Returns an array of files in the given directory. Before a file is added,
-     * the filter function is called, with the name about to be added and an
-     * indication whether it is a filename or a directory.
-     * If flags is LAND_FULL_PATH files are returned as a full path, if
-     * LAND_RELATIVE_PATH relative to dir, otherwise as
-     * only the filename.
-     * The return value of the filter decides what is done with the name:
-     * 0 - Discard it.
-     * 1 - Append it to the returned list.
-     * 2 - If it is a directory, recurse into it.
-     * 3 - Like 1 and 2 combined.
-     */
-    return platform_filelist(dir, filter, flags, data);
-}
-LandArray* land_split_path_name_ext(char const * filename) {
-    /* Returns a LandArray with three elements, for example:
-     * data/blah/tree.png -> ["data/blah", "tree", "png"]
-     * test.txt -> [None, "test", "txt"]
-     * /etc/passwd -> ["/etc", "passwd", None]
-     * The return value can most conveniently be freed like this:
-     * a = land_split_path_name_ext(filename)
-     * ...
-     * land_array_destroy_with_strings(a)
-     */
-    LandArray * a = land_array_new();
-    char * path = land_strdup(filename);
-    char * name;
-    char * ext;
-    char * slash = strrchr(path, '/');
-    if (slash) {
-        * slash = 0;
-        name = land_strdup(slash + 1);
+void platform_triangles_init(LandTriangles * self) {
+    LandTrianglesPlatform * platform;
+    land_alloc(platform);
+    self->platform = platform;
+    if (self->has_normals) {
+        ALLEGRO_VERTEX_ELEMENT elem [] = {{ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_3, 0}, {ALLEGRO_PRIM_USER_ATTR + 0, ALLEGRO_PRIM_FLOAT_3, 12}, {ALLEGRO_PRIM_COLOR_ATTR, 0, 24}, {ALLEGRO_PRIM_USER_ATTR + 1, ALLEGRO_PRIM_FLOAT_1, 40}, {0, 0, 0}};
+        self->size = 44;
+        platform->decl = al_create_vertex_decl(elem, self->size);
     }
     else {
-        name = path;
-        path = NULL;
+        ALLEGRO_VERTEX_ELEMENT elem [] = {{ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_3, 0}, {ALLEGRO_PRIM_TEX_COORD_PIXEL, ALLEGRO_PRIM_FLOAT_2, 12}, {ALLEGRO_PRIM_COLOR_ATTR, 0, 20}, {0, 0, 0}};
+        self->size = 36;
+        platform->decl = al_create_vertex_decl(elem, self->size);
     }
-    char * dot = strrchr(name, '.');
-    if (dot) {
-        * dot = 0;
-        ext = land_strdup(dot + 1);
+}
+void platform_triangles_deinit(LandTriangles * self) {
+    LandTrianglesPlatform * platform = self->platform;
+    al_destroy_vertex_decl(platform->decl);
+    if (platform->vb) {
+        al_destroy_vertex_buffer(platform->vb);
+    }
+    land_free(platform);
+}
+void platform_triangles_draw(LandTriangles * t) {
+    LandTrianglesPlatform * platform = t->platform;
+    if (! platform->vb) {
+        platform->vb = al_create_vertex_buffer(platform->decl, t->buf->buffer, t->n, 0);
+    }
+    LandImagePlatform * pim = (void *) t->image;
+    platform_check_blending_and_transform();
+    if (platform->vb) {
+        al_draw_vertex_buffer(platform->vb, pim ? pim->a5 : NULL, 0, t->n, ALLEGRO_PRIM_TRIANGLE_LIST);
     }
     else {
-        ext = NULL;
+        al_draw_prim(t->buf->buffer, platform->decl, pim ? pim->a5 : NULL, 0, t->n, ALLEGRO_PRIM_TRIANGLE_LIST);
     }
-    land_array_add(a, path);
-    land_array_add(a, name);
-    land_array_add(a, ext);
+    platform_uncheck_blending();
+}
+LandCSGAABB land_csg_aabb_infinite(void) {
+    LandCSGAABB a;
+    a.x1 = - INFINITY;
+    a.x2 = + INFINITY;
+    a.y1 = - INFINITY;
+    a.y2 = + INFINITY;
+    a.z1 = - INFINITY;
+    a.z2 = + INFINITY;
     return a;
 }
-LandArray* land_split(char const * text, char c) {
-    /* Returns an array of strings which you should destroy with
-     * land_array_destroy_with_strings
-     */
-    LandArray * split = land_array_new();
-    LandBuffer * buf = land_buffer_new();
-    land_buffer_cat(buf, text);
-    LandArray * lines = land_buffer_split(buf, c);
+LandCSGAABB land_csg_aabb_empty(void) {
+    LandCSGAABB a;
+    a.x1 = + INFINITY;
+    a.x2 = - INFINITY;
+    a.y1 = + INFINITY;
+    a.y2 = - INFINITY;
+    a.z1 = + INFINITY;
+    a.z2 = - INFINITY;
+    return a;
+}
+void land_csg_aabb_update(LandCSGAABB * self, LandArray * polygons) {
+    * self = land_csg_aabb_empty();
     {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(lines);
-        for (LandBuffer * line = LandArrayIterator_item(lines, &__iter0__); LandArrayIterator_next(lines, &__iter0__); line = LandArrayIterator_item(lines, &__iter0__)) {
-            char * x = land_buffer_finish(line);
-            land_array_add(split, x);
+        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
+                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
+                    if (v->pos.x < self->x1) {
+                        self->x1 = v->pos.x;
+                    }
+                    if (v->pos.x > self->x2) {
+                        self->x2 = v->pos.x;
+                    }
+                    if (v->pos.y < self->y1) {
+                        self->y1 = v->pos.y;
+                    }
+                    if (v->pos.y > self->y2) {
+                        self->y2 = v->pos.y;
+                    }
+                    if (v->pos.z < self->z1) {
+                        self->z1 = v->pos.z;
+                    }
+                    if (v->pos.z > self->z2) {
+                        self->z2 = v->pos.z;
+                    }
+                }
+            }
         }
     }
-    land_array_destroy(lines);
-    land_buffer_destroy(buf);
-    return split;
 }
-LandArray* land_split_lines(char const * text) {
-    return land_split(text, '\n');
+LandCSGAABB land_csg_aabb_intersect(LandCSGAABB a, LandCSGAABB b) {
+    LandCSGAABB c = a;
+    if (b.x1 > c.x1) {
+        c.x1 = b.x1;
+    }
+    if (b.x2 < c.x2) {
+        c.x2 = b.x2;
+    }
+    if (b.y1 > c.y1) {
+        c.y1 = b.y1;
+    }
+    if (b.y2 < c.y2) {
+        c.y2 = b.y2;
+    }
+    if (b.z1 > c.z1) {
+        c.z1 = b.z1;
+    }
+    if (b.z2 < c.z2) {
+        c.z2 = b.z2;
+    }
+    return c;
 }
-static void test(char const * name, int want, int got) {
-    if (want == got) {
-        printf("OK   %s\n", name);
+static int gul_debug;
+#define D(_) if(gul_debug) _
+static void ERR(char const * format, ...) {
+    va_list args;
+    va_start(args, format);
+    char str [1024];
+    vsnprintf(str, sizeof str, format, args);
+    strcat(str, "\n");
+    land_log_message(str);
+    va_end(args);
+}
+void land_internal_land_gul_box_initialize(LandLayoutBox * self) {
+    memset(self, 0, sizeof (* self));
+}
+void land_internal_land_gul_box_deinitialize(LandLayoutBox * self) {
+    if (self->lookup_grid) {
+        land_free(self->lookup_grid);
+        self->lookup_grid = NULL;
+    }
+}
+static void update_lookup_grid(LandWidget * self) {
+    if (self->box.lookup_grid) {
+        land_free(self->box.lookup_grid);
+    }
+    self->box.lookup_grid = NULL;
+    if (self->box.flags & (GUL_NO_LAYOUT | GUL_HIDDEN)) {
+        return ;
+    }
+    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
+        LandWidgetContainer * container = LAND_WIDGET_CONTAINER(self);
+        if (! container->children) {
+            return ;
+        }
+        if (self->box.cols * self->box.rows == 0) {
+            return ;
+        }
+        self->box.lookup_grid = land_calloc(self->box.cols * self->box.rows * sizeof (* self->box.lookup_grid));
+        LandListItem * li = container->children->first;
+        for (; li; li = li->next) {
+            LandWidget * c = li->data;
+            int i, j;
+            if (c->box.flags & GUL_HIDDEN) {
+                continue;
+            }
+            for (i = c->box.col; i <= c->box.col + c->box.extra_cols; i++) {
+                for (j = c->box.row; j <= c->box.row + c->box.extra_rows; j++) {
+                    self->box.lookup_grid [i + j * self->box.cols] = c;
+                }
+            }
+        }
+    }
+}
+static LandWidget* lookup_box_in_grid(LandWidget * self, int col, int row) {
+    if (! self->box.lookup_grid) {
+        update_lookup_grid(self);
+    }
+    if (! self->box.lookup_grid) {
+        return NULL;
+    }
+    assert(col < self->box.cols && row < self->box.rows);
+    return self->box.lookup_grid [row * self->box.cols + col];
+}
+static int row_min_height(LandWidget * self, int row) {
+    int v = 0;
+    for (int i = 0; i < self->box.cols; i += 1) {
+        LandWidget * c = lookup_box_in_grid(self, i, row);
+        if (c && c->box.current_min_height > v) {
+            v = c->box.current_min_height;
+        }
+    }
+    return v;
+}
+static int column_min_width(LandWidget * self, int col) {
+    int v = 0;
+    for (int i = 0; i < self->box.rows; i += 1) {
+        LandWidget * c = lookup_box_in_grid(self, col, i);
+        if (c && c->box.current_min_width > v) {
+            v = c->box.current_min_width;
+        }
+    }
+    return v;
+}
+static int is_column_expanding(LandWidget * self, int col) {
+    int i;
+    for (i = 0; i < self->box.rows; i++) {
+        LandWidget * c = lookup_box_in_grid(self, col, i);
+        if (c && c->box.col == col && ! (c->box.flags & GUL_SHRINK_X)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+static int is_row_expanding(LandWidget * self, int row) {
+    int i;
+    for (i = 0; i < self->box.cols; i++) {
+        LandWidget * c = lookup_box_in_grid(self, i, row);
+        if (c && c->box.row == row && ! (c->box.flags & GUL_SHRINK_Y)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+static int expanding_columns(LandWidget * self) {
+    int i;
+    int v = 0;
+    for (i = 0; i < self->box.cols; i++) {
+        if (is_column_expanding(self, i)) {
+            v++;
+        }
+    }
+    return v;
+}
+static int expanding_rows(LandWidget * self) {
+    int i;
+    int v = 0;
+    for (i = 0; i < self->box.rows; i++) {
+        if (is_row_expanding(self, i)) {
+            v++;
+        }
+    }
+    return v;
+}
+static int min_height(LandWidget * self) {
+    int v = 0;
+    for (int i = 0; i < self->box.rows; i += 1) {
+        v += row_min_height(self, i);
+    }
+    if (self->element) {
+        v += self->element->vgap * (self->box.rows - 1);
+        v += self->element->it + self->element->ib;
+    }
+    return v;
+}
+static int min_width(LandWidget * self) {
+    int v = 0;
+    for (int i = 0; i < self->box.cols; i += 1) {
+        v += column_min_width(self, i);
+    }
+    if (self->element) {
+        v += self->element->hgap * (self->box.cols - 1);
+        v += self->element->il + self->element->ir;
+    }
+    return v;
+}
+static int adjust_resize_width(LandWidget * self, int dx) {
+    for (int i = 0; i < self->box.cols; i += 1) {
+        int j;
+        for (j = 0; j < self->box.rows; j++) {
+            LandWidget * c = lookup_box_in_grid(self, i, j);
+            if (c && c->box.flags & GUL_RESIZE) {
+                c->box.current_min_width += dx;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+static int adjust_resize_height(LandWidget * self, int dx) {
+    int j;
+    for (j = 0; j < self->box.rows; j++) {
+        int i;
+        for (i = 0; i < self->box.cols; i++) {
+            LandWidget * c = lookup_box_in_grid(self, i, j);
+            if (c && c->box.flags & GUL_RESIZE) {
+                c->box.current_min_height += dx;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+static void gul_box_bottom_up(LandWidget * self) {
+    if (self->box.flags & GUL_HIDDEN) {
+        self->box.current_min_width = 0;
+        self->box.current_min_height = 0;
+        return ;
+    }
+    LandWidgetContainer * container = NULL;
+    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
+        container = LAND_WIDGET_CONTAINER(self);
+    }
+    if ((self->box.flags & GUL_NO_LAYOUT) || ! container || ! container->children) {
+        self->box.current_min_width = self->box.min_width;
+        self->box.current_min_height = self->box.min_height;
+        return ;
+    }
+    {
+        LandListIterator __iter0__ = LandListIterator_first(container->children);
+        for (LandWidget * c = LandListIterator_item(container->children, &__iter0__); LandListIterator_next(container->children, &__iter0__); c = LandListIterator_item(container->children, &__iter0__)) {
+            gul_box_bottom_up(LAND_WIDGET(c));
+        }
+    }
+    int min_w = min_width(self);
+    int min_h = min_height(self);
+    self->box.current_min_width = _scramble_max(self->box.min_width, min_w);
+    self->box.current_min_height = _scramble_max(self->box.min_height, min_h);
+}
+static void gul_box_top_down(LandWidget * self) {
+    /* Recursively fit in all child widgets into the given widget.
+     */
+    D(printf("Box (%s[%p]): %d[%d] x %d[%d] at %d/%d\n", self->vt->name, self, self->box.w, self->box.cols, self->box.h, self->box.rows, self->box.x, self->box.y));
+    if (self->box.flags & GUL_HIDDEN) {
+        D(printf("    hidden.\n"));
+        return ;
+    }
+    if (self->box.flags & GUL_NO_LAYOUT) {
+        D(printf("    no layout.\n"));
+        return ;
+    }
+    if (self->box.cols == 0 || self->box.rows == 0) {
+        D(printf("    empty.\n"));
+        return ;
+    }
+    int minw = min_width(self);
+    int minh = min_height(self);
+    if (self->box.max_width && minw > self->box.max_width) {
+        if (! adjust_resize_width(self, self->box.max_width - minw)) {
+            ERR("Fatal: Minimum width of children (%d) ""exceeds available space (%d).", minw, self->box.max_width);
+        }
+    }
+    if (self->box.max_height && minh > self->box.max_height) {
+        if (! adjust_resize_height(self, self->box.max_height - minh)) {
+            ERR("Fatal: Minimum height of children (%d) ""exceeds available space (%d).", minh, self->box.max_height);
+        }
+    }
+    LandWidgetThemeElement * element = self->element;
+    int available_width = self->box.w - minw;
+    int available_height = self->box.h - minh;
+    int want_width = expanding_columns(self);
+    int want_height = expanding_rows(self);
+    D(printf("    Children: %d (%d exp) x %d (%d exp)\n", self->box.cols, want_width, self->box.rows, want_height));
+    D(printf("              %d x %d min\n", minw, minh));
+    int i, j;
+    int x = self->box.x;
+    if (self->element) {
+        x += element->il;
+    }
+    int share = 0;
+    if (want_width) {
+        share = available_width / want_width;
+    }
+    available_width -= share * want_width;
+    D(printf("    Columns:"));
+    int hgap = self->element ? element->hgap : 0;
+    for (i = 0; i < self->box.cols; i++) {
+        int cw = column_min_width(self, i);
+        int cx = x;
+        if (is_column_expanding(self, i)) {
+            cw += share;
+            if (available_width) {
+                cw += 1;
+                available_width -= 1;
+            }
+            D(printf(" <->%d", cw));
+        }
+        else {
+            D(printf(" [-]%d", cw));
+        }
+        x += cw + hgap;
+        for (j = 0; j < self->box.rows; j++) {
+            LandWidget * c = lookup_box_in_grid(self, i, j);
+            if (c && c->box.row == j) {
+                if (c->box.col == i) {
+                    c->box.w = cw;
+                    land_widget_move(c, cx - c->box.x, 0);
+                }
+                else {
+                    c->box.w += cw + hgap;
+                }
+            }
+        }
+    }
+    D(printf("\n"));
+    D(printf("    Rows:"));
+    int y = self->box.y;
+    if (self->element) {
+        y += element->it;
+    }
+    share = 0;
+    if (want_height) {
+        share = available_height / want_height;
+    }
+    available_height -= share * want_height;
+    int vgap = self->element ? element->vgap : 0;
+    for (j = 0; j < self->box.rows; j++) {
+        int ch = row_min_height(self, j);
+        int cy = y;
+        if (is_row_expanding(self, j)) {
+            ch += share;
+            if (available_height) {
+                ch += 1;
+                available_height -= 1;
+            }
+            D(printf(" <->%d", ch));
+        }
+        else {
+            D(printf(" [-]%d", ch));
+        }
+        y += ch;
+        y += vgap;
+        for (i = 0; i < self->box.cols; i++) {
+            LandWidget * c = lookup_box_in_grid(self, i, j);
+            if (c && c->box.col == i) {
+                if (c->box.row == j) {
+                    c->box.h = ch;
+                    land_widget_move(c, 0, cy - c->box.y);
+                }
+                else {
+                    c->box.h += ch + vgap;
+                }
+            }
+        }
+    }
+    D(printf("\n"));
+    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
+        LandWidgetContainer * container = LAND_WIDGET_CONTAINER(self);
+        if (container->children) {
+            LandListItem * li = container->children->first;
+            for (; li; li = li->next) {
+                LandWidget * c = li->data;
+                if (c->box.w != c->box.ow || c->box.h != c->box.oh) {
+                    land_call_method(c, layout_changing, (c));
+                }
+                gul_box_top_down(c);
+                if (c->box.w != c->box.ow || c->box.h != c->box.oh) {
+                    land_call_method(c, layout_changed, (c));
+                    c->box.ow = c->box.w;
+                    c->box.oh = c->box.h;
+                }
+                if (c->layout_hack) {
+                    c->layout_hack = 0;
+                    gul_box_top_down(c);
+                }
+            }
+        }
+    }
+}
+static void gul_box_fit_children(LandWidget * self) {
+    D(printf("gul_box_fit_children %s[%p]\n", self->vt->name, self));
+    gul_box_bottom_up(self);
+    if (! (self->box.flags & GUL_STEADFAST)) {
+        self->box.w = self->box.current_min_width;
+        self->box.h = self->box.current_min_height;
+    }
+    if (self->no_layout_notify == 0) {
+        land_call_method(self, layout_changing, (self));
+    }
+    gul_box_top_down(self);
+    if (self->no_layout_notify == 0) {
+        land_call_method(self, layout_changed, (self));
+    }
+}
+void land_internal_gul_layout_updated(LandWidget * self) {
+    /* This is used if the size of a widget may have changed and therefore its own
+     * as well as its parent's layout needs updating.
+     */
+    D(printf("gul_layout_updated %s[%p]\n", self->vt->name, self));
+    update_lookup_grid(self);
+    if (self->parent && ! (self->parent->box.flags & GUL_NO_LAYOUT)) {
+        if (self->no_layout_notify == 0) {
+            self->no_layout_notify = 1;
+            land_internal_gul_layout_updated(self->parent);
+            self->no_layout_notify = 0;
+        }
     }
     else {
-        printf("FAIL %s (want %d but got %d)\n", name, want, got);
+        gul_box_fit_children(self);
     }
 }
-void csg_test_shapes(void) {
-    LandCSG * cube = csg_cube(NULL);
-    test("cube", 6, cube->polygons->count);
-    land_csg_destroy(cube);
-    LandCSG * sphere = csg_sphere(3, 3, NULL);
-    test("sphere", 6, sphere->polygons->count);
-    land_csg_destroy(sphere);
-    LandCSG * sphere2 = csg_sphere(3, 4, NULL);
-    test("sphere2", 9, sphere2->polygons->count);
-    land_csg_destroy(sphere2);
-    LandCSG * sphere3 = csg_sphere(4, 3, NULL);
-    test("sphere3", 8, sphere3->polygons->count);
-    land_csg_destroy(sphere3);
-    LandCSG * cylinder = csg_cylinder(3, NULL);
-    test("cylinder", 9, cylinder->polygons->count);
-    land_csg_destroy(cylinder);
-    LandCSG * cylinder2 = csg_cylinder(4, NULL);
-    test("cylinder2", 12, cylinder2->polygons->count);
-    land_csg_destroy(cylinder2);
-}
-void csg_test_union(void) {
-    LandCSG * cubeA = csg_cube(NULL);
-    LandCSG * cubeB = csg_cube(NULL);
-    land_csg_transform(cubeB, land_4x4_matrix_translate(4, 0, 0));
-    LandCSG * AB = land_csg_union(cubeA, cubeB);
-    test("AB", 12, AB->polygons->count);
-    LandCSG * cubeC = csg_cube(NULL);
-    land_csg_transform(cubeC, land_4x4_matrix_translate(2, 0, 0));
-    LandCSG * AC = land_csg_union(cubeA, cubeC);
-    test("AC", 10, AC->polygons->count);
-    LandCSG * ABC1 = land_csg_union(AB, cubeC);
-    test("ABC1", 14, ABC1->polygons->count);
-    LandCSG * ABC2 = land_csg_union(cubeB, AC);
-    test("ABC2", 14, ABC2->polygons->count);
-    land_csg_destroy(cubeA);
-    land_csg_destroy(cubeB);
-    land_csg_destroy(cubeC);
-    land_csg_destroy(AB);
-    land_csg_destroy(AC);
-    land_csg_destroy(ABC1);
-    land_csg_destroy(ABC2);
-}
-void csg_test_subtract(void) {
-    LandCSG * cubeA = csg_cube(NULL);
-    LandCSG * cubeB = csg_cube(NULL);
-    land_csg_transform(cubeB, land_4x4_matrix_translate(1, 0, 0));
-    LandCSG * A_B = land_csg_subtract(cubeA, cubeB);
-    test("A-B", 6, A_B->polygons->count);
-    LandCSG * cubeBi = land_csg_inverse(cubeB);
-    test("Bi", 6, cubeBi->polygons->count);
-    LandCSG * ABi = land_csg_union(cubeA, cubeBi);
-    test("ABi", 6, ABi->polygons->count);
-    land_csg_destroy(cubeA);
-    land_csg_destroy(cubeB);
-    land_csg_destroy(A_B);
-    land_csg_destroy(cubeBi);
-    land_csg_destroy(ABi);
-}
-void csg_test_intersect(void) {
-    LandCSG * cubeA = csg_cube(NULL);
-    LandCSG * cubeB = csg_cube(NULL);
-    land_csg_transform(cubeB, land_4x4_matrix_translate(1, 0, 0));
-    LandCSG * A_B = land_csg_intersect(cubeA, cubeB);
-    test("A/B", 6, A_B->polygons->count);
-    land_csg_destroy(cubeA);
-    land_csg_destroy(cubeB);
-    land_csg_destroy(A_B);
-}
-void csg_test(void) {
-    csg_test_shapes();
-    csg_test_union();
-    csg_test_subtract();
-    csg_test_intersect();
-}
-#define pi LAND_PI
-static void sphere_point(LandArray * vertices, LandFloat i, LandFloat j) {
-    LandFloat theta = 2 * pi * i;
-    LandFloat phi = pi * j;
-    LandVector normal = land_vector(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
-    LandVector pos = normal;
-    land_array_add(vertices, land_csg_vertex_new(pos, normal));
-}
-LandCSG* csg_sphere(int slices, int rings, void * shared) {
-    /* Make a sphere with radius 1.0.
-     * It fits within a cube from -1/-1/-1 to 1/1/1.
-     * rings determines how many parts the latitude is divided into, a
-     * value of 3 means just south pole, equator and north pole.
-     * slices determins how many parts the longitude is divided into,
-     * a value of 3 means 0-meridian, +120° and -120°.
+void land_internal_gul_layout_updated_during_layout(LandWidget * self) {
+    /* FIXME: What the hell is this? Can't we do it the proper way?
+     * If widgets are added or removed in the middle of a layout algorithm run,
+     * this function should be called from within the layout_changed event.
      */
-    if (slices < 3) {
-        return NULL;
+    update_lookup_grid(self);
+    gul_box_bottom_up(self);
+}
+#undef D
+static LandHash * cache;
+static double const Xn = 0.95047;
+static double const Yn = 1.00000;
+static double const Zn = 1.08883;
+static double const delta = 6.0 / 29;
+static double const delta2 = 6.0 / 29 * 6.0 / 29;
+static double const delta3 = 6.0 / 29 * 6.0 / 29 * 6.0 / 29;
+static double const tf7 = 1.0 / 4 / 4 / 4 / 4 / 4 / 4 / 4;
+LandColor land_color_hsv(float hue, float sat, float val) {
+    return platform_color_hsv(hue, sat, val);
+}
+LandColor land_color_rgba(float r, float g, float b, float a) {
+    LandColor c = {r, g, b, a};
+    return c;
+}
+double srgba_gamma_to_linear(double x) {
+    double const a = 0.055;
+    if (x < 0.04045) {
+        return x / 12.92;
     }
-    if (rings < 3) {
-        return NULL;
+    return pow((x + a) / (1 + a), 2.4);
+}
+double srgba_linear_to_gamma(double x) {
+    double const a = 0.055;
+    if (x < 0.0031308) {
+        return x * 12.92;
     }
-    LandArray * polygons = land_array_new();
-    for (int i = 0; i < slices; i += 1) {
-        for (int j = 0; j < rings - 1; j += 1) {
-            LandArray * vertices = land_array_new();
-            sphere_point(vertices, 1.0 * i / slices, 1.0 * j / (rings - 1));
-            if (j > 0) {
-                sphere_point(vertices, 1.0 * (i + 1) / slices, 1.0 * j / (rings - 1));
+    return pow(x, 1 / 2.4) * (1 + a) - a;
+}
+LandColor land_color_xyz(double x, double y, double z) {
+    LandColor c;
+    double r = 3.2406 * x + (- 1.5372 * y) + (- 0.4986 * z);
+    double g = - 0.9689 * x + 1.8758 * y + 0.0415 * z;
+    double b = 0.0557 * x + (- 0.2040 * y) + 1.0570 * z;
+    c.r = srgba_linear_to_gamma(r);
+    c.g = srgba_linear_to_gamma(g);
+    c.b = srgba_linear_to_gamma(b);
+    c.a = 1;
+    return c;
+}
+void land_color_to_xyz(LandColor c, double * x, double * y, double * z) {
+    double r = srgba_gamma_to_linear(c.r);
+    double g = srgba_gamma_to_linear(c.g);
+    double b = srgba_gamma_to_linear(c.b);
+    * x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+    * y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    * z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+}
+static double cielab_f(double x) {
+    if (x > delta3) {
+        return pow(x, 1.0 / 3);
+    }
+    return 4.0 / 29 + x / delta2 / 3;
+}
+static double cielab_f_inv(double x) {
+    if (x > delta) {
+        return pow(x, 3);
+    }
+    return (x - 4.0 / 29) * 3 * delta2;
+}
+void land_color_to_cielab(LandColor c, double * L, double * a, double * b) {
+    double x, y, z;
+    land_color_to_xyz(c, & x, & y, & z);
+    x /= Xn;
+    y /= Yn;
+    z /= Zn;
+    * L = 1.16 * cielab_f(y) - 0.16;
+    * a = 5.00 * (cielab_f(x) - cielab_f(y));
+    * b = 2.00 * (cielab_f(y) - cielab_f(z));
+}
+LandColor land_color_cielab(double L, double a, double b) {
+    double x = Xn * cielab_f_inv((L + 0.16) / 1.16 + a / 5.00);
+    double y = Yn * cielab_f_inv((L + 0.16) / 1.16);
+    double z = Zn * cielab_f_inv((L + 0.16) / 1.16 - b / 2.00);
+    return land_color_xyz(x, y, z);
+}
+LandColor land_color_lch(double l, double c, double h) {
+    double a = c * cos(h);
+    double b = c * sin(h);
+    return land_color_cielab(l, a, b);
+}
+LandColor land_color_xyy(double x, double y, double Y) {
+    double X = x * Y / y;
+    double Z = (1 - y - x) * Y / y;
+    return land_color_xyz(X, Y, Z);
+}
+void land_color_to_xyy(LandColor c, double * x, double * y, double * Y) {
+    double X, Z;
+    land_color_to_xyz(c, & X, Y, & Z);
+    * x = X / (X + * Y + Z);
+    * y = * Y / (X + * Y + Z);
+}
+double land_color_distance_cie94(LandColor color, LandColor other) {
+    double l1, a1, b1;
+    double l2, a2, b2;
+    land_color_to_cielab(color, & l1, & a1, & b1);
+    land_color_to_cielab(other, & l2, & a2, & b2);
+    return land_color_distance_cie94_lab(l1, a1, b1, l2, a2, b2);
+}
+double land_color_distance_cie94_lab(double l1, double a1, double b1, double l2, double a2, double b2) {
+    double dl = l1 - l2;
+    double da = a1 - a2;
+    double db = b1 - b2;
+    double c1 = sqrt(a1 * a1 + b1 * b1);
+    double c2 = sqrt(a2 * a2 + b2 * b2);
+    double dc = c1 - c2;
+    double dh = da * da + db * db - dc * dc;
+    dh = dh < 0 ? 0 : sqrt(dh);
+    dc /= 1 + 0.045 * c1;
+    dh /= 1 + 0.015 * c1;
+    return sqrt(dl * dl + dc * dc + dh * dh);
+}
+double land_color_distance_ciede2000(LandColor color, LandColor other) {
+    double l1, a1, b1;
+    double l2, a2, b2;
+    land_color_to_cielab(color, & l1, & a1, & b1);
+    land_color_to_cielab(other, & l2, & a2, & b2);
+    return land_color_distance_ciede2000_lab(l1, a1, b1, l2, a2, b2);
+}
+double land_color_distance_ciede2000_lab(double l1, double a1, double b1, double l2, double a2, double b2) {
+    /* http://www.ece.rochester.edu/~gsharma/ciede2000/ciede2000noteCRNA.pdf
+     */
+    double pi = LAND_PI;
+    double dl = l1 - l2;
+    double ml = (l1 + l2) / 2;
+    double c1 = sqrt(a1 * a1 + b1 * b1);
+    double c2 = sqrt(a2 * a2 + b2 * b2);
+    double mc = (c1 + c2) / 2;
+    double fac = sqrt(pow(mc, 7) / (pow(mc, 7) + tf7));
+    double g = 0.5 * (1 - fac);
+    a1 *= 1 + g;
+    a2 *= 1 + g;
+    c1 = sqrt(a1 * a1 + b1 * b1);
+    c2 = sqrt(a2 * a2 + b2 * b2);
+    double dc = c2 - c1;
+    mc = (c1 + c2) / 2;
+    fac = sqrt(pow(mc, 7) / (pow(mc, 7) + tf7));
+    double h1 = fmod(2 * pi + atan2(b1, a1), 2 * pi);
+    double h2 = fmod(2 * pi + atan2(b2, a2), 2 * pi);
+    double dh = 0;
+    double mh = h1 + h2;
+    if (c1 * c2 != 0) {
+        dh = h2 - h1;
+        if (dh > pi) {
+            dh -= 2 * pi;
+        }
+        if (dh < - pi) {
+            dh += 2 * pi;
+        }
+        if (fabs(h1 - h2) <= pi) {
+            mh = (h1 + h2) / 2;
+        }
+        else if (h1 + h2 < 2 * pi) {
+            mh = (h1 + h2 + 2 * pi) / 2;
+        }
+        else {
+            mh = (h1 + h2 - 2 * pi) / 2;
+        }
+    }
+    dh = 2 * sqrt(c1 * c2) * sin(dh / 2);
+    double t = 1 - 0.17 * cos(mh - pi / 6) + 0.24 * cos(2 * mh) + 0.32 * cos(3 * mh + pi / 30) - 0.2 * cos(4 * mh - pi * 7 / 20);
+    double mls = pow(ml - 0.5, 2);
+    double sl = 1 + 1.5 * mls / sqrt(0.002 + mls);
+    double sc = 1 + 4.5 * mc;
+    double sh = 1 + 1.5 * mc * t;
+    double rt = - 2 * fac * sin(pi / 3 * exp(- pow(mh / pi * 36 / 5 - 11, 2)));
+    return sqrt(pow(dl / sl, 2) + pow(dc / sc, 2) + pow(dh / sh, 2) + rt * dc / sc * dh / sh);
+}
+struct TestData {
+    double l1, a1, b1, l2, a2, b2, e;
+};
+static TestData test_data [] = {{50.0000, 2.6772, - 79.7751, 50.0000, 0.0000, - 82.7485, 2.0425}, {50.0000, 3.1571, - 77.2803, 50.0000, 0.0000, - 82.7485, 2.8615}, {50.0000, 2.8361, - 74.0200, 50.0000, 0.0000, - 82.7485, 3.4412}, {50.0000, - 1.3802, - 84.2814, 50.0000, 0.0000, - 82.7485, 1.0000}, {50.0000, - 1.1848, - 84.8006, 50.0000, 0.0000, - 82.7485, 1.0000}, {50.0000, - 0.9009, - 85.5211, 50.0000, 0.0000, - 82.7485, 1.0000}, {50.0000, 0.0000, 0.0000, 50.0000, - 1.0000, 2.0000, 2.3669}, {50.0000, - 1.0000, 2.0000, 50.0000, 0.0000, 0.0000, 2.3669}, {50.0000, 2.4900, - 0.0010, 50.0000, - 2.4900, 0.0009, 7.1792}, {50.0000, 2.4900, - 0.0010, 50.0000, - 2.4900, 0.0010, 7.1792}, {50.0000, 2.4900, - 0.0010, 50.0000, - 2.4900, 0.0011, 7.2195}, {50.0000, 2.4900, - 0.0010, 50.0000, - 2.4900, 0.0012, 7.2195}, {50.0000, - 0.0010, 2.4900, 50.0000, 0.0009, - 2.4900, 4.8045}, {50.0000, - 0.0010, 2.4900, 50.0000, 0.0010, - 2.4900, 4.8045}, {50.0000, - 0.0010, 2.4900, 50.0000, 0.0011, - 2.4900, 4.7461}, {50.0000, 2.5000, 0.0000, 50.0000, 0.0000, - 2.5000, 4.3065}, {50.0000, 2.5000, 0.0000, 73.0000, 25.0000, - 18.0000, 27.1492}, {50.0000, 2.5000, 0.0000, 61.0000, - 5.0000, 29.0000, 22.8977}, {50.0000, 2.5000, 0.0000, 56.0000, - 27.0000, - 3.0000, 31.9030}, {50.0000, 2.5000, 0.0000, 58.0000, 24.0000, 15.0000, 19.4535}, {50.0000, 2.5000, 0.0000, 50.0000, 3.1736, 0.5854, 1.0000}, {50.0000, 2.5000, 0.0000, 50.0000, 3.2972, 0.0000, 1.0000}, {50.0000, 2.5000, 0.0000, 50.0000, 1.8634, 0.5757, 1.0000}, {50.0000, 2.5000, 0.0000, 50.0000, 3.2592, 0.3350, 1.0000}, {60.2574, - 34.0099, 36.2677, 60.4626, - 34.1751, 39.4387, 1.2644}, {63.0109, - 31.0961, - 5.8663, 62.8187, - 29.7946, - 4.0864, 1.2630}, {61.2901, 3.7196, - 5.3901, 61.4292, 2.2480, - 4.9620, 1.8731}, {35.0831, - 44.1164, 3.7933, 35.0232, - 40.0716, 1.5901, 1.8645}, {22.7233, 20.0904, - 46.6940, 23.0331, 14.9730, - 42.5619, 2.0373}, {36.4612, 47.8580, 18.3852, 36.2715, 50.5065, 21.2231, 1.4146}, {90.8027, - 2.0831, 1.4410, 91.1528, - 1.6435, 0.0447, 1.4441}, {90.9257, - 0.5406, - 0.9208, 88.6381, - 0.8985, - 0.7239, 1.5381}, {6.7747, - 0.2908, - 2.4247, 5.8714, - 0.0985, - 2.2286, 0.6377}, {2.0776, 0.0795, - 1.1350, 0.9033, - 0.0636, - 0.5514, 0.9082}};
+void test_ciede2000(void) {
+    for (int i = 0; i < 34; i += 1) {
+        TestData data = test_data [i];
+        double e = land_color_distance_ciede2000_lab(data.l1 / 100, data.a1 / 100, data.b1 / 100, data.l2 / 100, data.a2 / 100, data.b2 / 100);
+        double e94 = land_color_distance_cie94_lab(data.l1 / 100, data.a1 / 100, data.b1 / 100, data.l2 / 100, data.a2 / 100, data.b2 / 100);
+        double d = e * 100 - data.e;
+        bool ok = d * d < 0.0001 * 0.0001;
+        printf("%s%d: %.4f == %.4f (%.4f)%s\n", land_color_bash(ok ? "green" : "red"), 1 + i, e * 100, data.e, e94 * 100, land_color_bash("end"));
+    }
+}
+LandColor land_color_premul(float r, float g, float b, float a) {
+    LandColor c = {r * a, g * a, b * a, a};
+    return c;
+}
+static int hexval(char c) {
+    c = tolower(c);
+    if (c >= '0' && c <= '9') {
+        return (c - '0');
+    }
+    if (c >= 'a' && c <= 'f') {
+        return 10 + (c - 'a');
+    }
+    return 0;
+}
+LandColor land_color_name(char const * name) {
+    if (name && name [0] == '#') {
+        LandColor c;
+        c.r = (hexval(name [1]) * 16 + hexval(name [2])) / 255.0;
+        c.g = (hexval(name [3]) * 16 + hexval(name [4])) / 255.0;
+        c.b = (hexval(name [5]) * 16 + hexval(name [6])) / 255.0;
+        c.a = 1;
+        return c;
+    }
+    int i1 = land_find(name, "*");
+    int i2 = land_find(name, "/");
+    if (i1 >= 0 || i2 >= 0) {
+        int i = i1;
+        if (i < 0 || i2 < i) {
+            i = i2;
+        }
+        char * name2 = land_substring(name, 0, i);
+        LandColor c = platform_color_name(name2);
+        char prev = 0;
+        while (1) {
+            if (name [i] == 0) {
+                break;
             }
-            if (j < rings - 2) {
-                sphere_point(vertices, 1.0 * (i + 1) / slices, 1.0 * (j + 1) / (rings - 1));
-            }
-            sphere_point(vertices, 1.0 * i / slices, 1.0 * (j + 1) / (rings - 1));
-            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-        }
-    }
-    return land_csg_new_from_polygons(polygons);
-}
-LandCSG* csg_cylinder(int slices, void * shared) {
-    return csg_cylinder_open(slices, 0, shared);
-}
-LandCSG* csg_cylinder_open(int slices, bool opened, void * shared) {
-    /* Make a cylinder along the z-axis with radius 1.0 and height 2.0.
-     * It fits within a cube from -1/-1/-1 to 1/1/1.
-     */
-    if (slices < 3) {
-        return NULL;
-    }
-    LandVector up = land_vector(0, 0, 1);
-    LandVector down = land_vector(0, 0, - 1);
-    LandArray * polygons = land_array_new();
-    for (int i = 0; i < slices; i += 1) {
-        LandCSGVertex * start = land_csg_vertex_new(down, down);
-        LandCSGVertex * end = land_csg_vertex_new(up, up);
-        LandFloat angle0 = i * 2 * pi / slices;
-        LandFloat angle1 = (i + 1) * 2 * pi / slices;
-        LandFloat c0 = cos(angle0), s0 = sin(angle0);
-        LandFloat c1 = cos(angle1), s1 = sin(angle1);
-        LandVector side0 = land_vector(c0, - s0, 0);
-        LandVector side1 = land_vector(c1, - s1, 0);
-        LandVector v0d = land_vector(c0, - s0, - 1);
-        LandVector v1d = land_vector(c1, - s1, - 1);
-        LandVector v0u = land_vector(c0, - s0, 1);
-        LandVector v1u = land_vector(c1, - s1, 1);
-        LandArray * vertices;
-        if (! opened) {
-            vertices = land_array_new();
-            land_array_add(vertices, start);
-            land_array_add(vertices, land_csg_vertex_new(v0d, down));
-            land_array_add(vertices, land_csg_vertex_new(v1d, down));
-            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-        }
-        vertices = land_array_new();
-        land_array_add(vertices, land_csg_vertex_new(v1d, side1));
-        land_array_add(vertices, land_csg_vertex_new(v0d, side0));
-        land_array_add(vertices, land_csg_vertex_new(v0u, side0));
-        land_array_add(vertices, land_csg_vertex_new(v1u, side1));
-        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-        if (! opened) {
-            vertices = land_array_new();
-            land_array_add(vertices, end);
-            land_array_add(vertices, land_csg_vertex_new(v1u, up));
-            land_array_add(vertices, land_csg_vertex_new(v0u, up));
-            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-        }
-    }
-    return land_csg_new_from_polygons(polygons);
-}
-LandCSG* csg_cone(int slices, void * shared) {
-    /* Make a cone along the z-axis with radius 1.0 and height 2.0.
-     * The top of the cone is at 0/0/1.
-     * It fits within a cube from -1/-1/-1 to 1/1/1.
-     */
-    if (slices < 3) {
-        return NULL;
-    }
-    LandVector down = land_vector(0, 0, - 1);
-    LandVector up = land_vector(0, 0, 1);
-    LandArray * polygons = land_array_new();
-    for (int i = 0; i < slices; i += 1) {
-        LandCSGVertex * start = land_csg_vertex_new(down, down);
-        LandFloat angle0 = i * 2 * pi / slices;
-        LandFloat angle1 = (i + 1) * 2 * pi / slices;
-        LandFloat c0 = cos(angle0), s0 = sin(angle0);
-        LandFloat c1 = cos(angle1), s1 = sin(angle1);
-        LandVector side0 = land_vector_normalize(land_vector(c0, - s0, 0.5));
-        LandVector side1 = land_vector_normalize(land_vector(c1, - s1, 0.5));
-        LandVector v0d = land_vector(c0, - s0, - 1);
-        LandVector v1d = land_vector(c1, - s1, - 1);
-        LandArray * vertices;
-        vertices = land_array_new();
-        land_array_add(vertices, start);
-        land_array_add(vertices, land_csg_vertex_new(v0d, down));
-        land_array_add(vertices, land_csg_vertex_new(v1d, down));
-        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-        vertices = land_array_new();
-        land_array_add(vertices, land_csg_vertex_new(up, up));
-        land_array_add(vertices, land_csg_vertex_new(v1d, side1));
-        land_array_add(vertices, land_csg_vertex_new(v0d, side0));
-        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-    }
-    return land_csg_new_from_polygons(polygons);
-}
-LandCSG* csg_prism(int slices, void * shared) {
-    return NULL;
-}
-static void add_quad(LandArray * polygons, LandVector a, LandVector b, LandVector c, LandVector d, void * shared) {
-    LandArray * vertices = land_array_new();
-    LandVector ab = land_vector_sub(b, a);
-    LandVector bc = land_vector_sub(c, b);
-    LandVector normal = land_vector_normalize(land_vector_cross(ab, bc));
-    land_array_add(vertices, land_csg_vertex_new(a, normal));
-    land_array_add(vertices, land_csg_vertex_new(b, normal));
-    land_array_add(vertices, land_csg_vertex_new(c, normal));
-    land_array_add(vertices, land_csg_vertex_new(d, normal));
-    land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-}
-static void add_tri(LandArray * polygons, LandVector a, LandVector b, LandVector c, void * shared) {
-    LandArray * vertices = land_array_new();
-    LandVector ab = land_vector_sub(b, a);
-    LandVector bc = land_vector_sub(c, b);
-    LandVector normal = land_vector_normalize(land_vector_cross(ab, bc));
-    land_array_add(vertices, land_csg_vertex_new(a, normal));
-    land_array_add(vertices, land_csg_vertex_new(b, normal));
-    land_array_add(vertices, land_csg_vertex_new(c, normal));
-    land_array_add(polygons, land_csg_polygon_new(vertices, shared));
-}
-LandCSG* csg_pyramid(void * shared) {
-    /* Make a 4-sided pyramid with a side-length of 1 and a height of 2.
-     * The top is at 0/0/1.
-     * It fits within a cube from -1/-1/-1 to 1/1/1.
-     */
-    LandArray * polygons = land_array_new();
-    LandVector a = land_vector(- 1, - 1, - 1);
-    LandVector b = land_vector(1, - 1, - 1);
-    LandVector c = land_vector(1, 1, - 1);
-    LandVector d = land_vector(- 1, 1, - 1);
-    LandVector e = land_vector(0, 0, 1);
-    add_quad(polygons, a, d, c, b, shared);
-    add_tri(polygons, a, b, e, shared);
-    add_tri(polygons, b, c, e, shared);
-    add_tri(polygons, c, d, e, shared);
-    add_tri(polygons, d, a, e, shared);
-    return land_csg_new_from_polygons(polygons);
-}
-LandCSG* csg_tetrahedron(void * shared) {
-    /* Make a tetrahedron.
-     */
-    LandArray * polygons = land_array_new();
-    LandFloat s = 1 / sqrt(2);
-    LandVector a = land_vector(- 1, 0, - s);
-    LandVector b = land_vector(1, 0, - s);
-    LandVector c = land_vector(0, - 1, s);
-    LandVector d = land_vector(0, 1, s);
-    add_tri(polygons, a, d, b, shared);
-    add_tri(polygons, d, c, b, shared);
-    add_tri(polygons, c, d, a, shared);
-    add_tri(polygons, c, a, b, shared);
-    return land_csg_new_from_polygons(polygons);
-}
-LandCSG* csg_cube(void * shared) {
-    /* Make a cube from -1/-1/-1 to 1/1/1.
-     */
-    LandArray * polygons = land_array_new();
-    LandVector a = land_vector(- 1, - 1, - 1);
-    LandVector b = land_vector(1, - 1, - 1);
-    LandVector c = land_vector(1, 1, - 1);
-    LandVector d = land_vector(- 1, 1, - 1);
-    LandVector e = land_vector(- 1, - 1, 1);
-    LandVector f = land_vector(1, - 1, 1);
-    LandVector g = land_vector(1, 1, 1);
-    LandVector h = land_vector(- 1, 1, 1);
-    add_quad(polygons, a, d, c, b, shared);
-    add_quad(polygons, e, f, g, h, shared);
-    add_quad(polygons, h, g, c, d, shared);
-    add_quad(polygons, g, f, b, c, shared);
-    add_quad(polygons, f, e, a, b, shared);
-    add_quad(polygons, e, h, d, a, shared);
-    return land_csg_new_from_polygons(polygons);
-}
-LandCSG* csg_block(int x, int y, int z, bool outside, void * shared) {
-    bool all = ! outside;
-    LandArray * polygons = land_array_new();
-    LandFloat xs = 1.0 / x;
-    LandFloat ys = 1.0 / y;
-    LandFloat zs = 1.0 / z;
-    for (int i = 0; i < x; i += 1) {
-        for (int j = 0; j < y; j += 1) {
-            for (int k = 0; k < z; k += 1) {
-                LandFloat xp = - 1 + xs + i * xs * 2;
-                LandFloat yp = - 1 + ys + j * ys * 2;
-                LandFloat zp = - 1 + zs + k * zs * 2;
-                LandVector a = land_vector(xp + xs * (- 1), yp + ys * (- 1), zp + zs * (- 1));
-                LandVector b = land_vector(xp + xs * 1, yp + ys * (- 1), zp + zs * (- 1));
-                LandVector c = land_vector(xp + xs * 1, yp + ys * 1, zp + zs * (- 1));
-                LandVector d = land_vector(xp + xs * (- 1), yp + ys * 1, zp + zs * (- 1));
-                LandVector e = land_vector(xp + xs * (- 1), yp + ys * (- 1), zp + zs * 1);
-                LandVector f = land_vector(xp + xs * 1, yp + ys * (- 1), zp + zs * 1);
-                LandVector g = land_vector(xp + xs * 1, yp + ys * 1, zp + zs * 1);
-                LandVector h = land_vector(xp + xs * (- 1), yp + ys * 1, zp + zs * 1);
-                if (all || k == 0) {
-                    add_quad(polygons, a, d, c, b, shared);
+            if (name [i] >= '1' && name [i] <= '9') {
+                float d = name [i] - '0';
+                if (prev == '*') {
+                    c.r *= d;
+                    c.g *= d;
+                    c.b *= d;
                 }
-                if (all || k == z - 1) {
-                    add_quad(polygons, e, f, g, h, shared);
-                }
-                if (all || j == y - 1) {
-                    add_quad(polygons, h, g, c, d, shared);
-                }
-                if (all || i == x - 1) {
-                    add_quad(polygons, g, f, b, c, shared);
-                }
-                if (all || j == 0) {
-                    add_quad(polygons, f, e, a, b, shared);
-                }
-                if (all || i == 0) {
-                    add_quad(polygons, e, h, d, a, shared);
+                else if (prev == '/') {
+                    c.r /= d;
+                    c.g /= d;
+                    c.b /= d;
                 }
             }
+            prev = name [i];
+            i++;
         }
+        return c;
     }
-    return land_csg_new_from_polygons(polygons);
+    return platform_color_name(name);
 }
-static void torus_point(LandArray * vertices, LandFloat i, LandFloat j, LandFloat r) {
-    LandFloat theta = 2 * pi * i;
-    LandFloat phi = 2 * pi * j;
-    LandFloat cx = cos(theta);
-    LandFloat cy = sin(theta);
-    LandVector pos = land_vector(cx + cx * r * cos(phi), cy + cy * cos(phi) * r, sin(phi) * r);
-    LandVector normal = land_vector(cx * cos(phi), cy * cos(phi), sin(phi));
-    land_array_add(vertices, land_csg_vertex_new(pos, normal));
+void land_color_to_html(LandColor c, char html [8]) {
+    sprintf(html, "#%02x%02x%02x", (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255));
 }
-LandCSG* csg_torus(int slices, int segments, LandFloat diameter, void * shared) {
-    /* slices is the longitude subdivisions, or how many "disks" the torus
-     * is cut into along its outer circle
-     * segments is the "latitude" subdivisions, i.e. how many segments each
-     * individual disk has
-     * diameter is the size of the tube and must be greater than 0 (thin)
-     * and less than 1 (thick).
-     * The torus has radius of 1 around the origin and lies in the
-     * X/Y plane. The outer radius therefore is 1 + diameter / 2.
+LandColor land_color_int(int i) {
+    int r = i & 255;
+    int g = (i >> 8) & 255;
+    int b = (i >> 16) & 255;
+    int a = (i >> 24) & 255;
+    return land_color_rgba(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+}
+int land_color_to_int(LandColor c) {
+    int r = c.r * 255;
+    int g = c.g * 255;
+    int b = c.b * 255;
+    int a = c.a * 255;
+    return r + (g << 8) + (b << 16) + (a << 24);
+}
+LandColor land_color_lerp(LandColor a, LandColor b, float t) {
+    return land_color_rgba(a.r + t * (b.r - a.r), a.g + t * (b.g - a.g), a.b + t * (b.b - a.b), a.a + t * (b.a - a.a));
+}
+char const* land_color_bash(char const * x) {
+    /* bash("bright red")
+     * bash("back white")
+     * bash("bold blue back bright green")
+     * bash("end")
+     * Note: The return value remains property of the color module and is
+     * not to be freed.
      */
-    LandArray * polygons = land_array_new();
-    for (int i = 0; i < slices; i += 1) {
-        for (int j = 0; j < segments; j += 1) {
-            LandArray * vertices = land_array_new();
-            torus_point(vertices, 1.0 * i / slices, 1.0 * j / segments, diameter / 2);
-            torus_point(vertices, 1.0 * (i + 1) / slices, 1.0 * j / segments, diameter / 2);
-            torus_point(vertices, 1.0 * (i + 1) / slices, 1.0 * (j + 1) / segments, diameter / 2);
-            torus_point(vertices, 1.0 * i / slices, 1.0 * (j + 1) / segments, diameter / 2);
-            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+    return bash_mode(x, "3");
+}
+#define CAT(X, Y1, Y2) \
+    if (land_equals(c, X)) { \
+        land_concatenate_with_separator(& m, Y1, ";"); \
+        land_concatenate(& m, Y2); \
+    }
+static char const* bash_mode(char const * x, char const * mode) {
+    if (cache == NULL) {
+        cache = land_hash_new();
+    }
+    char * cached = land_hash_get(cache, x);
+    if (cached) {
+        return cached;
+    }
+    char const * back = strstr(x, "back");
+    if (back) {
+        if (back == x) {
+            return bash_mode(x + 4, "4");
+        }
+        char * x2 = land_substring(x, 0, back - x);
+        char const * fg = bash_mode(x2, "3");
+        char const * bg = bash_mode(back, "4");
+        char * r = land_strdup(fg);
+        land_concatenate(& r, bg);
+        land_free(x2);
+        land_hash_insert(cache, x, r);
+        return r;
+    }
+    char * m = land_strdup("");
+    LandArray * a = land_split(x, " ");
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(a);
+        for (char * c = LandArrayIterator_item(a, &__iter0__); LandArrayIterator_next(a, &__iter0__); c = LandArrayIterator_item(a, &__iter0__)) {
+            if (land_equals(c, "bright")) {
+                if (land_equals(mode, "3")) {
+                    mode = "9";
+                }
+                else {
+                    mode = "10";
+                }
+            }
+            CAT("bold", "", "1");
+            CAT("black", mode, "0");
+            CAT("red", mode, "1");
+            CAT("green", mode, "2");
+            CAT("yellow", mode, "3");
+            CAT("blue", mode, "4");
+            CAT("magenta", mode, "5");
+            CAT("cyan", mode, "6");
+            CAT("white", mode, "7");
         }
     }
-    return land_csg_new_from_polygons(polygons);
+    land_array_destroy_with_strings(a);
+    land_prepend(& m, "\x1b[");
+    land_concatenate(& m, "m");
+    land_hash_insert(cache, x, m);
+    return m;
 }
-#undef pi
+#undef CAT
+static jmp_buf exception;
+static char exception_string [1024];
+int(* land_exception_handler)(char const * str);
+static int init = 1;
+int land_default_exception_handler(char const * str) {
+    fprintf(stderr, "%s\n", str);
+    return 1;
+}
+void land_exception_handler_init(void) {
+    again:;
+    if (setjmp(exception)) {
+        int r = land_exception_handler(exception_string);
+        if (! r) {
+            goto again;
+        }
+        abort();
+    }
+}
+void land_exception_handler_set(int(* handler)(char const * str)) {
+    if (init) {
+        land_exception_handler_init();
+        init = 0;
+    }
+    land_exception_handler = handler;
+}
+void land_exception(char const * format, ...) {
+    va_list args;
+    va_start(args, format);
+    vsnprintf(exception_string, 1024, format, args);
+    va_end(args);
+    fprintf(stderr, "%s", exception_string);
+    int r = land_exception_handler(exception_string);
+    if (r) {
+        abort();
+    }
+}
+void land_popup(str title, str message) {
+    platform_popup(title, message);
+}
+LandShader* platform_shader_new(char const * name, char const * vertex_glsl, char const * fragment_glsl) {
+    LandShaderPlatform * self;
+    land_alloc(self);
+    self->super.name = land_strdup(name);
+    self->a5 = al_create_shader(ALLEGRO_SHADER_GLSL);
+    if (vertex_glsl) {
+        al_attach_shader_source(self->a5, ALLEGRO_VERTEX_SHADER, vertex_glsl);
+    }
+    if (fragment_glsl) {
+        al_attach_shader_source(self->a5, ALLEGRO_PIXEL_SHADER, fragment_glsl);
+    }
+    if (! al_build_shader(self->a5)) {
+        land_log_message("Shader build error: %s\n", name);
+    }
+    if (! al_use_shader(self->a5)) {
+        land_log_message("Shader use error: %s\n", name);
+    }
+    str error = al_get_shader_log(self->a5);
+    if (error && error [0]) {
+        land_log_message("Shader log:\n%s\n", error);
+    }
+    return & self->super;
+}
+void platform_shader_destroy(LandShader * super) {
+    land_free(super->name);
+    LandShaderPlatform * self = (void *) super;
+    al_destroy_shader(self->a5);
+    land_free(self);
+}
 void land_layer_draw(LandLayer * self, LandView * view) {
     if (self->hidden) {
         return ;
@@ -5734,214 +8177,1824 @@ void land_layer_hide(LandLayer * self) {
 void land_layer_unhide(LandLayer * self) {
     self->hidden = false;
 }
-LandMemoryPool* land_pool_new_initial(int initial) {
-    LandMemoryPool * self;
+LandAnimation* land_animation_new(LandArray * frames) {
+    /* Ownership of the frames array is transferred to the animation - destroying
+     * the animation later will destroy the array.
+     */
+    LandAnimation * self;
     land_alloc(self);
-    self->allocated = initial;
-    self->memory = land_calloc(self->allocated);
-    self->prev = self;
+    self->fps = 10;
+    self->frames = frames;
     return self;
 }
-LandMemoryPool* land_pool_new(void) {
-    return land_pool_new_initial(1024);
-}
-void land_pool_destroy(LandMemoryPool * self) {
-    LandMemoryPool * last = self->prev;
-    while (1) {
-        LandMemoryPool * prev = last->prev;
-        land_free(last->memory);
-        land_free(last);
-        if (last == self) {
-            break;
+void land_animation_destroy(LandAnimation * self) {
+    int i;
+    if (self->frames) {
+        for (i = 0; i < self->frames->count; i++) {
+            land_image_destroy(land_array_get_nth(self->frames, i));
         }
-        last = prev;
+        land_array_destroy(self->frames);
     }
+    land_free(self);
 }
-void* land_pool_alloc(LandMemoryPool * self, int size) {
-    LandMemoryPool * last = self->prev;
-    while (last->used + size > last->allocated) {
-        LandMemoryPool * another = land_pool_new_initial(last->allocated * 2);
-        another->prev = last;
-        self->prev = another;
-        last = another;
-    }
-    void * p = last->memory + last->used;
-    last->used += size;
-    return p;
+LandImage* land_animation_get_frame(LandAnimation * self, int i) {
+    return land_array_get_nth(self->frames, i);
 }
-#ifdef LAND_MEMLOG
-#undef land_list_new
-#undef land_list_destroy
-#undef land_add_list_data
-LandList* land_list_new_memlog(char const * f, int l) {
-    LandList * list = land_list_new();
-    land_memory_add(list, "list", 1, f, l);
-    return list;
-}
-void land_list_destroy_memlog(LandList * self, char const * f, int l) {
-    land_memory_remove(self, "list", 1, f, l);
-    land_list_destroy(self);
-}
-void land_add_list_data_memlog(LandList * (* list), void * data, char const * f, int l) {
-    if (* list) {
-        land_memory_remove(* list, "list", 1, f, l);
-        land_add_list_data(list, data);
-        land_memory_add(* list, "list", 1, f, l);
-    }
-    else {
-        * list = land_list_new_memlog(f, l);
-        land_add_list_data(list, data);
-    }
-}
-#endif
-LandListIterator LandListIterator_first(LandList * a) {
-    LandListIterator i = {a->first};
-    return i;
-}
-void* LandListIterator_item(LandList * a, LandListIterator * i) {
-    return i->i ? i->i->data : NULL;
-}
-bool LandListIterator_next(LandList * a, LandListIterator * i) {
-    if (i->i) {
-        i->i = i->i->next;
-        return 1;
+int land_animation_length(LandAnimation * self) {
+    if (self->frames) {
+        return land_array_count(self->frames);
     }
     return 0;
 }
-LandList* land_list_new(void) {
-    LandList * self;
-    land_alloc(self);
-    return self;
-}
-void land_list_clear(LandList * list) {
-    LandListItem * item = list->first;
-    while (item) {
-        LandListItem * next = item->next;
-        land_listitem_destroy(item);
-        item = next;
+void land_animation_add_frame(LandAnimation * self, LandImage * frame) {
+    if (! self->frames) {
+        self->frames = land_array_new();
     }
-    list->first = NULL;
-    list->last = NULL;
-    list->count = 0;
+    land_array_add(self->frames, frame);
 }
-void land_list_destroy(LandList * list) {
-    land_list_clear(list);
-    land_free(list);
+LandAnimation* land_animation_load_cb(char const * pattern, void(* cb)(LandImage * image, void * data), void * data) {
+    /* Create a new animation from all files matching the pattern, sorted
+     * alphabetically. The callback function, if present, is called on each
+     * frame.
+     */
+    LandArray * pics = land_load_images_cb(pattern, cb, data);
+    if (! pics) {
+        land_log_message("Could not locate: %s\n", pattern);
+        return NULL;
+    }
+    return land_animation_new(pics);
 }
-LandListItem* land_listitem_new(void * data) {
-    LandListItem * self;
-    land_alloc(self);
-    self->data = data;
+void land_animation_draw_frame(LandAnimation * self, int i, float x, float y) {
+    LandImage * frame = land_animation_get_frame(self, i);
+    land_image_draw(frame, x, y);
+}
+void land_animation_draw_frame_rotated(LandAnimation * self, int i, float x, float y, float angle) {
+    LandImage * frame = land_animation_get_frame(self, i);
+    land_image_draw_rotated(frame, x, y, angle);
+}
+void land_animation_draw_frame_scaled_rotated(LandAnimation * self, int i, float x, float y, float xs, float ys, float angle) {
+    LandImage * frame = land_animation_get_frame(self, i);
+    land_image_draw_scaled_rotated(frame, x, y, xs, ys, angle);
+}
+void land_animation_mirror(LandAnimation * self) {
+    /* Assuming the animation is like this make it -> like this:
+     * 1 -> 1
+     * 1 2 -> 1 2
+     * 1 2 3 -> 1 2 3 2
+     * 1 2 3 4 -> 1 2 3 4 3 2
+     * 1 2 3 4 5 -> 1 2 3 4 5 4 3 2
+     * ...
+     */
+    if (! self->frames) {
+        return ;
+    }
+    int n = land_array_count(self->frames);
+    for (int i = 0; i < n - 2; i += 1) {
+        land_animation_add_frame(self, land_array_get_nth(self->frames, n - 2 - i));
+    }
+}
+    /* The art of programming tilemaps
+     * = Types of tilemaps =
+     * == The classic fixed-cell grid-map ==
+     * This is the simplest form of a tilemap. Just define a grid and store a tile-id
+     * in each cell.
+     * == Optimized fixed-cell map ==
+     * There are various ways to optimize the simple tilemap to consume less memory.
+     * For example, quad-trees or similar techniques. A quad-tree can optimize away
+     * large empty areas, and makes it easy to have different-sized tiles as long as
+     * bigger ones have double the dimensions of smaller ones.
+     * == Layers ==
+     * Simply have multiple layers, one on top of another. This can have many uses,
+     * for example different tile-sizes and parallax scrolling.
+     * == Non-rectangle ==
+     * Popular types of tiles don't use a fixed rectangular grid, but use hexagon or
+     * isometric maps. We'll deal with both of them.
+     * = The basics =
+     * == Drawing ==
+     * Assume, we have a fixed cell map. The x and y position of a tile can
+     * be calculated like this:
+     * * pixel_x = tile_x * cell_width
+     * * pixel_y = tile_y * cell_height
+     * If the map data are stored as an array, and each map position just
+     * stores a tile number, we  can retriece it like this:
+     * * tile_numer = array[tile_y * map_width + tile_x]
+     * So now, we have all we need. We can draw the tile to its position.
+     * Doing this for all tiles in the map, we can draw the complete map.
+     * == Picking ==
+     * Something which is not obvious to do at first, but will be useful soon, is how
+     * to pick tiles out of a map. Thinking about it, it is quite simple to
+     * do. It is, in a sense, the opposite of drawing.
+     * We have a (pixel) position, and want to know which tile lies under it.
+     * * tile_x = pixel_x / cell_width
+     * * tile_y = pixel_y / cell_height
+     * == Collision ==
+     * Since we know how to pick a tile from a position, we can easily do
+     * collision detection now.
+     * = Non-rectangular maps =
+     * == Isometric (diamond layout) ==
+     * == Hexagon (diamond layout) ==
+     * == Isometric (row or column shifted layout) ==
+     * == Hexagon (row or coumn shifted layout) ==
+     */
+void land_grid_draw(LandGrid * self, LandView * view) {
+    self->vt->draw(self, view);
+}
+void land_grid_get_cell_at(LandGrid * self, LandView * view, float view_x, float view_y, float * cell_x, float * cell_y) {
+    /* Given a view position, return the corresponding cell position.
+     * For a wrapped grid, the returned position will always be normalized to
+     * lie within the grid, even if the passed position or the view's scroll
+     * position are outside.
+     */
+    self->vt->get_cell_at(self, view, view_x, view_y, cell_x, cell_y);
+}
+void land_grid_get_cell_position(LandGrid * self, LandView * view, float cell_x, float cell_y, float * view_x, float * view_y) {
+    /* Given a cell position, return the corresponding view position, in pixels.
+     * For a wrapped grid, the returned position will first be normalized to
+     * lie within the grid, and then related to the view position. Try normalizing
+     * the view's scroll position first (land_view_ensure_inside_grid) so it lies
+     * within the grid, if you experience unexpected offsets.
+     */
+    self->vt->get_cell_position(self, view, cell_x, cell_y, view_x, view_y);
+}
+void land_grid_initialize(LandGrid * self, int cell_w, int cell_h, int x_cells, int y_cells) {
+    self->x_cells = x_cells;
+    self->y_cells = y_cells;
+    self->cell_w = cell_w;
+    self->cell_h = cell_h;
+}
+void land_grid_init(void) {
+    land_log_message("land_grid_init\n");
+    land_tilemap_init();
+    land_isometric_init();
+    land_sprites_init();
+}
+void land_grid_exit(void) {
+    land_log_message("land_grid_exit\n");
+    land_tilemap_exit();
+    land_isometric_exit();
+    land_sprites_exit();
+}
+void land_grid_del(LandGrid * self) {
+    land_call_method(self, del, (self));
+}
+LandWidgetInterface * land_widget_box_interface;
+void land_widget_box_draw(LandWidget * self) {
+    land_widget_theme_draw(self);
+}
+LandWidget* land_widget_box_new(LandWidget * parent, int x, int y, int w, int h) {
+    LandWidget * self = land_widget_base_new(parent, x, y, w, h);
+    land_widget_box_interface_initialize();
+    self->vt = land_widget_box_interface;
+    land_widget_theme_initialize(self);
+    land_call_method(parent, update, (parent));
     return self;
 }
-void land_listitem_destroy(LandListItem * self) {
+void land_widget_box_interface_initialize(void) {
+    if (land_widget_box_interface) {
+        return ;
+    }
+    land_widget_box_interface = land_widget_copy_interface(land_widget_base_interface, "box");
+    land_widget_box_interface->id = LAND_WIDGET_ID_BASE;
+    land_widget_box_interface->draw = land_widget_box_draw;
+}
+struct LandAtlasSprite {
+    int x, y, w, h, ox, oy;
+    LandAtlasSheet * sheet;
+};
+struct LandAtlasSheet {
+    char * filename;
+    int id;
+    LandImage * image;
+};
+LandAtlas* land_atlas_new(char const * filename) {
+    LandAtlas * self;
+    land_alloc(self);
+    self->sheets = land_array_new();
+    self->sprites = land_hash_new();
+    self->filename = land_strdup(filename);
+    land_atlas_load_all(self);
+    return self;
+}
+void land_atlas_destroy(LandAtlas * self) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->sheets);
+        for (LandAtlasSheet * sheet = LandArrayIterator_item(self->sheets, &__iter0__); LandArrayIterator_next(self->sheets, &__iter0__); sheet = LandArrayIterator_item(self->sheets, &__iter0__)) {
+            land_image_destroy(sheet->image);
+            land_free(sheet->filename);
+            land_free(sheet);
+        }
+    }
+    {
+        LandHashIterator __iter0__ = LandHashIterator_first(self->sprites);
+        for (LandAtlasSprite * s = LandHashIterator_item(self->sprites, &__iter0__); LandHashIterator_next(self->sprites, &__iter0__); s = LandHashIterator_item(self->sprites, &__iter0__)) {
+            land_free(s);
+        }
+    }
+    land_array_destroy(self->sheets);
+    land_hash_destroy(self->sprites);
+    land_free(self->filename);
     land_free(self);
 }
-void land_list_insert_item(LandList * list, LandListItem * item) {
-    item->next = NULL;
-    item->prev = list->last;
-    if (list->last) {
-        list->last->next = item;
+static LandAtlasSheet* atlas_find_sheet(LandAtlas * self, char const * name) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->sheets);
+        for (LandAtlasSheet * sheet = LandArrayIterator_item(self->sheets, &__iter0__); LandArrayIterator_next(self->sheets, &__iter0__); sheet = LandArrayIterator_item(self->sheets, &__iter0__)) {
+            if (land_equals(name, sheet->filename)) {
+                return sheet;
+            }
+        }
+    }
+    return NULL;
+}
+void land_atlas_load_all(LandAtlas * self) {
+    char * text = land_read_text(self->filename);
+    LandArray * a = land_split_lines(text);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(a);
+        for (char * row = LandArrayIterator_item(a, &__iter0__); LandArrayIterator_next(a, &__iter0__); row = LandArrayIterator_item(a, &__iter0__)) {
+            char * path = row;
+            char * colon = strchr(path, ':');
+            if (! colon) {
+                break;
+            }
+            * colon = '\0';
+            char * sheet = colon + 2;
+            char * space = strchr(sheet, ' ');
+            * space = '\0';
+            LandAtlasSprite * s;
+            land_alloc(s);
+            LandAtlasSheet * atlas_sheet = atlas_find_sheet(self, sheet);
+            if (! atlas_sheet) {
+                land_alloc(atlas_sheet);
+                atlas_sheet->filename = land_strdup(sheet);
+                atlas_sheet->id = land_array_count(self->sheets);
+                land_array_add(self->sheets, atlas_sheet);
+                char * sheet_path = land_replace_filename(self->filename, sheet);
+                atlas_sheet->image = land_image_load(sheet_path);
+                land_free(sheet_path);
+            }
+            s->sheet = atlas_sheet;
+            sscanf(space + 1, " %d %d %d %d %d %d\n", & s->x, & s->y, & s->w, & s->h, & s->ox, & s->oy);
+            land_hash_insert(self->sprites, path, s);
+        }
+    }
+    land_free(text);
+    land_array_destroy_with_strings(a);
+}
+static LandAtlasSprite* atlas_load_picture(LandAtlas * self, char const * filename) {
+    return land_hash_get(self->sprites, filename);
+}
+LandImage* land_atlas_image_create(LandAtlas * self, char const * filename) {
+    LandAtlasSprite * sprite = atlas_load_picture(self, filename);
+    if (! sprite) {
+        return NULL;
+    }
+    LandImage * image = land_image_sub(sprite->sheet->image, sprite->x, sprite->y, sprite->w, sprite->h);
+    land_image_offset(image, - sprite->ox, - sprite->oy);
+    return image;
+}
+static float wrap_distance(float x1, float x2, float wrap) {
+    /* |x1    x2             |x1
+     * |x1              x2   |x1
+     * |x2              x1   |x2
+     */
+    float d = fabs(x2 - x1);
+    float d2 = fabs(x1 + wrap - x2);
+    if (d2 < d) {
+        d = d2;
+    }
+    d2 = fabs(x2 + wrap - x1);
+    if (d2 < d) {
+        d = d2;
+    }
+    return d;
+}
+static int get_closest(LandVoronoi * self, int x, int y) {
+    int mi = - 1;
+    int md = INT_MAX;
+    for (int i = 0; i < self->n; i += 1) {
+        int dx = wrap_distance(self->xy [i].x, x, self->w);
+        int dy = wrap_distance(self->xy [i].y, y, self->h);
+        if (dx * dx + dy * dy < md) {
+            mi = i;
+            md = dx * dx + dy * dy;
+        }
+    }
+    return mi;
+}
+LandVoronoi* land_voronoi_new(LandRandom * seed, int w, int h, int n) {
+    LandVoronoi * self;
+    land_alloc(self);
+    self->w = w;
+    self->h = h;
+    self->map = land_calloc(w * h * sizeof (* self->map));
+    self->distance = land_calloc(w * h * sizeof (* self->distance));
+    self->n = n;
+    self->xy = land_calloc(n * sizeof (* self->xy));
+    self->max_distance = 0;
+    for (int i = 0; i < n; i += 1) {
+        int x = land_random(seed, 0, w - 1);
+        int y = land_random(seed, 0, h - 1);
+        self->xy [i].x = x;
+        self->xy [i].y = y;
+    }
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            int i = get_closest(self, x, y);
+            self->map [x + w * y] = i;
+        }
+    }
+    return self;
+}
+LandVoronoi* land_voronoi_create(LandRandom * seed, int w, int h, int n, float randomness) {
+    LandVoronoi * self = land_voronoi_new(seed, w, h, n);
+    land_voronoi_distort_with_perlin(self, seed, randomness);
+    land_voronoi_calculate_distance(self);
+    return self;
+}
+void land_voronoi_calculate_distance(LandVoronoi * self) {
+    int w = self->w;
+    int h = self->h;
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            int i = self->map [x + self->w * y];
+            int dx = wrap_distance(self->xy [i].x, x, self->w);
+            int dy = wrap_distance(self->xy [i].y, y, self->h);
+            float d = sqrt(dx * dx + dy * dy);
+            self->distance [x + self->w * y] = d;
+            if (d > self->max_distance) {
+                self->max_distance = d;
+            }
+        }
+    }
+}
+void land_voronoi_distort_with_perlin(LandVoronoi * self, LandRandom * seed, float randomness) {
+    int w = self->w;
+    int h = self->h;
+    int * map2 = land_calloc(w * h * sizeof (* map2));
+    float rs = randomness;
+    if (rs < 1) {
+        rs = 1;
+    }
+    LandPerlin * perlin = land_perlin_create(seed, w / rs, h / rs);
+    for (int y = 0; y < h; y += 1) {
+        for (int x = 0; x < w; x += 1) {
+            float xd, yd;
+            land_perlin_displace(perlin, x / rs, y / rs, & xd, & yd);
+            int dx = land_mod(x + xd * randomness, self->w);
+            int dy = land_mod(y + yd * randomness, self->h);
+            int i = self->map [dx + w * dy];
+            map2 [y * w + x] = i;
+        }
+    }
+    land_perlin_destroy(perlin);
+    land_free(self->map);
+    self->map = map2;
+}
+void land_voronoi_destroy(LandVoronoi * self) {
+    land_free(self->map);
+    land_free(self->distance);
+    land_free(self->xy);
+    land_free(self);
+}
+float land_voronoi_at(LandVoronoi * self, int x, int y) {
+    float value = self->distance [x + self->w * y] / self->max_distance;
+    return value * 2 - 1;
+}
+static LandDisplay * global_previous_display;
+static LandDisplayPlatform global_image_display;
+static ALLEGRO_BITMAP * previous;
+#define SELF LandImagePlatform * self = (void *) super
+LandImage* platform_new_image(void) {
+    LandImagePlatform * self;
+    land_alloc(self);
+    return (void *) self;
+}
+void platform_del_image(LandImage * super) {
+    SELF;
+    if (self->a5) {
+        al_destroy_bitmap(self->a5);
+    }
+    land_free(self);
+}
+void platform_image_empty(LandImage * super) {
+    SELF;
+    if (! self->a5) {
+        if (super->flags & LAND_IMAGE_DEPTH) {
+            al_set_new_bitmap_depth(16);
+        }
+        self->a5 = al_create_bitmap(super->width, super->height);
+        if (super->flags & LAND_IMAGE_DEPTH) {
+            al_set_new_bitmap_depth(0);
+        }
+    }
+    int f = al_get_bitmap_format(self->a5);
+    ALLEGRO_LOCKED_REGION * lock = al_lock_bitmap(self->a5, f, ALLEGRO_LOCK_WRITEONLY);
+    int rowbytes = al_get_pixel_size(f) * super->width;
+    for (int i = 0; i < super->height; i++) {
+        memset(lock->data + lock->pitch * i, 0, rowbytes);
+    }
+    al_unlock_bitmap(self->a5);
+}
+LandImage* platform_image_load(char const * filename, bool mem) {
+    LandImage * super = land_display_new_image();
+    super->filename = land_strdup(filename);
+    if (mem) {
+        super->flags |= LAND_IMAGE_MEMORY;
+    }
+    _platform_load(super);
+    return super;
+}
+static void _platform_load(LandImage * super) {
+    super->name = land_strdup(super->filename);
+    ALLEGRO_STATE state;
+    if (super->flags & LAND_IMAGE_MEMORY) {
+        al_store_state(& state, ALLEGRO_STATE_NEW_BITMAP_PARAMETERS);
+        al_set_new_bitmap_flags(ALLEGRO_MEMORY_BITMAP);
+    }
+    #ifdef ANDROID
+    land_log_message("open %s", super->filename);
+    #endif
+    ALLEGRO_BITMAP * bmp;
+    if (strchr(super->filename, '.')) {
+        bmp = al_load_bitmap(super->filename);
     }
     else {
-        list->first = item;
+        bmp = al_load_bitmap(super->filename);
     }
-    list->last = item;
-    list->count++;
+    if (bmp) {
+        LandImagePlatform * self = (void *) super;
+        self->a5 = bmp;
+        super->width = al_get_bitmap_width(bmp);
+        super->height = al_get_bitmap_height(bmp);
+        super->flags |= LAND_LOADED;
+    }
+    else {
+        super->flags |= LAND_FAILED;
+    }
+    if (super->flags & LAND_IMAGE_MEMORY) {
+        al_restore_state(& state);
+        super->flags |= LAND_FAILED;
+    }
 }
-void land_list_insert_item_before(LandList * list, LandListItem * insert, LandListItem * before) {
-    if (before) {
-        insert->next = before;
-        insert->prev = before->prev;
-        if (before->prev) {
-            before->prev->next = insert;
+bool platform_image_exists(LandImage * super) {
+    return al_filename_exists(super->filename);
+}
+void platform_image_load_on_demand(LandImage * super) {
+    LandImagePlatform * self = (void *) super;
+    if (self->a5) {
+        return ;
+    }
+    _platform_load(super);
+}
+LandImage* platform_image_sub(LandImage * parent, float x, float y, float w, float h) {
+    LandImage * super = land_display_new_image();
+    super->flags |= LAND_SUBIMAGE;
+    super->filename = parent->filename;
+    super->name = parent->name;
+    LandImagePlatform * self = (void *) super;
+    LandImagePlatform * parentself = (void *) parent;
+    self->a5 = al_create_sub_bitmap(parentself->a5, x, y, w, h);
+    super->width = al_get_bitmap_width(self->a5);
+    super->height = al_get_bitmap_height(self->a5);
+    return super;
+}
+void platform_image_save(LandImage * super, char const * filename) {
+    LandImagePlatform * self = (void *) super;
+    al_save_bitmap(filename, self->a5);
+}
+void platform_image_prepare(LandImage * super) {
+    land_log_message("platform_image_prepare\n");
+}
+void platform_image_draw_scaled_rotated_tinted_flipped(LandImage * super, float x, float y, float sx, float sy, float angle, float r, float g, float b, float alpha, int flip) {
+    SELF;
+    LandDisplay * d = _land_active_display;
+    ALLEGRO_STATE state;
+    if (! self->a5) {
+        return ;
+    }
+    land_a5_display_check_transform();
+    bool restore = 0;
+    if (d->blend) {
+        if (d->blend & LAND_BLEND_SOLID) {
+            al_store_state(& state, ALLEGRO_STATE_BLENDER);
+            al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
+            restore = 1;
+        }
+        if (d->blend & LAND_BLEND_ADD) {
+            al_store_state(& state, ALLEGRO_STATE_BLENDER);
+            al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
+            restore = 1;
+        }
+    }
+    int flags = 0;
+    if (flip == 1 || flip == 3) {
+        flags |= ALLEGRO_FLIP_HORIZONTAL;
+    }
+    if (flip == 2 || flip == 3) {
+        flags |= ALLEGRO_FLIP_VERTICAL;
+    }
+    ALLEGRO_COLOR tint = al_map_rgba_f(r, g, b, alpha);
+    al_draw_tinted_scaled_rotated_bitmap_region(self->a5, super->l, super->t, super->width - super->l - super->r, super->height - super->t - super->b, tint, super->x - super->l, super->y - super->t, x, y, sx, sy, - angle, flags);
+    if (restore) {
+        al_restore_state(& state);
+    }
+}
+void platform_set_image_display(LandImage * super) {
+    SELF;
+    global_previous_display = _land_active_display;
+    LandDisplayPlatform * prev = (void *) global_previous_display;
+    LandDisplay * d = (void *) & global_image_display;
+    _land_active_display = d;
+    if (prev) {
+        global_image_display.a5 = prev->a5;
+    }
+    global_image_display.c = al_map_rgb_f(1, 1, 1);
+    d->w = super->width;
+    d->h = super->height;
+    d->flags = 0;
+    d->color_r = 1;
+    d->color_g = 1;
+    d->color_b = 1;
+    d->color_a = 1;
+    d->blend = 0;
+    d->clip_off = 0;
+    d->clip_x1 = 0;
+    d->clip_y1 = 0;
+    d->clip_x2 = super->width;
+    d->clip_y2 = super->height;
+    previous = al_get_target_bitmap();
+    al_set_target_bitmap(self->a5);
+}
+void platform_unset_image_display(void) {
+    _land_active_display = global_previous_display;
+    al_set_target_bitmap(previous);
+}
+void platform_image_grab_into(LandImage * super, float x, float y, float tx, float ty, float tw, float th) {
+    SELF;
+    ALLEGRO_STATE state;
+    al_store_state(& state, ALLEGRO_STATE_TARGET_BITMAP);
+    ALLEGRO_BITMAP * from = al_get_target_bitmap();
+    al_set_target_bitmap(self->a5);
+    al_draw_bitmap_region(from, x, y, tw, th, tx, ty, 0);
+    al_restore_state(& state);
+}
+void platform_image_get_rgba_data(LandImage * super, unsigned char * rgba) {
+    SELF;
+    int w = super->width;
+    int h = super->height;
+    unsigned char * p = rgba;
+    ALLEGRO_LOCKED_REGION * lock;
+    lock = al_lock_bitmap(self->a5, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READONLY);
+    unsigned char * p2 = lock->data;
+    for (int y = 0; y < h; y++) {
+        unsigned char * p3 = p2;
+        for (int x = 0; x < w; x++) {
+            unsigned char r, g, b, a;
+            r = * (p3++);
+            g = * (p3++);
+            b = * (p3++);
+            a = * (p3++);
+            * (p++) = r;
+            * (p++) = g;
+            * (p++) = b;
+            * (p++) = a;
+        }
+        p2 += lock->pitch;
+    }
+    al_unlock_bitmap(self->a5);
+}
+void platform_image_set_rgba_data(LandImage * super, unsigned char const * rgba) {
+    SELF;
+    int w = super->width;
+    int h = super->height;
+    unsigned char const * p = rgba;
+    ALLEGRO_LOCKED_REGION * lock;
+    lock = al_lock_bitmap(self->a5, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+    unsigned char * p2 = lock->data;
+    for (int y = 0; y < h; y++) {
+        unsigned char * p3 = p2;
+        for (int x = 0; x < w; x++) {
+            int r, g, b, a;
+            r = * (p++);
+            g = * (p++);
+            b = * (p++);
+            a = * (p++);
+            * (p3++) = r;
+            * (p3++) = g;
+            * (p3++) = b;
+            * (p3++) = a;
+        }
+        p2 += lock->pitch;
+    }
+    al_unlock_bitmap(self->a5);
+}
+int platform_image_opengl_texture(LandImage * super) {
+    SELF;
+    return al_get_opengl_texture(self->a5);
+}
+void platform_image_crop(LandImage * super, int x, int y, int w, int h) {
+    SELF;
+    ALLEGRO_STATE state;
+    if (x == 0 && y == 0 && w == super->width && h == super->height) {
+        return ;
+    }
+    al_store_state(& state, ALLEGRO_STATE_TARGET_BITMAP | ALLEGRO_STATE_BLENDER);
+    ALLEGRO_BITMAP * cropped = al_create_bitmap(w, h);
+    al_set_target_bitmap(cropped);
+    al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
+    if (self->a5) {
+        al_draw_bitmap(self->a5, - x, - y, 0);
+        al_destroy_bitmap(self->a5);
+    }
+    self->a5 = cropped;
+    al_restore_state(& state);
+    super->width = w;
+    super->height = h;
+}
+void platform_image_merge(LandImage * super, LandImage * replacement_image) {
+    SELF;
+    LandImagePlatform * replacement = (void *) replacement_image;
+    al_destroy_bitmap(self->a5);
+    self->a5 = replacement->a5;
+    replacement->a5 = NULL;
+    super->width = replacement_image->width;
+    super->height = replacement_image->height;
+    super->l = 0;
+    super->t = 0;
+    super->r = 0;
+    super->b = 0;
+    land_image_destroy(replacement_image);
+}
+#undef SELF
+static int button_state [LandJoystickButtonsCount];
+static int button_pressed [LandJoystickButtonsCount];
+static float axis [LandJoystickAxesCount];
+static float oaxis [LandJoystickAxesCount];
+void land_joystick_button_down_event(int button) {
+    if (! button_state [button]) {
+        button_pressed [button]++;
+        button_state [button] = 1;
+    }
+}
+void land_joystick_button_up_event(int button) {
+    button_state [button] = 0;
+}
+void land_joystick_axis_event(int a, float x) {
+    axis [a] = x;
+}
+void land_joystick_tick(void) {
+    int bn = land_joystick_button_count();
+    for (int i = 1; i < bn; i += 1) {
+        button_pressed [i] = 0;
+    }
+    int an = land_joystick_axis_count();
+    for (int i = 1; i < an; i += 1) {
+        oaxis [i] = axis [i];
+    }
+}
+int land_joystick_button(int button) {
+    /* Is the Joystick button down during this tick. The button is a number
+     * between 1 inclusive and land_joystick_button_count() exclusive.
+     */
+    return button_state [button];
+}
+int land_joystick_button_pressed(int button) {
+    /* How often was the joystick button pressed in this tick (almost
+     * always will be either 0 or 1, except you can press your button
+     * very fast).
+     */
+    return button_pressed [button];
+}
+float land_joystick_axis(int a) {
+    /* The joystick axis position of the given axis. The axis is a number
+     * between 1 inclusive and land_joystick_axis_count() exclusive.
+     */
+    return axis [a];
+}
+float land_joystick_delta_axis(int a) {
+    return axis [a] - oaxis [a];
+}
+str land_joystick_button_name(int b) {
+    return platform_joystick_button_name(b);
+}
+str land_joystick_axis_name(int a) {
+    return platform_joystick_axis_name(a);
+}
+int land_joystick_button_count(void) {
+    return platform_joystick_button_count();
+}
+int land_joystick_axis_count(void) {
+    return platform_joystick_axis_count();
+}
+int land_joystick_find_axis(str name) {
+    int an = land_joystick_axis_count();
+    for (int ai = 1; ai < an; ai += 1) {
+        str axis = land_joystick_axis_name(ai);
+        if (land_equals(axis, name)) {
+            return ai;
+        }
+    }
+    return 0;
+}
+int land_joystick_find_button(str name) {
+    int bn = land_joystick_button_count();
+    for (int bi = 1; bi < bn; bi += 1) {
+        str button = land_joystick_button_name(bi);
+        if (land_equals(button, name)) {
+            return bi;
+        }
+    }
+    return 0;
+}
+void land_joystick_debug(void) {
+    int an = land_joystick_axis_count();
+    for (int ai = 1; ai < an; ai += 1) {
+        float v = land_joystick_axis(ai);
+        if (v) {
+            printf("%s: %f\n", land_joystick_axis_name(ai), v);
+        }
+    }
+    int bn = land_joystick_button_count();
+    for (int bi = 1; bi < bn; bi += 1) {
+        int v = land_joystick_button_pressed(bi);
+        if (v) {
+            printf("%s: %d\n", land_joystick_button_name(bi), v);
+        }
+    }
+}
+static void test(char const * name, int want, int got) {
+    if (want == got) {
+        printf("OK   %s\n", name);
+    }
+    else {
+        printf("FAIL %s (want %d but got %d)\n", name, want, got);
+    }
+}
+void csg_test_shapes(void) {
+    LandCSG * cube = csg_cube(NULL);
+    test("cube", 6, cube->polygons->count);
+    land_csg_destroy(cube);
+    LandCSG * sphere = csg_sphere(3, 3, NULL);
+    test("sphere", 6, sphere->polygons->count);
+    land_csg_destroy(sphere);
+    LandCSG * sphere2 = csg_sphere(3, 4, NULL);
+    test("sphere2", 9, sphere2->polygons->count);
+    land_csg_destroy(sphere2);
+    LandCSG * sphere3 = csg_sphere(4, 3, NULL);
+    test("sphere3", 8, sphere3->polygons->count);
+    land_csg_destroy(sphere3);
+    LandCSG * cylinder = csg_cylinder(3, NULL);
+    test("cylinder", 9, cylinder->polygons->count);
+    land_csg_destroy(cylinder);
+    LandCSG * cylinder2 = csg_cylinder(4, NULL);
+    test("cylinder2", 12, cylinder2->polygons->count);
+    land_csg_destroy(cylinder2);
+}
+void csg_test_union(void) {
+    LandCSG * cubeA = csg_cube(NULL);
+    LandCSG * cubeB = csg_cube(NULL);
+    land_csg_transform(cubeB, land_4x4_matrix_translate(4, 0, 0));
+    LandCSG * AB = land_csg_union(cubeA, cubeB);
+    test("AB", 12, AB->polygons->count);
+    LandCSG * cubeC = csg_cube(NULL);
+    land_csg_transform(cubeC, land_4x4_matrix_translate(2, 0, 0));
+    LandCSG * AC = land_csg_union(cubeA, cubeC);
+    test("AC", 10, AC->polygons->count);
+    LandCSG * ABC1 = land_csg_union(AB, cubeC);
+    test("ABC1", 14, ABC1->polygons->count);
+    LandCSG * ABC2 = land_csg_union(cubeB, AC);
+    test("ABC2", 14, ABC2->polygons->count);
+    land_csg_destroy(cubeA);
+    land_csg_destroy(cubeB);
+    land_csg_destroy(cubeC);
+    land_csg_destroy(AB);
+    land_csg_destroy(AC);
+    land_csg_destroy(ABC1);
+    land_csg_destroy(ABC2);
+}
+void csg_test_subtract(void) {
+    LandCSG * cubeA = csg_cube(NULL);
+    LandCSG * cubeB = csg_cube(NULL);
+    land_csg_transform(cubeB, land_4x4_matrix_translate(1, 0, 0));
+    LandCSG * A_B = land_csg_subtract(cubeA, cubeB);
+    test("A-B", 6, A_B->polygons->count);
+    LandCSG * cubeBi = land_csg_inverse(cubeB);
+    test("Bi", 6, cubeBi->polygons->count);
+    LandCSG * ABi = land_csg_union(cubeA, cubeBi);
+    test("ABi", 6, ABi->polygons->count);
+    land_csg_destroy(cubeA);
+    land_csg_destroy(cubeB);
+    land_csg_destroy(A_B);
+    land_csg_destroy(cubeBi);
+    land_csg_destroy(ABi);
+}
+void csg_test_intersect(void) {
+    LandCSG * cubeA = csg_cube(NULL);
+    LandCSG * cubeB = csg_cube(NULL);
+    land_csg_transform(cubeB, land_4x4_matrix_translate(1, 0, 0));
+    LandCSG * A_B = land_csg_intersect(cubeA, cubeB);
+    test("A/B", 6, A_B->polygons->count);
+    land_csg_destroy(cubeA);
+    land_csg_destroy(cubeB);
+    land_csg_destroy(A_B);
+}
+void csg_test(void) {
+    csg_test_shapes();
+    csg_test_union();
+    csg_test_subtract();
+    csg_test_intersect();
+}
+#ifndef LAND_USE_EXTERNAL_YAML
+LandYaml* land_yaml_load(char const * filename) {
+    LandFile * f = land_file_new(filename, "rb");
+    if (! f) {
+        land_log_message("Failed opening %s\n", filename);
+        return NULL;
+    }
+    land_log_message("Parsing yaml %s\n", filename);
+    LandYaml * yaml = land_yaml_new(filename);
+    LandBuffer * value = land_buffer_new();
+    while (1) {
+        int c = land_file_getc(f);
+        if (c < 0 || strchr("{}[],:\n", c)) {
+            if (value->n) {
+                land_buffer_add_char(value, 0);
+                land_yaml_add_scalar(yaml, land_strdup(value->buffer));
+                land_buffer_clear(value);
+            }
+        }
+        if (c < 0) {
+            break;
+        }
+        if (c == '{') {
+            land_yaml_add_mapping(yaml);
+        }
+        else if (c == '[') {
+            land_yaml_add_sequence(yaml);
+        }
+        else if (c == '}') {
+            land_yaml_done(yaml);
+        }
+        else if (c == ']') {
+            land_yaml_done(yaml);
+        }
+        else if (c == ',') {
+            ;
+        }
+        else if (c == ':') {
+            ;
+        }
+        else if (c == '\n') {
+            ;
         }
         else {
-            list->first = insert;
+            land_buffer_add_char(value, c);
         }
-        before->prev = insert;
-        list->count++;
     }
-    else {
-        land_list_insert_item(list, insert);
-    }
+    land_file_destroy(f);
+    land_buffer_destroy(value);
+    return yaml;
 }
-void land_list_remove_item(LandList * list, LandListItem * item) {
-    if (item->prev) {
-        item->prev->next = item->next;
-    }
-    else {
-        list->first = item->next;
-    }
-    if (item->next) {
-        item->next->prev = item->prev;
-    }
-    else {
-        list->last = item->prev;
-    }
-    list->count--;
-}
-void land_add_list_data(LandList * (* list), void * data) {
-    LandListItem * item = land_listitem_new(data);
-    if (! (* list)) {
-        * list = land_list_new();
-    }
-    land_list_insert_item(* list, item);
-}
-void land_remove_list_data(LandList * (* list), void * data) {
-    LandListItem * item = (* list)->first;
-    while (item) {
-        LandListItem * next = item->next;
-        if (item->data == data) {
-            land_list_remove_item(* list, item);
-            land_listitem_destroy(item);
-            return ;
+static void _yaml_write(YamlParser * p, char const * s) {
+    int n = strlen(s);
+    if (! p->cannot_break) {
+        if (p->line_length + n > 80) {
+            land_file_write(p->file, "\n", 1);
+            p->line_length = 0;
         }
-        item = next;
+    }
+    p->cannot_break = 0;
+    land_file_write(p->file, s, n);
+    p->line_length += n;
+}
+static void yaml_write(YamlParser * p, char const * s) {
+    _yaml_write(p, s);
+}
+static void _pretty_newline(YamlParser * p) {
+    if (p->flags & LandYamlPretty) {
+        yaml_write(p, "\n");
+        p->line_length = 0;
+        for (int i = 0; i < p->indent; i += 1) {
+            yaml_write(p, "    ");
+        }
     }
 }
-static jmp_buf exception;
-static char exception_string [1024];
-int(* land_exception_handler)(char const * str);
-static int init = 1;
-int land_default_exception_handler(char const * str) {
-    fprintf(stderr, "%s\n", str);
+static bool _save_mapping(LandYamlEntry * e, YamlParser * p) {
+    yaml_write(p, "{");
+    p->indent += 1;
+    bool prev = 0;
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(e->sequence);
+        for (char const * key = LandArrayIterator_item(e->sequence, &__iter0__); LandArrayIterator_next(e->sequence, &__iter0__); key = LandArrayIterator_item(e->sequence, &__iter0__)) {
+            if (prev) {
+                yaml_write(p, ",");
+            }
+            _pretty_newline(p);
+            _yaml_write(p, key);
+            p->cannot_break = 1;
+            _yaml_write(p, ": ");
+            p->cannot_break = 1;
+            _save_entry(land_hash_get(e->mapping, key), p);
+            prev = 1;
+        }
+    }
+    p->indent -= 1;
+    _pretty_newline(p);
+    yaml_write(p, "}");
+    return true;
+}
+static bool _save_sequence(LandYamlEntry * e, YamlParser * p) {
+    yaml_write(p, "[");
+    p->indent += 1;
+    bool prev = 0;
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(e->sequence);
+        for (LandYamlEntry * e2 = LandArrayIterator_item(e->sequence, &__iter0__); LandArrayIterator_next(e->sequence, &__iter0__); e2 = LandArrayIterator_item(e->sequence, &__iter0__)) {
+            if (prev) {
+                yaml_write(p, ",");
+            }
+            if (p->indent < 2) {
+                _pretty_newline(p);
+            }
+            _save_entry(e2, p);
+            prev = 1;
+        }
+    }
+    p->indent -= 1;
+    _pretty_newline(p);
+    yaml_write(p, "]");
+    return true;
+}
+static bool _save_scalar(LandYamlEntry * e, YamlParser * p) {
+    yaml_write(p, e->scalar);
     return 1;
 }
-void land_exception_handler_init(void) {
-    again:;
-    if (setjmp(exception)) {
-        int r = land_exception_handler(exception_string);
-        if (! r) {
-            goto again;
+static bool _save_entry(LandYamlEntry * e, YamlParser * p) {
+    if (e->type == YamlMapping) {
+        return _save_mapping(e, p);
+    }
+    else if (e->type == YamlSequence) {
+        return _save_sequence(e, p);
+    }
+    else if (e->type == YamlScalar) {
+        return _save_scalar(e, p);
+    }
+    return false;
+}
+void land_yaml_save_flags(LandYaml * yaml, int flags) {
+    LandFile * f = land_file_new(yaml->filename, "wb");
+    YamlParser * p = NULL;
+    if (! f) {
+        goto error;
+    }
+    land_alloc(p);
+    p->file = f;
+    p->flags = flags;
+    if (! _save_entry(yaml->root, p)) {
+        goto error;
+    }
+    error:;
+    if (p) {
+        land_free(p);
+    }
+    if (f) {
+        land_file_destroy(f);
+    }
+}
+void land_yaml_save(LandYaml * yaml) {
+    land_yaml_save_flags(yaml, 0);
+}
+#endif
+LandArrayIterator LandArrayIterator_first(LandArray * a) {
+    LandArrayIterator i = {0};
+    return i;
+}
+void* LandArrayIterator_item(LandArray * a, LandArrayIterator * i) {
+    return i->i < a->count ? a->data [i->i] : NULL;
+}
+bool LandArrayIterator_next(LandArray * a, LandArrayIterator * i) {
+    i->i++;
+    return i->i <= a->count;
+}
+int LandArray__len__(LandArray * a) {
+    return a->count;
+}
+LandArray* land_array_new(void) {
+    /* Create a new empty array.
+     */
+    LandArray * self;
+    land_alloc(self);
+    return self;
+}
+void land_array_add(LandArray * self, void * data) {
+    /* Add data to an array.
+     */
+    int i = self->count++;
+    if (self->count > self->size) {
+        if (self->size == 0) {
+            self->size = 1;
         }
-        abort();
+        else {
+            self->size *= 2;
+        }
+        self->data = land_realloc(self->data, self->size * sizeof (* self->data));
+    }
+    self->data [i] = data;
+}
+void land_array_reserve(LandArray * self, int n) {
+    /* Allocate n empty (None) entries for the array. Removes any contents
+     * of the array if it already has any data added to it.
+     */
+    self->count = self->size = n;
+    self->data = land_realloc(self->data, self->size * sizeof (* self->data));
+    memset(self->data, 0, self->count * sizeof (* self->data));
+}
+void* land_array_pop(LandArray * self) {
+    /* Remove the last element in the array and return it. Only the last element
+     * in an array can be removed. To remove another element, you could replace
+     * it with the last (land_array_replace_nth) and remove the last with this
+     * function.
+     */
+    if (self->count == 0) {
+        return NULL;
+    }
+    int i = --self->count;
+    return self->data [i];
+}
+void* land_array_remove(LandArray * self, int i) {
+    /* Return item at position i and replace it with the last item,
+     * shortening the array by one.
+     * If i is the last item this is identical to land_array_pop.
+     */
+    void * last = land_array_pop(self);
+    if (i == land_array_count(self)) {
+        return last;
+    }
+    return land_array_replace_nth(self, i, last);
+}
+void land_array_add_data(LandArray * (* array), void * data) {
+    /* *deprecated*
+     * Use land_array_add in new code, as this function might be removed in a
+     * future version.
+     * Given a pointer to a (possibly NULL valued) array pointer, create a new node
+     * with the given data, and add to the (possibly modified) array.
+     */
+    LandArray * self = * array;
+    if (! self) {
+        #if LAND_MEMLOG
+        self = land_array_new_memlog(__FILE__, __LINE__);
+        #else
+        self = land_array_new();
+        #endif
+        * array = self;
+    }
+    land_array_add(self, data);
+}
+int land_array_find(LandArray * self, void * data) {
+    /* Searches the array for the given data. If they are contained, return the
+     * first index i so that land_array_get_nth(array, i) == data. If the data
+     * cannot be found, -1 is returned.
+     */
+    for (int i = 0; i < self->count; i++) {
+        if (self->data [i] == data) {
+            return i;
+        }
+    }
+    return - 1;
+}
+void* land_array_get_nth(LandArray const * array, int i) {
+    if (i < 0) {
+        i += array->count;
+    }
+    return array->data [i];
+}
+void* land_array_get(LandArray const * array, int i) {
+    return land_array_get_nth(array, i);
+}
+bool land_array_is_empty(LandArray const * array) {
+    return array->count == 0;
+}
+void* land_array_replace_nth(LandArray * array, int i, void * data) {
+    /* Replace the array entry at the given index, and return the previous
+     * contents.
+     */
+    if (i >= array->count) {
+        return NULL;
+    }
+    void * old = array->data [i];
+    array->data [i] = data;
+    return old;
+}
+void* land_array_replace_or_resize(LandArray * array, int i, void * data) {
+    /* Replaces the entry at i and returns the previous data.
+     * If i is outside the size of the array, resize it.
+     */
+    while (array->count < i + 1) {
+        land_array_add(array, NULL);
+    }
+    return land_array_replace_nth(array, i, data);
+}
+void* land_array_get_last(LandArray * array) {
+    return land_array_get_nth(array, array->count - 1);
+}
+void land_array_destroy(LandArray * self) {
+    /* Destroys an array. This does not destroy any of the data put into it - loop
+     * through the array before and destroy the data if there are no other
+     * references to them.
+     */
+    if (self->data) {
+        land_free(self->data);
+    }
+    land_free(self);
+}
+static int cb_free(void * data, void * _) {
+    land_free(data);
+    return 0;
+}
+void land_array_destroy_with_strings(LandArray * self) {
+    land_array_destroy_with_free(self);
+}
+void land_array_destroy_with_free(LandArray * self) {
+    /* Like [land_array_destroy] but also calls land_free on every
+     * element.
+     */
+    land_array_for_each(self, cb_free, NULL);
+    land_array_destroy(self);
+}
+void land_array_sort(LandArray * self, int(* cmpfnc)(void const * a, void const * b)) {
+    /* Sorts the entries in the array. The given callback function gets passed
+     * two direct pointers to two array elements, and expects a return value
+     * determining the order:
+     * < 0: a is before b
+     * = 0: order is arbitrary
+     * > 0: a is after b
+     */
+    qsort(self->data, self->count, sizeof (void *), cmpfnc);
+}
+static int alphacomp(void const * a, void const * b) {
+    char const * const * as = a;
+    char const * const * bs = b;
+    int r = strcmp(* as, * bs);
+    return r;
+}
+void land_array_sort_alphabetical(LandArray * self) {
+    /* Expects all array members to be strings and sorts alphabetically.
+     */
+    land_array_sort(self, alphacomp);
+}
+int land_array_count(LandArray const * self) {
+    if (! self) {
+        return 0;
+    }
+    return self->count;
+}
+int land_array_for_each(LandArray * self, int(* cb)(void * item, void * data), void * data) {
+    /* Call the given callback for each array element. If the callback returns
+     * anything but 0, the iteration is stopped. The return value is the number
+     * of times the callback was called. The data argument simply is passed as-is
+     * to the callback.
+     */
+    if (! self) {
+        return 0;
+    }
+    int i;
+    for (i = 0; i < self->count; i++) {
+        if (cb(self->data [i], data)) {
+            break;
+        }
+    }
+    return i;
+}
+void land_array_clear(LandArray * self) {
+    /* Clear all elements in the array.
+     */
+    self->count = 0;
+}
+void land_array_concat(LandArray * self, LandArray const * other) {
+    int new_count = self->count + other->count;
+    self->size = new_count;
+    self->data = land_realloc(self->data, self->size * sizeof (* self->data));
+    memcpy(self->data + self->count, other->data, other->count * sizeof (* other->data));
+    self->count = self->size;
+}
+void land_array_merge(LandArray * self, LandArray * other) {
+    land_array_concat(self, other);
+    land_array_destroy(other);
+}
+LandArray* land_array_copy(LandArray const * self) {
+    LandArray * copy = land_array_new();
+    land_array_concat(copy, self);
+    return copy;
+}
+void land_array_swap(LandArray * self, int a, int b) {
+    if (a < 0) {
+        a += self->count;
+    }
+    if (b < 0) {
+        b += self->count;
+    }
+    void * temp = self->data [a];
+    self->data [a] = self->data [b];
+    self->data [b] = temp;
+}
+void land_array_move_behind(LandArray * self, int a, int b) {
+    /* Move item at position a so it is behind b. If b is 0 then a is moved to
+     * the beginning. If b is n then a is moved to the end.
+     */
+    void * temp = self->data [a];
+    if (a < b) {
+        for (int i = a; i < b - 1; i++) {
+            self->data [i] = self->data [i + 1];
+        }
+        self->data [b - 1] = temp;
+    }
+    else {
+        for (int i = a; i > b; i--) {
+            self->data [i] = self->data [i - 1];
+        }
+        self->data [b] = temp;
     }
 }
-void land_exception_handler_set(int(* handler)(char const * str)) {
-    if (init) {
-        land_exception_handler_init();
-        init = 0;
+void land_array_reverse(LandArray * self) {
+    for (int i = 0; i < self->count / 2; i += 1) {
+        land_array_swap(self, i, self->count - 1 - i);
     }
-    land_exception_handler = handler;
 }
-void land_exception(char const * format, ...) {
-    va_list args;
-    va_start(args, format);
-    vsnprintf(exception_string, 1024, format, args);
-    va_end(args);
-    fprintf(stderr, "%s", exception_string);
-    int r = land_exception_handler(exception_string);
-    if (r) {
-        abort();
+#ifdef LAND_MEMLOG
+#undef land_array_new
+#undef land_array_destroy
+#undef land_array_add
+#undef land_array_clear
+#undef land_array_merge
+#undef land_array_concat
+#undef land_array_copy
+LandArray* land_array_new_memlog(char const * f, int l) {
+    LandArray * array = land_array_new();
+    land_memory_add(array, "array", 1, f, l);
+    return array;
+}
+void land_array_destroy_memlog(LandArray * self, char const * f, int l) {
+    land_memory_remove(self, "array", 1, f, l);
+    land_array_destroy(self);
+}
+void land_array_add_memlog(LandArray * self, void * data, char const * f, int l) {
+    land_array_add(self, data);
+    land_memory_remove(self, "array", 1, f, l);
+    land_memory_add(self, "array", self->size, f, l);
+}
+LandArray* land_array_copy_memlog(LandArray const * self, char const * f, int l) {
+    LandArray * copy = land_array_copy(self);
+    land_memory_add(copy, "array", copy->size, f, l);
+    return copy;
+}
+void land_array_concat_memlog(LandArray * self, LandArray const * other, char const * f, int l) {
+    land_array_concat(self, other);
+    land_memory_remove(self, "array", 1, f, l);
+    land_memory_add(self, "array", self->size, f, l);
+}
+void land_array_merge_memlog(LandArray * self, LandArray * other, char const * f, int l) {
+    land_array_merge(self, other);
+    land_memory_remove(self, "array", 1, f, l);
+    land_memory_add(self, "array", self->size, f, l);
+    land_memory_remove(other, "array", 1, f, l);
+}
+void land_array_clear_memlog(LandArray * self, char const * f, int l) {
+    land_array_clear(self);
+    land_memory_remove(self, "array", 1, f, l);
+    land_memory_add(self, "array", self->size, f, l);
+}
+#endif
+static void* _get(LandIniSection * s, char const * key) {
+    LandIniEntry * e = land_hash_get(s->lookup, key);
+    if (e) {
+        return e->val;
+    }
+    return NULL;
+}
+static void _add(LandIniSection * s, char const * key, void * val) {
+    LandIniEntry * e = land_hash_get(s->lookup, key);
+    if (e) {
+        land_free(e->val);
+        e->val = val;
+        return ;
+    }
+    e = land_calloc(sizeof (* e));
+    e->key = land_strdup(key);
+    e->val = val;
+    land_array_add(s->entries, e);
+    land_hash_insert(s->lookup, key, e);
+}
+static void _del(LandIniSection * s) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(s->entries);
+        for (LandIniEntry * e = LandArrayIterator_item(s->entries, &__iter0__); LandArrayIterator_next(s->entries, &__iter0__); e = LandArrayIterator_item(s->entries, &__iter0__)) {
+            land_free(e->key);
+            if (e->val) {
+                land_free(e->val);
+            }
+            land_free(e);
+        }
+    }
+    land_array_destroy(s->entries);
+    land_hash_destroy(s->lookup);
+    land_free(s);
+}
+static LandIniSection* _new(void) {
+    LandIniSection * s = land_calloc(sizeof (* s));
+    s->lookup = land_hash_new();
+    s->entries = land_array_new();
+    return s;
+}
+void land_ini_set_string(LandIniFile * ini, char const * section, char const * key, char const * val) {
+    LandIniSection * s = _get(ini->sections, section);
+    if (! s) {
+        s = _new();
+        _add(ini->sections, section, s);
+    }
+    _add(s, key, val ? land_strdup(val) : NULL);
+}
+void land_ini_set_int(LandIniFile * ini, char const * section, char const * key, int val) {
+    char temp [100];
+    snprintf(temp, sizeof temp, "%d", val);
+    land_ini_set_string(ini, section, key, temp);
+}
+char const* land_ini_get_string(LandIniFile * ini, char const * section, char const * key, char const * de) {
+    LandIniSection * s = _get(ini->sections, section);
+    if (! s) {
+        return de;
+    }
+    char * v = _get(s, key);
+    if (v) {
+        return v;
+    }
+    return de;
+}
+int land_ini_get_int(LandIniFile * ini, char const * section, char const * key, int de) {
+    char const * s = land_ini_get_string(ini, section, key, NULL);
+    if (s == NULL) {
+        return de;
+    }
+    return strtol(s, NULL, 0);
+}
+int land_ini_get_number_of_entries(LandIniFile * ini, char const * section) {
+    LandIniSection * s = ini->sections;
+    if (! s) {
+        return 0;
+    }
+    if (section) {
+        s = _get(s, section);
+        if (! s) {
+            return 0;
+        }
+    }
+    return land_array_count(s->entries);
+}
+char const* land_ini_get_nth_entry(LandIniFile * ini, char const * section, int i) {
+    /* Get the n-th entry of an ini section. If section is None get the
+     * n-th section instead.
+     */
+    LandIniSection * s = ini->sections;
+    if (section) {
+        s = _get(s, section);
+    }
+    LandIniEntry * e = land_array_get_nth(s->entries, i);
+    return e->key;
+}
+static bool is_whitespace(char c) {
+    if (c == ' ' || c == '\t' || c == '\n') {
+        return true;
+    }
+    return false;
+}
+#define addc(var, l) \
+    var [l] = c; \
+    if (l < (int) sizeof (var) - 1) { \
+        l++; \
+    } \
+    var [l] = '\0';
+enum State {
+    OUTSIDE,
+    SECTION,
+    KEY,
+    EQUALS,
+    VALUE,
+    COMMENT
+};
+LandIniFile* land_ini_read(char const * filename) {
+    char section_name [1024] = "", key_name [1024] = "", value [1024] = "";
+    int slen = 0, klen = 0, vlen = 0;
+    State state = OUTSIDE;
+    LandIniFile * ini = land_calloc(sizeof (* ini));
+    ini->filename = land_strdup(filename);
+    ini->sections = _new();
+    LandFile * f = land_file_new(filename, "rb");
+    if (! f) {
+        return ini;
+    }
+    int done = 0;
+    while (! done) {
+        int c = land_file_getc(f);
+        if (c == EOF) {
+            done = 1;
+            c = '\n';
+        }
+        if (c == '\r') {
+            continue;
+        }
+        if (state == OUTSIDE) {
+            if (c == '[') {
+                slen = 0;
+                state = SECTION;
+            }
+            else if (c == '#') {
+                state = COMMENT;
+            }
+            else if (! is_whitespace(c)) {
+                klen = 0;
+                addc(key_name, klen);
+                state = KEY;
+            }
+        }
+        else if (state == SECTION) {
+            if (c == ']' || c == '\n') {
+                state = OUTSIDE;
+            }
+            else {
+                addc(section_name, slen);
+            }
+        }
+        else if (state == KEY) {
+            if (c == '\n') {
+                state = OUTSIDE;
+            }
+            else if (c == '=') {
+                state = EQUALS;
+            }
+            else {
+                addc(key_name, klen);
+            }
+        }
+        else if (state == EQUALS) {
+            if (c == '\n') {
+                value [0] = 0;
+                goto got_value;
+            }
+            if (! is_whitespace(c)) {
+                state = VALUE;
+                vlen = 0;
+                addc(value, vlen);
+            }
+        }
+        else if (state == VALUE) {
+            if (c == '\n') {
+                got_value:;
+                int trailing = strlen(key_name);
+                while (trailing > 1) {
+                    trailing--;
+                    if (is_whitespace(key_name [trailing])) {
+                        key_name [trailing] = 0;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                land_ini_set_string(ini, section_name, key_name, value);
+                state = OUTSIDE;
+            }
+            else {
+                addc(value, vlen);
+            }
+        }
+        else if (state == COMMENT) {
+            if (c == '\n') {
+                state = OUTSIDE;
+            }
+        }
+    }
+    land_file_destroy(f);
+    return ini;
+}
+LandIniFile* land_ini_new(char const * filename) {
+    LandIniFile * ini = land_calloc(sizeof (* ini));
+    ini->filename = land_strdup(filename);
+    ini->sections = _new();
+    return ini;
+}
+void land_ini_destroy(LandIniFile * ini) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(ini->sections->entries);
+        for (LandIniEntry * e = LandArrayIterator_item(ini->sections->entries, &__iter0__); LandArrayIterator_next(ini->sections->entries, &__iter0__); e = LandArrayIterator_item(ini->sections->entries, &__iter0__)) {
+            LandIniSection * s = e->val;
+            _del(s);
+            e->val = NULL;
+        }
+    }
+    _del(ini->sections);
+    land_free(ini->filename);
+    land_free(ini);
+}
+void land_ini_writeback(LandIniFile * ini) {
+    FILE * f = fopen(ini->filename, "wb");
+    if (! f) {
+        return ;
+    }
+    LandIniSection * ss = ini->sections;
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(ss->entries);
+        for (LandIniEntry * es = LandArrayIterator_item(ss->entries, &__iter0__); LandArrayIterator_next(ss->entries, &__iter0__); es = LandArrayIterator_item(ss->entries, &__iter0__)) {
+            LandIniSection * s = es->val;
+            char * name = es->key;
+            if (name && name [0]) {
+                fprintf(f, "[%s]\n", name);
+            }
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(s->entries);
+                for (LandIniEntry * e = LandArrayIterator_item(s->entries, &__iter1__); LandArrayIterator_next(s->entries, &__iter1__); e = LandArrayIterator_item(s->entries, &__iter1__)) {
+                    if (e->val) {
+                        fprintf(f, "%s = %s\n", e->key, (char *) e->val);
+                    }
+                }
+            }
+        }
+    }
+    fclose(f);
+}
+LandIniFile* land_ini_app_settings(char const * appname) {
+    char * name = platform_get_app_settings_file(appname);
+    LandIniFile * ini = land_ini_read(name);
+    land_free(name);
+    return ini;
+}
+#undef addc
+enum XmlState {
+    Outside,
+    ElementName,
+    Attributes,
+    AttributeName,
+    AttributeStart,
+    AttributeValue
+};
+struct XmlParser {
+    XmlState state;
+    bool closing;
+    LandBuffer * value;
+    LandYaml * yaml;
+};
+static void scalar(XmlParser * x) {
+    land_buffer_add_char(x->value, 0);
+    land_yaml_add_scalar(x->yaml, land_strdup(x->value->buffer));
+    land_buffer_clear(x->value);
+}
+static void opt_scalar(XmlParser * x) {
+    if (x->value->n) {
+        scalar(x);
+    }
+}
+static void discard_scalar(XmlParser * x) {
+    land_buffer_clear(x->value);
+}
+LandYaml* land_yaml_load_xml(str filename) {
+    LandFile * f = land_file_new(filename, "rb");
+    if (! f) {
+        land_log_message("Failed opening %s\n", filename);
+        return NULL;
+    }
+    land_log_message("Parsing yaml %s\n", filename);
+    XmlParser x_;
+    XmlParser * x = & x_;
+    x->yaml = land_yaml_new(filename);
+    x->value = land_buffer_new();
+    x->state = Outside;
+    x->closing = 0;
+    land_yaml_add_sequence(x->yaml);
+    while (1) {
+        int c = land_file_getc(f);
+        if (c < 0) {
+            break;
+        }
+        if (x->state == Outside) {
+            if (c == '<') {
+                opt_scalar(x);
+                x->state = ElementName;
+                continue;
+            }
+        }
+        else if (x->state == ElementName) {
+            if (c == '/') {
+                x->closing = 1;
+                continue;
+            }
+            else if (c == '>') {
+                if (x->closing) {
+                    discard_scalar(x);
+                    close_tag(x);
+                    land_yaml_done(x->yaml);
+                }
+                else {
+                    create_tag(x);
+                    open_tag(x);
+                }
+                continue;
+            }
+            else if (isspace(c)) {
+                create_tag(x);
+                x->state = Attributes;
+                continue;
+            }
+        }
+        else if (x->state == Attributes) {
+            if (isspace(c)) {
+                continue;
+            }
+            else if (c == '/') {
+                x->closing = 1;
+                continue;
+            }
+            else if (c == '?') {
+                x->closing = 1;
+                continue;
+            }
+            else if (c == '>') {
+                if (x->closing) {
+                    close_tag(x);
+                }
+                else {
+                    open_tag(x);
+                }
+                continue;
+            }
+            else if (c == '=') {
+                scalar(x);
+                x->state = AttributeStart;
+                continue;
+            }
+        }
+        else if (x->state == AttributeStart) {
+            if (c == '"') {
+                x->state = AttributeValue;
+            }
+            continue;
+        }
+        else if (x->state == AttributeValue) {
+            if (c == '"') {
+                x->state = Attributes;
+                scalar(x);
+                continue;
+            }
+        }
+        add_char(x, c);
+    }
+    land_yaml_done(x->yaml);
+    land_file_destroy(f);
+    land_buffer_destroy(x->value);
+    return x->yaml;
+}
+static void add_char(XmlParser * x, char c) {
+    land_buffer_add_char(x->value, c);
+}
+static void create_tag(XmlParser * x) {
+    land_yaml_add_mapping(x->yaml);
+    land_yaml_add_scalar(x->yaml, land_strdup("<"));
+    scalar(x);
+}
+static void open_tag(XmlParser * x) {
+    x->state = Outside;
+    land_yaml_add_scalar(x->yaml, land_strdup(">"));
+    land_yaml_add_sequence(x->yaml);
+}
+static void close_tag(XmlParser * x) {
+    land_yaml_done(x->yaml);
+    x->state = Outside;
+    x->closing = 0;
+}
+static void xml_write(YamlParser * p, char const * s, bool can_break_before) {
+    int n = strlen(s);
+    if (can_break_before && p->line_length + n > 80) {
+        land_file_write(p->file, "\n", 1);
+        p->line_length = 0;
+    }
+    land_file_write(p->file, s, n);
+    int i = land_find(s, "\n");
+    if (i >= 0) {
+        p->line_length = n - 1 - i;
+    }
+    else {
+        p->line_length += n;
+    }
+}
+static bool xml_save_mapping(LandYamlEntry * e, YamlParser * p) {
+    str name = land_yaml_get_entry_scalar(e, "<");
+    if (! name) {
+        return 0;
+    }
+    xml_write(p, "<", 0);
+    xml_write(p, name, 0);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(e->sequence);
+        for (char const * key = LandArrayIterator_item(e->sequence, &__iter0__); LandArrayIterator_next(e->sequence, &__iter0__); key = LandArrayIterator_item(e->sequence, &__iter0__)) {
+            if (land_equals(key, "<") || land_equals(key, ">")) {
+                continue;
+            }
+            xml_write(p, " ", 0);
+            xml_write(p, key, 1);
+            xml_write(p, "=\"", 0);
+            str value = land_yaml_get_entry_scalar(e, key);
+            xml_write(p, value, 0);
+            xml_write(p, "\"", 0);
+        }
+    }
+    LandYamlEntry * contents = land_yaml_get_entry(e, ">");
+    if (contents) {
+        xml_write(p, ">", 1);
+        xml_save_sequence(contents, p);
+        xml_write(p, "</", 0);
+        xml_write(p, name, 0);
+        xml_write(p, ">", 1);
+    }
+    else {
+        xml_write(p, " />", 1);
+    }
+    return 1;
+}
+static bool xml_save_sequence(LandYamlEntry * e, YamlParser * p) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(e->sequence);
+        for (LandYamlEntry * e2 = LandArrayIterator_item(e->sequence, &__iter0__); LandArrayIterator_next(e->sequence, &__iter0__); e2 = LandArrayIterator_item(e->sequence, &__iter0__)) {
+            xml_save_entry(e2, p);
+        }
+    }
+    return 1;
+}
+static bool xml_save_scalar(LandYamlEntry * e, YamlParser * p) {
+    xml_write(p, e->scalar, 0);
+    return 1;
+}
+static bool xml_save_entry(LandYamlEntry * e, YamlParser * p) {
+    if (e->type == YamlMapping) {
+        return xml_save_mapping(e, p);
+    }
+    else if (e->type == YamlSequence) {
+        return xml_save_sequence(e, p);
+    }
+    else if (e->type == YamlScalar) {
+        return xml_save_scalar(e, p);
+    }
+    return false;
+}
+void land_yaml_save_xml(LandYaml * yaml) {
+    LandFile * f = land_file_new(yaml->filename, "wb");
+    if (! f) {
+        goto error;
+    }
+    YamlParser p;
+    memset(& p, 0, sizeof p);
+    p.file = f;
+    if (! xml_save_entry(yaml->root, & p)) {
+        goto error;
+    }
+    error:;
+    if (f) {
+        land_file_destroy(f);
+    }
+}
+static void _xml(LandYaml * yaml) {
+    if (! yaml->root || ! yaml->parent) {
+        land_yaml_add_sequence(yaml);
+    }
+    else if (yaml->parent->type == YamlMapping) {
+        land_yaml_add_scalar(yaml, ">");
+        land_yaml_add_sequence(yaml);
+    }
+}
+void land_yaml_xml_tag(LandYaml * yaml, str name) {
+    _xml(yaml);
+    land_yaml_add_mapping(yaml);
+    land_yaml_add_scalar(yaml, "<");
+    land_yaml_add_scalar(yaml, name);
+}
+void land_yaml_xml_tag_with_content(LandYaml * yaml, str name, str content) {
+    land_yaml_xml_tag(yaml, name);
+    land_yaml_xml_content(yaml, content);
+    land_yaml_xml_end(yaml);
+}
+void land_yaml_xml_content(LandYaml * yaml, str content) {
+    _xml(yaml);
+    land_yaml_add_scalar(yaml, content);
+}
+void land_yaml_xml_attribute(LandYaml * yaml, str key, str value) {
+    land_yaml_add_scalar(yaml, key);
+    land_yaml_add_scalar(yaml, value);
+}
+void land_yaml_xml_end(LandYaml * yaml) {
+    land_yaml_done(yaml);
+    if (yaml->parent && yaml->parent->type == YamlMapping) {
+        land_yaml_done(yaml);
     }
 }
 #ifndef LAND_NO_NET
 #ifdef WINDOWS
-#include < winsock2.h>
-#include < ws2tcpip>
 #define SHUT_RDWR SD_BOTH
-#else
 #endif
 #define D(_) _
 #ifdef WINDOWS
@@ -6550,2352 +10603,348 @@ void land_net_poll(LandNet * self) {
 #undef D
 #undef closesocket
 #undef sockerror
-LandQueue* land_queue_new(int(* cmp_cb)(void * data1, void * data2)) {
-    /* Create a new queue, with the given comparison function for its elements.
+    /* _____
+     * Theme
+     * a theme determines the styling and border size of each widget.
+     * ______
+     * Layout
+     * Different widgets have different default layout. Some have a fixed size
+     * or a fixed minimum size and some grow to take as much or little space as
+     * is available.
+     * In general by default most of them will set the minimum size to the
+     * size given in the constructor or to the minimum size required for the
+     * contents given in the constructor (like a picture or text) but grow to
+     * use additional space if available.
+     * Containers also have different layout for their children.
+     * A Board will place children at their x/y coordinate and keep their
+     * initial size.
+     * A VBox and HBox instead will distribute the available space to their
+     * children (while growing itself to use all available space).
+     * A Scrolling widget will not change its size but provide scrollbars to
+     * scroll the child.
      */
-    LandQueue * self;
-    land_alloc(self);
-    self->array.data = NULL;
-    self->cmp_cb = cmp_cb;
-    return self;
-}
-void land_queue_del(LandQueue * q) {
-    /* Delete the queue. This will not touch the elements that might have been
-     * added since its creation.
-     */
-    land_free(q->array.data);
-    land_free(q);
-}
-void land_queue_destroy(LandQueue * q) {
-    land_queue_del(q);
-}
-void land_queue_add(LandQueue * q, void * data) {
-    /* Add an element to the queue.
-     */
-    int i = q->array.count;
-    land_array_add(& q->array, data);
-    while (i > 0) {
-        int parent = (i - 1) / 2;
-        if (q->cmp_cb(q->array.data [parent], q->array.data [i]) <= 0) {
-            break;
-        }
-        void * temp = q->array.data [parent];
-        q->array.data [parent] = q->array.data [i];
-        q->array.data [i] = temp;
-        i = parent;
-    }
-}
-void* land_queue_pop(LandQueue * q) {
-    /* Return and remove the smallest element in the queue.
-     */
-    if (q->array.count == 0) {
-        return NULL;
-    }
-    void * data = q->array.data [0];
-    q->array.data [0] = q->array.data [q->array.count - 1];
-    land_array_pop(& q->array);
-    int i = 0;
-    while (1) {
-        int child1 = i * 2 + 1;
-        int child2 = i * 2 + 2;
-        if ((child1 >= q->array.count || q->cmp_cb(q->array.data [child1], q->array.data [i]) >= 0) && (child2 >= q->array.count || q->cmp_cb(q->array.data [child2], q->array.data [i]) >= 0)) {
-            break;
-        }
-        if (child2 >= q->array.count || (child1 < q->array.count && q->cmp_cb(q->array.data [child1], q->array.data [child2]) < 0)) {
-            void * temp = q->array.data [i];
-            q->array.data [i] = q->array.data [child1];
-            q->array.data [child1] = temp;
-            i = child1;
-        }
-        else {
-            void * temp = q->array.data [i];
-            q->array.data [i] = q->array.data [child2];
-            q->array.data [child2] = temp;
-            i = child2;
-        }
-    }
-    return data;
-}
-LandArray* land_queue_sort(LandQueue * q) {
-    /* Return an array referencing the same data as the queue. The array will be
-     * sorted from smallest to largest element. The queue will be destroyed in
-     * the process. So you should set the parameter you passed to this function to
-     * None after it returns.
-     */
-    LandArray * a = land_array_new();
-    while (1) {
-        void * data = land_queue_pop(q);
-        if (! data) {
-            break;
-        }
-        land_array_add(a, data);
-    }
-    land_queue_del(q);
-    return a;
-}
-int land_queue_for_each(LandQueue * self, int(* cb)(void * item, void * data), void * data) {
-    /* Like land_array_for_each. The callback will not be called in any particular
-     * order, especially it will *not* be sorted. (The first call will be the
-     * smallest element, but the subsequent order is random.)
-     */
-    return land_array_for_each(& self->array, cb, data);
-}
-int land_queue_count(LandQueue * self) {
-    return self->array.count;
-}
-void land_queue_clear(LandQueue * self) {
-    land_array_clear(& self->array);
-}
-static int active;
-LandSound* land_sound_load(char const * filename) {
-    LandSound * sound = platform_sound_load(filename);
-    return sound;
-}
-LandSound* land_sound_new(int samples, float frequency, int bits, int channels) {
-    LandSound * sound = platform_sound_new(samples, frequency, bits, channels);
-    return sound;
-}
-void* land_sound_sample_pointer(LandSound * self) {
-    return platform_sound_sample_pointer(self);
-}
-int land_sound_length(LandSound * self) {
-    return platform_sound_length(self);
-}
-double land_sound_seconds(LandSound * self) {
-    return platform_sound_seconds(self);
-}
-void land_sound_play(LandSound * s, float volume, float pan, float frequency) {
-    if (! s) {
-        return ;
-    }
-    platform_sound_play(s, volume, pan, frequency, false);
-}
-void land_sound_loop(LandSound * s, float volume, float pan, float frequency) {
-    if (! s) {
-        return ;
-    }
-    platform_sound_play(s, volume, pan, frequency, true);
-}
-void land_sound_stop(LandSound * s) {
-    if (! s) {
-        return ;
-    }
-    platform_sound_stop(s);
-}
-void land_sound_destroy(LandSound * s) {
-    if (! s) {
-        return ;
-    }
-    platform_sound_destroy(s);
-}
-void land_sound_init(void) {
-    platform_sound_init();
-    active = 1;
-}
-void land_sound_exit(void) {
-    platform_sound_exit();
-    active = 0;
-}
-LandStream* land_stream_new(int samples, int fragments, float frequency, int bits, int channels) {
-    return platform_stream_new(samples, fragments, frequency, bits, channels);
-}
-void land_stream_destroy(LandStream * self) {
-    platform_stream_destroy(self);
-}
-void* land_stream_buffer(LandStream * self) {
-    return platform_stream_buffer(self);
-}
-void land_stream_fill(LandStream * self) {
-    platform_stream_fill(self);
-}
-void land_stream_music(LandStream * self, char const * filename) {
-    self->filename = land_strdup(filename);
-    platform_stream_music(self, filename);
-}
-void land_stream_volume(LandStream * self, float volume) {
-    platform_stream_volume(self, volume);
-}
-bool land_stream_is_playing(LandStream * self) {
-    return platform_stream_is_playing(self);
-}
-void land_stream_set_playing(LandStream * self, bool onoff) {
-    platform_stream_set_playing(self, onoff);
-}
-LandAnimation* land_animation_new(LandArray * frames) {
-    /* Ownership of the frames array is transferred to the animation - destroying
-     * the animation later will destroy the array.
-     */
-    LandAnimation * self;
-    land_alloc(self);
-    self->fps = 10;
-    self->frames = frames;
-    return self;
-}
-void land_animation_destroy(LandAnimation * self) {
-    int i;
-    if (self->frames) {
-        for (i = 0; i < self->frames->count; i++) {
-            land_image_destroy(land_array_get_nth(self->frames, i));
-        }
-        land_array_destroy(self->frames);
-    }
-    land_free(self);
-}
-LandImage* land_animation_get_frame(LandAnimation * self, int i) {
-    return land_array_get_nth(self->frames, i);
-}
-int land_animation_length(LandAnimation * self) {
-    if (self->frames) {
-        return land_array_count(self->frames);
-    }
+#ifdef ANDROID
+#include "allegro5/allegro_android.h"
+#endif
+#ifdef __EMSCRIPTEN__
+#include < emscripten.h>
+#endif
+static bool redraw;
+static LandDisplayPlatform * d;
+static ALLEGRO_EVENT_QUEUE * queue;
+static ALLEGRO_TIMER * timer;
+static void(* global_cb)(void);
+static int replacement_main(int argc, char * (* argv)) {
+    global_cb();
     return 0;
 }
-void land_animation_add_frame(LandAnimation * self, LandImage * frame) {
-    if (! self->frames) {
-        self->frames = land_array_new();
-    }
-    land_array_add(self->frames, frame);
+void platform_without_main(void(* cb)(void)) {
+    global_cb = cb;
+    al_run_main(0, NULL, replacement_main);
 }
-LandAnimation* land_animation_load_cb(char const * pattern, void(* cb)(LandImage * image, void * data), void * data) {
-    /* Create a new animation from all files matching the pattern, sorted
-     * alphabetically. The callback function, if present, is called on each
-     * frame.
-     */
-    LandArray * pics = land_load_images_cb(pattern, cb, data);
-    if (! pics) {
-        land_log_message("Could not locate: %s\n", pattern);
-        return NULL;
-    }
-    return land_animation_new(pics);
+double platform_get_time(void) {
+    return al_current_time();
 }
-void land_animation_draw_frame(LandAnimation * self, int i, float x, float y) {
-    LandImage * frame = land_animation_get_frame(self, i);
-    land_image_draw(frame, x, y);
+void platform_halt(void) {
+    platform_sound_halt();
 }
-void land_animation_draw_frame_rotated(LandAnimation * self, int i, float x, float y, float angle) {
-    LandImage * frame = land_animation_get_frame(self, i);
-    land_image_draw_rotated(frame, x, y, angle);
+void platform_resume(void) {
+    platform_sound_resume();
 }
-void land_animation_draw_frame_scaled_rotated(LandAnimation * self, int i, float x, float y, float xs, float ys, float angle) {
-    LandImage * frame = land_animation_get_frame(self, i);
-    land_image_draw_scaled_rotated(frame, x, y, xs, ys, angle);
+void platform_init(void) {
+    land_log_message("Compiled against Allegro %s.\n", ALLEGRO_VERSION_STR);
+    if (! al_init()) {
+        land_log_message("Allegro initialization failed.\n");
+        land_exception("Error in allegro_init.");
+    }
+    queue = al_create_event_queue();
+    al_init_image_addon();
+    al_install_keyboard();
+    al_install_mouse();
+    al_init_primitives_addon();
+    if (al_install_joystick()) {
+        al_register_event_source(queue, al_get_joystick_event_source());
+    }
+    a5_joystick_create_mapping();
+    #ifdef  ANDROID
+    al_android_set_apk_file_interface();
+    #endif
 }
-#ifdef ANDROID
-#include "android/log.h"
-#endif
-static char * logname = NULL;
-void land_log_overwrite(char const * name) {
-    FILE * f;
-    if (logname) {
-        land_free(logname);
+#define _UnkKey(x) LandKeyUnknown3 + x + 0, LandKeyUnknown3 + x + 1, LandKeyUnknown3 + x + 2, LandKeyUnknown3 + x + 3, LandKeyUnknown3 + x + 4, LandKeyUnknown3 + x + 5, LandKeyUnknown3 + x + 6, LandKeyUnknown3 + x + 7, LandKeyUnknown3 + x + 8, LandKeyUnknown3 + x + 9
+static int keyboard_conversion_table [ALLEGRO_KEY_MAX] = {LandKeyNone, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', LandKeyPad + 0, LandKeyPad + 1, LandKeyPad + 2, LandKeyPad + 3, LandKeyPad + 4, LandKeyPad + 5, LandKeyPad + 6, LandKeyPad + 7, LandKeyPad + 8, LandKeyPad + 9, LandKeyFunction + 1, LandKeyFunction + 2, LandKeyFunction + 3, LandKeyFunction + 4, LandKeyFunction + 5, LandKeyFunction + 6, LandKeyFunction + 7, LandKeyFunction + 8, LandKeyFunction + 9, LandKeyFunction + 10, LandKeyFunction + 11, LandKeyFunction + 12, LandKeyEscape, '~', '-', '=', LandKeyBackspace, LandKeyTab, '[', ']', LandKeyEnter, ';', '\'', '\\', LandKeyUnknown + 0, ',', '.', '/', ' ', LandKeyInsert, LandKeyDelete, LandKeyHome, LandKeyEnd, LandKeyPageUp, LandKeyPageDown, LandKeyLeft, LandKeyRight, LandKeyUp, LandKeyDown, LandKeyPadSlash, LandKeyPadStar, LandKeyPadMinus, LandKeyPadPlus, LandKeyPadDelete, LandKeyPadEnter, LandKeyPrint, LandKeyPause, LandKeyUnknown + 1, LandKeyUnknown + 2, LandKeyUnknown + 3, LandKeyUnknown + 4, LandKeyUnknown + 5, '@', '^', ':', LandKeyUnknown + 6, LandKeyUnknown + 7, LandKeyUnknown + 8, LandKeyUnknown + 9, LandKeyUnknown + 10, LandKeyBack, LandKeyUnknown + 12, LandKeyUnknown2 + 0, LandKeyUnknown2 + 1, LandKeyUnknown2 + 2, LandKeyUnknown2 + 3, LandKeyUnknown2 + 4, LandKeyUnknown2 + 5, LandKeyUnknown3 + 0, LandKeyUnknown3 + 1, LandKeyUnknown3 + 2, LandKeyUnknown3 + 3, LandKeyUnknown3 + 4, LandKeyUnknown3 + 5, _UnkKey(6), _UnkKey(16), _UnkKey(26), _UnkKey(36), _UnkKey(46), _UnkKey(56), _UnkKey(66), _UnkKey(76), _UnkKey(86), LandKeyUnknown3 + 96, LandKeyUnknown3 + 97, LandKeyUnknown3 + 98, LandKeyUnknown3 + 99, LandKeyLeftShift, LandKeyRightShift, LandKeyLeftControl, LandKeyRightControl, LandKeyLeftAlt, LandKeyRightAlt, LandKeyLeftWin, LandKeyRightWin, LandKeyMenu, LandKeyScrollLock, LandKeyNumLock, LandKeyCapsLock};
+char const* platform_key_name(int lk) {
+    int ak = 0;
+    for (int i = 0; i < ALLEGRO_KEY_MAX; i++) {
+        if (keyboard_conversion_table [i] == lk) {
+            ak = i;
+            break;
+        }
     }
-    logname = land_strdup(name);
-    f = fopen(logname, "w");
-    if (f) {
-        fclose(f);
+    char const * s = al_keycode_to_name(ak);
+    return s;
+}
+static int platform_keycode(int ak) {
+    return keyboard_conversion_table [ak];
+}
+void platform_hide_mouse_cursor(void) {
+    LandDisplayPlatform * d = (void *) _land_active_display;
+    al_hide_mouse_cursor(d->a5);
+}
+void platform_show_mouse_cursor(void) {
+    LandDisplayPlatform * d = (void *) _land_active_display;
+    al_show_mouse_cursor(d->a5);
+}
+void platform_mouse_set_pos(float x, float y) {
+    LandDisplayPlatform * d = (void *) _land_active_display;
+    al_set_mouse_xy(d->a5, x, y);
+}
+void platform_pause(void) {
+    if (timer) {
+        al_stop_timer(timer);
     }
 }
-void land_log_set(char const * name) {
-    if (logname) {
-        land_free(logname);
+void platform_unpause(void) {
+    if (timer) {
+        al_resume_timer(timer);
     }
-    logname = land_strdup(name);
 }
-void land_log_del(void) {
-    if (logname) {
-        land_free(logname);
+void platform_mainloop(LandParameters * parameters) {
+    d = (void *) _land_active_display;
+    timer = al_create_timer(1.0 / parameters->fps);
+    al_register_event_source(queue, al_get_keyboard_event_source());
+    al_register_event_source(queue, al_get_mouse_event_source());
+    if (al_install_touch_input()) {
+        al_register_event_source(queue, al_get_touch_input_event_source());
     }
-    logname = NULL;
-}
-void land_log_new(char const * base, int unique) {
-    static int once = 0;
-    if (logname) {
-        land_free(logname);
-    }
-    logname = land_malloc(strlen(base) + 10);
-    if (! once) {
-        atexit(land_log_del);
-        once++;
-    }
-    #ifdef ANDROID
-    sprintf(logname, "%s.log", base);
-    __android_log_print(ANDROID_LOG_INFO, "land", "%s", "******* new log *******\n");
+    al_register_event_source(queue, al_get_display_event_source(d->a5));
+    al_register_event_source(queue, al_get_timer_event_source(timer));
+    al_start_timer(timer);
+    ALLEGRO_MOUSE_STATE s;
+    al_get_mouse_state(& s);
+    land_mouse_move_event(s.x, s.y, s.z);
+    redraw = 0;
+    #ifdef __EMSCRIPTEN__
+    _land_synchronized = 1;
+    emscripten_set_main_loop(platform_frame, 0, true);
     #else
-    FILE * f;
-    int i = 0;
-    if (unique) {
+    while (! _land_quit) {
+        platform_frame();
+    }
+    #endif
+}
+void platform_frame(void) {
+    if (! _land_quit) {
+        if (redraw && (_land_synchronized || al_event_queue_is_empty(queue))) {
+            if (! _land_halted) {
+                land_draw();
+            }
+            redraw = 0;
+        }
         while (1) {
-            sprintf(logname, "%s%04d.log", base, i);
-            f = fopen(logname, "r");
-            if (f) {
-                fclose(f);
-            }
-            i++;
-            if (! f) {
+            ALLEGRO_EVENT event;
+            #ifdef __EMSCRIPTEN__
+            if (! al_get_next_event(queue, & event)) {
                 break;
             }
-        }
-    }
-    else {
-        sprintf(logname, "%s.log", base);
-    }
-    f = fopen(logname, "w");
-    if (f) {
-        fprintf(f, "******* new log *******\n");
-        fclose(f);
-    }
-    #endif
-}
-void land_log_message_nostamp(char const * format, ...) {
-    if (! logname) {
-        land_log_new("land", 0);
-    }
-    va_list va_args;
-    va_start(va_args, format);
-    #ifdef ANDROID
-    char s [16382];
-    vsprintf(s, format, va_args);
-    __android_log_print(ANDROID_LOG_INFO, "land", "%s", s);
-    #else
-    FILE * logfile = fopen(logname, "a");
-    vfprintf(logfile, format, va_args);
-    fclose(logfile);
-    #endif
-    va_end(va_args);
-}
-void land_log_message(char const * format, ...) {
-    if (! logname) {
-        land_log_new("land", 0);
-    }
-    va_list va_args;
-    va_start(va_args, format);
-    #ifdef ANDROID
-    char s [16382];
-    vsprintf(s, format, va_args);
-    __android_log_print(ANDROID_LOG_INFO, "land", "%s", s);
-    #else
-    struct timeval tv;
-    #ifdef WINDOWS
-    tv.tv_usec = 0;
-    #else
-    gettimeofday(& tv, NULL);
-    #endif
-    time_t t;
-    struct tm tm;
-    time(& t);
-    tm = * gmtime(& t);
-    FILE * logfile = fopen(logname, "a");
-    fprintf(logfile, "%04d/%02d/%02d %02d:%02d:%02d.%06ld ", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, tv.tv_usec);
-    vfprintf(logfile, format, va_args);
-    fclose(logfile);
-    #endif
-    va_end(va_args);
-}
-LandDataFile * _land_datafile;
-static int read32(FILE * f) {
-    unsigned int u = fgetc(f);
-    u += fgetc(f) << 8;
-    u += fgetc(f) << 16;
-    u += fgetc(f) << 24;
-    return u;
-}
-LandDataFile* land_read_datafile(FILE * file) {
-    LandDataFile * self;
-    land_alloc(self);
-    self->file = file;
-    int count = read32(self->file);
-    int i;
-    char name [1024];
-    land_log_message("Data listing:\n");
-    for (i = 0; i < count; i++) {
-        int s = 0;
-        while (s < 1024) {
-            int c = fgetc(self->file);
-            name [s++] = c;
-            if (c == '\0') {
-                break;
-            }
-        }
-        LandDataEntry * entry;
-        land_alloc(entry);
-        entry->name = land_strdup(name);
-        entry->offset = read32(self->file);
-        entry->size = read32(self->file);
-        land_array_add_data(& self->entries, entry);
-        land_log_message(" %8d %8d %s\n", entry->offset, entry->size, entry->name);
-    }
-    return self;
-}
-LandDataFile* land_open_datafile(char const * filename) {
-    FILE * file = fopen(filename, "rb");
-    if (! file) {
-        return NULL;
-    }
-    return land_read_datafile(file);
-}
-LandDataFile* land_open_appended_datafile(char const * filename, char const * marker) {
-    FILE * file = fopen(filename, "rb");
-    if (! file) {
-        return NULL;
-    }
-    fseek(file, - 4, SEEK_END);
-    int size = read32(file);
-    land_log_message("Embedded data size: %d\n", size);
-    fseek(file, - size - strlen(marker), SEEK_END);
-    int i;
-    for (i = 0; i < (int) strlen(marker); i++) {
-        if (fgetc(file) != marker [i]) {
-            fclose(file);
-            return NULL;
-        }
-    }
-    int offset = ftell(file);
-    LandDataFile * data = land_read_datafile(file);
-    for (i = 0; i < data->entries->count; i++) {
-        LandDataEntry * entry = land_array_get_nth(data->entries, i);
-        entry->offset += offset;
-    }
-    return data;
-}
-void* land_datafile_read_entry(LandDataFile * self, char const * filename, int * size) {
-    int i;
-    for (i = 0; i < self->entries->count; i++) {
-        LandDataEntry * entry = land_array_get_nth(self->entries, i);
-        if (! strcmp(entry->name, filename)) {
-            fseek(self->file, entry->offset, 0);
-            unsigned char * buffer = land_calloc(entry->size);
-            int r = fread(buffer, entry->size, 1, self->file);
-            entry->size = r;
-            if (size) {
-                * size = entry->size;
-            }
-            return buffer;
-        }
-    }
-    return NULL;
-}
-static int star_match(char const * pattern, char const * name) {
-    int i = 0;
-    int j = 0;
-    while (1) {
-        char c = pattern [i];
-        char d = name [j];
-        if (c == '*') {
-            int k;
-            if (pattern [i + 1] == '\0') {
-                return 1;
-            }
-            for (k = j; k < (int) strlen(name); k++) {
-                int r = star_match(pattern + i + 1, name + k);
-                if (r) {
-                    return r;
+            #else
+            al_wait_for_event(queue, & event);
+            #endif
+            switch (event.type) {
+                case ALLEGRO_EVENT_DISPLAY_CLOSE: {
+                    land_closebutton_event();
+                    break;
                 }
-            }
-            return 0;
-        }
-        else if (c == '?') {
-            ;
-        }
-        else if (c != d) {
-            return 0;
-        }
-        if (c == '\0') {
-            return 1;
-        }
-        i++;
-        j++;
-    }
-}
-int land_datafile_for_each_entry(LandDataFile * self, char const * pattern, int(* callback)(const char * filename, int attrib, void * param), void * param) {
-    int i;
-    int n = 0;
-    for (i = 0; i < self->entries->count; i++) {
-        LandDataEntry * entry = land_array_get_nth(self->entries, i);
-        if (star_match(pattern, entry->name)) {
-            if (callback(entry->name, 0, param)) {
-                break;
-            }
-            n++;
-        }
-    }
-    return n;
-}
-void land_set_datafile(LandDataFile * datafile) {
-    _land_datafile = datafile;
-}
-LandDataFile* land_get_datafile(void) {
-    return _land_datafile;
-}
-float land_norm2d(float x, float y) {
-    return sqrt(x * x + y * y);
-}
-float land_dot2d(float ax, float ay, float bx, float by) {
-    /* Given two vectors ax/ay and bx/by, returns the dot product.
-     * If the result is 0, the two vectors are orthogonal. If the result is
-     * > 0, they point into the same general direction. If the result is < 0,
-     * they point into opposite directions.
-     * This can be geometrically interpreted as "how far one vector goes along the
-     * direction of the other vector".
-     * For example, if we have two vectors a = (4, -3) and b = (4, 0). Then:
-     * |a| = 5
-     * |b| = 4
-     * a.b = 16
-     * cos = a.b / |a| / |b| = 0.8 (36.87°)
-     * length of a projected onto b: a.b / |b| = 4
-     * length of b projected onto a: a.b / |a| = 3.2
-     */
-    return ax * bx + ay * by;
-}
-float land_cross2d(float ax, float ay, float bx, float by) {
-    /* Given two vectors ax/ay and bx/by, returns the cross product.
-     * If the result is 0, the two vectors are parallel. If the result
-     * is > 0, b points more to the left than a (if y goes up). If the
-     * result is < 0, b points more to the right than a (if y goes up).
-     * Geometrically, this is "how far away does one vector go from the other".
-     * For example, if we have two vectors a = (4, -3) and b = (4, 0). Then:
-     * |a| = 5
-     * |b| = 4
-     * axb = 4 * 0 - -3 * 4 = 12
-     * sin = axb / |a| / |b| = 0.6 (36.87°)
-     * distance of a from b: axb / |b| = 3
-     * distance of b from a: axb / |a| = 2.4
-     */
-    return ax * by - ay * bx;
-}
-void land_ortho2d(float ax, float ay, float * bx, float * by) {
-    /* Returns a vector orthogonal to ax/ay. More specifically, returns a
-     * vector rotated 90 degree to the right (with y axis going down).
-     */
-    * bx = - ay;
-    * by = ax;
-}
-bool land_line_line_collision2d(float l1x1, float l1y1, float l1x2, float l1y2, float l2x1, float l2y1, float l2x2, float l2y2) {
-    /* Checks if two line segments collide.
-     */
-    float ax = l1x2 - l1x1;
-    float ay = l1y2 - l1y1;
-    float bx = l2x2 - l2x1;
-    float by = l2y2 - l2y1;
-    float cx = l2x1 - l1x1;
-    float cy = l2y1 - l1y1;
-    float ab = land_cross2d(ax, ay, bx, by);
-    float ca = land_cross2d(cx, cy, ax, ay);
-    float cb = land_cross2d(cx, cy, bx, by);
-    if (ab == 0) {
-        return 0;
-    }
-    if (ab < 0) {
-        if (ca > 0 || cb > 0) {
-            return 0;
-        }
-        if (ca < ab || cb < ab) {
-            return 0;
-        }
-    }
-    else {
-        if (ca < 0 || cb < 0) {
-            return 0;
-        }
-        if (ca > ab || cb > ab) {
-            return 0;
-        }
-    }
-    return 1;
-}
-enum LandWidgetThemeFlags {
-    TILE_H=0,
-    TILE_V=0,
-    STRETCH_H=1,
-    STRETCH_V=2,
-    CENTER_H=4,
-    CENTER_V=8,
-    ALIGN_H=16,
-    ALIGN_V=32
-};
-static LandWidgetTheme * default_theme;
-LandWidgetTheme* land_widget_theme_default(void) {
-    return default_theme;
-}
-void land_widget_theme_set_default(LandWidgetTheme * self) {
-    default_theme = self;
-}
-static inline int centered_offset(int size1, int size2) {
-    int center1, center2, o;
-    if (! size1 || ! size2) {
-        return 0;
-    }
-    center1 = size1 / 2;
-    center2 = size2 / 2;
-    o = (center1 - center2) % size2;
-    if (o > 0) {
-        o -= size2;
-    }
-    return o;
-}
-static inline void _masked_non_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int _, int __) {
-    land_image_clip(s, sx, sy, sx + w, sy + h);
-    land_image_draw(s, dx - sx, dy - sy);
-}
-static inline void _masked_stretched_blit(LandImage * s, int sx, int sy, int w, int h, int dx, int dy, int dw, int dh) {
-    land_image_clip(s, sx, sy, sx + w, sy + h);
-    land_image_draw_scaled(s, dx - sx, dy - sy, (float) dw / w, (float) dh / h);
-}
-enum COLUMN_TYPE {
-    COLUMN_CENTER=1,
-    COLUMN_STRETCH,
-    COLUMN_LEFT,
-    COLUMN_MIDDLE,
-    COLUMN_RIGHT
-};
-static inline void blit_column(LandWidgetThemeElement * pat, int bx, int bw, int x, int y, int w, int h, int skip_middle) {
-    int oy;
-    int j;
-    int bh = land_image_height(pat->bmp);
-    int bm = bh - pat->bt - pat->bb;
-    void(* bfunc)(LandImage *, int, int, int, int, int, int, int, int);
-    bfunc = _masked_non_stretched_blit;
-    if (bm < 1) {
-        return ;
-    }
-    if (pat->flags & ALIGN_V) {
-        oy = (y / bm) * bm - y;
-    }
-    else {
-        oy = centered_offset(h, bm);
-    }
-    if (w != bw) {
-        bfunc = _masked_stretched_blit;
-    }
-    if (pat->flags & CENTER_V) {
-        bfunc(pat->bmp, bx, 0, bw, land_image_height(pat->bmp), x, y + h / 2 - land_image_height(pat->bmp) / 2, w, land_image_height(pat->bmp));
-    }
-    else if (pat->flags & STRETCH_V) {
-        _masked_stretched_blit(pat->bmp, bx, 0, bw, land_image_height(pat->bmp), x, y, w, h);
-    }
-    else {
-        int bt = pat->bt;
-        int bb = pat->bb;
-        if (bt + bb > h) {
-            bt = h / 2;
-            bb = h - bt;
-        }
-        if (bt && y + bt >= _land_active_display->clip_y1) {
-            land_clip_push();
-            land_clip_intersect(0, y, land_display_width(), _scramble_min(y + h, y + bt));
-            bfunc(pat->bmp, bx, 0, bw, bt, x, y, w, bt);
-            land_clip_pop();
-        }
-        if (h - pat->bt - pat->bb > 0 && ! skip_middle) {
-            land_clip_push();
-            land_clip_intersect(0, _scramble_min(y + h, y + pat->bt), land_display_width(), _scramble_max(y, y + h - pat->bb));
-            int start = _scramble_max(0, (_land_active_display->clip_y1 - (y + oy)) / bm);
-            start = y + oy + start * bm;
-            int end = _scramble_min(_land_active_display->clip_y2, y + h);
-            for (j = start; j < end; j += bm) {
-                bfunc(pat->bmp, bx, pat->bt, bw, bm, x, j, w, bm);
-            }
-            land_clip_pop();
-        }
-        if (bb && y + h - bb < _land_active_display->clip_y2) {
-            land_clip_push();
-            land_clip_intersect(0, _scramble_max(y, y + h - bb), land_display_width(), y + h);
-            bfunc(pat->bmp, bx, land_image_height(pat->bmp) - bb, bw, bb, x, y + h - bb, w, bb);
-            land_clip_pop();
-        }
-    }
-}
-static void draw_bitmap(LandWidgetThemeElement * pat, int x, int y, int w, int h, int skip_middle) {
-    int i;
-    int bw = land_image_width(pat->bmp);
-    int bm = bw - pat->bl - pat->br;
-    if (w < 1 || h < 1 || bm < 1) {
-        return ;
-    }
-    land_clip_push();
-    land_clip_intersect(x, y, x + w, y + h);
-    if (pat->flags & CENTER_H) {
-        blit_column(pat, 0, bw, x + w / 2 - bw / 2, y, bw, h, 0);
-    }
-    else if (pat->flags & STRETCH_H) {
-        blit_column(pat, 0, bw, x, y, w, h, 0);
-    }
-    else {
-        int ox;
-        if (pat->flags & ALIGN_H) {
-            ox = (x / bm) * bm - x;
-        }
-        else {
-            ox = centered_offset(w, bm);
-        }
-        int bl = pat->bl;
-        int br = pat->br;
-        if (bl + br > w) {
-            bl = w / 2;
-            br = w - bl;
-        }
-        if (bl && x + bl >= _land_active_display->clip_x1) {
-            land_clip_push();
-            land_clip_intersect(x, 0, _scramble_min(x + w, x + bl), land_display_height());
-            blit_column(pat, 0, bl, x, y, bl, h, 0);
-            land_clip_pop();
-        }
-        if (w - pat->bl - pat->br > 0) {
-            land_clip_push();
-            land_clip_intersect(_scramble_min(x + w, x + pat->bl), 0, _scramble_max(x, x + w - pat->br), land_display_height());
-            int start = _scramble_max(0, (_land_active_display->clip_x1 - (x + ox)) / bm);
-            start = x + ox + start * bm;
-            int end = _scramble_min(_land_active_display->clip_x2, x + w - pat->br);
-            for (i = start; i < end; i += bm) {
-                blit_column(pat, pat->bl, bm, i, y, bm, h, skip_middle);
-            }
-            land_clip_pop();
-        }
-        if (br && x + w - br < _land_active_display->clip_x2) {
-            land_clip_push();
-            land_clip_intersect(_scramble_max(x, x + w - br), 0, x + w, land_display_height());
-            blit_column(pat, bw - br, br, x + w - br, y, br, h, 0);
-            land_clip_pop();
-        }
-    }
-    land_clip_pop();
-}
-static void read_int_arg(int argc, LandArray * argv, int * a, int * val) {
-    (* a)++;
-    if (* a < argc) {
-        LandBuffer * buf = land_array_get_nth(argv, * a);
-        char * arg = land_buffer_finish(buf);
-        * val = strtoul(arg, NULL, 0);
-        land_free(arg);
-    }
-}
-LandWidgetThemeElement* land_widget_theme_element_new(struct LandWidgetTheme * theme, char const * name, char const * argline) {
-    LandWidgetThemeElement * self;
-    land_alloc(self);
-    self->name = land_strdup(name);
-    self->a = 1;
-    self->minw = 4;
-    self->minh = 4;
-    self->font = land_font_current();
-    self->theme = theme;
-    LandBuffer * argbuf = land_buffer_new();
-    land_buffer_cat(argbuf, argline);
-    land_buffer_strip(argbuf, " ");
-    LandArray * argv = land_buffer_split(argbuf, ' ');
-    land_buffer_del(argbuf);
-    int argc = land_array_count(argv);
-    LandImage * img = NULL;
-    if (argc) {
-        char iname [2048];
-        LandBuffer * buf = land_array_get_nth(argv, 0);
-        char * arg = land_buffer_finish(buf);
-        snprintf(iname, sizeof iname, "%s%s%s", theme->prefix, arg, theme->suffix);
-        land_free(arg);
-        img = land_image_load(iname);
-        if (img) {
-            for (int a = 1; a < argc; a++) {
-                buf = land_array_get_nth(argv, a);
-                arg = land_buffer_finish(buf);
-                if (! strcmp(arg, "cut")) {
-                    int cx = 0, cy = 0, cw = 0, ch = 0;
-                    read_int_arg(argc, argv, & a, & cx);
-                    read_int_arg(argc, argv, & a, & cy);
-                    read_int_arg(argc, argv, & a, & cw);
-                    read_int_arg(argc, argv, & a, & ch);
-                    if (cw <= 0) {
-                        cw += land_image_width(img);
+                case ALLEGRO_EVENT_TIMER: {
+                    if (_land_was_halted && _land_halted) {
+                        al_stop_timer(timer);
                     }
-                    if (ch <= 0) {
-                        ch += land_image_height(img);
+                    else {
+                        land_tick();
+                        _land_frames++;
+                        redraw = 1;
                     }
-                    self->bmp = land_image_new_from(img, cx, cy, cw, ch);
+                    break;
                 }
-                else if (! strcmp(arg, "halign")) {
-                    self->flags |= ALIGN_H;
+                case ALLEGRO_EVENT_KEY_DOWN: {
+                    int lk = platform_keycode(event.keyboard.keycode);
+                    land_key_press_event(lk);
+                    break;
                 }
-                else if ((! strcmp(arg, "valign"))) {
-                    self->flags |= ALIGN_V;
+                case ALLEGRO_EVENT_KEY_CHAR: {
+                    int lk = platform_keycode(event.keyboard.keycode);
+                    land_keyboard_add_char(lk, event.keyboard.unichar);
+                    break;
                 }
-                else if ((! strcmp(arg, "min"))) {
-                    read_int_arg(argc, argv, & a, & self->minw);
-                    read_int_arg(argc, argv, & a, & self->minh);
+                case ALLEGRO_EVENT_KEY_UP: {
+                    int lk = platform_keycode(event.keyboard.keycode);
+                    land_key_release_event(lk);
+                    break;
                 }
-                else if ((! strcmp(arg, "border"))) {
-                    read_int_arg(argc, argv, & a, & self->bl);
-                    read_int_arg(argc, argv, & a, & self->bt);
-                    read_int_arg(argc, argv, & a, & self->br);
-                    read_int_arg(argc, argv, & a, & self->bb);
-                    self->il = self->bl;
-                    self->it = self->bt;
-                    self->ir = self->br;
-                    self->ib = self->bb;
+                case ALLEGRO_EVENT_MOUSE_AXES: {
+                    land_mouse_move_event(event.mouse.x, event.mouse.y, event.mouse.z);
+                    if (land_mouse_b() & 1) {
+                        land_touch_event(event.mouse.x, event.mouse.y, 10, 0);
+                    }
+                    break;
                 }
-                else if ((! strcmp(arg, "inner"))) {
-                    read_int_arg(argc, argv, & a, & self->il);
-                    read_int_arg(argc, argv, & a, & self->it);
-                    read_int_arg(argc, argv, & a, & self->ir);
-                    read_int_arg(argc, argv, & a, & self->ib);
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN: {
+                    land_mouse_button_down_event(event.mouse.button - 1);
+                    land_touch_event(land_mouse_x(), land_mouse_y(), 10, 1);
+                    break;
                 }
-                else if (! strcmp(arg, "gap")) {
-                    read_int_arg(argc, argv, & a, & self->hgap);
-                    read_int_arg(argc, argv, & a, & self->vgap);
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP: {
+                    land_mouse_button_up_event(event.mouse.button - 1);
+                    land_touch_event(land_mouse_x(), land_mouse_y(), 10, - 1);
+                    break;
                 }
-                else if (! strcmp(arg, "color")) {
-                    int c = 0;
-                    read_int_arg(argc, argv, & a, & c);
-                    self->a = (c & 255) / 255.0;
-                    c >>= 8;
-                    self->b = (c & 255) / 255.0;
-                    c >>= 8;
-                    self->g = (c & 255) / 255.0;
-                    c >>= 8;
-                    self->r = (c & 255) / 255.0;
-                    c >>= 8;
+                case ALLEGRO_EVENT_TOUCH_BEGIN: {
+                    land_touch_event(event.touch.x, event.touch.y, event.touch.id, 1);
+                    land_mouse_move_event(event.touch.x, event.touch.y, 0);
+                    land_mouse_button_down_event(0);
+                    break;
                 }
-                else if ((! strcmp(arg, "transparent"))) {
-                    self->transparent = 1;
+                case ALLEGRO_EVENT_TOUCH_END: {
+                    land_touch_event(event.touch.x, event.touch.y, event.touch.id, - 1);
+                    land_mouse_move_event(event.touch.x, event.touch.y, 0);
+                    land_mouse_button_up_event(0);
+                    break;
                 }
-                land_free(arg);
+                case ALLEGRO_EVENT_TOUCH_MOVE: {
+                    land_touch_event(event.touch.x, event.touch.y, event.touch.id, 0);
+                    land_mouse_move_event(event.touch.x, event.touch.y, 0);
+                    break;
+                }
+                case ALLEGRO_EVENT_DISPLAY_RESIZE: {
+                    al_acknowledge_resize((ALLEGRO_DISPLAY *) event.any.source);
+                    land_resize_event(event.display.width, event.display.height);
+                    break;
+                }
+                case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT: {
+                    land_switch_out_event();
+                    break;
+                }
+                case ALLEGRO_EVENT_DISPLAY_HALT_DRAWING: {
+                    land_halt();
+                    al_acknowledge_drawing_halt(d->a5);
+                    break;
+                }
+                case ALLEGRO_EVENT_DISPLAY_SWITCH_IN: {
+                    break;
+                }
+                case ALLEGRO_EVENT_DISPLAY_RESUME_DRAWING: {
+                    land_resume();
+                    al_acknowledge_drawing_resume(d->a5);
+                    al_start_timer(timer);
+                    break;
+                }
+                case ALLEGRO_EVENT_JOYSTICK_CONFIGURATION: {
+                    al_reconfigure_joysticks();
+                    a5_joystick_create_mapping();
+                    break;
+                }
+                case ALLEGRO_EVENT_JOYSTICK_AXIS: {
+                    int a = a5_joystick_axis_to_land(event.joystick.id, event.joystick.stick, event.joystick.axis);
+                    land_joystick_axis_event(a, event.joystick.pos);
+                    break;
+                }
+                case ALLEGRO_EVENT_JOYSTICK_BUTTON_DOWN: {
+                    int b = a5_joystick_button_to_land(event.joystick.id, event.joystick.button);
+                    land_joystick_button_down_event(b);
+                    break;
+                }
+                case ALLEGRO_EVENT_JOYSTICK_BUTTON_UP: {
+                    int b = a5_joystick_button_to_land(event.joystick.id, event.joystick.button);
+                    land_joystick_button_up_event(b);
+                    break;
+                }
             }
-            if (! self->bmp) {
-                self->bmp = land_image_new_from(img, 0, 0, land_image_width(img), land_image_height(img));
-            }
-            land_log_message("element %s: %d x %d, %d/%d/%d/%d %.1f/%.1f/%.1f/%.1f\n", name, land_image_width(self->bmp), land_image_height(self->bmp), self->bl, self->bt, self->br, self->bb, self->r, self->g, self->b, self->a);
-        }
-        else {
-            land_log_message("element: Error: %s not found!\n", name);
-        }
-    }
-    land_array_destroy(argv);
-    if (img) {
-        land_image_destroy(img);
-    }
-    return self;
-}
-LandWidgetTheme* land_widget_theme_new(char const * filename) {
-    LandWidgetTheme * self;
-    land_alloc(self);
-    LandIniFile * config = land_ini_read(filename);
-    LandBuffer * prefix = land_buffer_new();
-    land_buffer_cat(prefix, filename);
-    int slash = land_buffer_rfind(prefix, '/');
-    if (slash >= 0) {
-        land_buffer_set_length(prefix, slash + 1);
-    }
-    else {
-        land_buffer_set_length(prefix, 0);
-    }
-    land_buffer_cat(prefix, land_ini_get_string(config, "agup.cfg", "prefix", ""));
-    self->name = land_strdup(land_ini_get_string(config, "agup.cfg", "name", ""));
-    self->prefix = land_buffer_finish(prefix);
-    self->suffix = land_strdup(land_ini_get_string(config, "agup.cfg", "suffix", ""));
-    int n = land_ini_get_number_of_entries(config, "agup.cfg/elements");
-    for (int i = 0; i < n; i++) {
-        char const * v = land_ini_get_nth_entry(config, "agup.cfg/elements", i);
-        char const * k = land_ini_get_string(config, "agup.cfg/elements", v, "");
-        LandWidgetThemeElement * elem = land_widget_theme_element_new(self, v, k);
-        land_add_list_data(& self->elements, elem);
-    }
-    land_ini_destroy(config);
-    return self;
-}
-void land_widget_theme_destroy(LandWidgetTheme * self) {
-    LandListItem * item;
-    for (item = self->elements->first; item; item = item->next) {
-        LandWidgetThemeElement * elem = item->data;
-        land_free(elem->name);
-        land_image_destroy(elem->bmp);
-        land_free(elem);
-    }
-    land_list_destroy(self->elements);
-    land_free(self->name);
-    land_free(self->prefix);
-    land_free(self->suffix);
-    land_free(self);
-}
-static LandWidgetThemeElement* find_element(LandList * list, char const * name) {
-    if (! list) {
-        return NULL;
-    }
-    LandListItem * item = list->first;
-    while (item) {
-        LandWidgetThemeElement * elem = item->data;
-        if (! strcmp(elem->name, name)) {
-            return elem;
-        }
-        item = item->next;
-    }
-    return NULL;
-}
-LandWidgetThemeElement* land_widget_theme_find_element(LandWidgetTheme * theme, LandWidget * widget) {
-    if (! theme) {
-        return NULL;
-    }
-    LandWidgetThemeElement * element;
-    element = find_element(theme->elements, widget->vt->name);
-    if (! element) {
-        element = find_element(theme->elements, "base");
-    }
-    if (! element) {
-        land_alloc(element);
-        element->name = land_strdup("");
-        element->theme = theme;
-    }
-    if (! element->selected) {
-        char name [1024];
-        strncpy(name, widget->vt->name, sizeof name);
-        strncat(name, ".selected", sizeof name - strlen(name) - 1);
-        element->selected = find_element(theme->elements, name);
-        if (! element->selected) {
-            strncpy(name, element->name, sizeof name);
-            strncat(name, ".selected", sizeof name - strlen(name) - 1);
-            element->selected = find_element(theme->elements, name);
-        }
-        if (! element->selected) {
-            element->selected = element;
-        }
-    }
-    if (! element->disabled) {
-        char name [1024];
-        strncpy(name, widget->vt->name, sizeof name);
-        strncat(name, ".disabled", sizeof name - strlen(name) - 1);
-        element->disabled = find_element(theme->elements, name);
-        if (! element->disabled) {
-            element->disabled = element;
-        }
-    }
-    return element;
-}
-LandWidgetThemeElement* land_widget_theme_element(LandWidget * self) {
-    if (self->selected) {
-        return self->element->selected;
-    }
-    if (self->disabled) {
-        return self->element->disabled;
-    }
-    return self->element;
-}
-void land_widget_theme_draw(LandWidget * self) {
-    LandWidgetThemeElement * element = land_widget_theme_element(self);
-    if (! element) {
-        return ;
-    }
-    if (self->no_decoration) {
-        return ;
-    }
-    if (element->transparent) {
-        return ;
-    }
-    draw_bitmap(element, self->box.x, self->box.y, self->box.w, self->box.h, self->only_border);
-}
-void land_widget_theme_color(LandWidget * self) {
-    LandWidgetThemeElement * element = land_widget_theme_element(self);
-    if (! element) {
-        return ;
-    }
-    land_color(element->r, element->g, element->b, element->a);
-}
-void land_widget_theme_font(LandWidget * self) {
-    LandWidgetThemeElement * element = land_widget_theme_element(self);
-    if (! element) {
-        return ;
-    }
-    land_font_set(element->font);
-}
-void land_widget_theme_set_minimum_size_for_contents(LandWidget * self, int w, int h) {
-    LandWidgetThemeElement * element = land_widget_theme_element(self);
-    if (! element) {
-        return ;
-    }
-    self->inner_w = w;
-    self->inner_h = h;
-    w += element->il + element->ir;
-    h += element->it + element->ib;
-    if (element->minw > w) {
-        w = element->minw;
-    }
-    if (element->minh > h) {
-        h = element->minh;
-    }
-    if (self->outer_w > w) {
-        w = self->outer_w;
-    }
-    if (self->outer_h > h) {
-        h = self->outer_h;
-    }
-    land_widget_layout_set_minimum_size(self, w, h);
-}
-void land_widget_theme_set_minimum_size_for_text(LandWidget * self, char const * text) {
-    LandWidgetThemeElement * element = land_widget_theme_element(self);
-    if (! element) {
-        return ;
-    }
-    land_font_set(element->font);
-    int w = land_text_get_width(text);
-    int h = land_font_height(land_font_current());
-    land_widget_theme_set_minimum_size_for_contents(self, w, h);
-}
-void land_widget_theme_set_minimum_size_for_image(LandWidget * self, LandImage * image) {
-    LandWidgetThemeElement * element = land_widget_theme_element(self);
-    if (! element) {
-        return ;
-    }
-    int w = land_image_width(image);
-    int h = land_image_height(image);
-    land_widget_theme_set_minimum_size_for_contents(self, w, h);
-}
-void land_widget_theme_initialize(LandWidget * self) {
-    /* Initialize theming of an item. Must only called once at item creation,
-     * as it also calculates the minimum size.
-     */
-    if (! self->element) {
-        return ;
-    }
-    self->element = land_widget_theme_find_element(self->element->theme, self);
-    self->outer_w = self->box.min_width;
-    self->outer_h = self->box.min_height;
-    land_widget_theme_set_minimum_size_for_contents(self, 0, 0);
-}
-void land_widget_theme_update(LandWidget * self) {
-    /* Adjust the widget's theme to its class (widgets all start off as "base"
-     * otherwise).
-     */
-    if (! self->element) {
-        return ;
-    }
-    self->element = land_widget_theme_find_element(self->element->theme, self);
-    land_widget_theme_set_minimum_size_for_contents(self, self->inner_w, self->inner_h);
-}
-static void _theme_recurse(LandWidget * self, LandWidgetTheme * theme) {
-    if (! self->element) {
-        return ;
-    }
-    self->element = land_widget_theme_find_element(theme, self);
-    land_widget_theme_set_minimum_size_for_contents(self, self->inner_w, self->inner_h);
-    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
-        LandWidgetContainer * c = (void *) self;
-        LandListItem * i = c->children ? c->children->first : NULL;
-        while (i) {
-            LandWidget * w = i->data;
-            _theme_recurse(w, theme);
-            i = i->next;
+            #ifdef __EMSCRIPTEN__
+            continue;
+            #endif
+            break;
         }
     }
 }
-static void _layout_recurse(LandWidget * self, LandWidgetTheme * theme) {
-    if (land_widget_is(self, LAND_WIDGET_ID_CONTAINER)) {
-        LandWidgetContainer * c = (void *) self;
-        LandListItem * i = c->children ? c->children->first : NULL;
-        while (i) {
-            LandWidget * w = i->data;
-            _layout_recurse(w, theme);
-            i = i->next;
-        }
-        if (self->parent && (self->parent->box.flags & GUL_NO_LAYOUT)) {
-            land_widget_layout(self);
-        }
-    }
+void platform_wait(double seconds) {
+    al_rest(seconds);
 }
-void land_widget_theme_apply(LandWidget * self, LandWidgetTheme * theme) {
-    /* Applies the given theme to the widget and all its children.
-     */
-    _theme_recurse(self, theme);
-    _layout_recurse(self, theme);
+#undef _UnkKey
+int land_widget_layout_freeze(LandWidget * self) {
+    int nl = self->no_layout;
+    self->no_layout = 1;
+    return ! nl;
+}
+int land_widget_layout_unfreeze(LandWidget * self) {
+    int nl = self->no_layout;
+    self->no_layout = 0;
+    return nl;
+}
+void land_widget_layout_set_grid(LandWidget * self, int columns, int rows) {
+    self->box.rows = rows;
+    self->box.cols = columns;
     land_widget_layout(self);
 }
-    /* The art of programming tilemaps
-     * = Types of tilemaps =
-     * == The classic fixed-cell grid-map ==
-     * This is the simplest form of a tilemap. Just define a grid and store a tile-id
-     * in each cell.
-     * == Optimized fixed-cell map ==
-     * There are various ways to optimize the simple tilemap to consume less memory.
-     * For example, quad-trees or similar techniques. A quad-tree can optimize away
-     * large empty areas, and makes it easy to have different-sized tiles as long as
-     * bigger ones have double the dimensions of smaller ones.
-     * == Layers ==
-     * Simply have multiple layers, one on top of another. This can have many uses,
-     * for example different tile-sizes and parallax scrolling.
-     * == Non-rectangle ==
-     * Popular types of tiles don't use a fixed rectangular grid, but use hexagon or
-     * isometric maps. We'll deal with both of them.
-     * = The basics =
-     * == Drawing ==
-     * Assume, we have a fixed cell map. The x and y position of a tile can
-     * be calculated like this:
-     * * pixel_x = tile_x * cell_width
-     * * pixel_y = tile_y * cell_height
-     * If the map data are stored as an array, and each map position just
-     * stores a tile number, we  can retriece it like this:
-     * * tile_numer = array[tile_y * map_width + tile_x]
-     * So now, we have all we need. We can draw the tile to its position.
-     * Doing this for all tiles in the map, we can draw the complete map.
-     * == Picking ==
-     * Something which is not obvious to do at first, but will be useful soon, is how
-     * to pick tiles out of a map. Thinking about it, it is quite simple to
-     * do. It is, in a sense, the opposite of drawing.
-     * We have a (pixel) position, and want to know which tile lies under it.
-     * * tile_x = pixel_x / cell_width
-     * * tile_y = pixel_y / cell_height
-     * == Collision ==
-     * Since we know how to pick a tile from a position, we can easily do
-     * collision detection now.
-     * = Non-rectangular maps =
-     * == Isometric (diamond layout) ==
-     * == Hexagon (diamond layout) ==
-     * == Isometric (row or column shifted layout) ==
-     * == Hexagon (row or coumn shifted layout) ==
-     */
-void land_grid_draw(LandGrid * self, LandView * view) {
-    self->vt->draw(self, view);
+void land_widget_layout_disable(LandWidget * self) {
+    self->box.flags |= GUL_NO_LAYOUT;
 }
-void land_grid_get_cell_at(LandGrid * self, LandView * view, float view_x, float view_y, float * cell_x, float * cell_y) {
-    /* Given a view position, return the corresponding cell position.
-     * For a wrapped grid, the returned position will always be normalized to
-     * lie within the grid, even if the passed position or the view's scroll
-     * position are outside.
-     */
-    self->vt->get_cell_at(self, view, view_x, view_y, cell_x, cell_y);
+void land_widget_layout_enable(LandWidget * self) {
+    self->box.flags &= ~ GUL_NO_LAYOUT;
 }
-void land_grid_get_cell_position(LandGrid * self, LandView * view, float cell_x, float cell_y, float * view_x, float * view_y) {
-    /* Given a cell position, return the corresponding view position, in pixels.
-     * For a wrapped grid, the returned position will first be normalized to
-     * lie within the grid, and then related to the view position. Try normalizing
-     * the view's scroll position first (land_view_ensure_inside_grid) so it lies
-     * within the grid, if you experience unexpected offsets.
-     */
-    self->vt->get_cell_position(self, view, cell_x, cell_y, view_x, view_y);
-}
-void land_grid_initialize(LandGrid * self, int cell_w, int cell_h, int x_cells, int y_cells) {
-    self->x_cells = x_cells;
-    self->y_cells = y_cells;
-    self->cell_w = cell_w;
-    self->cell_h = cell_h;
-}
-void land_grid_init(void) {
-    land_log_message("land_grid_init\n");
-    land_tilemap_init();
-    land_isometric_init();
-    land_sprites_init();
-}
-void land_grid_exit(void) {
-    land_log_message("land_grid_exit\n");
-    land_tilemap_exit();
-    land_isometric_exit();
-    land_sprites_exit();
-}
-void land_grid_del(LandGrid * self) {
-    land_call_method(self, del, (self));
-}
-void land_thread_run(void(* cb)(void * data), void * data) {
-    platform_thread_run(cb, data);
-}
-LandThread* land_thread_new(void(* cb)(void * data), void * data) {
-    return platform_thread_new(cb, data);
-}
-void land_thread_destroy(LandThread * t) {
-    platform_thread_destroy(t);
-}
-LandLock* land_thread_new_lock(void) {
-    return platform_thread_new_lock();
-}
-void land_thread_delete_lock(LandLock * l) {
-    return platform_thread_delete_lock(l);
-}
-void land_thread_lock(LandLock * l) {
-    platform_thread_lock(l);
-}
-void land_thread_unlock(LandLock * l) {
-    platform_thread_unlock(l);
-}
-    /* translation matrix to translate by xt/yt/zt
-     * T = 1 0 0 xt
-     * 0 1 0 yt
-     * 0 0 1 zt
-     * 0 0 0 1
-     * rotation matrix into coordinate system given by 3 vectors
-     * x=xx/yx/zx, y=xy/yy/zy, z=xz/yz/zz
-     * R = xx xy xz 0
-     * yx yy yz 0
-     * zx zy zz 0
-     * 0  0  0  1
-     * scaling matrix to scale by xs/ys/zs
-     * S = xs 0  0  0
-     * 0  ys 0  0
-     * 0  0  zs 0
-     * 0  0  0  1
-     * inv(T) = 1 0 0 -xt
-     * 0 1 0 -yt
-     * 0 0 1 -zt
-     * 0 0 0 1
-     * inv(R) = xx yx zx 0
-     * xy yy zy 0
-     * xz yz zz 0
-     * 0  0  0  1
-     * T x = x + xt
-     * y = y + yt
-     * z = z + zt
-     * 1 = 1
-     * R x = xx x + xy y + xz z
-     * y = yx x + yy y + yz z
-     * z = zx x + zy y + zz z
-     * 1 = 1
-     * rotate first then translate
-     * T R = xx xy xz xt
-     * yx yy yz yt
-     * zx zy zz zt
-     * 0  0  0  1
-     * T R x = xx x + xy y + xz z + xt
-     * y   yx x + yy y + yz z + yt
-     * z   zx x + zy y + zz z + zt
-     * 1   1
-     * translate first then rotate
-     * R T = xx xy xz xx xt + xy yt + xz zt
-     * yx yy yz yx xt + yy yt + yz zt
-     * zx zy zz zx xt + zy yt + zz zt
-     * 0  0  0  1
-     * scale first then translate
-     * T S = 1 0 0 xt   xs 0  0  0   xs 0  0  xt
-     * 0 1 0 yt * 0  ys 0  0 = 0  ys 0  yt
-     * 0 0 1 zt   0  0  zs 0   0  0  zs zt
-     * 0 0 0 1    0  0  0  1   0  0  0  1
-     * T S x = xs * x + xt
-     * y   ys * y + yt
-     * z   zs * z + zt
-     * 1   1
-     * translate first then scale
-     * S T = xs 0  0  0   1 0 0 xt   xs 0  0  xs*xt
-     * 0  ys 0  0 * 0 1 0 yt = 0  ys 0  ys*yt
-     * 0  0  zs 0   0 0 1 zt   0  0  zs zs*zt
-     * 0  0  0  1   0 0 0 1    0  0  0  1
-     * S T x = xs * x + xs * xt
-     * y   ys * y + ys * yt
-     * z   zs * z + zs * zt
-     * 1   1
-     * translate first then arbitrary affine matrix
-     * A T = A0 A1 A2 A3   1 0 0 xt    A0 A1 A2 A0*xt+A1*yt+A2*zt+A3
-     * A4 A5 A6 A7 * 0 1 0 yt =  A4 A5 A6 A4*xt+A5*yt+A7*zt+A7
-     * A8 A9 Aa Ab   0 0 1 zt    A8 A9 Aa A8*xt+A9*yt+Aa*zt+Ab
-     * 0  0  0  1    0 0 0 1     0  0  0  1
-     * scale first then arbitrary affine matrix
-     * A S = A0 A1 A2 A3   xs 0  0  0   A0*xs A1*ys A2*zs A3
-     * A4 A5 A6 A7 * 0  ys 0  0 = A4*xs A5*ys A6*zs A7
-     * A8 A9 Aa Ab   0  0  zs 0   A8*xs A9*ys Aa*zs Ab
-     * 0  0  0  1    0  0  0  1   0     0     0     1
-     * rotate by an angle around vector 0/0/1
-     * Ra = +cos -sin 0 0
-     * +sin +cos 0 0
-     * 0    0    1 0
-     * 0    0    0 1
-     * same but arbitrary affine matrix afterwards
-     * A Ra = A0*c+A1*s -A0*s+A1*c A2 A3
-     * A4*c+A5*s -A4*s+A5*c A6 A7
-     * A8*c+A9*s -A8*s+A9*c Aa Ab
-     * 0         0          0  1
-     */
-#define SQRT sqrt
-#define COS cos
-#define SIN sin
-LandVector land_vector(LandFloat x, LandFloat y, LandFloat z) {
-    LandVector v = {x, y, z};
-    return v;
-}
-LandVector land_vector_from_array(LandFloat * a) {
-    LandVector v = {a [0], a [1], a [2]};
-    return v;
-}
-void land_vector_iadd(LandVector * v, LandVector w) {
-    v->x += w.x;
-    v->y += w.y;
-    v->z += w.z;
-}
-void land_vector_isub(LandVector * v, LandVector w) {
-    v->x -= w.x;
-    v->y -= w.y;
-    v->z -= w.z;
-}
-void land_vector_imul(LandVector * v, LandFloat s) {
-    v->x *= s;
-    v->y *= s;
-    v->z *= s;
-}
-void land_vector_idiv(LandVector * v, LandFloat s) {
-    v->x /= s;
-    v->y /= s;
-    v->z /= s;
-}
-LandVector land_vector_neg(LandVector v) {
-    LandVector r = {- v.x, - v.y, - v.z};
-    return r;
-}
-LandVector land_vector_mul(LandVector v, LandFloat s) {
-    LandVector r = {v.x * s, v.y * s, v.z * s};
-    return r;
-}
-LandVector land_vector_div(LandVector v, LandFloat s) {
-    LandVector r = {v.x / s, v.y / s, v.z / s};
-    return r;
-}
-LandVector land_vector_add(LandVector v, LandVector w) {
-    LandVector r = {v.x + w.x, v.y + w.y, v.z + w.z};
-    return r;
-}
-LandVector land_vector_sub(LandVector v, LandVector w) {
-    LandVector r = {v.x - w.x, v.y - w.y, v.z - w.z};
-    return r;
-}
-LandVector land_vector_lerp(LandVector v, LandVector w, LandFloat t) {
-    return land_vector_add(v, land_vector_mul(land_vector_sub(w, v), t));
-}
-LandFloat land_vector_dot(LandVector v, LandVector w) {
-    /* The dot product is a number. The number corresponds to the cosine
-     * between the two vectors times their lengths. So the angle between the
-     * vectors would be: angle = acos(v . w / (|v| * |w|)). If the dot product
-     * is 0, the two vectors conversely are orthogonal. The sign can be used to
-     * determine which side of a plane a point is on.
-     */
-    return v.x * w.x + v.y * w.y + v.z * w.z;
-}
-LandVector land_vector_cross(LandVector v, LandVector w) {
-    /* The cross product results in a vector orthogonal to both v and w. The
-     * length of the resulting vector corresponds to the sine of the angle
-     * between the two vectors and their lengths. So the angle between the
-     * vectors would be: angle = asin(|v x w| / (|v| * |w|)). If the cross
-     * product is the 0 vector, the two input vectors are parallel.
-     */
-    LandVector r = {v.y * w.z - w.y * v.z, v.z * w.x - w.z * v.x, v.x * w.y - w.x * v.y};
-    return r;
-}
-LandFloat land_vector_norm(LandVector v) {
-    /* Return the norm of the vector.
-     */
-    return SQRT(land_vector_dot(v, v));
-}
-LandVector land_vector_normalize(LandVector v) {
-    /* Return a normalized version of the vector.
-     */
-    return land_vector_div(v, land_vector_norm(v));
-}
-LandQuaternion land_vector_quatmul(LandVector v, LandQuaternion q) {
-    /* Multiply the vector with a quaternion. The result is a quaternion. For
-     * example if your vector is a rotation, the resulting quaternion will be a
-     * quaternion who rotates whatever it did plus this additional rotation.
-     */
-    LandQuaternion r = {- v.x * q.x - v.y * q.y - v.z * q.z, v.x * q.w + v.y * q.z - v.z * q.y, v.y * q.w + v.z * q.x - v.x * q.z, v.z * q.w + v.x * q.y - v.y * q.x};
-    return r;
-}
-LandVector land_vector_transform(LandVector v, LandVector p, LandVector r, LandVector u, LandVector b) {
-    /* Return a new vector obtained by transforming this vector by a coordinate
-     * system with the given origin and given right/up/back vectors. This is
-     * used if the vector is in world coordinates, and you want to transform it
-     * to camera coordinates, where p/r/u/b define camera position and
-     * orientation.
-     */
-    LandVector w = land_vector_sub(v, p);
-    LandVector a = {land_vector_dot(w, r), land_vector_dot(w, u), land_vector_dot(w, b)};
-    return a;
-}
-LandVector land_vector_matmul(LandVector v, Land4x4Matrix * m) {
-    LandFloat x = m->v [0] * v.x + m->v [1] * v.y + m->v [2] * v.z + m->v [3];
-    LandFloat y = m->v [4] * v.x + m->v [5] * v.y + m->v [6] * v.z + m->v [7];
-    LandFloat z = m->v [8] * v.x + m->v [9] * v.y + m->v [10] * v.z + m->v [11];
-    return land_vector(x, y, z);
-}
-LandVector land_vector_backtransform(LandVector v, LandVector p, LandVector r, LandVector u, LandVector b) {
-    /* Do the inverse of transform, i.e. you can use it to transform from
-     * camera back to world coordinates.
-     */
-    LandVector x = land_vector_mul(r, v.x);
-    LandVector y = land_vector_mul(u, v.y);
-    LandVector z = land_vector_mul(b, v.z);
-    LandVector a = p;
-    land_vector_iadd(& a, x);
-    land_vector_iadd(& a, y);
-    land_vector_iadd(& a, z);
-    return a;
-}
-LandVector land_vector_rotate(LandVector v, LandVector a, double angle) {
-    /* Rotate the vector around axis a by angle in counter clockwise direction.
-     * If this vector is a point in world space, then the axis of rotation is
-     * defined by the origin and the a vector.
-     */
-    LandFloat c = COS(angle);
-    LandFloat s = SIN(angle);
-    LandVector r = land_vector_mul(a, a.x * (1 - c));
-    LandVector u = land_vector_mul(a, a.y * (1 - c));
-    LandVector b = land_vector_mul(a, a.z * (1 - c));
-    r.x += c;
-    r.y += a.z * s;
-    r.z -= a.y * s;
-    u.x -= a.z * s;
-    u.y += c;
-    u.z += a.x * s;
-    b.x += a.y * s;
-    b.y -= a.x * s;
-    b.z += c;
-    LandFloat x = land_vector_dot(v, r);
-    LandFloat y = land_vector_dot(v, u);
-    LandFloat z = land_vector_dot(v, b);
-    LandVector ret = {x, y, z};
-    return ret;
-}
-LandVector land_vector_reflect(LandVector v, LandVector n) {
-    /* Given the normal of a plane, reflect the vector off the plane. If the
-     * vector is a point in 3D space, and the plane goes through the origin,
-     * the result is a point reflected by the plane.
-     */
-    LandFloat d = land_vector_dot(v, n);
-    LandVector r = n;
-    land_vector_imul(& r, - 2 * d);
-    land_vector_iadd(& r, v);
-    return r;
-}
-LandQuaternion land_quaternion(LandFloat w, LandFloat x, LandFloat y, LandFloat z) {
-    LandQuaternion q = {w, x, y, z};
-    return q;
-}
-LandQuaternion land_quaternion_from_array(LandFloat * f) {
-    LandQuaternion q = {f [0], f [1], f [2], f [3]};
-    return q;
-}
-void land_quaternion_to_array(LandQuaternion * q, LandFloat * f) {
-    f [0] = q->w;
-    f [1] = q->x;
-    f [2] = q->y;
-    f [3] = q->z;
-}
-void land_quaternion_iadd(LandQuaternion * q, LandQuaternion p) {
-    q->w += p.w;
-    q->x += p.x;
-    q->y += p.y;
-    q->z += p.z;
-}
-void land_quaternion_imul(LandQuaternion * q, LandFloat s) {
-    q->w *= s;
-    q->x *= s;
-    q->y *= s;
-    q->z *= s;
-}
-LandQuaternion land_quaternion_combine(LandQuaternion qa, LandQuaternion qb) {
-    LandVector qav = {qa.x, qa.y, qa.z};
-    LandVector qbv = {qb.x, qb.y, qb.z};
-    LandVector va = land_vector_cross(qav, qbv);
-    LandVector vb = land_vector_mul(qav, qb.w);
-    LandVector vc = land_vector_mul(qbv, qa.w);
-    land_vector_iadd(& va, vb);
-    LandVector qrv = land_vector_add(va, vc);
-    double w = land_vector_dot(qav, qbv);
-    LandQuaternion qr = {qrv.x, qrv.y, qrv.z, w};
-    land_quaternion_normalize(& qr);
-    return qr;
-}
-void land_quaternion_vectors(LandQuaternion q, LandVector * r, LandVector * u, LandVector * b) {
-    /* Output three orientation vectors for the quaternion. That is, if the
-     * quaternion is used as a 3D orientation, return right/up/back vectors
-     * representing the same orientation.
-     */
-    LandFloat ww = q.w * q.w;
-    LandFloat xx = q.x * q.x;
-    LandFloat yy = q.y * q.y;
-    LandFloat zz = q.z * q.z;
-    LandFloat wx = q.w * q.x * 2;
-    LandFloat wy = q.w * q.y * 2;
-    LandFloat wz = q.w * q.z * 2;
-    LandFloat xy = q.x * q.y * 2;
-    LandFloat xz = q.x * q.z * 2;
-    LandFloat yz = q.y * q.z * 2;
-    r->x = ww + xx - yy - zz;
-    u->x = xy - wz;
-    b->x = xz + wy;
-    r->y = xy + wz;
-    u->y = ww - xx + yy - zz;
-    b->y = yz - wx;
-    r->z = xz - wy;
-    u->z = yz + wx;
-    b->z = ww - xx - yy + zz;
-}
-Land4x4Matrix land_quaternion_4x4_matrix(LandQuaternion q) {
-    LandVector r, u, b;
-    land_quaternion_vectors(q, & r, & u, & b);
-    Land4x4Matrix m;
-    m.v [0] = r.x;
-    m.v [1] = u.x;
-    m.v [2] = b.x;
-    m.v [3] = 0;
-    m.v [4] = r.y;
-    m.v [5] = u.y;
-    m.v [6] = b.y;
-    m.v [7] = 0;
-    m.v [8] = r.z;
-    m.v [9] = u.z;
-    m.v [10] = b.z;
-    m.v [11] = 0;
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_mul(Land4x4Matrix a, Land4x4Matrix b) {
-    /* This multiplies two matrices:
-     * result = a b
-     * When used with 3D transformations, the result has the same effect as first
-     * applying b, then a.
-     * In words, result[row,column] = a[row,...] * b[...,column].
-     */
-    Land4x4Matrix m;
-    for (int i = 0; i < 4; i += 1) {
-        for (int j = 0; j < 4; j += 1) {
-            LandFloat x = 0;
-            for (int k = 0; k < 4; k += 1) {
-                x += a.v [i * 4 + k] * b.v [k * 4 + j];
-            }
-            m.v [i * 4 + j] = x;
-        }
-    }
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_scale(LandFloat x, LandFloat y, LandFloat z) {
-    Land4x4Matrix m;
-    m.v [0] = x;
-    m.v [1] = 0;
-    m.v [2] = 0;
-    m.v [3] = 0;
-    m.v [4] = 0;
-    m.v [5] = y;
-    m.v [6] = 0;
-    m.v [7] = 0;
-    m.v [8] = 0;
-    m.v [9] = 0;
-    m.v [10] = z;
-    m.v [11] = 0;
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_rotate(LandFloat x, LandFloat y, LandFloat z, LandFloat angle) {
-    Land4x4Matrix m;
-    double s = sin(angle);
-    double c = cos(angle);
-    double cc = 1 - c;
-    m.v [0] = (cc * x * x) + c;
-    m.v [4] = (cc * x * y) + (z * s);
-    m.v [8] = (cc * x * z) - (y * s);
-    m.v [12] = 0;
-    m.v [1] = (cc * x * y) - (z * s);
-    m.v [5] = (cc * y * y) + c;
-    m.v [9] = (cc * z * y) + (x * s);
-    m.v [13] = 0;
-    m.v [2] = (cc * x * z) + (y * s);
-    m.v [6] = (cc * y * z) - (x * s);
-    m.v [10] = (cc * z * z) + c;
-    m.v [14] = 0;
-    m.v [3] = 0;
-    m.v [7] = 0;
-    m.v [11] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_identity(void) {
-    Land4x4Matrix m;
-    m.v [0] = 1;
-    m.v [1] = 0;
-    m.v [2] = 0;
-    m.v [3] = 0;
-    m.v [4] = 0;
-    m.v [5] = 1;
-    m.v [6] = 0;
-    m.v [7] = 0;
-    m.v [8] = 0;
-    m.v [9] = 0;
-    m.v [10] = 1;
-    m.v [11] = 0;
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_translate(LandFloat x, LandFloat y, LandFloat z) {
-    /* T = 1 0 0 xt
-     * 0 1 0 yt
-     * 0 0 1 zt
-     * 0 0 0 1
-     */
-    Land4x4Matrix m;
-    m.v [0] = 1;
-    m.v [1] = 0;
-    m.v [2] = 0;
-    m.v [3] = x;
-    m.v [4] = 0;
-    m.v [5] = 1;
-    m.v [6] = 0;
-    m.v [7] = y;
-    m.v [8] = 0;
-    m.v [9] = 0;
-    m.v [10] = 1;
-    m.v [11] = z;
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_perspective(LandFloat left, LandFloat bottom, LandFloat nearz, LandFloat right, LandFloat top, LandFloat farz) {
-    Land4x4Matrix m;
-    LandFloat w = right - left;
-    LandFloat h = top - bottom;
-    LandFloat depth = farz - nearz;
-    LandFloat cx = (right + left) / 2;
-    LandFloat cy = (bottom + top) / 2;
-    LandFloat cz = (farz + nearz) / 2;
-    m.v [0] = 2 * nearz / w;
-    m.v [1] = 0;
-    m.v [2] = 2 * cx / w;
-    m.v [3] = 0;
-    m.v [4] = 0;
-    m.v [5] = 2 * nearz / h;
-    m.v [6] = 0;
-    m.v [7] = 2 * cy / h;
-    m.v [8] = 0;
-    m.v [9] = 0;
-    m.v [10] = - 2 * cz / depth;
-    m.v [11] = farz * nearz * (- 2 / depth);
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = - 1;
-    m.v [15] = 0;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_orthographic(LandFloat left, LandFloat top, LandFloat nearz, LandFloat right, LandFloat bottom, LandFloat farz) {
-    /* Orthographic means no projection so this would be just an identity matrix.
-     * But as convenience this scales and translates to fit into the
-     * left/top/right/bottom rectangle and also scales depth.
-     * The point at (left, top, near) will end up at (-1, -1, -1) and the point
-     * at (right, bottom, far) will end up at (1, 1, 1).
-     * O = S(2/w, 2/h, 2/d) T(-cx, -cy, -cz)
-     * O = 2/w 0   0   2/w*-cx
-     * 0   2/h 0   2/h*-cy
-     * 0   0   2/d 2/d*-cz
-     * 0   0   0   1
-     * O x = 2/w*(x-cx)
-     * y   2/h*(y-cy)
-     * z   2/d*(z-cz)
-     * 1   1
-     * inv(O) = inv(T) inv(S) = w/2 0   0   cx
-     * 0   h/2 0   cy
-     * 0   0   d/2 cz
-     * 0   0   0   1
-     * O inv(O) = 1 0 0 0
-     * 0 1 0 0
-     * 0 0 1 0
-     * 0 0 0 1
-     */
-    Land4x4Matrix m;
-    LandFloat w = right - left;
-    LandFloat h = bottom - top;
-    LandFloat depth = farz - nearz;
-    LandFloat cx = (right + left) / 2;
-    LandFloat cy = (bottom + top) / 2;
-    LandFloat cz = (farz + nearz) / 2;
-    m.v [0] = 2 / w;
-    m.v [1] = 0;
-    m.v [2] = 0;
-    m.v [3] = 2 / w * (- cx);
-    m.v [4] = 0;
-    m.v [5] = 2 / h;
-    m.v [6] = 0;
-    m.v [7] = 2 / h * (- cy);
-    m.v [8] = 0;
-    m.v [9] = 0;
-    m.v [10] = 2 / depth;
-    m.v [11] = 2 / depth * (- cz);
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_from_vectors(LandVector * p, LandVector * r, LandVector * u, LandVector * b) {
-    Land4x4Matrix m;
-    m.v [0] = r->x;
-    m.v [1] = u->x;
-    m.v [2] = b->x;
-    m.v [3] = p->x;
-    m.v [4] = r->y;
-    m.v [5] = u->y;
-    m.v [6] = b->y;
-    m.v [7] = p->y;
-    m.v [8] = r->z;
-    m.v [9] = u->z;
-    m.v [10] = b->z;
-    m.v [11] = p->z;
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-Land4x4Matrix land_4x4_matrix_inverse_from_vectors(LandVector * p, LandVector * r, LandVector * u, LandVector * b) {
-    Land4x4Matrix m;
-    m.v [0] = r->x;
-    m.v [1] = r->y;
-    m.v [2] = r->z;
-    m.v [3] = r->x * (- p->x) + r->y * (- p->y) + r->z * (- p->z);
-    m.v [4] = u->x;
-    m.v [5] = u->y;
-    m.v [6] = u->z;
-    m.v [7] = u->x * (- p->x) + u->y * (- p->y) + u->z * (- p->z);
-    m.v [8] = b->x;
-    m.v [9] = b->y;
-    m.v [10] = b->z;
-    m.v [11] = b->x * (- p->x) + b->y * (- p->y) + b->z * (- p->z);
-    m.v [12] = 0;
-    m.v [13] = 0;
-    m.v [14] = 0;
-    m.v [15] = 1;
-    return m;
-}
-void land_quaternion_normalize(LandQuaternion * q) {
-    /* Normalize the quaternion. This may be useful to prevent deteriorating
-     * the quaternion if it is used for a long time, due to floating point
-     * inaccuracies.
-     */
-    LandFloat n = SQRT(q->w * q->w + q->x * q->x + q->y * q->y + q->z * q->z);
-    q->w /= n;
-    q->x /= n;
-    q->y /= n;
-    q->z /= n;
-}
-LandQuaternion land_quaternion_slerp(LandQuaternion qa, LandQuaternion qb, double t) {
-    /* Given two quaternions, interpolate a quaternion in between. If t is 0
-     * this will return qa, if t is 1 it will return qb.
-     * The rotation will be along the shortest path (not necessarily the shorter
-     * direction though) and the rotation angle will linearly correspond to t.
-     */
-    LandQuaternion q;
-    double c = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z;
-    if (c < 0) {
-        c = - c;
-        qb.w = - qb.w;
-        qb.x = - qb.x;
-        qb.y = - qb.y;
-        qb.z = - qb.z;
-    }
-    double theta = acos(c);
-    double s = sin(theta);
-    double fs = sin((1 - t) * theta) / s;
-    double ts = sin(t * theta) / s;
-    q.w = qa.w * fs + qb.w * ts;
-    q.x = qa.x * fs + qb.x * ts;
-    q.y = qa.y * fs + qb.y * ts;
-    q.z = qa.z * fs + qb.z * ts;
-    return q;
-}
-LandBuffer* land_4x4_matrix_to_string(Land4x4Matrix * m) {
-    LandBuffer * b = land_buffer_new();
-    for (int i = 0; i < 16; i += 1) {
-        land_buffer_addf(b, "%-5.2f%s", m->v [i], i % 4 == 3 ? "\n" : " ");
-    }
-    return b;
-}
-#undef SQRT
-#undef COS
-#undef SIN
-static int mx, my, mz, mb;
-static int omx, omy, omz, omb;
-static int buttons [5], obuttons [5], clicks [5];
-static float tx [11], ty [11], tb [11], otb [11];
-void land_mouse_init(void) {
-    land_show_mouse_cursor();
-}
-void land_mouse_tick(void) {
-    omx = mx;
-    omy = my;
-    omz = mz;
-    omb = mb;
-    for (int i = 0; i < 5; i++) {
-        obuttons [i] = buttons [i];
-        if (buttons [i] == 2) {
-            buttons [i] = 0;
-        }
-        clicks [i] = 0;
-    }
-    for (int i = 0; i < 11; i += 1) {
-        otb [i] = tb [i];
+void land_widget_layout_set_grid_position(LandWidget * self, int column, int row) {
+    self->box.col = column;
+    self->box.row = row;
+    if (self->parent) {
+        land_widget_layout(self->parent);
     }
 }
-void land_mouse_move_event(int x, int y, int z) {
-    mx = x;
-    my = y;
-    mz = z;
-}
-void land_touch_event(float x, float y, int n, int d) {
-    if (n > 10) {
-        return ;
-    }
-    tx [n] = x;
-    ty [n] = y;
-    if (d == 1) {
-        tb [n] = 1;
-    }
-    if (d == - 1) {
-        tb [n] = 0;
+void land_widget_layout_set_grid_extra(LandWidget * self, int columns, int rows) {
+    self->box.extra_cols = columns;
+    self->box.extra_rows = rows;
+    if (self->parent) {
+        land_widget_layout(self->parent);
     }
 }
-float land_touch_x(int n) {
-    if (n > 10) {
-        return 0;
+void land_widget_layout_set_minimum_size(LandWidget * self, int w, int h) {
+    self->box.min_width = w;
+    self->box.min_height = h;
+}
+void land_widget_layout_set_maximum_size(LandWidget * self, int w, int h) {
+    self->box.max_width = w;
+    self->box.max_height = h;
+}
+void land_widget_layout_set_shrinking(LandWidget * self, int x, int y) {
+    if (x) {
+        self->box.flags |= GUL_SHRINK_X;
     }
-    return tx [n];
-}
-float land_touch_y(int n) {
-    if (n > 10) {
-        return 0;
+    if (y) {
+        self->box.flags |= GUL_SHRINK_Y;
     }
-    return ty [n];
-}
-bool land_touch_down(int n) {
-    if (n > 10) {
-        return 0;
-    }
-    return tb [n];
-}
-bool land_touch_delta(int n) {
-    if (n > 10) {
-        return 0;
-    }
-    return otb [n] != tb [n];
-}
-void land_mouse_button_down_event(int b) {
-    mb |= 1 << b;
-    if (! (buttons [b] & 1)) {
-        clicks [b]++;
-    }
-    buttons [b] |= 1 + 2;
-}
-void land_mouse_button_up_event(int b) {
-    mb &= ~ (1 << b);
-    buttons [b] &= ~ 1;
-}
-int land_mouse_x(void) {
-    /* """Return the mouse X coordinate for the current tick."""
-     */
-    return mx;
-}
-int land_mouse_y(void) {
-    /* """Return the mouse Y coordinate for the current tick."""
-     */
-    return my;
-}
-int land_mouse_z(void) {
-    /* """Return the mouse wheel coordinate for the current tick."""
-     */
-    return mz;
-}
-int land_mouse_b(void) {
-    /* """Short for land_mouse_button."""
-     */
-    return mb;
-}
-int land_mouse_button(int i) {
-    /* """Return the mouse button state for the current tick."""
-     */
-    return buttons [i] & 1;
-}
-int land_mouse_delta_x(void) {
-    return mx - omx;
-}
-int land_mouse_delta_y(void) {
-    return my - omy;
-}
-int land_mouse_delta_z(void) {
-    return mz - omz;
-}
-int land_mouse_delta_b(void) {
-    return mb ^ omb;
-}
-int land_mouse_delta_button(int i) {
-    return (buttons [i] & 1) ^ (obuttons [i] & 1);
-}
-int land_mouse_button_clicked(int i) {
-    return clicks [i];
-}
-void land_mouse_set_pos(int x, int y) {
-    platform_mouse_set_pos(x, y);
-    mx = x;
-    my = y;
-}
-bool land_hide_mouse_cursor(void) {
-    platform_hide_mouse_cursor();
-    return true;
-}
-bool land_show_mouse_cursor(void) {
-    platform_show_mouse_cursor();
-    return true;
-}
-static LandGridInterface * land_grid_vtable_tilegrid;
-LandGrid* land_tilegrid_new(int cell_w, int cell_h, int x_cells, int y_cells) {
-    LandTileGrid * self;
-    land_alloc(self);
-    land_grid_initialize(& self->super, cell_w, cell_h, x_cells, y_cells);
-    self->super.vt = land_grid_vtable_tilegrid;
-    self->tiles = land_calloc(x_cells * y_cells * sizeof (* self->tiles));
-    return & self->super;
-}
-void land_tilegrid_del(LandGrid * self) {
-    land_free(LAND_TILE_GRID (self)->tiles);
-    land_free(self);
-}
-void land_tilegrid_place(LandGrid * super, int cell_x, int cell_y, LandImage * image) {
-    if (cell_x < 0 || cell_y < 0 || cell_x >= super->x_cells || cell_y >= super->y_cells) {
-        return ;
-    }
-    LandTileGrid * self = LAND_TILE_GRID(super);
-    self->tiles [cell_y * super->x_cells + cell_x] = image;
-}
-static void land_tilegrid_draw_cell(LandGrid * self, LandView * view, int cell_x, int cell_y, float pixel_x, float pixel_y) {
-    LandImage * image = LAND_TILE_GRID (self)->tiles [cell_y * self->x_cells + cell_x];
-    if (image) {
-        land_image_draw_scaled(image, pixel_x, pixel_y, view->scale_x, view->scale_y);
+    if (self->parent && ! self->parent->no_layout) {
+        land_widget_layout(self);
     }
 }
-static void view_x_to_cell_and_pixel_x(LandGrid * self, float view_x, int * cell_x, float * pixel_x) {
-    if (view_x < 0) {
-        * cell_x = 0;
-        * pixel_x = - view_x;
+void land_widget_layout_set_expanding(LandWidget * self, int x, int y) {
+    if (x) {
+        self->box.flags &= ~ GUL_SHRINK_X;
     }
-    else {
-        * cell_x = (unsigned int) view_x / self->cell_w;
-        * pixel_x = * cell_x * self->cell_w - view_x;
+    if (y) {
+        self->box.flags &= ~ GUL_SHRINK_Y;
     }
-}
-static void view_y_to_cell_and_pixel_y(LandGrid * self, float view_y, int * cell_y, float * pixel_y) {
-    if (view_y < 0) {
-        * cell_y = 0;
-        * pixel_y = - view_y;
-    }
-    else {
-        * cell_y = (unsigned int) view_y / self->cell_h;
-        * pixel_y = * cell_y * self->cell_h - view_y;
+    if (self->parent) {
+        land_widget_layout(self);
     }
 }
-void land_grid_draw_normal(LandGrid * self, LandView * view) {
-    int cell_x, cell_y;
-    float pixel_x, pixel_y;
-    float view_x = view->scroll_x;
-    float view_y = view->scroll_y;
-    view_y_to_cell_and_pixel_y(self, view_y, & cell_y, & pixel_y);
-    pixel_y *= view->scale_y;
-    pixel_y += view->y;
-    for (; pixel_y < view->y + view->h; cell_y++, pixel_y += self->cell_h * view->scale_y) {
-        if (cell_y >= self->y_cells) {
-            break;
-        }
-        view_x_to_cell_and_pixel_x(self, view_x, & cell_x, & pixel_x);
-        pixel_x *= view->scale_x;
-        pixel_x += view->x;
-        for (; pixel_x < view->x + view->w; cell_x++, pixel_x += self->cell_w * view->scale_x) {
-            if (cell_x >= self->x_cells) {
-                break;
-            }
-            self->vt->draw_cell(self, view, cell_x, cell_y, pixel_x, pixel_y);
-        }
+void land_widget_layout(LandWidget * self) {
+    if (! self->no_layout) {
+        land_internal_gul_layout_updated(self);
     }
 }
-void land_tilemap_init(void) {
-    land_log_message("land_tilemap_init\n");
-    land_alloc(land_grid_vtable_tilegrid);
-    land_grid_vtable_tilegrid->draw = land_grid_draw_normal;
-    land_grid_vtable_tilegrid->draw_cell = land_tilegrid_draw_cell;
-    land_grid_vtable_tilegrid->del = land_tilegrid_del;
-}
-void land_tilemap_exit(void) {
-    land_log_message("land_tilemap_exit\n");
-    land_free(land_grid_vtable_tilegrid);
-}
-static LandFontState * land_font_state;
-static int active;
-void land_font_init(void) {
-    if (active) {
-        return ;
-    }
-    land_log_message("land_font_init\n");
-    land_alloc(land_font_state);
-    platform_font_init();
-    active = 1;
-}
-void land_font_exit(void) {
-    if (! active) {
-        return ;
-    }
-    land_free(land_font_state);
-    platform_font_exit();
-    active = 0;
-}
-int land_font_active(void) {
-    return active;
-}
-LandFont* land_font_load(char const * filename, float size) {
-    /* Load the given font file, with the given size. The size usually is the pixel
-     * height of a line in the font. But some fonts, e.g. bitmap fonts, will
-     * ignore it. The font also us made the current font if successfully loaded.
-     */
-    char * path = land_path_with_prefix(filename);
-    LandFont * self = platform_font_load(path, size);
-    land_free(path);
-    land_font_state->font = self;
-    return self;
-}
-void land_font_destroy(LandFont * self) {
-    platform_font_destroy(self);
-}
-LandFont* land_font_new(void) {
-    LandFont * f = platform_font_new();
-    return f;
-}
-void land_font_scale(LandFont * f, double scaling) {
-    f->xscaling = f->yscaling = scaling;
-}
-void land_font_yscale(LandFont * f, double scaling) {
-    f->yscaling = scaling;
-}
-void land_font_set(LandFont * self) {
-    land_font_state->font = self;
-}
-void land_text_pos(float x, float y) {
-    land_font_state->x_pos = x;
-    land_font_state->y_pos = y;
-}
-void land_text_set_width(float w) {
-    land_font_state->adjust_width = w;
-}
-float land_text_x_pos(void) {
-    return land_font_state->x_pos;
-}
-float land_text_y_pos(void) {
-    return land_font_state->y_pos;
-}
-float land_text_x(void) {
-    return land_font_state->x;
-}
-float land_text_y(void) {
-    return land_font_state->y;
-}
-float land_text_width(void) {
-    return land_font_state->w;
-}
-float land_text_height(void) {
-    return land_font_state->h;
-}
-int land_text_state(void) {
-    return land_font_state->off;
-}
-float land_font_height(LandFont * self) {
-    return self->size * land_font_current ()->yscaling;
-}
-LandFont* land_font_current(void) {
-    return land_font_state->font;
-}
-float land_line_height(void) {
-    return land_font_height(land_font_current());
-}
-void land_text_off(void) {
-    land_font_state->off = 1;
-}
-void land_text_on(void) {
-    land_font_state->off = 0;
-}
-void land_print_string(char const * str, int newline, int alignment) {
-    platform_font_print(land_font_state, str, alignment);
-    if (newline) {
-        land_font_state->y_pos = land_font_state->y + land_font_state->h;
-    }
-    else {
-        land_font_state->x_pos = land_font_state->x + land_font_state->w;
-    }
-}
-float land_text_get_width(char const * str) {
-    int onoff = land_font_state->off;
-    land_font_state->off = 1;
-    platform_font_print(land_font_state, str, 0);
-    land_font_state->off = onoff;
-    return land_font_state->w;
-}
-int land_text_get_char_offset(char const * str, int nth) {
-    char * u = land_strdup(str);
-    char * p = u;
-    for (int i = 0; i < nth; i++) {
-        land_utf8_char(& p);
-    }
-    * p = 0;
-    int x = land_text_get_width(u);
-    land_free(u);
-    return x;
-}
-int land_text_get_char_index(char const * str, int x) {
-    if (x < 0) {
-        return 0;
-    }
-    int l = 0;
-    char * p = (char *) str;
-    while (land_utf8_char(& p)) {
-        l++;
-    }
-    for (int i = 0; i <= l; i++) {
-        if (land_text_get_char_offset(str, i) > x) {
-            return i - 1;
-        }
-    }
-    return l;
-}
-void land_print(char const * text, ...) {
-    VPRINT;
-    land_print_string(s, 1, 0);
-}
-void land_print_right(char const * text, ...) {
-    VPRINT;
-    land_print_string(s, 1, 1);
-}
-void land_print_center(char const * text, ...) {
-    VPRINT;
-    land_print_string(s, 1, 2);
-}
-void land_write(char const * text, ...) {
-    VPRINT;
-    land_print_string(s, 0, 0);
-}
-void land_write_right(char const * text, ...) {
-    VPRINT;
-    land_print_string(s, 0, 1);
-}
-void land_write_center(char const * text, ...) {
-    VPRINT;
-    land_print_string(s, 0, 2);
-}
-void land_printv(char const * text, va_list args) {
-    va_list args2;
-    va_copy(args2, args);
-    int n = vsnprintf(NULL, 0, text, args2);
-    va_end(args2);
-    if (n < 0) {
-        n = 1023;
-    }
-    char s [n + 1];
-    vsnprintf(s, n + 1, text, args);
-    land_print_string(s, 1, 0);
-}
-static int _wordwrap_helper(char const * text, int w, int h, void(* cb)(int a, int b, void * data), void * data) {
-    int y = land_text_y_pos();
-    float fh = land_font_state->font->size;
-    char const * line_start_p = text;
-    land_font_state->adjust_width = w;
-    while (1) {
-        if (h > 0 && land_text_y_pos() >= y + h) {
-            break;
-        }
-        float width_of_line = 0;
-        int word_end_glyphs = 0;
-        char const * word_end_p = line_start_p;
-        char const * prev_word_end_p = line_start_p;
-        char const * ptr;
-        int c;
-        while (1) {
-            bool inside_leading_whitespace = 1;
-            ptr = word_end_p;
-            int glyphs = word_end_glyphs;
-            while (1) {
-                c = land_utf8_char_const(& ptr);
-                if (c == 0) {
-                    break;
-                }
-                if (c == '\n') {
-                    break;
-                }
-                if (c == ' ') {
-                    if (! inside_leading_whitespace) {
-                        break;
-                    }
-                }
-                else {
-                    inside_leading_whitespace = 0;
-                }
-                if (inside_leading_whitespace && word_end_glyphs == 0) {
-                    line_start_p = ptr;
-                }
-                else {
-                    glyphs++;
-                    word_end_p = ptr;
-                }
-            }
-            int x = land_text_get_char_offset(line_start_p, glyphs);
-            if (x > w) {
-                if (word_end_glyphs == 0) {
-                    word_end_glyphs = glyphs;
-                    width_of_line = x;
-                }
-                else {
-                    c = ' ';
-                    ptr = word_end_p = prev_word_end_p;
-                }
-                break;
-            }
-            width_of_line = x;
-            word_end_glyphs = glyphs;
-            prev_word_end_p = word_end_p;
-            if (c == 0 || c == '\n') {
-                break;
-            }
-        }
-        if (width_of_line > land_font_state->wordwrap_width) {
-            land_font_state->wordwrap_width = width_of_line;
-        }
-        land_font_state->wordwrap_height += fh;
-        if (word_end_p < line_start_p) {
-            cb(line_start_p - text, line_start_p - text, data);
-        }
-        else {
-            cb(line_start_p - text, word_end_p - text, data);
-        }
-        line_start_p = ptr;
-        if (c == 0) {
-            break;
-        }
-    }
-    return line_start_p - text;
-}
-static void _print_wordwrap_cb(int a, int b, void * data) {
-    void * (* p) = data;
-    char * text = p [0];
-    int * alignment = p [1];
-    char s [b - a + 1];
-    strncpy(s, text + a, b - a + 1);
-    s [b - a] = 0;
-    land_print_string(s, 1, * alignment);
-}
-int land_print_string_wordwrap(char const * text, int w, int h, int alignment) {
-    /* Print text inside, and starts a new line whenever the text goes over the
-     * given width, wrapping at whitespace. If a single word is bigger than w, it
-     * will be printed in its own line and exceed w. If h is 0, the whole text is
-     * printed. Otherwise, only as many lines as fit into h pixels are printed.
-     * The return value is the offset into text in bytes of one past the last
-     * printed character.
-     */
-    void * data [] = {(void *) text, & alignment};
-    return _wordwrap_helper(text, w, h, _print_wordwrap_cb, data);
-}
-int land_print_wordwrap(int w, int h, char const * text, ...) {
-    VPRINT;
-    return land_print_string_wordwrap(s, w, h, 0);
-}
-int land_print_wordwrap_right(int w, int h, char const * text, ...) {
-    VPRINT;
-    return land_print_string_wordwrap(s, w, h, 1);
-}
-int land_print_wordwrap_center(int w, int h, char const * text, ...) {
-    VPRINT;
-    return land_print_string_wordwrap(s, w, h, 2);
-}
-static void land_wordwrap_text_cb(int a, int b, void * data) {
-    void * (* p) = data;
-    char * text = p [0];
-    LandArray * lines = p [1];
-    char * s = land_malloc(b - a + 1);
-    strncpy(s, text + a, b - a + 1);
-    s [b - a] = 0;
-    land_array_add(lines, s);
-}
-LandArray* land_wordwrap_text(int w, int h, char const * str) {
-    /* Splits the given string into multiple lines no longer than w pixels. The
-     * returned array will have a newly allocated string for each line. You are
-     * responsible for freeing those strings again.
-     * The calculations will use the current font. Note that for large texts, this
-     * can take a while, so you should do calculations on demand and only for the
-     * visible text.
-     * You can call land_wordwrap_extents after this functions to get the
-     * dimensions of a box which will be able to hold all the text.
-     */
-    LandArray * lines = land_array_new();
-    land_font_state->wordwrap_width = 0;
-    land_font_state->wordwrap_height = 0;
-    if (str) {
-        void * data [] = {(void *) str, lines};
-        _wordwrap_helper(str, w, h, land_wordwrap_text_cb, data);
-    }
-    return lines;
-}
-void land_text_destroy_lines(LandArray * lines) {
-    if (! lines) {
-        return ;
-    }
-    int n = land_array_count(lines);
-    for (int i = 0; i < n; i++) {
-        char * s = land_array_get_nth(lines, i);
-        land_free(s);
-    }
-    land_array_destroy(lines);
-}
-LandArray* land_text_splitlines(char const * str) {
-    /* Splits the text into lines, and updates the wordwrap extents.
-     */
-    land_font_state->wordwrap_width = 0;
-    LandArray * lines = land_array_new();
-    while (1) {
-        char const * p = strchr(str, '\n');
-        if (! p) {
-            p = str + strlen(str);
-        }
-        char * s = land_malloc(p - str + 1);
-        strncpy(s, str, p - str);
-        s [p - str] = 0;
-        int w = land_text_get_width(s);
-        if (w > land_font_state->wordwrap_width) {
-            land_font_state->wordwrap_width = w;
-        }
-        land_array_add(lines, s);
-        if (p [0] == 0) {
-            break;
-        }
-        str = p + 1;
-    }
-    land_font_state->wordwrap_height = land_font_state->font->size * land_array_count(lines);
-    return lines;
-}
-void land_wordwrap_extents(float * w, float * h) {
-    if (w) {
-        * w = land_font_state->wordwrap_width;
-    }
-    if (h) {
-        * h = land_font_state->wordwrap_height;
-    }
-}
-void land_print_lines(LandArray * lines, int alignment) {
-    /* Given an array of lines, print the visible ones.
-     */
-    float cl, ct, cr, cb;
-    land_get_clip(& cl, & ct, & cr, & cb);
-    float fh = land_font_state->font->size;
-    float ty = land_text_y_pos();
-    int first = (ct - ty) / fh;
-    int last = (cb - ty) / fh;
-    int n = land_array_count(lines);
-    if (first < 0) {
-        first = 0;
-    }
-    if (last > n - 1) {
-        last = n - 1;
-    }
-    land_font_state->y_pos += fh * first;
-    for (int i = first; i <= last; i++) {
-        char * s = land_array_get_nth(lines, i);
-        land_print_string(s, 1, alignment);
-    }
-}
-LandFont* land_font_from_image(LandImage * image, int n_ranges, int * ranges) {
-    LandFont * self = platform_font_from_image(image, n_ranges, ranges);
-    land_font_state->font = self;
-    return self;
+void land_widget_layout_initialize(LandWidget * self, int x, int y, int w, int h) {
+    land_internal_land_gul_box_initialize(& self->box);
+    self->box.x = x;
+    self->box.y = y;
+    self->box.w = w;
+    self->box.h = h;
 }
     /* Drawing Primitives in Land
      * # Positions
@@ -8992,9 +11041,9 @@ void land_display_destroy(LandDisplay * self) {
 void land_display_del(LandDisplay * self) {
     land_display_destroy(self);
 }
-double land_scale_to_fit(float w, float h, int how) {
-    float dw = land_display_width();
-    float dh = land_display_height();
+double land_scale_to_fit_into(float w, float h, float l, float t, float r, float b, int how) {
+    float dw = r - l;
+    float dh = b - t;
     float sx, sy;
     float ox = 0, oy = 0;
     int back = how >> 8;
@@ -9036,13 +11085,24 @@ double land_scale_to_fit(float w, float h, int how) {
     land_reset_transform();
     if (back) {
         land_scale(1 / sx, 1 / sy);
-        land_translate(- ox, - oy);
+        land_translate(- ox - l, - oy - t);
     }
     else {
-        land_translate(ox, oy);
+        land_translate(ox + l, oy + t);
         land_scale(sx, sy);
     }
     return sx;
+}
+void land_get_scaled_dimensions(float * x, float * y, float * w, float * h) {
+    * x = land_get_left();
+    * y = land_get_top();
+    * w = land_display_width() / land_get_x_scale();
+    * h = land_display_height() / land_get_y_scale();
+}
+double land_scale_to_fit(float w, float h, int how) {
+    float dw = land_display_width();
+    float dh = land_display_height();
+    return land_scale_to_fit_into(w, h, 0, 0, dw, dh, how);
 }
 LandFloat land_get_left(void) {
     LandFloat * m = _land_active_display->matrix;
@@ -9051,6 +11111,14 @@ LandFloat land_get_left(void) {
 LandFloat land_get_x_scale(void) {
     LandFloat * m = _land_active_display->matrix;
     return m [0];
+}
+LandFloat land_get_top(void) {
+    LandFloat * m = _land_active_display->matrix;
+    return - m [7] / m [5];
+}
+LandFloat land_get_y_scale(void) {
+    LandFloat * m = _land_active_display->matrix;
+    return m [5];
 }
 void land_set_image_display(LandImage * image) {
     /* Change the display of the current thread to an internal display which draws
@@ -9152,6 +11220,11 @@ void land_premul(float r, float g, float b, float a) {
 void land_color_set(LandColor c) {
     land_color(c.r, c.g, c.b, c.a);
 }
+LandColor land_color_get(void) {
+    LandColor c;
+    land_get_color(& c.r, & c.g, & c.b, & c.a);
+    return c;
+}
 void land_thickness(float t) {
     LandDisplay * d = _land_active_display;
     d->thickness = t;
@@ -9190,6 +11263,7 @@ void land_clip_intersect(float x, float y, float x_, float y_) {
 void land_clip_push(void) {
     LandDisplay * d = _land_active_display;
     if (d->clip_stack_depth > LAND_MAX_CLIP_DEPTH) {
+        printf("error: exceeded clip depth\n");
         return ;
     }
     int * clip = d->clip_stack + d->clip_stack_depth * 5;
@@ -9297,6 +11371,9 @@ void land_3d_triangles(int n, LandFloat * xyzrgb) {
 void land_textured_polygon(LandImage * image, int n, float * xy, float * uv) {
     platform_textured_polygon(image, n, xy, uv);
 }
+void land_textured_colored_polygon(LandImage * image, int n, float * xy, float * uv, float * rgba) {
+    platform_textured_colored_polygon(image, n, xy, uv, rgba);
+}
 void land_filled_polygon_with_holes(int n, float * xy, int * holes) {
     platform_filled_polygon_with_holes(n, xy, holes);
 }
@@ -9311,10 +11388,16 @@ void land_pick_color(float x, float y) {
 }
 int land_display_width(void) {
     LandDisplay * self = _land_active_display;
+    if (! self) {
+        return 0;
+    }
     return self->w;
 }
 int land_display_height(void) {
     LandDisplay * self = _land_active_display;
+    if (! self) {
+        return 0;
+    }
     return self->h;
 }
 void land_display_resize(int w, int h) {
@@ -9324,6 +11407,7 @@ void land_display_resize(int w, int h) {
     d->w = w;
     d->h = h;
     platform_display_resize(w, h);
+    land_resize_event(w, h);
 }
 void land_display_move(int x, int y) {
     platform_display_move(x, y);
@@ -9333,6 +11417,9 @@ void land_display_desktop_size(int * w, int * h) {
 }
 void land_display_title(char const * title) {
     platform_display_title(title);
+}
+void land_display_icon(LandImage * icon) {
+    platform_display_icon(icon);
 }
 int land_display_flags(void) {
     LandDisplay * self = _land_active_display;
@@ -9476,6 +11563,12 @@ void land_transform(LandFloat * x, LandFloat * y, LandFloat * z) {
     * y = v.y;
     * z = v.z;
 }
+void land_projection(Land4x4Matrix m) {
+    platform_projection(m);
+}
+void land_reset_projection(void) {
+    platform_reset_projection();
+}
 void land_display_transform_4x4(Land4x4Matrix * matrix) {
     LandFloat * m = _land_active_display->matrix;
     for (int i = 0; i < 16; i += 1) {
@@ -9492,1347 +11585,8 @@ void land_display_set_default_shaders(void) {
      */
     platform_set_default_shaders();
 }
-struct LandSoundPlatform {
-    LandSound super;
-    ALLEGRO_SAMPLE * a5;
-    ALLEGRO_SAMPLE_ID last_playing;
-    void * buffer;
-};
-struct LandStreamPlatform {
-    LandStream super;
-    ALLEGRO_AUDIO_STREAM * a5;
-    void * fragment;
-};
-static LandArray * streaming;
-static bool get_params(int channels, int bits, int * chan_conf, int * depth) {
-    if (channels == 1) {
-        * chan_conf = ALLEGRO_CHANNEL_CONF_1;
-    }
-    else if (channels == 2) {
-        * chan_conf = ALLEGRO_CHANNEL_CONF_2;
-    }
-    else {
-        return 0;
-    }
-    if (bits == 8) {
-        * depth = ALLEGRO_AUDIO_DEPTH_INT8;
-    }
-    else if (bits == 16) {
-        * depth = ALLEGRO_AUDIO_DEPTH_INT16;
-    }
-    else {
-        return 0;
-    }
-    return 1;
-}
-LandSound* platform_sound_load(char const * filename) {
-    LandSoundPlatform * self;
-    land_alloc(self);
-    self->a5 = al_load_sample(filename);
-    self->super.filename = land_strdup(filename);
-    return (void *) self;
-}
-LandSound* platform_sound_new(int samples, float frequency, int bits, int channels) {
-    LandSoundPlatform * self;
-    land_alloc(self);
-    int chan_conf = 0, depth = 0;
-    get_params(channels, bits, & chan_conf, & depth);
-    int sample_size = al_get_channel_count(chan_conf) * al_get_audio_depth_size(depth);
-    int bytes = samples * sample_size;
-    self->buffer = land_malloc(bytes);
-    self->a5 = al_create_sample(self->buffer, samples, frequency, depth, chan_conf, 0);
-    return (void *) self;
-}
-void* platform_sound_sample_pointer(LandSound * super) {
-    LandSoundPlatform * self = (void *) super;
-    return al_get_sample_data(self->a5);
-}
-int platform_sound_length(LandSound * super) {
-    LandSoundPlatform * self = (void *) super;
-    return al_get_sample_length(self->a5);
-}
-double platform_sound_seconds(LandSound * super) {
-    LandSoundPlatform * self = (void *) super;
-    double x = al_get_sample_length(self->a5);
-    x /= al_get_sample_frequency(self->a5);
-    return x;
-}
-void platform_sound_play(LandSound * s, float volume, float pan, float frequency, bool loop) {
-    LandSoundPlatform * self = (void *) s;
-    al_play_sample(self->a5, volume, pan, frequency, loop ? ALLEGRO_PLAYMODE_LOOP : ALLEGRO_PLAYMODE_ONCE, & self->last_playing);
-}
-void platform_sound_stop(LandSound * s) {
-    LandSoundPlatform * self = (void *) s;
-    al_stop_sample(& self->last_playing);
-}
-void platform_sound_destroy(LandSound * s) {
-    LandSoundPlatform * self = (void *) s;
-    al_destroy_sample(self->a5);
-    if (self->buffer) {
-        land_free(self->buffer);
-    }
-    land_free(s->filename);
-    land_free(s);
-}
-void platform_sound_init(void) {
-    al_init_acodec_addon();
-    al_install_audio();
-    al_reserve_samples(8);
-}
-void platform_sound_exit(void) {
-    ;
-}
-void platform_sound_resume(void) {
-    al_restore_default_mixer();
-    ALLEGRO_MIXER * mix = al_get_default_mixer();
-    if (mix) {
-        al_set_mixer_playing(mix, 1);
-    }
-}
-void platform_sound_halt(void) {
-    ALLEGRO_MIXER * mix = al_get_default_mixer();
-    if (mix) {
-        al_set_mixer_playing(al_get_default_mixer(), 0);
-    }
-    al_set_default_voice(NULL);
-}
-LandStream* platform_stream_new(int samples, int fragments, float frequency, int bits, int channels) {
-    LandStreamPlatform * self;
-    land_alloc(self);
-    LandStream * super = (void *) self;
-    int chan_conf = 0, depth = 0;
-    get_params(channels, bits, & chan_conf, & depth);
-    super->fragments = fragments;
-    super->samples = samples;
-    super->sample_size = al_get_channel_count(chan_conf) * al_get_audio_depth_size(depth);
-    self->a5 = al_create_audio_stream(fragments, samples, frequency, depth, chan_conf);
-    al_attach_audio_stream_to_mixer(self->a5, al_get_default_mixer());
-    if (! streaming) {
-        streaming = land_array_new();
-    }
-    land_array_add(streaming, self);
-    return super;
-}
-void platform_stream_destroy(LandStream * super) {
-    int i = land_array_find(streaming, super);
-    if (i >= 0) {
-        land_array_swap(streaming, i, - 1);
-        land_array_pop(streaming);
-    }
-    LandStreamPlatform * self = (void *) super;
-    al_destroy_audio_stream(self->a5);
-    land_free(super);
-}
-void* platform_stream_buffer(LandStream * super) {
-    LandStreamPlatform * self = (void *) super;
-    if (al_get_available_audio_stream_fragments(self->a5) == 0) {
-        return NULL;
-    }
-    self->fragment = al_get_audio_stream_fragment(self->a5);
-    return self->fragment;
-}
-void platform_stream_fill(LandStream * super) {
-    LandStreamPlatform * self = (void *) super;
-    al_set_audio_stream_fragment(self->a5, self->fragment);
-}
-void platform_stream_music(LandStream * super, char const * filename) {
-    LandStreamPlatform * self = (void *) super;
-    al_destroy_audio_stream(self->a5);
-    self->a5 = al_load_audio_stream(filename, super->fragments, super->samples);
-    al_attach_audio_stream_to_mixer(self->a5, al_get_default_mixer());
-    al_set_audio_stream_playmode(self->a5, ALLEGRO_PLAYMODE_LOOP);
-}
-void platform_stream_volume(LandStream * super, float volume) {
-    LandStreamPlatform * self = (void *) super;
-    al_set_audio_stream_gain(self->a5, volume);
-}
-bool platform_stream_is_playing(LandStream * super) {
-    LandStreamPlatform * self = (void *) super;
-    return al_get_audio_stream_playing(self->a5);
-}
-void platform_stream_set_playing(LandStream * super, bool onoff) {
-    LandStreamPlatform * self = (void *) super;
-    al_set_audio_stream_playing(self->a5, onoff);
-}
-struct PlatformThread {
-    LandThread super;
-    ALLEGRO_THREAD * a5;
-};
-struct PlatformLock {
-    ALLEGRO_MUTEX * a5;
-};
-static void* proc(void * data) {
-    LandThread * t = data;
-    t->cb(t->data);
-    land_free(t);
-    return NULL;
-}
-void platform_thread_run(void(* cb)(void *), void * data) {
-    LandThread * t;
-    land_alloc(t);
-    t->cb = cb;
-    t->data = data;
-    al_run_detached_thread(proc, t);
-}
-static void* aproc(ALLEGRO_THREAD * thread, void * arg) {
-    LandThread * t = arg;
-    t->cb(t->data);
-    return NULL;
-}
-LandThread* platform_thread_new(void(* cb)(void * data), void * data) {
-    PlatformThread * t;
-    land_alloc(t);
-    t->super.cb = cb;
-    t->super.data = data;
-    t->a5 = al_create_thread(aproc, t);
-    al_start_thread(t->a5);
-    return & t->super;
-}
-void platform_thread_destroy(LandThread * self) {
-    PlatformThread * t = (void *) self;
-    al_destroy_thread(t->a5);
-    land_free(self);
-}
-LandLock* platform_thread_new_lock(void) {
-    PlatformLock * l;
-    land_alloc(l);
-    l->a5 = al_create_mutex();
-    return (void *) l;
-}
-void platform_thread_delete_lock(LandLock * lock) {
-    PlatformLock * l = (void *) lock;
-    al_destroy_mutex(l->a5);
-    land_free(l);
-}
-void platform_thread_lock(LandLock * lock) {
-    PlatformLock * l = (void *) lock;
-    al_lock_mutex(l->a5);
-}
-void platform_thread_unlock(LandLock * lock) {
-    PlatformLock * l = (void *) lock;
-    al_unlock_mutex(l->a5);
-}
-void land_bind_vbo(GLuint * vbo, void * data, int n, int draw) {
-    if (* vbo) {
-        glBindBuffer(GL_ARRAY_BUFFER, * vbo);
-        if (glGetError() == GL_INVALID_OPERATION) {
-            * vbo = 0;
-        }
-    }
-    if (! (* vbo)) {
-        glGenBuffers(1, vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, * vbo);
-        glBufferData(GL_ARRAY_BUFFER, n, data, draw);
-    }
-}
-char const* land_opengl_error(void) {
-    GLenum e = glGetError();
-    if (e == GL_NO_ERROR) {
-        return "GL_NO_ERROR";
-    }
-    if (e == GL_INVALID_ENUM) {
-        return "GL_INVALID_ENUM";
-    }
-    if (e == GL_INVALID_VALUE) {
-        return "GL_INVALID_VALUE";
-    }
-    if (e == GL_INVALID_OPERATION) {
-        return "GL_INVALID_OPERATION";
-    }
-    if (e == GL_INVALID_FRAMEBUFFER_OPERATION) {
-        return "GL_INVALID_FRAMEBUFFER_OPERATION";
-    }
-    if (e == GL_OUT_OF_MEMORY) {
-        return "GL_OUT_OF_MEMORY";
-    }
-    return "unknown";
-}
-void land_4x4_matrix_to_gl_float(Land4x4Matrix m, GLfloat * gl) {
-    gl [0x0] = m.v [0x0];
-    gl [0x1] = m.v [0x4];
-    gl [0x2] = m.v [0x8];
-    gl [0x3] = m.v [0xc];
-    gl [0x4] = m.v [0x1];
-    gl [0x5] = m.v [0x5];
-    gl [0x6] = m.v [0x9];
-    gl [0x7] = m.v [0xd];
-    gl [0x8] = m.v [0x2];
-    gl [0x9] = m.v [0x6];
-    gl [0xa] = m.v [0xa];
-    gl [0xb] = m.v [0xe];
-    gl [0xc] = m.v [0x3];
-    gl [0xd] = m.v [0x7];
-    gl [0xe] = m.v [0xb];
-    gl [0xf] = m.v [0xf];
-}
-    /* Simple themeable widgets to use for in-game user interface elements.
-     * This module implements a simple graphical user interface on top of Land.
-     * = Some Features =
-     * * Simple. This is intended to be used in-game, so no advanced features.
-     * * A widget is basically a box. It can contain other boxes, to which mouse and
-     * keyboard input is dispatched.
-     * * Themeable, either with custom drawing, or bitmap themes.
-     * = Mouse Focus =
-     * Mouse focus is given to the window under the mouse, if the left button is not
-     * being held. Else the focused window retains focus as long as the left mouse
-     * button is being held pressed, even if the mouse leaves the window.
-     * = Keyboard Focus =
-     * Keyboard focus is only given to widgets requesting it. A focused window retains
-     * keyboard focus, unless focus is transferred to another window.
-     * A widget will normally ask for keyboard focus being transferred to it, when
-     * the mouse is clicked over it, or when the TAB key is pressed and it is the
-     * next in the widget cycle. This cycle is constructed by walking all widgets in
-     * order, starting with the parent, then the children, recursively.
-     * = Layout =
-     * About using the auto layout:
-     * * Each widget has an outer box, which is how much space it takes up inside
-     * its parent.
-     * * Additionally, it has an inner box, which is the space available to
-     * children. The inner box is 6 values: il, it, ir, ib, hgap, vgap. The first
-     * 4 are for a border all around the widget, the last 2 are gaps between
-     * multiple children.
-     * * The space between outer and inner box is usually filled with some kind of
-     * border by the themeing.
-     * * The layout allows layers, so child windows can share the same space.
-     * * By default, container widgets try to fill up as much space as they can, so
-     * if you place e.g. a VBox onto the desktop, it fills it up completely when
-     * using auto layout. Non-container widgets on the other hand usually try to
-     * be as small as possible, e.g. a button will try to fit around the text/image
-     * inside it. You can of course change for each widget how it behaves.
-     * = Themeing =
-     * Each widget has a pointer to a theme. On creation, a widget inherits this
-     * theme from its parent. So usually is is enough to set a theme for the
-     * desktop, then all widgets spawned from it will inherit the theme. And it's
-     * also easy to have per-widget themes, either for a single widget, or for a
-     * window or menu. In the latter case, simply set the theme before creating
-     * children.
-     * Themes are built from bitmaps. This keeps them very simple, and should be
-     * enough in most cases. And of course, if you absolutely don't want to, you
-     * don't have to use themes. Simply override the draw method of all widgets
-     * which you want to draw yourself.
-     * = Polymorphism =
-     * The widgets are organized in a class hierarchy. To use polymorphism, you need
-     * to convert pointers to one class to pointers to a base or specialized class.
-     * This is done using land_widget_check, which will use the widgets vtable to
-     * assert that the conversion is possible and generate a runtime error
-     * otherwise.
-     * = Reference counting =
-     * The widgets use reference counting to handle deletion. This is a cheap way
-     * out of dealing with stale references/dangling pointers. A GUI without either reference counting
-     * or garbage collection is possible, it just needs some more design work. In
-     * our case here, following a KISS principle, we do simple naive reference counting,
-     * and leave the user to deal with possible problems like circular references.
-     * In the normal case, it works like this: You create a widget, and have to
-     * pass along a parent widget to the constructor. Now, the parent will hold a
-     * reference to the new widget. There is no reference from the child to the
-     * parent, despite the parent field referencing the parent. This is done to
-     * avoid complications with cyclic references. If your own widgets contain
-     * cyclic references in another way, you should understand how the reference
-     * counting works.
-     * The first consequence of the above is, you always should manually reference the
-     * top level window, since it has no parent it is referenced by.
-     * The apparent problem is the possible dangling pointer of a child to its
-     * parent. But it should be save, since whenever the parent is deleted, it will
-     * delete all its children anyway.
-     * = An example =
-     * desktop = desktop_new()
-     * reference(desktop)
-     * child = window_new(desktop)
-     * unreference(desktop)
-     * This does what is expected. The only reference to desktop is removed manually,
-     * therefore it gets destroyed. The destructor will detach all children. The only
-     * child in this case will therefore drop its reference count to zero, and get
-     * destroyed as well.
-     * desktop = desktop_new()
-     * reference(desktop)
-     * child = window_new(desktop)
-     * reference(child)
-     * unreference(desktop)
-     * Here, a reference is kept to child. Maybe it is the window with keyboard
-     * focus, and the focus handler holds a reference to it. So, when the desktop
-     * is destroyed, first all childs are detached again. This means, the parent
-     * member of child is set to NULL, and its reference is decreased. Since there
-     * is still the manual reference, nothing else will be done. The desktop itself
-     * however is destroyed. Also note that any other childs without a reference
-     * would be destroyed correctly, and it also would work recursively down for
-     * their childs. Only the child window stays, and the focus handler won't
-     * crash.
-     * unreference(child)
-     * If the focus handler is done, the reference of child will now drop to zero,
-     * and it is destroyed as well.
-     * Now, about cyclic references, just either don't use them, or else take care
-     * to resolve them before dropping the last reference into the cycle. As an
-     * example, you make a watchdog window, which somehow watches another window.
-     * So, you play good, and along with storing a reference to that other window,
-     * you increase the reference count of the other window, just so you never get
-     * a dangling pointer. In your destructor, you release the reference again, so
-     * everything seems to work out. But consider this:
-     * desktop = new_widget(NULL)
-     * reference(desktop)
-     * watchdog = new_widget(desktop)
-     * watchdog_watch(desktop)
-     * unreference(desktop)
-     * Yikes. Now you see the problem. Although nobody holds a reference to watchdog,
-     * and we remove the only real reference to desktop, neither of them gets deleted.
-     * Worse, neither of them can ever be deleted again, since the only reference to
-     * either is from each other.
-     * Simple rule here would be: The watchdog only ever should watch a sibling or
-     * unrelated widget, never a parent. Of course, in practice, widgets could get
-     * reparented and whatever, so things like this need watching out for. And there
-     * are many other cases. Also, you never have to use the reference counting. You
-     * just need to understand that Land provides no way to directly and forcefully
-     * delete one of its widgets, and why it is like that.
-     */
-LandWidgetInterface * land_widget_base_interface;
-static LandArray * land_widget_interfaces;
-int land_widget_is(LandWidget const * self, int id) {
-    /* Return true if the widget has the given type (or one derived from it).
-     */
-    int i;
-    for (i = 0; i < 7; i++) {
-        int digit = id & (0xf << (i * 4));
-        if (! digit) {
-            break;
-        }
-        if ((self->vt->id & (0xf << (i * 4))) != digit) {
-            return 0;
-        }
-    }
-    return 1;
-}
-void* land_widget_check(void const * ptr, int id, char const * file, int linenum) {
-    LandWidget const * widget = ptr;
-    if (land_widget_is(widget, id)) {
-        return (void *) ptr;
-    }
-    land_exception("%s: %d: Widget cannot be converted.", file, linenum);
-    return NULL;
-}
-char const* land_widget_info_string(LandWidget * w) {
-    static char str [1024];
-    if (! w) {
-        strcpy(str, "none");
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_MENU)) {
-        LandWidgetContainer * c = (void *) w;
-        int n = 0;
-        if (c->children) {
-            n = c->children->count;
-        }
-        sprintf(str, "menu (%d items)", n);
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_MENUBAR)) {
-        LandWidgetContainer * c = (void *) w;
-        int n = 0;
-        if (c->children) {
-            n = c->children->count;
-        }
-        sprintf(str, "menubar (%d items)", n);
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_MENUITEM)) {
-        LandWidgetButton * b = (void *) w;
-        sprintf(str, "menuitem %s", b->text);
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_MENUBUTTON)) {
-        LandWidgetButton * b = (void *) w;
-        sprintf(str, "menubutton %s", b->text);
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_BUTTON)) {
-        LandWidgetButton * b = (void *) w;
-        sprintf(str, "button %s", b->text);
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_CHECKBOX)) {
-        sprintf(str, "checkbox");
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_BOOK)) {
-        sprintf(str, "book");
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_SCROLLING)) {
-        sprintf(str, "scrolling");
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_SCROLLBAR)) {
-        sprintf(str, "scrollbar");
-    }
-    else if (land_widget_is(w, LAND_WIDGET_ID_BOOKPAGE)) {
-        sprintf(str, "bookpage");
-    }
-    else {
-        sprintf(str, "unknown");
-    }
-    return str;
-}
-void land_widget_set_property(LandWidget * self, char const * property, void * data, void(* destroy)(void * data)) {
-    if (! self->properties) {
-        self->properties = land_hash_new();
-    }
-    LandWidgetProperty * prop;
-    land_alloc(prop);
-    prop->data = data;
-    prop->destroy = destroy;
-    land_hash_insert(self->properties, property, prop);
-}
-void land_widget_del_property(LandWidget * self, char const * property) {
-    if (! self->properties) {
-        return ;
-    }
-    LandWidgetProperty * prop = land_hash_remove(self->properties, property);
-    if (prop->destroy) {
-        prop->destroy(prop);
-    }
-}
-void* land_widget_get_property(LandWidget * self, char const * property) {
-    if (! self->properties) {
-        return NULL;
-    }
-    LandWidgetProperty * prop = land_hash_get(self->properties, property);
-    if (prop) {
-        return prop->data;
-    }
-    return NULL;
-}
-void land_widget_remove_all_properties(LandWidget * self) {
-    LandHash * hash = self->properties;
-    if (! hash) {
-        return ;
-    }
-    int i;
-    for (i = 0; i < hash->size; i++) {
-        if (hash->entries [i]) {
-            int j;
-            for (j = 0; j < hash->entries [i]->n; j++) {
-                LandWidgetProperty * prop = hash->entries [i] [j].data;
-                if (prop->destroy) {
-                    prop->destroy(prop->data);
-                }
-                land_free(prop);
-            }
-        }
-    }
-    land_hash_destroy(self->properties);
-    self->properties = NULL;
-}
-void land_widget_base_initialize(LandWidget * self, LandWidget * parent, int x, int y, int w, int h) {
-    land_widget_base_interface_initialize();
-    land_widget_layout_initialize(self, x, y, w, h);
-    self->vt = land_widget_base_interface;
-    land_widget_layout_set_minimum_size(self, w, h);
-    if (parent) {
-        if (parent->element) {
-            self->element = land_widget_theme_find_element(parent->element->theme, self);
-        }
-        land_call_method(parent, add, (parent, self));
-    }
-    else {
-        self->element = land_widget_theme_find_element(land_widget_theme_default(), self);
-    }
-}
-LandWidget* land_widget_base_new(LandWidget * parent, int x, int y, int w, int h) {
-    LandWidget * self;
-    land_alloc(self);
-    land_widget_base_initialize(self, parent, x, y, w, h);
-    return self;
-}
-void land_widget_remove(LandWidget * self) {
-    /* """Remove a widget from its parent."""
-     */
-    if (! self->parent) {
-        return ;
-    }
-    land_call_method(self->parent, remove, (self->parent, self));
-}
-void land_widget_interfaces_destroy_all(void) {
-    int n = land_array_count(land_widget_interfaces);
-    land_log_message("land_widget_interfaces_destroy_all (%d)\n", n);
-    int i;
-    for (i = 0; i < n; i++) {
-        LandWidgetInterface * f = land_array_get_nth(land_widget_interfaces, i);
-        land_free(f->name);
-        land_free(f);
-    }
-    land_array_destroy(land_widget_interfaces);
-}
-void land_widget_interface_register(LandWidgetInterface * vt) {
-    /* """Register a new widget interface with Land.
-     * The interface is then owned by Land, and you should not try to free the
-     * passed pointer. Land will automatically free it when you call land_quit().
-     */
-    if (! land_widget_interfaces) {
-        land_log_message("land_widget_interfaces\n");
-        land_exit_function(land_widget_interfaces_destroy_all);
-    }
-    land_array_add_data(& land_widget_interfaces, vt);
-}
-LandWidgetInterface* land_widget_copy_interface(LandWidgetInterface * basevt, char const * name) {
-    LandWidgetInterface * vt;
-    land_alloc(vt);
-    memcpy(vt, basevt, sizeof (* vt));
-    vt->name = land_strdup(name);
-    land_widget_interface_register(vt);
-    return vt;
-}
-void land_widget_create_interface(LandWidget * widget, char const * name) {
-    widget->vt = land_widget_copy_interface(widget->vt, name);
-    land_widget_theme_update(widget);
-}
-void land_widget_base_destroy(LandWidget * self) {
-    land_widget_remove_all_properties(self);
-    _land_gul_box_deinitialize(& self->box);
-    land_free(self);
-}
-static void land_widget_really_destroy(LandWidget * self) {
-    if (self->vt->destroy) {
-        self->vt->destroy(self);
-    }
-    else {
-        land_log_message("*** widget without destructor?\n");
-        land_widget_base_destroy(self);
-    }
-}
-void land_widget_unreference(LandWidget * self) {
-    self->reference--;
-    if (self->reference <= 0) {
-        land_widget_really_destroy(self);
-    }
-}
-void land_widget_reference(LandWidget * self) {
-    self->reference++;
-}
-void land_widget_base_mouse_enter(LandWidget * self, LandWidget * focus) {
-    ;
-}
-void land_widget_base_mouse_leave(LandWidget * self, LandWidget * focus) {
-    ;
-}
-void land_widget_base_move(LandWidget * self, float dx, float dy) {
-    ;
-}
-void land_widget_move(LandWidget * self, float dx, float dy) {
-    /* Moves the widget.
-     */
-    self->box.x += dx;
-    self->box.y += dy;
-    land_call_method(self, move, (self, dx, dy));
-}
-void land_widget_center(LandWidget * self) {
-    int dw = land_display_width();
-    int dh = land_display_height();
-    int x = self->box.x;
-    int y = self->box.y;
-    int w = self->box.w;
-    int h = self->box.h;
-    land_widget_move(self, (dw - w) / 2 - x, (dh - h) / 2 - y);
-}
-void land_widget_base_size(LandWidget * self, float dx, float dy) {
-    ;
-}
-void land_widget_size(LandWidget * self, float dx, float dy) {
-    /* Resizes a widget.
-     */
-    self->box.w += dx;
-    self->box.h += dy;
-    land_call_method(self, size, (self, dx, dy));
-}
-void land_widget_resize(LandWidget * self, float dx, float dy) {
-    /* Changes the minimum size of the widget to its current size modified by the
-     * given offset.
-     */
-    self->box.min_width = self->box.w + dx;
-    self->box.min_height = self->box.h + dy;
-    land_widget_size(self, dx, dy);
-}
-void land_widget_set_size(LandWidget * self, float w, float h) {
-    land_widget_resize(self, w - self->box.w, h - self->box.h);
-}
-void land_widget_retain_mouse_focus(LandWidget * self) {
-    /* Called inside mouse_leave, will keep the mouse focus, and no other widget
-     * can get highlighted.
-     */
-    self->got_mouse = 1;
-}
-void land_widget_refuse_mouse_focus(LandWidget * self) {
-    /* Called inside mouse_enter, inhibits highlighting of the widget.
-     */
-    self->got_mouse = 0;
-}
-void land_widget_request_keyboard_focus(LandWidget * self) {
-    /* Called in mouse_tick (or elsewhere), will cause the widget to receive the
-     * keyboard focus.
-     */
-    self->want_focus = 1;
-}
-void land_widget_retain_keyboard_focus(LandWidget * self) {
-    /* Called in keyboard_leave to keep the focus. Doesn't usually make sense.
-     */
-    self->got_keyboard = 1;
-}
-void land_widget_tick(LandWidget * self) {
-    /* Call this regularly on your desktop widget. It's the base function which is
-     * needed in any widgets application to handle input to the widgets. The other
-     * important function is land_widget_draw, which handles display of widgets.
-     */
-    land_call_method(self, tick, (self));
-}
-void land_widget_draw(LandWidget * self) {
-    /* Draw a widget on its current position. Call this on your desktop widget to
-     * display all of your widgets. This function and land_widget_tick are the two
-     * functions you should call on your desktop widget in each widgets using
-     * application.
-     */
-    if (self->hidden) {
-        return ;
-    }
-    int pop = 0;
-    if (! self->dont_clip) {
-        land_clip_push();
-        land_clip_on();
-        land_clip_intersect(self->box.x, self->box.y, self->box.x + self->box.w, self->box.y + self->box.h);
-        pop = 1;
-    }
-    land_call_method(self, draw, (self));
-    if (pop) {
-        land_clip_pop();
-    }
-}
-void land_widget_hide(LandWidget * self) {
-    /* Hide the widget. It will not be displayed anymore, and also not take up any
-     * more space.
-     */
-    if (self->hidden) {
-        return ;
-    }
-    self->hidden = 1;
-    self->box.flags |= GUL_HIDDEN;
-    if (self->parent) {
-        land_widget_layout(self->parent);
-    }
-}
-void land_widget_unhide(LandWidget * self) {
-    /* Unhide the widget.
-     */
-    if (! self->hidden) {
-        return ;
-    }
-    self->hidden = 0;
-    self->box.flags &= ~ GUL_HIDDEN;
-    if (self->parent) {
-        land_widget_layout(self->parent);
-    }
-}
-void land_widget_outer(LandWidget * self, float * x, float * y, float * w, float * h) {
-    * x = self->box.x;
-    * y = self->box.y;
-    * w = self->box.w;
-    * h = self->box.h;
-}
-void land_widget_inner(LandWidget * self, float * x, float * y, float * w, float * h) {
-    * x = self->box.x;
-    * y = self->box.y;
-    * w = self->box.w;
-    * h = self->box.h;
-    if (self->element) {
-        * x += self->element->il;
-        * y += self->element->it;
-        * w -= self->element->ir + self->element->ir;
-        * h -= self->element->ib + self->element->ib;
-    }
-}
-void land_widget_inner_extents(LandWidget * self, float * l, float * t, float * r, float * b) {
-    * l = self->box.x;
-    * t = self->box.y;
-    * r = self->box.x + self->box.w;
-    * b = self->box.y + self->box.h;
-    if (self->element) {
-        * l += self->element->il;
-        * t += self->element->it;
-        * r -= self->element->ir;
-        * b -= self->element->ib;
-    }
-}
-void land_widget_base_interface_initialize(void) {
-    if (land_widget_base_interface) {
-        return ;
-    }
-    land_alloc(land_widget_base_interface);
-    land_widget_interface_register(land_widget_base_interface);
-    land_widget_base_interface->id = LAND_WIDGET_ID_BASE;
-    land_widget_base_interface->name = land_strdup("base");
-    land_widget_base_interface->size = land_widget_base_size;
-    land_widget_base_interface->destroy = land_widget_base_destroy;
-}
-void land_widget_debug(LandWidget * w, int indentation) {
-    for (int i = 0; i < indentation; i += 1) {
-        printf("  ");
-    }
-    printf("%s %d %d %d %d\n", land_widget_info_string(w), w->box.x, w->box.y, w->box.w, w->box.h);
-    if (land_widget_is(w, LAND_WIDGET_ID_CONTAINER)) {
-        LandWidgetContainer * c = LAND_WIDGET_CONTAINER(w);
-        if (c->children) {
-            {
-                LandListIterator __iter0__ = LandListIterator_first(c->children);
-                for (LandWidget * child = LandListIterator_item(c->children, &__iter0__); LandListIterator_next(c->children, &__iter0__); child = LandListIterator_item(c->children, &__iter0__)) {
-                    land_widget_debug(child, indentation + 1);
-                }
-            }
-        }
-    }
-}
-static const int COPLANAR = 0;
-static const int FRONT = 1;
-static const int BACK = 2;
-static const int SPANNING = 3;
-LandCSGVertex* land_csg_vertex_new(LandVector pos, LandVector normal) {
-    LandCSGVertex * self;
-    land_alloc(self);
-    self->pos = pos;
-    self->normal = normal;
-    return self;
-}
-void land_csg_vertex_destroy(LandCSGVertex * self) {
-    land_free(self);
-}
-LandCSGVertex* land_csg_vertex_new_pool(LandMemoryPool * pool) {
-    LandCSGVertex * self = land_pool_alloc(pool, sizeof (* self));
-    return self;
-}
-LandCSGVertex* csg_vertex_clone(LandCSG * csg, LandCSGVertex * self, bool pool) {
-    LandCSGVertex * v;
-    if (pool) {
-        v = land_csg_vertex_new_pool(csg->pool);
-    }
-    else {
-        land_alloc(v);
-    }
-    v->pos = self->pos;
-    v->normal = self->normal;
-    v->rgba = self->rgba;
-    return v;
-}
-static int collision_code(LandVector * v, LandCSGAABB * b) {
-    int c = 0;
-    if (v->x < b->x1) {
-        c |= 1;
-    }
-    if (v->x > b->x2) {
-        c |= 2;
-    }
-    if (v->y < b->y1) {
-        c |= 4;
-    }
-    if (v->y > b->y2) {
-        c |= 8;
-    }
-    if (v->z < b->z1) {
-        c |= 16;
-    }
-    if (v->z > b->z2) {
-        c |= 32;
-    }
-    return c;
-}
-static bool polygon_intersects_aabb(LandCSGPolygon * polygon, LandCSGAABB * box) {
-    int a = 0, b = 0;
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(polygon->vertices);
-        for (LandCSGVertex * v = LandArrayIterator_item(polygon->vertices, &__iter0__); LandArrayIterator_next(polygon->vertices, &__iter0__); v = LandArrayIterator_item(polygon->vertices, &__iter0__)) {
-            int c = collision_code(& v->pos, box);
-            if (c == 0) {
-                return 1;
-            }
-            a |= c;
-            b |= ~ c;
-        }
-    }
-    if (((a ^ b) & 63) != 0) {
-        return 0;
-    }
-    return 1;
-}
-static LandArray* clone_vertices(LandCSG * csg, LandArray * vertices) {
-    LandArray * clone = land_array_copy(vertices);
-    int n = land_array_count(clone);
-    for (int i = 0; i < n; i += 1) {
-        clone->data [i] = csg_vertex_clone(csg, clone->data [i], 1);
-    }
-    return clone;
-}
-static void remove_vertices(LandArray * vertices, bool is_pooled) {
-    if (! is_pooled) {
-        for (int i = 0; i < vertices->count; i += 1) {
-            land_csg_vertex_destroy(vertices->data [i]);
-        }
-    }
-    land_array_destroy(vertices);
-}
-static void csg_vertex_flip(LandCSGVertex * self) {
-    self->normal = land_vector_mul(self->normal, - 1);
-}
-static LandCSGVertex* csg_vertex_interpolate(LandCSG * csg, LandCSGVertex * self, LandCSGVertex * other, LandFloat t) {
-    LandCSGVertex * v = land_csg_vertex_new_pool(csg->pool);
-    v->pos = land_vector_lerp(self->pos, other->pos, t);
-    v->normal = land_vector_lerp(self->normal, other->normal, t);
-    v->rgba = land_color_lerp(self->rgba, other->rgba, t);
-    return v;
-}
-static LandCSGPlane csg_plane(LandVector normal, LandFloat w) {
-    LandCSGPlane self;
-    self.normal = normal;
-    self.w = w;
-    return self;
-}
-static const LandFloat LandCSGPlaneEPSILON = 0.00001;
-static LandCSGPlane csg_plane_from_points(LandVector a, LandVector b, LandVector c) {
-    LandVector ac = land_vector_sub(c, a);
-    LandVector ab = land_vector_sub(b, a);
-    LandVector n = land_vector_cross(ab, ac);
-    n = land_vector_normalize(n);
-    return csg_plane(n, land_vector_dot(n, a));
-}
-void land_csg_polygon_init(LandCSGPolygon * self, LandArray * vertices, void * shared) {
-    self->vertices = vertices;
-    self->shared = shared;
-    LandCSGVertex * v0 = land_array_get_nth(vertices, 0);
-    LandCSGVertex * v1 = land_array_get_nth(vertices, 1);
-    LandCSGVertex * v2 = land_array_get_nth(vertices, 2);
-    self->plane = csg_plane_from_points(v0->pos, v1->pos, v2->pos);
-}
-LandCSGPolygon* land_csg_polygon_new(LandArray * vertices, void * shared) {
-    LandCSGPolygon * self;
-    land_alloc(self);
-    land_csg_polygon_init(self, vertices, shared);
-    return self;
-}
-static LandCSGPolygon* land_csg_polygon_new_pool(LandMemoryPool * pool, LandArray * vertices, void * shared) {
-    LandCSGPolygon * p = land_pool_alloc(pool, sizeof (* p));
-    p->is_pooled = 1;
-    land_csg_polygon_init(p, vertices, shared);
-    return p;
-}
-void csg_plane_flip(LandCSGPlane * self) {
-    self->normal = land_vector_mul(self->normal, - 1);
-    self->w *= - 1;
-}
-static void csg_plane_split_polygon(LandCSG * csg, LandCSGPlane * self, LandCSGPolygon * polygon, LandArray * coplanar_front, LandArray * coplanar_back, LandArray * front, LandArray * back) {
-    int polygon_type = 0;
-    int n = land_array_count(polygon->vertices);
-    int i = 0;
-    int types [n];
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(polygon->vertices);
-        for (LandCSGVertex * v = LandArrayIterator_item(polygon->vertices, &__iter0__); LandArrayIterator_next(polygon->vertices, &__iter0__); v = LandArrayIterator_item(polygon->vertices, &__iter0__)) {
-            LandFloat dot = land_vector_dot(self->normal, v->pos) - self->w;
-            int t = (dot < - LandCSGPlaneEPSILON ? BACK : dot > LandCSGPlaneEPSILON ? FRONT : COPLANAR);
-            polygon_type |= t;
-            types [i++] = t;
-        }
-    }
-    assert(i == n);
-    if (polygon_type == COPLANAR) {
-        if (land_vector_dot(self->normal, polygon->plane.normal) > 0) {
-            land_array_add(coplanar_front, polygon);
-        }
-        else {
-            land_array_add(coplanar_back, polygon);
-        }
-    }
-    else if (polygon_type == FRONT) {
-        land_array_add(front, polygon);
-    }
-    else if (polygon_type == BACK) {
-        land_array_add(back, polygon);
-    }
-    else if (polygon_type == SPANNING) {
-        LandArray * f = land_array_new();
-        LandArray * b = land_array_new();
-        for (i = 0; i < n; i += 1) {
-            int j = (i + 1) % n;
-            int ti = types [i];
-            int tj = types [j];
-            LandCSGVertex * vi = land_array_get_nth(polygon->vertices, i);
-            LandCSGVertex * vj = land_array_get_nth(polygon->vertices, j);
-            if (ti == FRONT) {
-                land_array_add(f, csg_vertex_clone(csg, vi, 1));
-            }
-            else if (ti == BACK) {
-                land_array_add(b, csg_vertex_clone(csg, vi, 1));
-            }
-            else if (ti == COPLANAR) {
-                land_array_add(f, csg_vertex_clone(csg, vi, 1));
-                land_array_add(b, csg_vertex_clone(csg, vi, 1));
-            }
-            if ((ti | tj) == SPANNING) {
-                LandFloat t = self->w - land_vector_dot(self->normal, vi->pos);
-                t /= land_vector_dot(self->normal, land_vector_sub(vj->pos, vi->pos));
-                LandCSGVertex * v = csg_vertex_interpolate(csg, vi, vj, t);
-                land_array_add(f, v);
-                land_array_add(b, csg_vertex_clone(csg, v, 1));
-            }
-        }
-        if (land_array_count(f) >= 3) {
-            LandCSGPolygon * add = land_csg_polygon_new_pool(csg->pool, f, polygon->shared);
-            land_array_add(front, add);
-        }
-        else {
-            remove_vertices(f, true);
-        }
-        if (land_array_count(b) >= 3) {
-            LandCSGPolygon * add = land_csg_polygon_new_pool(csg->pool, b, polygon->shared);
-            land_array_add(back, add);
-        }
-        else {
-            remove_vertices(b, true);
-        }
-        land_csg_polygon_destroy(polygon);
-    }
-}
-void land_csg_polygon_destroy(LandCSGPolygon * self) {
-    if (self->is_pooled) {
-        land_array_destroy(self->vertices);
-    }
-    else {
-        remove_vertices(self->vertices, false);
-        land_free(self);
-    }
-}
-LandCSGPolygon* land_csg_polygon_clone(LandCSG * csg, LandCSGPolygon const * self) {
-    LandCSGPolygon * clone = land_csg_polygon_new_pool(csg->pool, clone_vertices(csg, self->vertices), self->shared);
-    return clone;
-}
-static void csg_polygon_flip(LandCSGPolygon * self) {
-    land_array_reverse(self->vertices);
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(self->vertices);
-        for (LandCSGVertex * v = LandArrayIterator_item(self->vertices, &__iter0__); LandArrayIterator_next(self->vertices, &__iter0__); v = LandArrayIterator_item(self->vertices, &__iter0__)) {
-            csg_vertex_flip(v);
-        }
-    }
-    csg_plane_flip(& self->plane);
-}
-static LandArray* clone_polygons(LandCSG * csg, LandArray * polygons) {
-    LandArray * clone = land_array_copy(polygons);
-    int n = land_array_count(clone);
-    for (int i = 0; i < n; i += 1) {
-        clone->data [i] = land_csg_polygon_clone(csg, clone->data [i]);
-    }
-    return clone;
-}
-static void clear_polygons(LandArray * polygons) {
-    for (int i = 0; i < polygons->count; i += 1) {
-        land_csg_polygon_destroy(polygons->data [i]);
-    }
-    land_array_clear(polygons);
-}
-static void csg_node_destroy(LandCSGNode * self) {
-    if (self->front) {
-        csg_node_destroy(self->front);
-    }
-    if (self->back) {
-        csg_node_destroy(self->back);
-    }
-    clear_polygons(self->polygons);
-    land_array_destroy(self->polygons);
-    land_free(self);
-}
-static void csg_node_invert(LandCSGNode * self) {
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
-            csg_polygon_flip(p);
-        }
-    }
-    csg_plane_flip(& self->plane);
-    if (self->front) {
-        csg_node_invert(self->front);
-    }
-    if (self->back) {
-        csg_node_invert(self->back);
-    }
-    LandCSGNode * temp = self->front;
-    self->front = self->back;
-    self->back = temp;
-}
-static void csg_node_clip_polygons(LandCSG * csg, LandCSGNode * self, LandArray * polygons) {
-    if (! self->plane.normal.z && ! self->plane.normal.y && ! self->plane.normal.x) {
-        return ;
-    }
-    LandArray * front = land_array_new();
-    LandArray * back = land_array_new();
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
-            csg_plane_split_polygon(csg, & self->plane, p, front, back, front, back);
-        }
-    }
-    land_array_clear(polygons);
-    if (self->front) {
-        csg_node_clip_polygons(csg, self->front, front);
-    }
-    if (self->back) {
-        csg_node_clip_polygons(csg, self->back, back);
-    }
-    else {
-        clear_polygons(back);
-    }
-    land_array_concat(polygons, front);
-    land_array_concat(polygons, back);
-    land_array_destroy(front);
-    land_array_destroy(back);
-}
-static void csg_node_clip_to(LandCSG * csg, LandCSGNode * self, LandCSGNode * bsp) {
-    csg_node_clip_polygons(csg, bsp, self->polygons);
-    if (self->front) {
-        csg_node_clip_to(csg, self->front, bsp);
-    }
-    if (self->back) {
-        csg_node_clip_to(csg, self->back, bsp);
-    }
-}
-static LandArray* csg_node_all_polygons(LandCSG * csg, LandCSGNode * self) {
-    LandArray * polygons = clone_polygons(csg, self->polygons);
-    if (self->front) {
-        land_array_merge(polygons, csg_node_all_polygons(csg, self->front));
-    }
-    if (self->back) {
-        land_array_merge(polygons, csg_node_all_polygons(csg, self->back));
-    }
-    return polygons;
-}
-static void csg_add_polygons_from_node(LandCSG * csg, LandCSGNode * node) {
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(node->polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(node->polygons, &__iter0__); LandArrayIterator_next(node->polygons, &__iter0__); p = LandArrayIterator_item(node->polygons, &__iter0__)) {
-            land_array_add(csg->polygons, land_csg_polygon_clone(csg, p));
-        }
-    }
-    if (node->front) {
-        csg_add_polygons_from_node(csg, node->front);
-    }
-    if (node->back) {
-        csg_add_polygons_from_node(csg, node->back);
-    }
-}
-static void csg_add_polygons(LandCSG * csg, LandArray * polygons) {
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
-            land_array_add(csg->polygons, land_csg_polygon_clone(csg, p));
-        }
-    }
-}
-static void csg_node_build(LandCSG * csg, LandCSGNode * self, LandArray * polygons) {
-    if (! land_array_count(polygons)) {
-        land_array_destroy(polygons);
-        return ;
-    }
-    if (! self->plane.normal.z && ! self->plane.normal.y && ! self->plane.normal.x) {
-        LandCSGPolygon * p0 = land_array_get_nth(polygons, 0);
-        self->plane = p0->plane;
-    }
-    LandArray * front = land_array_new();
-    LandArray * back = land_array_new();
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
-            csg_plane_split_polygon(csg, & self->plane, p, self->polygons, self->polygons, front, back);
-        }
-    }
-    land_array_destroy(polygons);
-    if (land_array_count(front)) {
-        if (! self->front) {
-            self->front = csg_node_new(csg, NULL);
-        }
-        csg_node_build(csg, self->front, front);
-    }
-    else {
-        land_array_destroy(front);
-    }
-    if (land_array_count(back)) {
-        if (! self->back) {
-            self->back = csg_node_new(csg, NULL);
-        }
-        csg_node_build(csg, self->back, back);
-    }
-    else {
-        land_array_destroy(back);
-    }
-}
-static LandCSGNode* csg_node_new(LandCSG * csg, LandArray * polygons) {
-    LandCSGNode * self;
-    land_alloc(self);
-    self->polygons = land_array_new();
-    if (polygons) {
-        csg_node_build(csg, self, polygons);
-    }
-    return self;
-}
-void land_csg_transform(LandCSG * self, Land4x4Matrix matrix) {
-    Land4x4Matrix matrix2 = * (& matrix);
-    matrix2.v [3] = 0;
-    matrix2.v [7] = 0;
-    matrix2.v [11] = 0;
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
-            {
-                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
-                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
-                    v->pos = land_vector_matmul(v->pos, & matrix);
-                    v->normal = land_vector_normalize(land_vector_matmul(v->normal, & matrix2));
-                }
-            }
-        }
-    }
-}
-void land_csg_destroy(LandCSG * self) {
-    clear_polygons(self->polygons);
-    land_array_destroy(self->polygons);
-    land_pool_destroy(self->pool);
-    land_free(self);
-}
-void land_csg_triangles(LandCSG * self) {
-    LandArray * triangles = NULL;
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
-            int n = land_array_count(p->vertices);
-            if (n == 3) {
-                continue;
-            }
-            if (! triangles) {
-                triangles = land_array_new();
-            }
-            LandCSGVertex * a = land_array_get_nth(p->vertices, 0);
-            LandCSGVertex * b = land_array_get_nth(p->vertices, 2);
-            for (int i = 3; i < n; i += 1) {
-                LandCSGVertex * c = land_array_get_nth(p->vertices, i);
-                LandArray * v = land_array_new();
-                land_array_add(v, csg_vertex_clone(self, a, p->is_pooled));
-                land_array_add(v, csg_vertex_clone(self, b, p->is_pooled));
-                land_array_add(v, c);
-                LandCSGPolygon * triangle;
-                if (p->is_pooled) {
-                    triangle = land_csg_polygon_new_pool(self->pool, v, p->shared);
-                }
-                else {
-                    triangle = land_csg_polygon_new(v, p->shared);
-                }
-                land_array_add(triangles, triangle);
-                b = c;
-            }
-            p->vertices->count = 3;
-        }
-    }
-    if (triangles) {
-        land_array_merge(self->polygons, triangles);
-    }
-}
-LandCSG* land_csg_new(void) {
-    LandCSG * self;
-    land_alloc(self);
-    self->pool = land_pool_new();
-    return self;
-}
-LandCSG* land_csg_new_from_polygons(LandArray * polygons) {
-    LandCSG * self = land_csg_new();
-    self->polygons = polygons;
-    return self;
-}
-LandCSG* land_csg_clone(LandCSG * self) {
-    LandCSG * csg = land_csg_new();
-    csg->polygons = clone_polygons(csg, self->polygons);
-    return csg;
-}
-static void csg_split_on_bounding_box(LandCSG const * self, LandCSGAABB * box, LandArray * (* inside), LandArray * (* outside)) {
-    /* Keep every polygon intersecting the bounding box, return the removed ones.
-     * TODO: we could use a cached BSP for an extra fast bounding box check,
-     * as soon as we see that the bounding box is on one side of a BSP node we
-     * can ignore the other side completely.
-     */
-    * inside = land_array_new();
-    * outside = land_array_new();
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
-            if (polygon_intersects_aabb(p, box)) {
-                land_array_add(* inside, p);
-            }
-            else {
-                land_array_add(* outside, p);
-            }
-        }
-    }
-}
-LandCSG* land_csg_union(LandCSG * csg_a, LandCSG * csg_b) {
-    LandCSG * c = land_csg_new();
-    land_csg_aabb_update(& csg_a->bbox, csg_a->polygons);
-    land_csg_aabb_update(& csg_b->bbox, csg_b->polygons);
-    LandCSGAABB box = land_csg_aabb_intersect(csg_a->bbox, csg_b->bbox);
-    LandArray * a_out, * a_in, * b_out, * b_in;
-    csg_split_on_bounding_box(csg_a, & box, & a_in, & a_out);
-    csg_split_on_bounding_box(csg_b, & box, & b_in, & b_out);
-    LandCSGNode * a = csg_node_new(c, clone_polygons(c, a_in));
-    LandCSGNode * b = csg_node_new(c, clone_polygons(c, b_in));
-    csg_node_clip_to(c, a, b);
-    csg_node_clip_to(c, b, a);
-    if (1) {
-        csg_node_invert(b);
-        csg_node_clip_to(c, b, a);
-        csg_node_invert(b);
-    }
-    c->polygons = land_array_new();
-    csg_add_polygons_from_node(c, a);
-    csg_add_polygons_from_node(c, b);
-    csg_add_polygons(c, a_out);
-    csg_add_polygons(c, b_out);
-    land_array_destroy(a_in);
-    land_array_destroy(a_out);
-    land_array_destroy(b_in);
-    land_array_destroy(b_out);
-    csg_node_destroy(a);
-    csg_node_destroy(b);
-    return c;
-}
-LandCSG* land_csg_subtract(LandCSG * self, LandCSG * csg) {
-    LandCSG * c = land_csg_new();
-    LandCSGNode * a = csg_node_new(c, clone_polygons(c, self->polygons));
-    LandCSGNode * b = csg_node_new(c, clone_polygons(c, csg->polygons));
-    csg_node_invert(a);
-    csg_node_clip_to(c, a, b);
-    csg_node_clip_to(c, b, a);
-    csg_node_invert(b);
-    csg_node_clip_to(c, b, a);
-    csg_node_invert(b);
-    csg_node_build(c, a, csg_node_all_polygons(c, b));
-    csg_node_invert(a);
-    c->polygons = csg_node_all_polygons(c, a);
-    csg_node_destroy(a);
-    csg_node_destroy(b);
-    return c;
-}
-LandCSG* land_csg_intersect(LandCSG * self, LandCSG * csg) {
-    LandCSG * c = land_csg_new();
-    LandCSGNode * a = csg_node_new(c, clone_polygons(c, self->polygons));
-    LandCSGNode * b = csg_node_new(c, clone_polygons(c, csg->polygons));
-    csg_node_invert(a);
-    csg_node_clip_to(c, b, a);
-    csg_node_invert(b);
-    csg_node_clip_to(c, a, b);
-    csg_node_clip_to(c, b, a);
-    csg_node_build(c, a, csg_node_all_polygons(c, b));
-    csg_node_invert(a);
-    c->polygons = csg_node_all_polygons(c, a);
-    csg_node_destroy(a);
-    csg_node_destroy(b);
-    return c;
-}
-LandCSG* land_csg_inverse(LandCSG * self) {
-    LandCSG * csg = land_csg_clone(self);
-    {
-        LandArrayIterator __iter0__ = LandArrayIterator_first(csg->polygons);
-        for (LandCSGPolygon * p = LandArrayIterator_item(csg->polygons, &__iter0__); LandArrayIterator_next(csg->polygons, &__iter0__); p = LandArrayIterator_item(csg->polygons, &__iter0__)) {
-            csg_polygon_flip(p);
-        }
-    }
-    return csg;
+int land_display_dpi(void) {
+    return platform_get_dpi();
 }
 static LandGridInterface * land_grid_vtable_sprites;
 LandGrid* land_sprites_grid_new(int cell_w, int cell_h, int x_cells, int y_cells) {
@@ -11108,7 +11862,7 @@ LandList* land_sprites_grid_get_circle(LandGrid * sprites_grid, float x, float y
                         other->tag = grid->tag;
                         float dx = other->x - x;
                         float dy = other->y - y;
-                        if (dx + dx + dy * dy < radius * radius) {
+                        if (dx * dx + dy * dy < radius * radius) {
                             land_add_list_data(& retlist, other);
                         }
                     }
@@ -11398,6 +12152,7 @@ void land_sprites_exit(void) {
 LandSpriteType* land_spritetype_new(void) {
     LandSpriteType * self;
     land_alloc(self);
+    self->name = "dummy";
     self->draw = dummy;
     return self;
 }
@@ -11474,6 +12229,2147 @@ void land_spritetype_animation_destroy(LandSpriteType * base) {
         land_animation_destroy(self->animation);
     }
 }
+void land_map_draw(LandMap * self, LandView * view) {
+    /* Render the map using the given ''view''.
+     */
+    LandLayer * layer = self->first_layer;
+    while (layer) {
+        land_layer_draw(layer, view);
+        layer = layer->next_in_map;
+    }
+}
+void land_map_add_layer(LandMap * map, LandLayer * layer) {
+    /* Add another layer to the map, on top of any existing layers.
+     */
+    if (map->first_layer) {
+        LandLayer * l = map->first_layer;
+        while (l->next_in_map) {
+            l = l->next_in_map;
+        }
+        l->next_in_map = layer;
+    }
+    else {
+        map->first_layer = layer;
+    }
+}
+LandLayer* land_map_base_layer(LandMap * map) {
+    /* Returns the base layer of the map.
+     */
+    return map->first_layer;
+}
+LandLayer* land_map_find_layer(LandMap * map, char const * name) {
+    for (LandLayer * l = map->first_layer; l; l = l->next_in_map) {
+        if (! strcmp(name, l->name)) {
+            return l;
+        }
+    }
+    return NULL;
+}
+LandMap* land_map_new(void) {
+    /* Create a new map. This is not called directly normally, as you likely want
+     * to use one of the convenience function to already create layers of the
+     * right type along with it.
+     */
+    LandMap * self;
+    land_alloc(self);
+    return self;
+}
+void land_map_del(LandMap * self) {
+    /* Destroy a map. This also destroys its layers.
+     */
+    if (self->first_layer) {
+        LandLayer * l = self->first_layer;
+        while (l) {
+            LandLayer * next = l->next_in_map;
+            land_layer_del(l);
+            l = next;
+        }
+    }
+    land_free(self);
+}
+void land_map_destroy(LandMap * self) {
+    /* Same as land_map_del.
+     */
+    land_map_del(self);
+}
+    /* translation matrix to translate by xt/yt/zt
+     * T = 1 0 0 xt
+     * 0 1 0 yt
+     * 0 0 1 zt
+     * 0 0 0 1
+     * rotation matrix into coordinate system given by 3 vectors
+     * x=xx/yx/zx, y=xy/yy/zy, z=xz/yz/zz
+     * R = xx xy xz 0
+     * yx yy yz 0
+     * zx zy zz 0
+     * 0  0  0  1
+     * scaling matrix to scale by xs/ys/zs
+     * S = xs 0  0  0
+     * 0  ys 0  0
+     * 0  0  zs 0
+     * 0  0  0  1
+     * inv(T) = 1 0 0 -xt
+     * 0 1 0 -yt
+     * 0 0 1 -zt
+     * 0 0 0 1
+     * inv(R) = xx yx zx 0
+     * xy yy zy 0
+     * xz yz zz 0
+     * 0  0  0  1
+     * T x = x + xt
+     * y = y + yt
+     * z = z + zt
+     * 1 = 1
+     * R x = xx x + xy y + xz z
+     * y = yx x + yy y + yz z
+     * z = zx x + zy y + zz z
+     * 1 = 1
+     * rotate first then translate
+     * T R = xx xy xz xt
+     * yx yy yz yt
+     * zx zy zz zt
+     * 0  0  0  1
+     * T R x = xx x + xy y + xz z + xt
+     * y   yx x + yy y + yz z + yt
+     * z   zx x + zy y + zz z + zt
+     * 1   1
+     * translate first then rotate
+     * R T = xx xy xz xx xt + xy yt + xz zt
+     * yx yy yz yx xt + yy yt + yz zt
+     * zx zy zz zx xt + zy yt + zz zt
+     * 0  0  0  1
+     * scale first then translate
+     * T S = 1 0 0 xt   xs 0  0  0   xs 0  0  xt
+     * 0 1 0 yt * 0  ys 0  0 = 0  ys 0  yt
+     * 0 0 1 zt   0  0  zs 0   0  0  zs zt
+     * 0 0 0 1    0  0  0  1   0  0  0  1
+     * T S x = xs * x + xt
+     * y   ys * y + yt
+     * z   zs * z + zt
+     * 1   1
+     * translate first then scale
+     * S T = xs 0  0  0   1 0 0 xt   xs 0  0  xs*xt
+     * 0  ys 0  0 * 0 1 0 yt = 0  ys 0  ys*yt
+     * 0  0  zs 0   0 0 1 zt   0  0  zs zs*zt
+     * 0  0  0  1   0 0 0 1    0  0  0  1
+     * S T x = xs * x + xs * xt
+     * y   ys * y + ys * yt
+     * z   zs * z + zs * zt
+     * 1   1
+     * translate first then arbitrary affine matrix
+     * A T = A0 A1 A2 A3   1 0 0 xt    A0 A1 A2 A0*xt+A1*yt+A2*zt+A3
+     * A4 A5 A6 A7 * 0 1 0 yt =  A4 A5 A6 A4*xt+A5*yt+A7*zt+A7
+     * A8 A9 Aa Ab   0 0 1 zt    A8 A9 Aa A8*xt+A9*yt+Aa*zt+Ab
+     * 0  0  0  1    0 0 0 1     0  0  0  1
+     * scale first then arbitrary affine matrix
+     * A S = A0 A1 A2 A3   xs 0  0  0   A0*xs A1*ys A2*zs A3
+     * A4 A5 A6 A7 * 0  ys 0  0 = A4*xs A5*ys A6*zs A7
+     * A8 A9 Aa Ab   0  0  zs 0   A8*xs A9*ys Aa*zs Ab
+     * 0  0  0  1    0  0  0  1   0     0     0     1
+     * rotate by an angle around vector 0/0/1
+     * Ra = +cos -sin 0 0
+     * +sin +cos 0 0
+     * 0    0    1 0
+     * 0    0    0 1
+     * same but arbitrary affine matrix afterwards
+     * A Ra = A0*c+A1*s -A0*s+A1*c A2 A3
+     * A4*c+A5*s -A4*s+A5*c A6 A7
+     * A8*c+A9*s -A8*s+A9*c Aa Ab
+     * 0         0          0  1
+     */
+#define SQRT sqrt
+#define COS cos
+#define SIN sin
+LandVector land_vector(LandFloat x, LandFloat y, LandFloat z) {
+    LandVector v = {x, y, z};
+    return v;
+}
+LandVector land_vector_from_array(LandFloat * a) {
+    LandVector v = {a [0], a [1], a [2]};
+    return v;
+}
+void land_vector_iadd(LandVector * v, LandVector w) {
+    v->x += w.x;
+    v->y += w.y;
+    v->z += w.z;
+}
+void land_vector_isub(LandVector * v, LandVector w) {
+    v->x -= w.x;
+    v->y -= w.y;
+    v->z -= w.z;
+}
+void land_vector_imul(LandVector * v, LandFloat s) {
+    v->x *= s;
+    v->y *= s;
+    v->z *= s;
+}
+void land_vector_idiv(LandVector * v, LandFloat s) {
+    v->x /= s;
+    v->y /= s;
+    v->z /= s;
+}
+LandVector land_vector_neg(LandVector v) {
+    LandVector r = {- v.x, - v.y, - v.z};
+    return r;
+}
+LandVector land_vector_mul(LandVector v, LandFloat s) {
+    LandVector r = {v.x * s, v.y * s, v.z * s};
+    return r;
+}
+LandVector land_vector_div(LandVector v, LandFloat s) {
+    LandVector r = {v.x / s, v.y / s, v.z / s};
+    return r;
+}
+LandVector land_vector_add(LandVector v, LandVector w) {
+    LandVector r = {v.x + w.x, v.y + w.y, v.z + w.z};
+    return r;
+}
+LandVector land_vector_add4(LandVector v, LandVector w, LandVector a, LandVector b) {
+    LandVector r = {v.x + w.x + a.x + b.x, v.y + w.y + a.y + b.y, v.z + w.z + a.z + b.z};
+    return r;
+}
+LandVector land_vector_add8(LandVector v, LandVector w, LandVector a, LandVector b, LandVector c, LandVector d, LandVector e, LandVector f) {
+    LandVector r = {v.x + w.x + a.x + b.x + c.x + d.x + e.x + f.x, v.y + w.y + a.y + b.y + c.y + d.y + e.y + f.y, v.z + w.z + a.z + b.z + c.z + d.z + e.z + f.z};
+    return r;
+}
+LandVector land_vector_sub(LandVector v, LandVector w) {
+    LandVector r = {v.x - w.x, v.y - w.y, v.z - w.z};
+    return r;
+}
+LandVector land_vector_lerp(LandVector v, LandVector w, LandFloat t) {
+    return land_vector_add(v, land_vector_mul(land_vector_sub(w, v), t));
+}
+LandFloat land_vector_dot(LandVector v, LandVector w) {
+    /* The dot product is a number. The number corresponds to the cosine
+     * between the two vectors times their lengths. So the angle between the
+     * vectors would be: angle = acos(v . w / (|v| * |w|)). If the dot product
+     * is 0, the two vectors conversely are orthogonal. The sign can be used to
+     * determine which side of a plane a point is on.
+     */
+    return v.x * w.x + v.y * w.y + v.z * w.z;
+}
+LandVector land_vector_cross(LandVector v, LandVector w) {
+    /* The cross product results in a vector orthogonal to both v and w. The
+     * length of the resulting vector corresponds to the sine of the angle
+     * between the two vectors and their lengths. So the angle between the
+     * vectors would be: angle = asin(|v x w| / (|v| * |w|)). If the cross
+     * product is the 0 vector, the two input vectors are parallel.
+     */
+    LandVector r = {v.y * w.z - w.y * v.z, v.z * w.x - w.z * v.x, v.x * w.y - w.x * v.y};
+    return r;
+}
+LandFloat land_vector_norm(LandVector v) {
+    /* Return the norm of the vector.
+     */
+    return SQRT(land_vector_dot(v, v));
+}
+LandVector land_vector_normalize(LandVector v) {
+    /* Return a normalized version of the vector.
+     */
+    return land_vector_div(v, land_vector_norm(v));
+}
+LandQuaternion land_vector_quatmul(LandVector v, LandQuaternion q) {
+    /* Multiply the vector with a quaternion. The result is a quaternion. For
+     * example if your vector is a rotation, the resulting quaternion will be a
+     * quaternion who rotates whatever it did plus this additional rotation.
+     */
+    LandQuaternion r = {- v.x * q.x - v.y * q.y - v.z * q.z, v.x * q.w + v.y * q.z - v.z * q.y, v.y * q.w + v.z * q.x - v.x * q.z, v.z * q.w + v.x * q.y - v.y * q.x};
+    return r;
+}
+LandVector land_vector_transform(LandVector v, LandVector p, LandVector r, LandVector u, LandVector b) {
+    /* Return a new vector obtained by transforming this vector by a coordinate
+     * system with the given origin and given right/up/back vectors. This is
+     * used if the vector is in world coordinates, and you want to transform it
+     * to camera coordinates, where p/r/u/b define camera position and
+     * orientation.
+     */
+    LandVector w = land_vector_sub(v, p);
+    LandVector a = {land_vector_dot(w, r), land_vector_dot(w, u), land_vector_dot(w, b)};
+    return a;
+}
+LandVector land_vector_matmul(LandVector v, Land4x4Matrix * m) {
+    LandFloat x = m->v [0] * v.x + m->v [1] * v.y + m->v [2] * v.z + m->v [3];
+    LandFloat y = m->v [4] * v.x + m->v [5] * v.y + m->v [6] * v.z + m->v [7];
+    LandFloat z = m->v [8] * v.x + m->v [9] * v.y + m->v [10] * v.z + m->v [11];
+    return land_vector(x, y, z);
+}
+LandVector land_vector_backtransform(LandVector v, LandVector p, LandVector r, LandVector u, LandVector b) {
+    /* Do the inverse of transform, i.e. you can use it to transform from
+     * camera back to world coordinates.
+     */
+    LandVector x = land_vector_mul(r, v.x);
+    LandVector y = land_vector_mul(u, v.y);
+    LandVector z = land_vector_mul(b, v.z);
+    LandVector a = p;
+    land_vector_iadd(& a, x);
+    land_vector_iadd(& a, y);
+    land_vector_iadd(& a, z);
+    return a;
+}
+LandVector land_vector_rotate(LandVector v, LandVector a, double angle) {
+    /* Rotate the vector around axis a by angle in counter clockwise direction.
+     * If this vector is a point in world space, then the axis of rotation is
+     * defined by the origin and the a vector.
+     */
+    LandFloat c = COS(angle);
+    LandFloat s = SIN(angle);
+    LandVector r = land_vector_mul(a, a.x * (1 - c));
+    LandVector u = land_vector_mul(a, a.y * (1 - c));
+    LandVector b = land_vector_mul(a, a.z * (1 - c));
+    r.x += c;
+    r.y += a.z * s;
+    r.z -= a.y * s;
+    u.x -= a.z * s;
+    u.y += c;
+    u.z += a.x * s;
+    b.x += a.y * s;
+    b.y -= a.x * s;
+    b.z += c;
+    LandFloat x = land_vector_dot(v, r);
+    LandFloat y = land_vector_dot(v, u);
+    LandFloat z = land_vector_dot(v, b);
+    LandVector ret = {x, y, z};
+    return ret;
+}
+LandVector land_vector_reflect(LandVector v, LandVector n) {
+    /* Given the normal of a plane, reflect the vector off the plane. If the
+     * vector is a point in 3D space, and the plane goes through the origin,
+     * the result is a point reflected by the plane.
+     */
+    LandFloat d = land_vector_dot(v, n);
+    LandVector r = n;
+    land_vector_imul(& r, - 2 * d);
+    land_vector_iadd(& r, v);
+    return r;
+}
+LandQuaternion land_quaternion(LandFloat w, LandFloat x, LandFloat y, LandFloat z) {
+    LandQuaternion q = {w, x, y, z};
+    return q;
+}
+LandQuaternion land_quaternion_from_array(LandFloat * f) {
+    LandQuaternion q = {f [0], f [1], f [2], f [3]};
+    return q;
+}
+void land_quaternion_to_array(LandQuaternion * q, LandFloat * f) {
+    f [0] = q->w;
+    f [1] = q->x;
+    f [2] = q->y;
+    f [3] = q->z;
+}
+void land_quaternion_iadd(LandQuaternion * q, LandQuaternion p) {
+    q->w += p.w;
+    q->x += p.x;
+    q->y += p.y;
+    q->z += p.z;
+}
+void land_quaternion_imul(LandQuaternion * q, LandFloat s) {
+    q->w *= s;
+    q->x *= s;
+    q->y *= s;
+    q->z *= s;
+}
+LandQuaternion land_quaternion_combine(LandQuaternion qa, LandQuaternion qb) {
+    LandVector qav = {qa.x, qa.y, qa.z};
+    LandVector qbv = {qb.x, qb.y, qb.z};
+    LandVector va = land_vector_cross(qav, qbv);
+    LandVector vb = land_vector_mul(qav, qb.w);
+    LandVector vc = land_vector_mul(qbv, qa.w);
+    land_vector_iadd(& va, vb);
+    LandVector qrv = land_vector_add(va, vc);
+    double w = land_vector_dot(qav, qbv);
+    LandQuaternion qr = {qrv.x, qrv.y, qrv.z, w};
+    land_quaternion_normalize(& qr);
+    return qr;
+}
+void land_quaternion_vectors(LandQuaternion q, LandVector * r, LandVector * u, LandVector * b) {
+    /* Output three orientation vectors for the quaternion. That is, if the
+     * quaternion is used as a 3D orientation, return right/up/back vectors
+     * representing the same orientation.
+     */
+    LandFloat ww = q.w * q.w;
+    LandFloat xx = q.x * q.x;
+    LandFloat yy = q.y * q.y;
+    LandFloat zz = q.z * q.z;
+    LandFloat wx = q.w * q.x * 2;
+    LandFloat wy = q.w * q.y * 2;
+    LandFloat wz = q.w * q.z * 2;
+    LandFloat xy = q.x * q.y * 2;
+    LandFloat xz = q.x * q.z * 2;
+    LandFloat yz = q.y * q.z * 2;
+    r->x = ww + xx - yy - zz;
+    u->x = xy - wz;
+    b->x = xz + wy;
+    r->y = xy + wz;
+    u->y = ww - xx + yy - zz;
+    b->y = yz - wx;
+    r->z = xz - wy;
+    u->z = yz + wx;
+    b->z = ww - xx - yy + zz;
+}
+Land4x4Matrix land_quaternion_4x4_matrix(LandQuaternion q) {
+    LandVector r, u, b;
+    land_quaternion_vectors(q, & r, & u, & b);
+    Land4x4Matrix m;
+    m.v [0] = r.x;
+    m.v [1] = u.x;
+    m.v [2] = b.x;
+    m.v [3] = 0;
+    m.v [4] = r.y;
+    m.v [5] = u.y;
+    m.v [6] = b.y;
+    m.v [7] = 0;
+    m.v [8] = r.z;
+    m.v [9] = u.z;
+    m.v [10] = b.z;
+    m.v [11] = 0;
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_mul(Land4x4Matrix a, Land4x4Matrix b) {
+    /* This multiplies two matrices:
+     * result = a b
+     * When used with 3D transformations, the result has the same effect as first
+     * applying b, then a. For example:
+     * v = land_vector(1, 0, 0)
+     * a = land_4x4_matrix_scale(10, 1, 1)
+     * b = land_4x4_matrix_translate(10, 0, 0)
+     * # This means first b then a, so v is first translated to 11, then
+     * # scaled to 110.
+     * land_vector_matmul(v, land_4x4_matrix_mul(a, b))
+     * # This means v is first scaled to 10, then translated to 20.
+     * land_vector_matmul(v, land_4x4_matrix_mul(b, a))
+     * In words, result[row,column] = a[row,...] * b[...,column].
+     */
+    Land4x4Matrix m;
+    for (int i = 0; i < 4; i += 1) {
+        for (int j = 0; j < 4; j += 1) {
+            LandFloat x = 0;
+            for (int k = 0; k < 4; k += 1) {
+                x += a.v [i * 4 + k] * b.v [k * 4 + j];
+            }
+            m.v [i * 4 + j] = x;
+        }
+    }
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_scale(LandFloat x, LandFloat y, LandFloat z) {
+    Land4x4Matrix m;
+    m.v [0] = x;
+    m.v [1] = 0;
+    m.v [2] = 0;
+    m.v [3] = 0;
+    m.v [4] = 0;
+    m.v [5] = y;
+    m.v [6] = 0;
+    m.v [7] = 0;
+    m.v [8] = 0;
+    m.v [9] = 0;
+    m.v [10] = z;
+    m.v [11] = 0;
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_skew(LandFloat xy, LandFloat xz, LandFloat yx, LandFloat yz, LandFloat zx, LandFloat zy) {
+    Land4x4Matrix m;
+    m.v [0] = 1;
+    m.v [1] = xy;
+    m.v [2] = xz;
+    m.v [3] = 0;
+    m.v [4] = yx;
+    m.v [5] = 1;
+    m.v [6] = yz;
+    m.v [7] = 0;
+    m.v [8] = zx;
+    m.v [9] = zy;
+    m.v [10] = 1;
+    m.v [11] = 0;
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_rotate(LandFloat x, LandFloat y, LandFloat z, LandFloat angle) {
+    Land4x4Matrix m;
+    double s = sin(angle);
+    double c = cos(angle);
+    double cc = 1 - c;
+    m.v [0] = (cc * x * x) + c;
+    m.v [4] = (cc * x * y) + (z * s);
+    m.v [8] = (cc * x * z) - (y * s);
+    m.v [12] = 0;
+    m.v [1] = (cc * x * y) - (z * s);
+    m.v [5] = (cc * y * y) + c;
+    m.v [9] = (cc * z * y) + (x * s);
+    m.v [13] = 0;
+    m.v [2] = (cc * x * z) + (y * s);
+    m.v [6] = (cc * y * z) - (x * s);
+    m.v [10] = (cc * z * z) + c;
+    m.v [14] = 0;
+    m.v [3] = 0;
+    m.v [7] = 0;
+    m.v [11] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_identity(void) {
+    Land4x4Matrix m;
+    m.v [0] = 1;
+    m.v [1] = 0;
+    m.v [2] = 0;
+    m.v [3] = 0;
+    m.v [4] = 0;
+    m.v [5] = 1;
+    m.v [6] = 0;
+    m.v [7] = 0;
+    m.v [8] = 0;
+    m.v [9] = 0;
+    m.v [10] = 1;
+    m.v [11] = 0;
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_translate(LandFloat x, LandFloat y, LandFloat z) {
+    /* T = 1 0 0 xt
+     * 0 1 0 yt
+     * 0 0 1 zt
+     * 0 0 0 1
+     */
+    Land4x4Matrix m;
+    m.v [0] = 1;
+    m.v [1] = 0;
+    m.v [2] = 0;
+    m.v [3] = x;
+    m.v [4] = 0;
+    m.v [5] = 1;
+    m.v [6] = 0;
+    m.v [7] = y;
+    m.v [8] = 0;
+    m.v [9] = 0;
+    m.v [10] = 1;
+    m.v [11] = z;
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_perspective(LandFloat left, LandFloat bottom, LandFloat nearz, LandFloat right, LandFloat top, LandFloat farz) {
+    Land4x4Matrix m;
+    LandFloat w = right - left;
+    LandFloat h = top - bottom;
+    LandFloat depth = farz - nearz;
+    LandFloat cx = (right + left) / 2;
+    LandFloat cy = (bottom + top) / 2;
+    LandFloat cz = (farz + nearz) / 2;
+    m.v [0] = 2 * nearz / w;
+    m.v [1] = 0;
+    m.v [2] = 2 * cx / w;
+    m.v [3] = 0;
+    m.v [4] = 0;
+    m.v [5] = 2 * nearz / h;
+    m.v [6] = 0;
+    m.v [7] = 2 * cy / h;
+    m.v [8] = 0;
+    m.v [9] = 0;
+    m.v [10] = - 2 * cz / depth;
+    m.v [11] = farz * nearz * (- 2 / depth);
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = - 1;
+    m.v [15] = 0;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_orthographic(LandFloat left, LandFloat top, LandFloat nearz, LandFloat right, LandFloat bottom, LandFloat farz) {
+    /* Orthographic means no projection so this would be just an identity matrix.
+     * But as convenience this scales and translates to fit into the
+     * left/top/right/bottom rectangle and also scales depth.
+     * The point at (left, top, near) will end up at (-1, -1, -1) and the point
+     * at (right, bottom, far) will end up at (1, 1, 1).
+     * O = S(2/w, 2/h, 2/d) T(-cx, -cy, -cz)
+     * O = 2/w 0   0   2/w*-cx
+     * 0   2/h 0   2/h*-cy
+     * 0   0   2/d 2/d*-cz
+     * 0   0   0   1
+     * O x = 2/w*(x-cx)
+     * y   2/h*(y-cy)
+     * z   2/d*(z-cz)
+     * 1   1
+     * inv(O) = inv(T) inv(S) = w/2 0   0   cx
+     * 0   h/2 0   cy
+     * 0   0   d/2 cz
+     * 0   0   0   1
+     * O inv(O) = 1 0 0 0
+     * 0 1 0 0
+     * 0 0 1 0
+     * 0 0 0 1
+     */
+    Land4x4Matrix m;
+    LandFloat w = right - left;
+    LandFloat h = bottom - top;
+    LandFloat depth = farz - nearz;
+    LandFloat cx = (right + left) / 2;
+    LandFloat cy = (bottom + top) / 2;
+    LandFloat cz = (farz + nearz) / 2;
+    m.v [0] = 2 / w;
+    m.v [1] = 0;
+    m.v [2] = 0;
+    m.v [3] = 2 / w * (- cx);
+    m.v [4] = 0;
+    m.v [5] = 2 / h;
+    m.v [6] = 0;
+    m.v [7] = 2 / h * (- cy);
+    m.v [8] = 0;
+    m.v [9] = 0;
+    m.v [10] = 2 / depth;
+    m.v [11] = 2 / depth * (- cz);
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_from_vectors(LandVector * p, LandVector * r, LandVector * u, LandVector * b) {
+    Land4x4Matrix m;
+    m.v [0] = r->x;
+    m.v [1] = u->x;
+    m.v [2] = b->x;
+    m.v [3] = p->x;
+    m.v [4] = r->y;
+    m.v [5] = u->y;
+    m.v [6] = b->y;
+    m.v [7] = p->y;
+    m.v [8] = r->z;
+    m.v [9] = u->z;
+    m.v [10] = b->z;
+    m.v [11] = p->z;
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+Land4x4Matrix land_4x4_matrix_inverse_from_vectors(LandVector * p, LandVector * r, LandVector * u, LandVector * b) {
+    Land4x4Matrix m;
+    m.v [0] = r->x;
+    m.v [1] = r->y;
+    m.v [2] = r->z;
+    m.v [3] = r->x * (- p->x) + r->y * (- p->y) + r->z * (- p->z);
+    m.v [4] = u->x;
+    m.v [5] = u->y;
+    m.v [6] = u->z;
+    m.v [7] = u->x * (- p->x) + u->y * (- p->y) + u->z * (- p->z);
+    m.v [8] = b->x;
+    m.v [9] = b->y;
+    m.v [10] = b->z;
+    m.v [11] = b->x * (- p->x) + b->y * (- p->y) + b->z * (- p->z);
+    m.v [12] = 0;
+    m.v [13] = 0;
+    m.v [14] = 0;
+    m.v [15] = 1;
+    return m;
+}
+LandVector land_4x4_matrix_get_right(Land4x4Matrix * m) {
+    return land_vector(m->v [0], m->v [4], m->v [8]);
+}
+LandVector land_4x4_matrix_get_up(Land4x4Matrix * m) {
+    return land_vector(m->v [1], m->v [5], m->v [9]);
+}
+LandVector land_4x4_matrix_get_back(Land4x4Matrix * m) {
+    return land_vector(m->v [2], m->v [6], m->v [10]);
+}
+LandVector land_4x4_matrix_get_position(Land4x4Matrix * m) {
+    return land_vector(m->v [3], m->v [7], m->v [11]);
+}
+void land_quaternion_normalize(LandQuaternion * q) {
+    /* Normalize the quaternion. This may be useful to prevent deteriorating
+     * the quaternion if it is used for a long time, due to floating point
+     * inaccuracies.
+     */
+    LandFloat n = SQRT(q->w * q->w + q->x * q->x + q->y * q->y + q->z * q->z);
+    q->w /= n;
+    q->x /= n;
+    q->y /= n;
+    q->z /= n;
+}
+LandQuaternion land_quaternion_slerp(LandQuaternion qa, LandQuaternion qb, double t) {
+    /* Given two quaternions, interpolate a quaternion in between. If t is 0
+     * this will return qa, if t is 1 it will return qb.
+     * The rotation will be along the shortest path (not necessarily the shorter
+     * direction though) and the rotation angle will linearly correspond to t.
+     */
+    LandQuaternion q;
+    double c = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z;
+    if (c < 0) {
+        c = - c;
+        qb.w = - qb.w;
+        qb.x = - qb.x;
+        qb.y = - qb.y;
+        qb.z = - qb.z;
+    }
+    double theta = acos(c);
+    double s = sin(theta);
+    double fs = sin((1 - t) * theta) / s;
+    double ts = sin(t * theta) / s;
+    q.w = qa.w * fs + qb.w * ts;
+    q.x = qa.x * fs + qb.x * ts;
+    q.y = qa.y * fs + qb.y * ts;
+    q.z = qa.z * fs + qb.z * ts;
+    return q;
+}
+LandBuffer* land_4x4_matrix_to_string(Land4x4Matrix * m) {
+    LandBuffer * b = land_buffer_new();
+    for (int i = 0; i < 16; i += 1) {
+        land_buffer_addf(b, "%-5.2f%s", m->v [i], i % 4 == 3 ? "\n" : " ");
+    }
+    return b;
+}
+#undef SQRT
+#undef COS
+#undef SIN
+#define pi LAND_PI
+static void sphere_point(LandArray * vertices, LandFloat i, LandFloat j) {
+    LandFloat theta = 2 * pi * i;
+    LandFloat phi = pi * j;
+    LandVector normal = land_vector(cos(theta) * sin(phi), cos(phi), sin(theta) * sin(phi));
+    LandVector pos = normal;
+    land_array_add(vertices, land_csg_vertex_new(pos, normal));
+}
+LandCSG* csg_sphere(int slices, int rings, void * shared) {
+    /* Make a sphere with radius 1.0.
+     * It fits within a cube from -1/-1/-1 to 1/1/1.
+     * rings determines how many parts the latitude is divided into, a
+     * value of 3 means just south pole, equator and north pole.
+     * slices determins how many parts the longitude is divided into,
+     * a value of 3 means 0-meridian, +120° and -120°.
+     */
+    if (slices < 3) {
+        return NULL;
+    }
+    if (rings < 3) {
+        return NULL;
+    }
+    LandArray * polygons = land_array_new();
+    for (int i = 0; i < slices; i += 1) {
+        for (int j = 0; j < rings - 1; j += 1) {
+            LandArray * vertices = land_array_new();
+            sphere_point(vertices, 1.0 * i / slices, 1.0 * j / (rings - 1));
+            if (j > 0) {
+                sphere_point(vertices, 1.0 * (i + 1) / slices, 1.0 * j / (rings - 1));
+            }
+            if (j < rings - 2) {
+                sphere_point(vertices, 1.0 * (i + 1) / slices, 1.0 * (j + 1) / (rings - 1));
+            }
+            sphere_point(vertices, 1.0 * i / slices, 1.0 * (j + 1) / (rings - 1));
+            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+        }
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+static LandVector _sphere_point(LandVector a, LandVector b) {
+    LandVector half = land_vector_mul(land_vector_add(a, b), 0.5);
+    return land_vector_normalize(half);
+}
+static void _sphere_tri(LandArray * polygons, LandVector a, LandVector b, LandVector c, int divisions, void * shared) {
+    /* c
+     * .
+     * / \
+     * /     \
+     * X---------X
+     * /   \     /   \
+     * /       \ /       \
+     * .---------I---------.
+     * a                   b
+     */
+    if (divisions == 0) {
+        LandArray * vertices = land_array_new();
+        land_array_add(vertices, land_csg_vertex_new(a, a));
+        land_array_add(vertices, land_csg_vertex_new(b, b));
+        land_array_add(vertices, land_csg_vertex_new(c, c));
+        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+    }
+    else {
+        LandVector ab2 = _sphere_point(a, b);
+        LandVector bc2 = _sphere_point(b, c);
+        LandVector ca2 = _sphere_point(c, a);
+        _sphere_tri(polygons, a, ab2, ca2, divisions - 1, shared);
+        _sphere_tri(polygons, b, bc2, ab2, divisions - 1, shared);
+        _sphere_tri(polygons, c, ca2, bc2, divisions - 1, shared);
+        _sphere_tri(polygons, ab2, bc2, ca2, divisions - 1, shared);
+    }
+}
+LandCSG* csg_tetrasphere(int divisions, void * shared) {
+    /* Make a sphere out of a repeatedly subdivided tetrahedron.
+     */
+    LandArray * polygons = land_array_new();
+    LandFloat r = 1 / sqrt(1.5);
+    LandFloat t = 1 / sqrt(3);
+    LandVector a = land_vector(- r, 0, - t);
+    LandVector b = land_vector(r, 0, - t);
+    LandVector c = land_vector(0, - r, t);
+    LandVector d = land_vector(0, r, t);
+    _sphere_tri(polygons, a, d, b, divisions, shared);
+    _sphere_tri(polygons, d, c, b, divisions, shared);
+    _sphere_tri(polygons, c, d, a, divisions, shared);
+    _sphere_tri(polygons, c, a, b, divisions, shared);
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* land_csg_icosphere(int divisions, void * shared) {
+    LandArray * polygons = land_array_new();
+    const LandFloat u = (1.0 + sqrt(5)) / 2.0;
+    const LandFloat r = sqrt(1 + u * u);
+    const LandFloat icosahedron_coords [] = {0, 1, u, 0, - 1, u, 0, 1, - u, 0, - 1, - u, 1, u, 0, - 1, u, 0, 1, - u, 0, - 1, - u, 0, u, 0, 1, u, 0, - 1, - u, 0, 1, - u, 0, - 1};
+    const int icosahedron_triangles [] = {1, 11, 2, 1, 6, 11, 1, 5, 6, 1, 9, 5, 1, 2, 9, 2, 7, 9, 2, 8, 7, 2, 11, 8, 3, 10, 4, 3, 5, 10, 3, 6, 5, 3, 12, 6, 3, 4, 12, 4, 10, 7, 4, 7, 8, 4, 8, 12, 11, 12, 8, 12, 11, 6, 9, 7, 10, 10, 5, 9};
+    for (int i = 0; i < 20; i += 1) {
+        int const * vi = icosahedron_triangles + i * 3;
+        LandFloat const * va = icosahedron_coords + vi [0] * 3 - 3;
+        LandFloat const * vb = icosahedron_coords + vi [1] * 3 - 3;
+        LandFloat const * vc = icosahedron_coords + vi [2] * 3 - 3;
+        LandVector a = land_vector(va [0] / r, va [1] / r, va [2] / r);
+        LandVector b = land_vector(vb [0] / r, vb [1] / r, vb [2] / r);
+        LandVector c = land_vector(vc [0] / r, vc [1] / r, vc [2] / r);
+        _sphere_tri(polygons, a, b, c, divisions, shared);
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_cylinder(int slices, void * shared) {
+    return csg_cylinder_open(slices, 0, shared);
+}
+LandCSG* csg_cut_cone_open(int slices, bool opened, float top_radius, void * shared) {
+    /* Make a cut cone along the z-axis with radius 1.0 at the botton
+     * and radius top_radius at the top at height 2.0.
+     * It fits within a cube from -1/-1/-1 to 1/1/1.
+     */
+    if (slices < 3) {
+        return NULL;
+    }
+    LandVector up = land_vector(0, 0, 1);
+    LandVector down = land_vector(0, 0, - 1);
+    LandArray * polygons = land_array_new();
+    for (int i = 0; i < slices; i += 1) {
+        LandCSGVertex * start = land_csg_vertex_new(down, down);
+        LandCSGVertex * end = land_csg_vertex_new(up, up);
+        LandFloat angle0 = i * 2 * pi / slices;
+        LandFloat angle1 = (i + 1) * 2 * pi / slices;
+        LandFloat c0 = cos(angle0), s0 = sin(angle0);
+        LandFloat c1 = cos(angle1), s1 = sin(angle1);
+        LandVector side0 = land_vector(c0, - s0, 0);
+        LandVector side1 = land_vector(c1, - s1, 0);
+        LandVector v0d = land_vector(c0, - s0, - 1);
+        LandVector v1d = land_vector(c1, - s1, - 1);
+        LandVector v0u = land_vector(c0 * top_radius, - s0 * top_radius, 1);
+        LandVector v1u = land_vector(c1 * top_radius, - s1 * top_radius, 1);
+        LandArray * vertices;
+        if (! opened) {
+            vertices = land_array_new();
+            land_array_add(vertices, start);
+            land_array_add(vertices, land_csg_vertex_new(v0d, down));
+            land_array_add(vertices, land_csg_vertex_new(v1d, down));
+            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+        }
+        vertices = land_array_new();
+        land_array_add(vertices, land_csg_vertex_new(v1d, side1));
+        land_array_add(vertices, land_csg_vertex_new(v0d, side0));
+        land_array_add(vertices, land_csg_vertex_new(v0u, side0));
+        land_array_add(vertices, land_csg_vertex_new(v1u, side1));
+        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+        if (! opened) {
+            vertices = land_array_new();
+            land_array_add(vertices, end);
+            land_array_add(vertices, land_csg_vertex_new(v1u, up));
+            land_array_add(vertices, land_csg_vertex_new(v0u, up));
+            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+        }
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_cylinder_open(int slices, bool opened, void * shared) {
+    return csg_cut_cone_open(slices, opened, 1.0, shared);
+}
+LandCSG* csg_cone(int slices, void * shared) {
+    /* Make a cone along the z-axis with radius 1.0 and height 2.0.
+     * The top of the cone is at 0/0/1.
+     * It fits within a cube from -1/-1/-1 to 1/1/1.
+     */
+    if (slices < 3) {
+        return NULL;
+    }
+    LandVector down = land_vector(0, 0, - 1);
+    LandVector up = land_vector(0, 0, 1);
+    LandArray * polygons = land_array_new();
+    for (int i = 0; i < slices; i += 1) {
+        LandCSGVertex * start = land_csg_vertex_new(down, down);
+        LandFloat angle0 = i * 2 * pi / slices;
+        LandFloat angle1 = (i + 1) * 2 * pi / slices;
+        LandFloat c0 = cos(angle0), s0 = sin(angle0);
+        LandFloat c1 = cos(angle1), s1 = sin(angle1);
+        LandVector side0 = land_vector_normalize(land_vector(c0, - s0, 0.5));
+        LandVector side1 = land_vector_normalize(land_vector(c1, - s1, 0.5));
+        LandVector v0d = land_vector(c0, - s0, - 1);
+        LandVector v1d = land_vector(c1, - s1, - 1);
+        LandArray * vertices;
+        vertices = land_array_new();
+        land_array_add(vertices, start);
+        land_array_add(vertices, land_csg_vertex_new(v0d, down));
+        land_array_add(vertices, land_csg_vertex_new(v1d, down));
+        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+        vertices = land_array_new();
+        land_array_add(vertices, land_csg_vertex_new(up, up));
+        land_array_add(vertices, land_csg_vertex_new(v1d, side1));
+        land_array_add(vertices, land_csg_vertex_new(v0d, side0));
+        land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+static LandArray* quad_vertices(LandVector a, LandVector b, LandVector c, LandVector d) {
+    LandArray * vertices = land_array_new();
+    LandVector ab = land_vector_sub(b, a);
+    LandVector bc = land_vector_sub(c, b);
+    LandVector normal = land_vector_normalize(land_vector_cross(ab, bc));
+    land_array_add(vertices, land_csg_vertex_new(a, normal));
+    land_array_add(vertices, land_csg_vertex_new(b, normal));
+    land_array_add(vertices, land_csg_vertex_new(c, normal));
+    land_array_add(vertices, land_csg_vertex_new(d, normal));
+    return vertices;
+}
+static void add_quad(LandArray * polygons, LandVector a, LandVector b, LandVector c, LandVector d, void * shared) {
+    LandArray * vertices = quad_vertices(a, b, c, d);
+    land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+}
+static LandArray* triangle_vertices(LandVector a, LandVector b, LandVector c) {
+    LandArray * vertices = land_array_new();
+    LandVector ab = land_vector_sub(b, a);
+    LandVector bc = land_vector_sub(c, b);
+    LandVector normal = land_vector_normalize(land_vector_cross(ab, bc));
+    land_array_add(vertices, land_csg_vertex_new(a, normal));
+    land_array_add(vertices, land_csg_vertex_new(b, normal));
+    land_array_add(vertices, land_csg_vertex_new(c, normal));
+    return vertices;
+}
+static void add_tri(LandArray * polygons, LandVector a, LandVector b, LandVector c, void * shared) {
+    LandArray * vertices = triangle_vertices(a, b, c);
+    land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+}
+static void add_tri_flip(LandArray * polygons, LandVector a, LandVector b, LandVector c, void * shared, bool flip) {
+    add_tri(polygons, a, b, c, shared);
+    if (flip) {
+        land_csg_polygon_flip(land_array_get_last(polygons));
+    }
+}
+static void add_quad_flip(LandArray * polygons, LandVector a, LandVector b, LandVector c, LandVector d, void * shared, bool flip) {
+    add_quad(polygons, a, b, c, d, shared);
+    if (flip) {
+        land_csg_polygon_flip(land_array_get_last(polygons));
+    }
+}
+LandCSG* csg_pyramid(void * shared) {
+    /* Make a 4-sided pyramid with a side-length of 1 and a height of 2.
+     * The top is at 0/0/1.
+     * It fits within a cube from -1/-1/-1 to 1/1/1.
+     */
+    LandArray * polygons = land_array_new();
+    LandVector a = land_vector(- 1, - 1, - 1);
+    LandVector b = land_vector(1, - 1, - 1);
+    LandVector c = land_vector(1, 1, - 1);
+    LandVector d = land_vector(- 1, 1, - 1);
+    LandVector e = land_vector(0, 0, 1);
+    add_quad(polygons, a, d, c, b, shared);
+    add_tri(polygons, a, b, e, shared);
+    add_tri(polygons, b, c, e, shared);
+    add_tri(polygons, c, d, e, shared);
+    add_tri(polygons, d, a, e, shared);
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_cut_pyramid_open(bool opened, LandFloat top_x, LandFloat top_y, void * shared) {
+    /* Make a 4-sided pyramid with a side-length of 1 at the base and a
+     * height of 2. The side-length at the top is top_x times top_y.
+     */
+    LandFloat x = top_x;
+    LandFloat y = top_y;
+    LandArray * polygons = land_array_new();
+    LandVector a = land_vector(- 1, - 1, - 1);
+    LandVector b = land_vector(1, - 1, - 1);
+    LandVector c = land_vector(1, 1, - 1);
+    LandVector d = land_vector(- 1, 1, - 1);
+    LandVector e = land_vector(- x, - y, 1);
+    LandVector f = land_vector(x, - y, 1);
+    LandVector g = land_vector(x, y, 1);
+    LandVector h = land_vector(- x, y, 1);
+    if (! opened) {
+        add_quad(polygons, a, d, c, b, shared);
+    }
+    if (! opened) {
+        add_quad(polygons, e, f, g, h, shared);
+    }
+    add_quad(polygons, h, g, c, d, shared);
+    add_quad(polygons, g, f, b, c, shared);
+    add_quad(polygons, f, e, a, b, shared);
+    add_quad(polygons, e, h, d, a, shared);
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_tetrahedron(void * shared) {
+    /* Make a tetrahedron.
+     */
+    LandArray * polygons = land_array_new();
+    LandFloat s = 1 / sqrt(2);
+    LandVector a = land_vector(- 1, 0, - s);
+    LandVector b = land_vector(1, 0, - s);
+    LandVector c = land_vector(0, - 1, s);
+    LandVector d = land_vector(0, 1, s);
+    add_tri(polygons, a, d, b, shared);
+    add_tri(polygons, d, c, b, shared);
+    add_tri(polygons, c, d, a, shared);
+    add_tri(polygons, c, a, b, shared);
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_cube(void * shared) {
+    /* Make a cube from -1/-1/-1 to 1/1/1.
+     */
+    return csg_trapezoid(- 1, 1, shared);
+}
+LandCSG* csg_block2(int x, int y, int z, bool outside, void * shared) {
+    bool all = ! outside;
+    LandArray * polygons = land_array_new();
+    LandFloat xs = 1.0 / x;
+    LandFloat ys = 1.0 / y;
+    LandFloat zs = 1.0 / z;
+    for (int i = 0; i < x; i += 1) {
+        for (int j = 0; j < y; j += 1) {
+            for (int k = 0; k < z; k += 1) {
+                LandFloat xp = - 1 + xs + i * xs * 2;
+                LandFloat yp = - 1 + ys + j * ys * 2;
+                LandFloat zp = - 1 + zs + k * zs * 2;
+                LandVector a = land_vector(xp + xs * (- 1), yp + ys * (- 1), zp + zs * (- 1));
+                LandVector b = land_vector(xp + xs * 1, yp + ys * (- 1), zp + zs * (- 1));
+                LandVector c = land_vector(xp + xs * 1, yp + ys * 1, zp + zs * (- 1));
+                LandVector d = land_vector(xp + xs * (- 1), yp + ys * 1, zp + zs * (- 1));
+                LandVector e = land_vector(xp + xs * (- 1), yp + ys * (- 1), zp + zs * 1);
+                LandVector f = land_vector(xp + xs * 1, yp + ys * (- 1), zp + zs * 1);
+                LandVector g = land_vector(xp + xs * 1, yp + ys * 1, zp + zs * 1);
+                LandVector h = land_vector(xp + xs * (- 1), yp + ys * 1, zp + zs * 1);
+                if (all || k == z - 1) {
+                    add_quad(polygons, e, f, g, h, shared);
+                }
+                if (all || k == 0) {
+                    add_quad(polygons, a, d, c, b, shared);
+                }
+                if (all || j == y - 1) {
+                    add_quad(polygons, h, g, c, d, shared);
+                }
+                if (all || i == x - 1) {
+                    add_quad(polygons, g, f, b, c, shared);
+                }
+                if (all || j == 0) {
+                    add_quad(polygons, f, e, a, b, shared);
+                }
+                if (all || i == 0) {
+                    add_quad(polygons, e, h, d, a, shared);
+                }
+            }
+        }
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_block(int x, int y, int z, bool outside, void * shared) {
+    return csg_block2(x, y, z, outside, shared);
+}
+LandCSG* csg_grid(int x, int y, void * shared) {
+    LandArray * polygons = land_array_new();
+    LandFloat xs = 1.0 / x;
+    LandFloat ys = 1.0 / y;
+    for (int j = 0; j < y; j += 1) {
+        for (int i = 0; i < x; i += 1) {
+            LandFloat xp = - 1 + xs + i * xs * 2;
+            LandFloat yp = - 1 + ys + j * ys * 2;
+            LandVector e = land_vector(xp + xs * (- 1), yp + ys * (- 1), 0);
+            LandVector f = land_vector(xp + xs * 1, yp + ys * (- 1), 0);
+            LandVector g = land_vector(xp + xs * 1, yp + ys * 1, 0);
+            LandVector h = land_vector(xp + xs * (- 1), yp + ys * 1, 0);
+            add_tri(polygons, e, f, g, shared);
+            add_tri(polygons, g, h, e, shared);
+        }
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_prism(int n, void * shared) {
+    /* n is the shape - 3 for triangle, 4 for square, 5 for pentagon...
+     * The prism extrudes along the z axis from -1 to 1.
+     * The first edge is at y = 1 the others are on a circle around 0/0
+     * with radius 1 in the x/y plane.
+     */
+    LandArray * polygons = land_array_new();
+    LandVector a = land_vector(0, 1, 1);
+    LandVector b = land_vector(0, 1, - 1);
+    LandVector a0 = a;
+    LandVector b0 = b;
+    for (int i = 1; i < n + 1; i += 1) {
+        LandFloat angle = i * 2 * pi / n;
+        LandVector c = land_vector(sin(angle), cos(angle), + 1);
+        LandVector d = land_vector(sin(angle), cos(angle), - 1);
+        add_quad(polygons, a, c, d, b, shared);
+        if (i >= 2 && i < n) {
+            add_tri(polygons, a0, c, a, shared);
+            add_tri(polygons, b0, b, d, shared);
+        }
+        a = c;
+        b = d;
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_trapezoid(LandFloat x1, LandFloat x2, void * shared) {
+    /* This is a prism, from one shape at z=-1 to another at z=1. The shape
+     * is assymetrical, at y=-1 the length is 2, from x=-1 to x=1. At y=1
+     * it goes from x1 to x2.
+     * If x1=-1 and x2=1 this is identical to csg_cube.
+     * y
+     * 1
+     * x1__.__x2
+     * |     \
+     * 0 |      \
+     * |        \
+     * |____.____\
+     * -1    0    1 x
+     */
+    LandArray * polygons = land_array_new();
+    LandVector a = land_vector(- 1, - 1, - 1);
+    LandVector b = land_vector(1, - 1, - 1);
+    LandVector c = land_vector(x2, 1, - 1);
+    LandVector d = land_vector(x1, 1, - 1);
+    LandVector e = land_vector(- 1, - 1, 1);
+    LandVector f = land_vector(1, - 1, 1);
+    LandVector g = land_vector(x2, 1, 1);
+    LandVector h = land_vector(x1, 1, 1);
+    add_quad(polygons, a, d, c, b, shared);
+    add_quad(polygons, e, f, g, h, shared);
+    add_quad(polygons, h, g, c, d, shared);
+    add_quad(polygons, g, f, b, c, shared);
+    add_quad(polygons, f, e, a, b, shared);
+    add_quad(polygons, e, h, d, a, shared);
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_extrude_triangle(LandVector a, LandVector b, LandFloat d, void * shared) {
+    /* This extrudes a triangle with points 0/a/b along a distance of d.
+     */
+    LandArray * polygons = land_array_new();
+    LandVector z = land_vector(0, 0, 0);
+    LandVector n = land_vector_cross(a, b);
+    n = land_vector_normalize(n);
+    LandVector z_ = land_vector_add(z, land_vector_mul(n, d));
+    LandVector a_ = land_vector_add(a, land_vector_mul(n, d));
+    LandVector b_ = land_vector_add(b, land_vector_mul(n, d));
+    add_tri_flip(polygons, z, a, b, shared, d > 0);
+    add_tri_flip(polygons, z_, b_, a_, shared, d > 0);
+    add_quad_flip(polygons, a, z, z_, a_, shared, d > 0);
+    add_quad_flip(polygons, z, b, b_, z_, shared, d > 0);
+    add_quad_flip(polygons, b, a, a_, b_, shared, d > 0);
+    return land_csg_new_from_polygons(polygons);
+}
+LandCSG* csg_irregular_tetrahedron(LandVector a, LandVector b, LandVector c, LandVector d, void * shared) {
+    LandArray * polygons = land_array_new();
+    add_tri(polygons, a, b, c, shared);
+    add_tri(polygons, a, d, b, shared);
+    add_tri(polygons, b, d, c, shared);
+    add_tri(polygons, c, d, a, shared);
+    return land_csg_new_from_polygons(polygons);
+}
+static void torus_point(LandArray * vertices, LandFloat i, LandFloat j, LandFloat r) {
+    LandFloat theta = 2 * pi * i;
+    LandFloat phi = 2 * pi * j;
+    LandFloat cx = cos(theta);
+    LandFloat cy = sin(theta);
+    LandVector pos = land_vector(cx + cx * r * cos(phi), cy + cy * cos(phi) * r, sin(phi) * r);
+    LandVector normal = land_vector(cx * cos(phi), cy * cos(phi), sin(phi));
+    land_array_add(vertices, land_csg_vertex_new(pos, normal));
+}
+LandCSG* csg_torus(int slices, int segments, LandFloat diameter, void * shared) {
+    /* slices is the longitude subdivisions, or how many "disks" the torus
+     * is cut into along its outer circle
+     * segments is the "latitude" subdivisions, i.e. how many segments each
+     * individual disk has
+     * diameter is the size of the tube and must be greater than 0 (thin)
+     * and less than 1 (thick).
+     * The torus has radius of 1 around the origin and lies in the
+     * X/Y plane. The outer radius therefore is 1 + diameter / 2.
+     */
+    LandArray * polygons = land_array_new();
+    for (int i = 0; i < slices; i += 1) {
+        for (int j = 0; j < segments; j += 1) {
+            LandArray * vertices = land_array_new();
+            torus_point(vertices, 1.0 * i / slices, 1.0 * j / segments, diameter / 2);
+            torus_point(vertices, 1.0 * (i + 1) / slices, 1.0 * j / segments, diameter / 2);
+            torus_point(vertices, 1.0 * (i + 1) / slices, 1.0 * (j + 1) / segments, diameter / 2);
+            torus_point(vertices, 1.0 * i / slices, 1.0 * (j + 1) / segments, diameter / 2);
+            land_array_add(polygons, land_csg_polygon_new(vertices, shared));
+        }
+    }
+    return land_csg_new_from_polygons(polygons);
+}
+void land_csg_polygon_recalculate_normal(LandCSGPolygon * p) {
+    LandCSGVertex * v0 = land_array_get(p->vertices, 0);
+    LandCSGVertex * v1 = land_array_get(p->vertices, 1);
+    LandCSGVertex * v2 = land_array_get(p->vertices, 2);
+    LandVector a = land_vector_sub(v0->pos, v1->pos);
+    LandVector b = land_vector_sub(v1->pos, v2->pos);
+    LandVector n = land_vector_normalize(land_vector_cross(a, b));
+    p->plane = land_csg_plane_from_points(v0->pos, v1->pos, v2->pos);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(p->vertices);
+        for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter0__); LandArrayIterator_next(p->vertices, &__iter0__); v = LandArrayIterator_item(p->vertices, &__iter0__)) {
+            v->normal = n;
+        }
+    }
+}
+struct CallbackData {
+    void(* callback)(LandCSGPolygon * p, void * data);
+    void * data;
+    LandVector pos;
+    LandFloat r;
+};
+static void _merge_callback_callback(LandArray * array, void * data) {
+    CallbackData * data2 = data;
+    if (! array) {
+        return ;
+    }
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(array);
+        for (LandCSGPolygon * p = LandArrayIterator_item(array, &__iter0__); LandArrayIterator_next(array, &__iter0__); p = LandArrayIterator_item(array, &__iter0__)) {
+            bool touches = 0;
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
+                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
+                    LandVector sub = land_vector_sub(data2->pos, v->pos);
+                    LandFloat d = land_vector_dot(sub, sub);
+                    if (d <= data2->r * data2->r) {
+                        touches = 1;
+                        break;
+                    }
+                }
+            }
+            if (touches) {
+                data2->callback(p, data2->data);
+            }
+        }
+    }
+}
+static void _lookup_close_polygons(LandCSG * csg, LandVector pos, LandFloat r, void(* callback)(LandCSGPolygon * p, void * data), void * data) {
+    CallbackData data2 = {callback, data, pos, r};
+    land_octree_callback_in_cube(csg->octree, pos.x - r, pos.y - r, pos.z - r, pos.x + r, pos.y + r, pos.z + r, _merge_callback_callback, & data2);
+}
+struct Data {
+    LandVector normal;
+};
+static void _merge_callback(LandCSGPolygon * p, void * v) {
+    Data * data = v;
+    data->normal.x += p->plane.normal.x;
+    data->normal.y += p->plane.normal.y;
+    data->normal.z += p->plane.normal.z;
+}
+void land_csg_recalculate_smooth_normals(LandCSG * csg) {
+    csg->octree = land_octree_new_from_aabb(& csg->bbox, 10);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(csg->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(csg->polygons, &__iter0__); LandArrayIterator_next(csg->polygons, &__iter0__); p = LandArrayIterator_item(csg->polygons, &__iter0__)) {
+            land_csg_polygon_recalculate_normal(p);
+            LandFloat x = 0, y = 0, z = 0;
+            int i = 0;
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
+                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
+                    i++;
+                    x += v->pos.x;
+                    y += v->pos.y;
+                    z += v->pos.z;
+                }
+            }
+            if (i > 0) {
+                land_octree_insert(csg->octree, x / i, y / i, z / i, p);
+            }
+        }
+    }
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(csg->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(csg->polygons, &__iter0__); LandArrayIterator_next(csg->polygons, &__iter0__); p = LandArrayIterator_item(csg->polygons, &__iter0__)) {
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
+                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
+                    Data data;
+                    data.normal.x = 0;
+                    data.normal.y = 0;
+                    data.normal.z = 0;
+                    _lookup_close_polygons(csg, v->pos, 0.001, _merge_callback, & data);
+                    v->normal = land_vector_normalize(data.normal);
+                }
+            }
+        }
+    }
+    land_octree_del(csg->octree);
+    csg->octree = NULL;
+}
+LandCSG* land_csg_voxelize(LandCSG * csg, double radius) {
+    /* FIXME: implement!
+     * The idea is to create a mesh from another mesh which is a voxelized
+     * version. Everything is cubes.
+     */
+    int x0 = floor(csg->bbox.x1 / radius);
+    int y0 = floor(csg->bbox.y1 / radius);
+    int z0 = floor(csg->bbox.z1 / radius);
+    int xn = ceil(csg->bbox.x2 / radius) - x0;
+    int yn = ceil(csg->bbox.y2 / radius) - y0;
+    int zn = ceil(csg->bbox.z2 / radius) - z0;
+    char * voxels = land_calloc(xn * yn * zn);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(csg->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(csg->polygons, &__iter0__); LandArrayIterator_next(csg->polygons, &__iter0__); p = LandArrayIterator_item(csg->polygons, &__iter0__)) {
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
+                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
+                    int x = floor(v->pos.x / radius) - x0;
+                    int y = floor(v->pos.y / radius) - y0;
+                    int z = floor(v->pos.z / radius) - z0;
+                    voxels [x + y * xn + z * xn * yn] = 1;
+                }
+            }
+        }
+    }
+    LandArray * polygons = land_array_new();
+    LandCSG * csg2 = land_csg_new_from_polygons(polygons);
+    land_free(voxels);
+    return csg2;
+}
+#undef pi
+struct PlatformThread {
+    LandThread super;
+    ALLEGRO_THREAD * a5;
+};
+struct PlatformLock {
+    ALLEGRO_MUTEX * a5;
+};
+static void* proc(void * data) {
+    LandThread * t = data;
+    t->cb(t->data);
+    land_free(t);
+    return NULL;
+}
+void platform_thread_run(void(* cb)(void *), void * data) {
+    LandThread * t;
+    land_alloc(t);
+    t->cb = cb;
+    t->data = data;
+    al_run_detached_thread(proc, t);
+}
+static void* aproc(ALLEGRO_THREAD * thread, void * arg) {
+    LandThread * t = arg;
+    t->cb(t->data);
+    return NULL;
+}
+LandThread* platform_thread_new(void(* cb)(void * data), void * data) {
+    PlatformThread * t;
+    land_alloc(t);
+    t->super.cb = cb;
+    t->super.data = data;
+    t->a5 = al_create_thread(aproc, t);
+    al_start_thread(t->a5);
+    return & t->super;
+}
+void platform_thread_destroy(LandThread * self) {
+    PlatformThread * t = (void *) self;
+    al_destroy_thread(t->a5);
+    land_free(self);
+}
+LandLock* platform_thread_new_lock(void) {
+    PlatformLock * l;
+    land_alloc(l);
+    l->a5 = al_create_mutex();
+    return (void *) l;
+}
+void platform_thread_delete_lock(LandLock * lock) {
+    PlatformLock * l = (void *) lock;
+    al_destroy_mutex(l->a5);
+    land_free(l);
+}
+void platform_thread_lock(LandLock * lock) {
+    PlatformLock * l = (void *) lock;
+    al_lock_mutex(l->a5);
+}
+void platform_thread_unlock(LandLock * lock) {
+    PlatformLock * l = (void *) lock;
+    al_unlock_mutex(l->a5);
+}
+struct LandSoundPlatform {
+    LandSound super;
+    ALLEGRO_SAMPLE * a5;
+    ALLEGRO_SAMPLE_ID last_playing;
+    void * buffer;
+    bool last_failed;
+};
+struct LandStreamPlatform {
+    LandStream super;
+    ALLEGRO_AUDIO_STREAM * a5;
+    void * fragment;
+};
+static LandArray * streaming;
+static bool get_params(int channels, int bits, int * chan_conf, int * depth) {
+    if (channels == 1) {
+        * chan_conf = ALLEGRO_CHANNEL_CONF_1;
+    }
+    else if (channels == 2) {
+        * chan_conf = ALLEGRO_CHANNEL_CONF_2;
+    }
+    else {
+        return 0;
+    }
+    if (bits == 8) {
+        * depth = ALLEGRO_AUDIO_DEPTH_INT8;
+    }
+    else if (bits == 16) {
+        * depth = ALLEGRO_AUDIO_DEPTH_INT16;
+    }
+    else {
+        return 0;
+    }
+    return 1;
+}
+LandSound* platform_sound_load(char const * filename) {
+    LandSoundPlatform * self;
+    land_alloc(self);
+    self->a5 = al_load_sample(filename);
+    self->super.filename = land_strdup(filename);
+    return (void *) self;
+}
+LandSound* platform_sound_new(int samples, float frequency, int bits, int channels) {
+    LandSoundPlatform * self;
+    land_alloc(self);
+    int chan_conf = 0, depth = 0;
+    get_params(channels, bits, & chan_conf, & depth);
+    int sample_size = al_get_channel_count(chan_conf) * al_get_audio_depth_size(depth);
+    int bytes = samples * sample_size;
+    self->buffer = land_malloc(bytes);
+    self->a5 = al_create_sample(self->buffer, samples, frequency, depth, chan_conf, 0);
+    return (void *) self;
+}
+void* platform_sound_sample_pointer(LandSound * super) {
+    LandSoundPlatform * self = (void *) super;
+    return al_get_sample_data(self->a5);
+}
+int platform_sound_length(LandSound * super) {
+    LandSoundPlatform * self = (void *) super;
+    return al_get_sample_length(self->a5);
+}
+double platform_sound_seconds(LandSound * super) {
+    LandSoundPlatform * self = (void *) super;
+    double x = al_get_sample_length(self->a5);
+    x /= al_get_sample_frequency(self->a5);
+    return x;
+}
+void platform_sound_play(LandSound * s, float volume, float pan, float frequency, bool loop) {
+    LandSoundPlatform * self = (void *) s;
+    self->last_failed = 0;
+    if (! al_play_sample(self->a5, volume, pan, frequency, loop ? ALLEGRO_PLAYMODE_LOOP : ALLEGRO_PLAYMODE_ONCE, & self->last_playing)) {
+        self->last_failed = 1;
+    }
+}
+void platform_sound_stop(LandSound * s) {
+    LandSoundPlatform * self = (void *) s;
+    if (self->last_failed) {
+        return ;
+    }
+    al_stop_sample(& self->last_playing);
+}
+void platform_sound_destroy(LandSound * s) {
+    LandSoundPlatform * self = (void *) s;
+    al_destroy_sample(self->a5);
+    if (self->buffer) {
+        land_free(self->buffer);
+    }
+    land_free(s->filename);
+    land_free(s);
+}
+void platform_sound_init(void) {
+    al_init_acodec_addon();
+    al_install_audio();
+    al_reserve_samples(8);
+}
+void platform_sound_exit(void) {
+    if (streaming) {
+        {
+            LandArrayIterator __iter0__ = LandArrayIterator_first(streaming);
+            for (LandStream * s = LandArrayIterator_item(streaming, &__iter0__); LandArrayIterator_next(streaming, &__iter0__); s = LandArrayIterator_item(streaming, &__iter0__)) {
+                LandStreamPlatform * s2 = (void *) s;
+                al_destroy_audio_stream(s2->a5);
+                s2->a5 = NULL;
+            }
+        }
+    }
+}
+void platform_sound_resume(void) {
+    al_restore_default_mixer();
+    ALLEGRO_MIXER * mix = al_get_default_mixer();
+    if (mix) {
+        al_set_mixer_playing(mix, 1);
+    }
+}
+void platform_sound_halt(void) {
+    ALLEGRO_MIXER * mix = al_get_default_mixer();
+    if (mix) {
+        al_set_mixer_playing(al_get_default_mixer(), 0);
+    }
+    al_set_default_voice(NULL);
+}
+LandStream* platform_stream_new(int samples, int fragments, float frequency, int bits, int channels) {
+    LandStreamPlatform * self;
+    land_alloc(self);
+    LandStream * super = (void *) self;
+    int chan_conf = 0, depth = 0;
+    get_params(channels, bits, & chan_conf, & depth);
+    super->fragments = fragments;
+    super->samples = samples;
+    super->sample_size = al_get_channel_count(chan_conf) * al_get_audio_depth_size(depth);
+    self->a5 = al_create_audio_stream(fragments, samples, frequency, depth, chan_conf);
+    al_attach_audio_stream_to_mixer(self->a5, al_get_default_mixer());
+    if (! streaming) {
+        streaming = land_array_new();
+    }
+    land_array_add(streaming, self);
+    return super;
+}
+void platform_stream_destroy(LandStream * super) {
+    int i = land_array_find(streaming, super);
+    if (i >= 0) {
+        land_array_swap(streaming, i, - 1);
+        land_array_pop(streaming);
+    }
+    LandStreamPlatform * self = (void *) super;
+    al_destroy_audio_stream(self->a5);
+    land_free(super);
+}
+void* platform_stream_buffer(LandStream * super) {
+    LandStreamPlatform * self = (void *) super;
+    if (al_get_available_audio_stream_fragments(self->a5) == 0) {
+        return NULL;
+    }
+    self->fragment = al_get_audio_stream_fragment(self->a5);
+    return self->fragment;
+}
+void platform_stream_fill(LandStream * super) {
+    LandStreamPlatform * self = (void *) super;
+    al_set_audio_stream_fragment(self->a5, self->fragment);
+}
+void platform_stream_music(LandStream * super, char const * filename, bool looping) {
+    LandStreamPlatform * self = (void *) super;
+    al_destroy_audio_stream(self->a5);
+    self->a5 = al_load_audio_stream(filename, super->fragments, super->samples);
+    al_attach_audio_stream_to_mixer(self->a5, al_get_default_mixer());
+    if (looping) {
+        al_set_audio_stream_playmode(self->a5, ALLEGRO_PLAYMODE_LOOP);
+    }
+}
+void platform_stream_volume(LandStream * super, float volume) {
+    LandStreamPlatform * self = (void *) super;
+    al_set_audio_stream_gain(self->a5, volume);
+}
+bool platform_stream_is_playing(LandStream * super) {
+    LandStreamPlatform * self = (void *) super;
+    return al_get_audio_stream_playing(self->a5);
+}
+void platform_stream_set_playing(LandStream * super, bool onoff) {
+    LandStreamPlatform * self = (void *) super;
+    al_set_audio_stream_playing(self->a5, onoff);
+}
+static const int COPLANAR = 0;
+static const int FRONT = 1;
+static const int BACK = 2;
+static const int SPANNING = 3;
+LandCSGVertex* land_csg_vertex_new(LandVector pos, LandVector normal) {
+    LandCSGVertex * self;
+    land_alloc(self);
+    self->pos = pos;
+    self->normal = normal;
+    return self;
+}
+void land_csg_vertex_destroy(LandCSGVertex * self) {
+    land_free(self);
+}
+LandCSGVertex* land_csg_vertex_new_pool(LandMemoryPool * pool) {
+    LandCSGVertex * self = land_pool_alloc(pool, sizeof (* self));
+    return self;
+}
+LandCSGVertex* csg_vertex_clone(LandCSG * csg, LandCSGVertex * self, bool pool) {
+    LandCSGVertex * v;
+    if (pool) {
+        v = land_csg_vertex_new_pool(csg->pool);
+    }
+    else {
+        land_alloc(v);
+    }
+    v->pos = self->pos;
+    v->normal = self->normal;
+    v->rgba = self->rgba;
+    return v;
+}
+static int collision_code(LandVector * v, LandCSGAABB * b) {
+    int c = 0;
+    if (v->x < b->x1) {
+        c |= 1;
+    }
+    if (v->x > b->x2) {
+        c |= 2;
+    }
+    if (v->y < b->y1) {
+        c |= 4;
+    }
+    if (v->y > b->y2) {
+        c |= 8;
+    }
+    if (v->z < b->z1) {
+        c |= 16;
+    }
+    if (v->z > b->z2) {
+        c |= 32;
+    }
+    return c;
+}
+static bool polygon_intersects_aabb(LandCSGPolygon * polygon, LandCSGAABB * box) {
+    int a = 0, b = 0;
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(polygon->vertices);
+        for (LandCSGVertex * v = LandArrayIterator_item(polygon->vertices, &__iter0__); LandArrayIterator_next(polygon->vertices, &__iter0__); v = LandArrayIterator_item(polygon->vertices, &__iter0__)) {
+            int c = collision_code(& v->pos, box);
+            if (c == 0) {
+                return 1;
+            }
+            a |= c;
+            b |= ~ c;
+        }
+    }
+    if (((a ^ b) & 63) != 0) {
+        return 0;
+    }
+    return 1;
+}
+static LandArray* clone_vertices(LandCSG * csg, LandArray * vertices) {
+    LandArray * clone = land_array_copy(vertices);
+    int n = land_array_count(clone);
+    for (int i = 0; i < n; i += 1) {
+        clone->data [i] = csg_vertex_clone(csg, clone->data [i], 1);
+    }
+    return clone;
+}
+static void remove_vertices(LandArray * vertices, bool is_pooled) {
+    if (! is_pooled) {
+        for (int i = 0; i < vertices->count; i += 1) {
+            land_csg_vertex_destroy(vertices->data [i]);
+        }
+    }
+    land_array_destroy(vertices);
+}
+static void csg_vertex_flip(LandCSGVertex * self) {
+    self->normal = land_vector_mul(self->normal, - 1);
+}
+static LandCSGVertex* csg_vertex_interpolate(LandCSG * csg, LandCSGVertex * self, LandCSGVertex * other, LandFloat t) {
+    LandCSGVertex * v = land_csg_vertex_new_pool(csg->pool);
+    v->pos = land_vector_lerp(self->pos, other->pos, t);
+    v->normal = land_vector_lerp(self->normal, other->normal, t);
+    v->rgba = land_color_lerp(self->rgba, other->rgba, t);
+    return v;
+}
+static LandCSGPlane csg_plane(LandVector normal, LandFloat w) {
+    LandCSGPlane self;
+    self.normal = normal;
+    self.w = w;
+    return self;
+}
+static const LandFloat LandCSGPlaneEPSILON = 0.00001;
+LandCSGPlane land_csg_plane_from_points(LandVector a, LandVector b, LandVector c) {
+    LandVector ac = land_vector_sub(c, a);
+    LandVector ab = land_vector_sub(b, a);
+    LandVector n = land_vector_cross(ab, ac);
+    n = land_vector_normalize(n);
+    return csg_plane(n, land_vector_dot(n, a));
+}
+void land_csg_polygon_init(LandCSGPolygon * self, LandArray * vertices, void * shared) {
+    self->vertices = vertices;
+    self->shared = shared;
+    LandCSGVertex * v0 = land_array_get_nth(vertices, 0);
+    LandCSGVertex * v1 = land_array_get_nth(vertices, 1);
+    LandCSGVertex * v2 = land_array_get_nth(vertices, 2);
+    self->plane = land_csg_plane_from_points(v0->pos, v1->pos, v2->pos);
+}
+LandCSGPolygon* land_csg_polygon_new(LandArray * vertices, void * shared) {
+    LandCSGPolygon * self;
+    land_alloc(self);
+    land_csg_polygon_init(self, vertices, shared);
+    return self;
+}
+static LandCSGPolygon* land_csg_polygon_new_pool(LandMemoryPool * pool, LandArray * vertices, void * shared) {
+    LandCSGPolygon * p = land_pool_alloc(pool, sizeof (* p));
+    p->is_pooled = 1;
+    land_csg_polygon_init(p, vertices, shared);
+    return p;
+}
+void csg_plane_flip(LandCSGPlane * self) {
+    self->normal = land_vector_mul(self->normal, - 1);
+    self->w *= - 1;
+}
+static void csg_plane_split_polygon(LandCSG * csg, LandCSGPlane * self, LandCSGPolygon * polygon, LandArray * coplanar_front, LandArray * coplanar_back, LandArray * front, LandArray * back) {
+    int polygon_type = 0;
+    int n = land_array_count(polygon->vertices);
+    int i = 0;
+    int types [n];
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(polygon->vertices);
+        for (LandCSGVertex * v = LandArrayIterator_item(polygon->vertices, &__iter0__); LandArrayIterator_next(polygon->vertices, &__iter0__); v = LandArrayIterator_item(polygon->vertices, &__iter0__)) {
+            LandFloat dot = land_vector_dot(self->normal, v->pos) - self->w;
+            int t = (dot < - LandCSGPlaneEPSILON ? BACK : dot > LandCSGPlaneEPSILON ? FRONT : COPLANAR);
+            polygon_type |= t;
+            types [i++] = t;
+        }
+    }
+    assert(i == n);
+    if (polygon_type == COPLANAR) {
+        if (land_vector_dot(self->normal, polygon->plane.normal) > 0) {
+            land_array_add(coplanar_front, polygon);
+        }
+        else {
+            land_array_add(coplanar_back, polygon);
+        }
+    }
+    else if (polygon_type == FRONT) {
+        land_array_add(front, polygon);
+    }
+    else if (polygon_type == BACK) {
+        land_array_add(back, polygon);
+    }
+    else if (polygon_type == SPANNING) {
+        LandArray * f = land_array_new();
+        LandArray * b = land_array_new();
+        for (i = 0; i < n; i += 1) {
+            int j = (i + 1) % n;
+            int ti = types [i];
+            int tj = types [j];
+            LandCSGVertex * vi = land_array_get_nth(polygon->vertices, i);
+            LandCSGVertex * vj = land_array_get_nth(polygon->vertices, j);
+            if (ti == FRONT) {
+                land_array_add(f, csg_vertex_clone(csg, vi, 1));
+            }
+            else if (ti == BACK) {
+                land_array_add(b, csg_vertex_clone(csg, vi, 1));
+            }
+            else if (ti == COPLANAR) {
+                land_array_add(f, csg_vertex_clone(csg, vi, 1));
+                land_array_add(b, csg_vertex_clone(csg, vi, 1));
+            }
+            if ((ti | tj) == SPANNING) {
+                LandFloat t = self->w - land_vector_dot(self->normal, vi->pos);
+                t /= land_vector_dot(self->normal, land_vector_sub(vj->pos, vi->pos));
+                LandCSGVertex * v = csg_vertex_interpolate(csg, vi, vj, t);
+                land_array_add(f, v);
+                land_array_add(b, csg_vertex_clone(csg, v, 1));
+            }
+        }
+        if (land_array_count(f) >= 3) {
+            LandCSGPolygon * add = land_csg_polygon_new_pool(csg->pool, f, polygon->shared);
+            land_array_add(front, add);
+        }
+        else {
+            remove_vertices(f, true);
+        }
+        if (land_array_count(b) >= 3) {
+            LandCSGPolygon * add = land_csg_polygon_new_pool(csg->pool, b, polygon->shared);
+            land_array_add(back, add);
+        }
+        else {
+            remove_vertices(b, true);
+        }
+        land_csg_polygon_destroy(polygon);
+    }
+}
+void land_csg_polygon_destroy(LandCSGPolygon * self) {
+    if (self->is_pooled) {
+        land_array_destroy(self->vertices);
+    }
+    else {
+        remove_vertices(self->vertices, false);
+        land_free(self);
+    }
+}
+LandCSGPolygon* land_csg_polygon_clone(LandCSG * csg, LandCSGPolygon const * self) {
+    LandCSGPolygon * clone = land_csg_polygon_new_pool(csg->pool, clone_vertices(csg, self->vertices), self->shared);
+    return clone;
+}
+void land_csg_polygon_flip(LandCSGPolygon * self) {
+    land_array_reverse(self->vertices);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->vertices);
+        for (LandCSGVertex * v = LandArrayIterator_item(self->vertices, &__iter0__); LandArrayIterator_next(self->vertices, &__iter0__); v = LandArrayIterator_item(self->vertices, &__iter0__)) {
+            csg_vertex_flip(v);
+        }
+    }
+    csg_plane_flip(& self->plane);
+}
+static LandArray* clone_polygons(LandCSG * csg, LandArray * polygons) {
+    LandArray * clone = land_array_copy(polygons);
+    int n = land_array_count(clone);
+    for (int i = 0; i < n; i += 1) {
+        clone->data [i] = land_csg_polygon_clone(csg, clone->data [i]);
+    }
+    return clone;
+}
+static void clear_polygons(LandArray * polygons) {
+    for (int i = 0; i < polygons->count; i += 1) {
+        land_csg_polygon_destroy(polygons->data [i]);
+    }
+    land_array_clear(polygons);
+}
+static void csg_node_destroy(LandCSGNode * self) {
+    if (self->front) {
+        csg_node_destroy(self->front);
+    }
+    if (self->back) {
+        csg_node_destroy(self->back);
+    }
+    clear_polygons(self->polygons);
+    land_array_destroy(self->polygons);
+    land_free(self);
+}
+static void csg_node_invert(LandCSGNode * self) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
+            land_csg_polygon_flip(p);
+        }
+    }
+    csg_plane_flip(& self->plane);
+    if (self->front) {
+        csg_node_invert(self->front);
+    }
+    if (self->back) {
+        csg_node_invert(self->back);
+    }
+    LandCSGNode * temp = self->front;
+    self->front = self->back;
+    self->back = temp;
+}
+static void csg_node_clip_polygons(LandCSG * csg, LandCSGNode * self, LandArray * polygons) {
+    if (! self->plane.normal.z && ! self->plane.normal.y && ! self->plane.normal.x) {
+        return ;
+    }
+    LandArray * front = land_array_new();
+    LandArray * back = land_array_new();
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
+            csg_plane_split_polygon(csg, & self->plane, p, front, back, front, back);
+        }
+    }
+    land_array_clear(polygons);
+    if (self->front) {
+        csg_node_clip_polygons(csg, self->front, front);
+    }
+    if (self->back) {
+        csg_node_clip_polygons(csg, self->back, back);
+    }
+    else {
+        clear_polygons(back);
+    }
+    land_array_concat(polygons, front);
+    land_array_concat(polygons, back);
+    land_array_destroy(front);
+    land_array_destroy(back);
+}
+static void csg_node_clip_to(LandCSG * csg, LandCSGNode * self, LandCSGNode * bsp) {
+    csg_node_clip_polygons(csg, bsp, self->polygons);
+    if (self->front) {
+        csg_node_clip_to(csg, self->front, bsp);
+    }
+    if (self->back) {
+        csg_node_clip_to(csg, self->back, bsp);
+    }
+}
+static LandArray* csg_node_all_polygons(LandCSG * csg, LandCSGNode * self) {
+    LandArray * polygons = clone_polygons(csg, self->polygons);
+    if (self->front) {
+        land_array_merge(polygons, csg_node_all_polygons(csg, self->front));
+    }
+    if (self->back) {
+        land_array_merge(polygons, csg_node_all_polygons(csg, self->back));
+    }
+    return polygons;
+}
+static void csg_add_polygons_from_node(LandCSG * csg, LandCSGNode * node) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(node->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(node->polygons, &__iter0__); LandArrayIterator_next(node->polygons, &__iter0__); p = LandArrayIterator_item(node->polygons, &__iter0__)) {
+            land_array_add(csg->polygons, land_csg_polygon_clone(csg, p));
+        }
+    }
+    if (node->front) {
+        csg_add_polygons_from_node(csg, node->front);
+    }
+    if (node->back) {
+        csg_add_polygons_from_node(csg, node->back);
+    }
+}
+static void csg_add_polygons(LandCSG * csg, LandArray * polygons) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
+            land_array_add(csg->polygons, land_csg_polygon_clone(csg, p));
+        }
+    }
+}
+static void csg_node_build(LandCSG * csg, LandCSGNode * self, LandArray * polygons) {
+    if (! land_array_count(polygons)) {
+        land_array_destroy(polygons);
+        return ;
+    }
+    int original = land_array_count(polygons);
+    if (! self->plane.normal.z && ! self->plane.normal.y && ! self->plane.normal.x) {
+        LandCSGPolygon * p0 = land_array_get_nth(polygons, 0);
+        self->plane = p0->plane;
+    }
+    LandArray * front = land_array_new();
+    LandArray * back = land_array_new();
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(polygons, &__iter0__); LandArrayIterator_next(polygons, &__iter0__); p = LandArrayIterator_item(polygons, &__iter0__)) {
+            csg_plane_split_polygon(csg, & self->plane, p, self->polygons, self->polygons, front, back);
+        }
+    }
+    land_array_destroy(polygons);
+    int fc = land_array_count(front);
+    if (fc) {
+        if (fc == original) {
+            ;
+        }
+        if (! self->front) {
+            self->front = csg_node_new(csg, NULL);
+        }
+        csg_node_build(csg, self->front, front);
+    }
+    else {
+        land_array_destroy(front);
+    }
+    int bc = land_array_count(back);
+    if (bc) {
+        if (bc == original) {
+            ;
+        }
+        if (! self->back) {
+            self->back = csg_node_new(csg, NULL);
+        }
+        csg_node_build(csg, self->back, back);
+    }
+    else {
+        land_array_destroy(back);
+    }
+}
+static LandCSGNode* csg_node_new(LandCSG * csg, LandArray * polygons) {
+    LandCSGNode * self;
+    land_alloc(self);
+    self->polygons = land_array_new();
+    if (polygons) {
+        csg_node_build(csg, self, polygons);
+    }
+    return self;
+}
+void land_csg_transform(LandCSG * self, Land4x4Matrix matrix) {
+    Land4x4Matrix matrix2 = * (& matrix);
+    matrix2.v [3] = 0;
+    matrix2.v [7] = 0;
+    matrix2.v [11] = 0;
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
+            {
+                LandArrayIterator __iter1__ = LandArrayIterator_first(p->vertices);
+                for (LandCSGVertex * v = LandArrayIterator_item(p->vertices, &__iter1__); LandArrayIterator_next(p->vertices, &__iter1__); v = LandArrayIterator_item(p->vertices, &__iter1__)) {
+                    v->pos = land_vector_matmul(v->pos, & matrix);
+                    v->normal = land_vector_normalize(land_vector_matmul(v->normal, & matrix2));
+                }
+            }
+        }
+    }
+}
+void land_csg_destroy(LandCSG * self) {
+    clear_polygons(self->polygons);
+    land_array_destroy(self->polygons);
+    land_pool_destroy(self->pool);
+    land_free(self);
+}
+void land_csg_triangles(LandCSG * self) {
+    LandArray * triangles = NULL;
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
+            int n = land_array_count(p->vertices);
+            if (n == 3) {
+                continue;
+            }
+            if (! triangles) {
+                triangles = land_array_new();
+            }
+            LandCSGVertex * a = land_array_get_nth(p->vertices, 0);
+            LandCSGVertex * b = land_array_get_nth(p->vertices, 2);
+            for (int i = 3; i < n; i += 1) {
+                LandCSGVertex * c = land_array_get_nth(p->vertices, i);
+                LandArray * v = land_array_new();
+                land_array_add(v, csg_vertex_clone(self, a, p->is_pooled));
+                land_array_add(v, csg_vertex_clone(self, b, p->is_pooled));
+                land_array_add(v, c);
+                LandCSGPolygon * triangle;
+                if (p->is_pooled) {
+                    triangle = land_csg_polygon_new_pool(self->pool, v, p->shared);
+                }
+                else {
+                    triangle = land_csg_polygon_new(v, p->shared);
+                }
+                land_array_add(triangles, triangle);
+                b = c;
+            }
+            p->vertices->count = 3;
+        }
+    }
+    if (triangles) {
+        land_array_merge(self->polygons, triangles);
+    }
+}
+LandCSG* land_csg_new(void) {
+    LandCSG * self;
+    land_alloc(self);
+    self->pool = land_pool_new();
+    return self;
+}
+LandCSG* land_csg_new_from_polygons(LandArray * polygons) {
+    LandCSG * self = land_csg_new();
+    self->polygons = polygons;
+    return self;
+}
+LandCSG* land_csg_clone(LandCSG * self) {
+    LandCSG * csg = land_csg_new();
+    csg->polygons = clone_polygons(csg, self->polygons);
+    return csg;
+}
+static void csg_split_on_bounding_box(LandCSG const * self, LandCSGAABB * box, LandArray * (* inside), LandArray * (* outside)) {
+    /* Keep every polygon intersecting the bounding box, return the removed ones.
+     * TODO: we could use a cached BSP for an extra fast bounding box check,
+     * as soon as we see that the bounding box is on one side of a BSP node we
+     * can ignore the other side completely.
+     */
+    * inside = land_array_new();
+    * outside = land_array_new();
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
+            if (polygon_intersects_aabb(p, box)) {
+                land_array_add(* inside, p);
+            }
+            else {
+                land_array_add(* outside, p);
+            }
+        }
+    }
+}
+LandCSG* land_csg_union(LandCSG * csg_a, LandCSG * csg_b) {
+    LandCSG * c = land_csg_new();
+    land_csg_aabb_update(& csg_a->bbox, csg_a->polygons);
+    land_csg_aabb_update(& csg_b->bbox, csg_b->polygons);
+    LandCSGAABB box = land_csg_aabb_intersect(csg_a->bbox, csg_b->bbox);
+    LandArray * a_out, * a_in, * b_out, * b_in;
+    csg_split_on_bounding_box(csg_a, & box, & a_in, & a_out);
+    csg_split_on_bounding_box(csg_b, & box, & b_in, & b_out);
+    LandCSGNode * a = csg_node_new(c, clone_polygons(c, a_in));
+    LandCSGNode * b = csg_node_new(c, clone_polygons(c, b_in));
+    csg_node_clip_to(c, a, b);
+    csg_node_clip_to(c, b, a);
+    if (1) {
+        csg_node_invert(b);
+        csg_node_clip_to(c, b, a);
+        csg_node_invert(b);
+    }
+    c->polygons = land_array_new();
+    csg_add_polygons_from_node(c, a);
+    csg_add_polygons_from_node(c, b);
+    csg_add_polygons(c, a_out);
+    csg_add_polygons(c, b_out);
+    land_array_destroy(a_in);
+    land_array_destroy(a_out);
+    land_array_destroy(b_in);
+    land_array_destroy(b_out);
+    csg_node_destroy(a);
+    csg_node_destroy(b);
+    return c;
+}
+LandCSG* land_csg_subtract(LandCSG * self, LandCSG * csg) {
+    LandCSG * c = land_csg_new();
+    LandCSGNode * a = csg_node_new(c, clone_polygons(c, self->polygons));
+    LandCSGNode * b = csg_node_new(c, clone_polygons(c, csg->polygons));
+    csg_node_invert(a);
+    csg_node_clip_to(c, a, b);
+    csg_node_clip_to(c, b, a);
+    csg_node_invert(b);
+    csg_node_clip_to(c, b, a);
+    csg_node_invert(b);
+    csg_node_build(c, a, csg_node_all_polygons(c, b));
+    csg_node_invert(a);
+    c->polygons = csg_node_all_polygons(c, a);
+    csg_node_destroy(a);
+    csg_node_destroy(b);
+    return c;
+}
+LandCSG* land_csg_intersect(LandCSG * self, LandCSG * csg) {
+    LandCSG * c = land_csg_new();
+    LandCSGNode * a = csg_node_new(c, clone_polygons(c, self->polygons));
+    LandCSGNode * b = csg_node_new(c, clone_polygons(c, csg->polygons));
+    csg_node_invert(a);
+    csg_node_clip_to(c, b, a);
+    csg_node_invert(b);
+    csg_node_clip_to(c, a, b);
+    csg_node_clip_to(c, b, a);
+    csg_node_build(c, a, csg_node_all_polygons(c, b));
+    csg_node_invert(a);
+    c->polygons = csg_node_all_polygons(c, a);
+    csg_node_destroy(a);
+    csg_node_destroy(b);
+    return c;
+}
+LandCSG* land_csg_inverse(LandCSG * self) {
+    LandCSG * csg = land_csg_clone(self);
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(csg->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(csg->polygons, &__iter0__); LandArrayIterator_next(csg->polygons, &__iter0__); p = LandArrayIterator_item(csg->polygons, &__iter0__)) {
+            land_csg_polygon_flip(p);
+        }
+    }
+    return csg;
+}
+void land_csg_polygon_paint(LandCSGPolygon * self, float r, float g, float b, float a) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->vertices);
+        for (LandCSGVertex * v = LandArrayIterator_item(self->vertices, &__iter0__); LandArrayIterator_next(self->vertices, &__iter0__); v = LandArrayIterator_item(self->vertices, &__iter0__)) {
+            v->rgba.r = r;
+            v->rgba.g = g;
+            v->rgba.b = b;
+            v->rgba.a = a;
+        }
+    }
+}
+void land_csg_paint_all(LandCSG * self, float r, float g, float b, float a) {
+    {
+        LandArrayIterator __iter0__ = LandArrayIterator_first(self->polygons);
+        for (LandCSGPolygon * p = LandArrayIterator_item(self->polygons, &__iter0__); LandArrayIterator_next(self->polygons, &__iter0__); p = LandArrayIterator_item(self->polygons, &__iter0__)) {
+            land_csg_polygon_paint(p, r, g, b, a);
+        }
+    }
+}
 LandGridInterface * land_grid_vtable_isometric;
 LandGridInterface * land_grid_vtable_isometric_wrap;
 static LandGrid* new(float cell_w1, float cell_h1, float cell_w2, float cell_h2, int x_cells, int y_cells) {
@@ -11512,8 +14408,12 @@ void land_grid_pixel_to_cell_isometric(LandGrid * self, LandView * view, float m
      * the given view.
      */
     LandGridIsometric * iso = (void *) self;
-    float x = view->scroll_x + mx - view->x;
-    float y = view->scroll_y + my - view->y;
+    float x = mx;
+    float y = my;
+    if (view) {
+        x += view->scroll_x - view->x;
+        y += view->scroll_y - view->y;
+    }
     float a = iso->cell_w1 * iso->cell_h2 + iso->cell_w2 * iso->cell_h1;
     * partial_x = (x * iso->cell_h1 + y * iso->cell_w1) / a;
     * partial_y = (y * iso->cell_w2 - x * iso->cell_h2) / a;
@@ -11628,7 +14528,7 @@ static void find_offset_wrap(LandGrid * self, float view_x, float view_y, int * 
     * pixel_x = x - (1 + floorf(x / vw - 0.5)) * vw;
     * pixel_y = y - (1 + floorf(y / vh - 0.5)) * vh;
 }
-static void placeholder(LandGrid * self, LandView * view, int cell_x, int cell_y, float x, float y) {
+void land_grid_isometric_placeholder(LandGrid * self, LandView * view, int cell_x, int cell_y, float x, float y) {
     int x_, y_;
     int w = self->cell_w / 2;
     int h = self->cell_h / 2;
@@ -11787,12 +14687,12 @@ void land_isometric_init(void) {
     land_log_message("land_isometric_init\n");
     land_alloc(land_grid_vtable_isometric);
     land_grid_vtable_isometric->draw = land_grid_draw_isometric;
-    land_grid_vtable_isometric->draw_cell = placeholder;
+    land_grid_vtable_isometric->draw_cell = land_grid_isometric_placeholder;
     land_grid_vtable_isometric->get_cell_at = land_grid_pixel_to_cell_isometric;
     land_grid_vtable_isometric->get_cell_position = land_grid_cell_to_pixel_isometric;
     land_alloc(land_grid_vtable_isometric_wrap);
     land_grid_vtable_isometric_wrap->draw = land_grid_draw_isometric_wrap;
-    land_grid_vtable_isometric_wrap->draw_cell = placeholder;
+    land_grid_vtable_isometric_wrap->draw_cell = land_grid_isometric_placeholder;
     land_grid_vtable_isometric_wrap->get_cell_at = land_grid_pixel_to_cell_isometric_wrap;
     land_grid_vtable_isometric_wrap->get_cell_position = land_grid_cell_to_pixel_isometric_wrap;
 }
@@ -11800,10 +14700,1037 @@ void land_isometric_exit(void) {
     land_free(land_grid_vtable_isometric);
     land_free(land_grid_vtable_isometric_wrap);
 }
+    /* Simple themeable widgets to use for in-game user interface elements.
+     * This module implements a simple graphical user interface on top of Land.
+     * = Some Features =
+     * * Simple. This is intended to be used in-game, so no advanced features.
+     * * A widget is basically a box. It can contain other boxes, to which mouse and
+     * keyboard input is dispatched.
+     * * Themeable, either with custom drawing, or bitmap themes.
+     * = Mouse Focus =
+     * Mouse focus is given to the window under the mouse, if the left button is not
+     * being held. Else the focused window retains focus as long as the left mouse
+     * button is being held pressed, even if the mouse leaves the window.
+     * = Keyboard Focus =
+     * Keyboard focus is only given to widgets requesting it. A focused window retains
+     * keyboard focus, unless focus is transferred to another window.
+     * A widget will normally ask for keyboard focus being transferred to it, when
+     * the mouse is clicked over it, or when the TAB key is pressed and it is the
+     * next in the widget cycle. This cycle is constructed by walking all widgets in
+     * order, starting with the parent, then the children, recursively.
+     * = Layout =
+     * About using the auto layout:
+     * * Each widget has an outer box, which is how much space it takes up inside
+     * its parent.
+     * * Additionally, it has an inner box, which is the space available to
+     * children. The inner box is 6 values: il, it, ir, ib, hgap, vgap. The first
+     * 4 are for a border all around the widget, the last 2 are gaps between
+     * multiple children.
+     * * The space between outer and inner box is usually filled with some kind of
+     * border by the themeing.
+     * * The layout allows layers, so child windows can share the same space.
+     * * By default, container widgets try to fill up as much space as they can, so
+     * if you place e.g. a VBox onto the desktop, it fills it up completely when
+     * using auto layout. Non-container widgets on the other hand usually try to
+     * be as small as possible, e.g. a button will try to fit around the text/image
+     * inside it. You can of course change for each widget how it behaves.
+     * = Themeing =
+     * Each widget has a pointer to a theme. On creation, a widget inherits this
+     * theme from its parent. So usually is is enough to set a theme for the
+     * desktop, then all widgets spawned from it will inherit the theme. And it's
+     * also easy to have per-widget themes, either for a single widget, or for a
+     * window or menu. In the latter case, simply set the theme before creating
+     * children.
+     * Themes are built from bitmaps. This keeps them very simple, and should be
+     * enough in most cases. And of course, if you absolutely don't want to, you
+     * don't have to use themes. Simply override the draw method of all widgets
+     * which you want to draw yourself.
+     * = Polymorphism =
+     * The widgets are organized in a class hierarchy. To use polymorphism, you need
+     * to convert pointers to one class to pointers to a base or specialized class.
+     * This is done using land_widget_check, which will use the widgets vtable to
+     * assert that the conversion is possible and generate a runtime error
+     * otherwise.
+     * = Reference counting =
+     * The widgets use reference counting to handle deletion. This is a cheap way
+     * out of dealing with stale references/dangling pointers. A GUI without either reference counting
+     * or garbage collection is possible, it just needs some more design work. In
+     * our case here, following a KISS principle, we do simple naive reference counting,
+     * and leave the user to deal with possible problems like circular references.
+     * In the normal case, it works like this: You create a widget, and have to
+     * pass along a parent widget to the constructor. Now, the parent will hold a
+     * reference to the new widget. There is no reference from the child to the
+     * parent, despite the parent field referencing the parent. This is done to
+     * avoid complications with cyclic references. If your own widgets contain
+     * cyclic references in another way, you should understand how the reference
+     * counting works.
+     * The first consequence of the above is, you always should manually reference the
+     * top level window, since it has no parent it is referenced by.
+     * The apparent problem is the possible dangling pointer of a child to its
+     * parent. But it should be save, since whenever the parent is deleted, it will
+     * delete all its children anyway.
+     * = An example =
+     * desktop = desktop_new()
+     * reference(desktop)
+     * child = window_new(desktop)
+     * unreference(desktop)
+     * This does what is expected. The only reference to desktop is removed manually,
+     * therefore it gets destroyed. The destructor will detach all children. The only
+     * child in this case will therefore drop its reference count to zero, and get
+     * destroyed as well.
+     * desktop = desktop_new()
+     * reference(desktop)
+     * child = window_new(desktop)
+     * reference(child)
+     * unreference(desktop)
+     * Here, a reference is kept to child. Maybe it is the window with keyboard
+     * focus, and the focus handler holds a reference to it. So, when the desktop
+     * is destroyed, first all childs are detached again. This means, the parent
+     * member of child is set to NULL, and its reference is decreased. Since there
+     * is still the manual reference, nothing else will be done. The desktop itself
+     * however is destroyed. Also note that any other childs without a reference
+     * would be destroyed correctly, and it also would work recursively down for
+     * their childs. Only the child window stays, and the focus handler won't
+     * crash.
+     * unreference(child)
+     * If the focus handler is done, the reference of child will now drop to zero,
+     * and it is destroyed as well.
+     * Now, about cyclic references, just either don't use them, or else take care
+     * to resolve them before dropping the last reference into the cycle. As an
+     * example, you make a watchdog window, which somehow watches another window.
+     * So, you play good, and along with storing a reference to that other window,
+     * you increase the reference count of the other window, just so you never get
+     * a dangling pointer. In your destructor, you release the reference again, so
+     * everything seems to work out. But consider this:
+     * desktop = new_widget(NULL)
+     * reference(desktop)
+     * watchdog = new_widget(desktop)
+     * watchdog_watch(desktop)
+     * unreference(desktop)
+     * Yikes. Now you see the problem. Although nobody holds a reference to watchdog,
+     * and we remove the only real reference to desktop, neither of them gets deleted.
+     * Worse, neither of them can ever be deleted again, since the only reference to
+     * either is from each other.
+     * Simple rule here would be: The watchdog only ever should watch a sibling or
+     * unrelated widget, never a parent. Of course, in practice, widgets could get
+     * reparented and whatever, so things like this need watching out for. And there
+     * are many other cases. Also, you never have to use the reference counting. You
+     * just need to understand that Land provides no way to directly and forcefully
+     * delete one of its widgets, and why it is like that.
+     */
+LandWidgetInterface * land_widget_base_interface;
+static LandArray * land_widget_interfaces;
+int land_widget_is(LandWidget const * self, int id) {
+    /* Return true if the widget has the given type (or one derived from it).
+     */
+    int i;
+    for (i = 0; i < 7; i++) {
+        int digit = id & (0xf << (i * 4));
+        if (! digit) {
+            break;
+        }
+        if ((self->vt->id & (0xf << (i * 4))) != digit) {
+            return 0;
+        }
+    }
+    return 1;
+}
+void* land_widget_check(void const * ptr, int id, char const * file, int linenum) {
+    LandWidget const * widget = ptr;
+    if (land_widget_is(widget, id)) {
+        return (void *) ptr;
+    }
+    land_exception("%s: %d: Widget cannot be converted.", file, linenum);
+    return NULL;
+}
+char const* land_widget_info_string(LandWidget * w) {
+    static char str [1024];
+    if (! w) {
+        strcpy(str, "none");
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_MENU)) {
+        LandWidgetContainer * c = (void *) w;
+        int n = 0;
+        if (c->children) {
+            n = c->children->count;
+        }
+        sprintf(str, "menu (%d items)", n);
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_MENUBAR)) {
+        LandWidgetContainer * c = (void *) w;
+        int n = 0;
+        if (c->children) {
+            n = c->children->count;
+        }
+        sprintf(str, "menubar (%d items)", n);
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_MENUITEM)) {
+        LandWidgetButton * b = (void *) w;
+        sprintf(str, "menuitem %s", b->text);
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_MENUBUTTON)) {
+        LandWidgetButton * b = (void *) w;
+        sprintf(str, "menubutton %s", b->text);
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_BUTTON)) {
+        LandWidgetButton * b = (void *) w;
+        sprintf(str, "button %s", b->text);
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_CHECKBOX)) {
+        sprintf(str, "checkbox");
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_BOOK)) {
+        sprintf(str, "book");
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_SCROLLING)) {
+        sprintf(str, "scrolling");
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_SCROLLBAR)) {
+        sprintf(str, "scrollbar");
+    }
+    else if (land_widget_is(w, LAND_WIDGET_ID_BOOKPAGE)) {
+        sprintf(str, "bookpage");
+    }
+    else {
+        sprintf(str, "unknown");
+    }
+    return str;
+}
+void land_widget_set_property(LandWidget * self, char const * property, void * data, void(* destroy)(void * data)) {
+    if (! self->properties) {
+        self->properties = land_hash_new();
+    }
+    LandWidgetProperty * prop;
+    land_alloc(prop);
+    prop->data = data;
+    prop->destroy = destroy;
+    land_hash_insert(self->properties, property, prop);
+}
+void land_widget_del_property(LandWidget * self, char const * property) {
+    if (! self->properties) {
+        return ;
+    }
+    LandWidgetProperty * prop = land_hash_remove(self->properties, property);
+    if (prop->destroy) {
+        prop->destroy(prop);
+    }
+}
+void* land_widget_get_property(LandWidget * self, char const * property) {
+    if (! self->properties) {
+        return NULL;
+    }
+    LandWidgetProperty * prop = land_hash_get(self->properties, property);
+    if (prop) {
+        return prop->data;
+    }
+    return NULL;
+}
+void land_widget_remove_all_properties(LandWidget * self) {
+    LandHash * hash = self->properties;
+    if (! hash) {
+        return ;
+    }
+    int i;
+    for (i = 0; i < hash->size; i++) {
+        if (hash->entries [i]) {
+            int j;
+            for (j = 0; j < hash->entries [i]->n; j++) {
+                LandWidgetProperty * prop = hash->entries [i] [j].data;
+                if (prop->destroy) {
+                    prop->destroy(prop->data);
+                }
+                land_free(prop);
+            }
+        }
+    }
+    land_hash_destroy(self->properties);
+    self->properties = NULL;
+}
+void land_widget_base_initialize(LandWidget * self, LandWidget * parent, int x, int y, int w, int h) {
+    land_widget_base_interface_initialize();
+    land_widget_layout_initialize(self, x, y, w, h);
+    self->vt = land_widget_base_interface;
+    land_widget_layout_set_minimum_size(self, w, h);
+    if (parent) {
+        if (parent->element) {
+            self->element = land_widget_theme_find_element(parent->element->theme, self);
+        }
+        land_call_method(parent, add, (parent, self));
+    }
+    else {
+        self->element = land_widget_theme_find_element(land_widget_theme_default(), self);
+    }
+}
+LandWidget* land_widget_base_new(LandWidget * parent, int x, int y, int w, int h) {
+    LandWidget * self;
+    land_alloc(self);
+    land_widget_base_initialize(self, parent, x, y, w, h);
+    return self;
+}
+void land_widget_remove(LandWidget * self) {
+    /* """Remove a widget from its parent.
+     * Note: If the reference held by the parent was the last this will
+     * also destroy the widget.
+     */
+    if (! self->parent) {
+        return ;
+    }
+    land_call_method(self->parent, remove, (self->parent, self));
+}
+void land_widget_interfaces_destroy_all(void) {
+    int n = land_array_count(land_widget_interfaces);
+    land_log_message("land_widget_interfaces_destroy_all (%d)\n", n);
+    int i;
+    for (i = 0; i < n; i++) {
+        LandWidgetInterface * f = land_array_get_nth(land_widget_interfaces, i);
+        land_free(f->name);
+        land_free(f);
+    }
+    land_array_destroy(land_widget_interfaces);
+}
+void land_widget_interface_register(LandWidgetInterface * vt) {
+    /* """Register a new widget interface with Land.
+     * The interface is then owned by Land, and you should not try to free the
+     * passed pointer. Land will automatically free it when you call land_quit().
+     */
+    if (! land_widget_interfaces) {
+        land_log_message("land_widget_interfaces\n");
+        land_exit_function(land_widget_interfaces_destroy_all);
+    }
+    land_array_add_data(& land_widget_interfaces, vt);
+}
+LandWidgetInterface* land_widget_copy_interface(LandWidgetInterface * basevt, char const * name) {
+    LandWidgetInterface * vt;
+    land_alloc(vt);
+    memcpy(vt, basevt, sizeof (* vt));
+    vt->name = land_strdup(name);
+    land_widget_interface_register(vt);
+    return vt;
+}
+void land_widget_create_interface(LandWidget * widget, char const * name) {
+    widget->vt = land_widget_copy_interface(widget->vt, name);
+    land_widget_theme_update(widget);
+}
+void land_widget_base_destroy(LandWidget * self) {
+    land_widget_remove_all_properties(self);
+    land_internal_land_gul_box_deinitialize(& self->box);
+    land_free(self);
+}
+static void land_widget_really_destroy(LandWidget * self) {
+    if (self->vt->destroy) {
+        self->vt->destroy(self);
+    }
+    else {
+        land_log_message("*** widget without destructor?\n");
+        land_widget_base_destroy(self);
+    }
+}
+void land_widget_unreference(LandWidget * self) {
+    self->reference--;
+    if (self->reference <= 0) {
+        land_widget_really_destroy(self);
+    }
+}
+void land_widget_reference(LandWidget * self) {
+    self->reference++;
+}
+void land_widget_base_mouse_enter(LandWidget * self, LandWidget * focus) {
+    ;
+}
+void land_widget_base_mouse_leave(LandWidget * self, LandWidget * focus) {
+    ;
+}
+void land_widget_base_move(LandWidget * self, float dx, float dy) {
+    ;
+}
+void land_widget_move(LandWidget * self, float dx, float dy) {
+    /* Moves the widget.
+     */
+    self->box.x += dx;
+    self->box.y += dy;
+    land_call_method(self, move, (self, dx, dy));
+}
+void land_widget_move_to(LandWidget * self, float x, float y) {
+    land_widget_move(self, x - self->box.x, y - self->box.y);
+}
+void land_widget_center(LandWidget * self) {
+    int dw = land_display_width();
+    int dh = land_display_height();
+    int x = self->box.x;
+    int y = self->box.y;
+    int w = self->box.w;
+    int h = self->box.h;
+    land_widget_move(self, (dw - w) / 2 - x, (dh - h) / 2 - y);
+}
+void land_widget_base_size(LandWidget * self, float dx, float dy) {
+    ;
+}
+void land_widget_size(LandWidget * self, float dx, float dy) {
+    /* Resizes a widget.
+     */
+    self->box.w += dx;
+    self->box.h += dy;
+    land_call_method(self, size, (self, dx, dy));
+}
+void land_widget_resize(LandWidget * self, float dx, float dy) {
+    /* Changes the minimum size of the widget to its current size modified by the
+     * given offset.
+     */
+    self->box.min_width = self->box.w + dx;
+    self->box.min_height = self->box.h + dy;
+    land_widget_size(self, dx, dy);
+}
+void land_widget_set_size_permanent(LandWidget * self, float w, float h) {
+    land_widget_resize(self, w - self->box.w, h - self->box.h);
+}
+void land_widget_set_size(LandWidget * self, float w, float h) {
+    land_widget_size(self, w - self->box.w, h - self->box.h);
+}
+void land_widget_set_height(LandWidget * self, float h) {
+    land_widget_resize(self, 0, h - self->box.h);
+}
+void land_widget_retain_mouse_focus(LandWidget * self) {
+    /* Called inside mouse_leave, will keep the mouse focus, and no other widget
+     * can get highlighted.
+     */
+    self->got_mouse = 1;
+}
+void land_widget_refuse_mouse_focus(LandWidget * self) {
+    /* Called inside mouse_enter, inhibits highlighting of the widget.
+     */
+    self->got_mouse = 0;
+}
+void land_widget_request_keyboard_focus(LandWidget * self) {
+    /* Called in mouse_tick (or elsewhere), will cause the widget to receive the
+     * keyboard focus.
+     */
+    self->want_focus = 1;
+}
+void land_widget_retain_keyboard_focus(LandWidget * self) {
+    /* Called in keyboard_leave to keep the focus. Doesn't usually make sense.
+     */
+    self->got_keyboard = 1;
+}
+void land_widget_tick(LandWidget * self) {
+    /* Call this regularly on your desktop widget. It's the base function which is
+     * needed in any widgets application to handle input to the widgets. The other
+     * important function is land_widget_draw, which handles display of widgets.
+     */
+    land_call_method(self, tick, (self));
+}
+void land_widget_draw(LandWidget * self) {
+    /* Draw a widget on its current position. Call this on your desktop widget to
+     * display all of your widgets. This function and land_widget_tick are the two
+     * functions you should call on your desktop widget in each widgets using
+     * application.
+     */
+    if (self->hidden) {
+        return ;
+    }
+    int pop = 0;
+    if (! self->dont_clip) {
+        land_clip_push();
+        land_clip_on();
+        land_clip_intersect(self->box.x, self->box.y, self->box.x + self->box.w, self->box.y + self->box.h);
+        pop = 1;
+    }
+    land_call_method(self, draw, (self));
+    if (pop) {
+        land_clip_pop();
+    }
+}
+void land_widget_hide(LandWidget * self) {
+    /* Hide the widget. It will not be displayed anymore, and also not take up any
+     * more space.
+     */
+    if (self->hidden) {
+        return ;
+    }
+    self->hidden = 1;
+    self->box.flags |= GUL_HIDDEN;
+    if (self->parent) {
+        land_widget_layout(self->parent);
+    }
+}
+void land_widget_unhide(LandWidget * self) {
+    /* Unhide the widget.
+     */
+    if (! self->hidden) {
+        return ;
+    }
+    self->hidden = 0;
+    self->box.flags &= ~ GUL_HIDDEN;
+    if (self->parent) {
+        land_widget_layout(self->parent);
+    }
+}
+void land_widget_set_hidden(LandWidget * self, bool hidden) {
+    if (self->hidden == hidden) {
+        return ;
+    }
+    self->hidden = hidden;
+    self->box.flags ^= GUL_HIDDEN;
+    if (self->parent) {
+        land_widget_layout(self->parent);
+    }
+}
+bool land_widget_is_hidden(LandWidget * self) {
+    return self->hidden;
+}
+void land_widget_outer(LandWidget * self, float * x, float * y, float * w, float * h) {
+    * x = self->box.x;
+    * y = self->box.y;
+    * w = self->box.w;
+    * h = self->box.h;
+}
+void land_widget_inner(LandWidget * self, float * x, float * y, float * w, float * h) {
+    * x = self->box.x;
+    * y = self->box.y;
+    * w = self->box.w;
+    * h = self->box.h;
+    if (self->element) {
+        * x += self->element->il;
+        * y += self->element->it;
+        * w -= self->element->ir + self->element->ir;
+        * h -= self->element->ib + self->element->ib;
+    }
+}
+void land_widget_inner_extents(LandWidget * self, float * l, float * t, float * r, float * b) {
+    * l = self->box.x;
+    * t = self->box.y;
+    * r = self->box.x + self->box.w;
+    * b = self->box.y + self->box.h;
+    if (self->element) {
+        * l += self->element->il;
+        * t += self->element->it;
+        * r -= self->element->ir;
+        * b -= self->element->ib;
+    }
+}
+void land_widget_get_inner_size(LandWidget * self, float * w, float * h) {
+    * w = self->box.w;
+    * h = self->box.h;
+    if (self->element) {
+        * w -= self->element->il;
+        * h -= self->element->it;
+        * w -= self->element->ir;
+        * h -= self->element->ib;
+    }
+}
+void land_widget_base_interface_initialize(void) {
+    if (land_widget_base_interface) {
+        return ;
+    }
+    land_alloc(land_widget_base_interface);
+    land_widget_interface_register(land_widget_base_interface);
+    land_widget_base_interface->id = LAND_WIDGET_ID_BASE;
+    land_widget_base_interface->name = land_strdup("base");
+    land_widget_base_interface->size = land_widget_base_size;
+    land_widget_base_interface->destroy = land_widget_base_destroy;
+}
+void land_widget_debug(LandWidget * w, int indentation) {
+    for (int i = 0; i < indentation; i += 1) {
+        printf("  ");
+    }
+    printf("%s %d %d %d %d\n", land_widget_info_string(w), w->box.x, w->box.y, w->box.w, w->box.h);
+    if (land_widget_is(w, LAND_WIDGET_ID_CONTAINER)) {
+        LandWidgetContainer * c = LAND_WIDGET_CONTAINER(w);
+        if (c->children) {
+            {
+                LandListIterator __iter0__ = LandListIterator_first(c->children);
+                for (LandWidget * child = LandListIterator_item(c->children, &__iter0__); LandListIterator_next(c->children, &__iter0__); child = LandListIterator_item(c->children, &__iter0__)) {
+                    land_widget_debug(child, indentation + 1);
+                }
+            }
+        }
+    }
+}
+void land_widget_keyboard_leave(LandWidget * self) {
+    land_call_method(self, keyboard_leave, (self));
+}
+void land_widget_keyboard_focus(LandWidget * self) {
+    self->want_focus = 1;
+}
+void land_bind_vbo(GLuint * vbo, void * data, int n, int draw) {
+    if (* vbo) {
+        glBindBuffer(GL_ARRAY_BUFFER, * vbo);
+        if (glGetError() == GL_INVALID_OPERATION) {
+            * vbo = 0;
+        }
+    }
+    if (! (* vbo)) {
+        glGenBuffers(1, vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, * vbo);
+        glBufferData(GL_ARRAY_BUFFER, n, data, draw);
+    }
+}
+void land_unbind_vbo(GLuint vbo) {
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+char const* land_opengl_error(void) {
+    GLenum e = glGetError();
+    if (e == GL_NO_ERROR) {
+        return "GL_NO_ERROR";
+    }
+    if (e == GL_INVALID_ENUM) {
+        return "GL_INVALID_ENUM";
+    }
+    if (e == GL_INVALID_VALUE) {
+        return "GL_INVALID_VALUE";
+    }
+    if (e == GL_INVALID_OPERATION) {
+        return "GL_INVALID_OPERATION";
+    }
+    if (e == GL_INVALID_FRAMEBUFFER_OPERATION) {
+        return "GL_INVALID_FRAMEBUFFER_OPERATION";
+    }
+    if (e == GL_OUT_OF_MEMORY) {
+        return "GL_OUT_OF_MEMORY";
+    }
+    return "unknown";
+}
+void land_4x4_matrix_to_gl_float(Land4x4Matrix m, GLfloat * gl) {
+    gl [0x0] = m.v [0x0];
+    gl [0x1] = m.v [0x4];
+    gl [0x2] = m.v [0x8];
+    gl [0x3] = m.v [0xc];
+    gl [0x4] = m.v [0x1];
+    gl [0x5] = m.v [0x5];
+    gl [0x6] = m.v [0x9];
+    gl [0x7] = m.v [0xd];
+    gl [0x8] = m.v [0x2];
+    gl [0x9] = m.v [0x6];
+    gl [0xa] = m.v [0xa];
+    gl [0xb] = m.v [0xe];
+    gl [0xc] = m.v [0x3];
+    gl [0xd] = m.v [0x7];
+    gl [0xe] = m.v [0xb];
+    gl [0xf] = m.v [0xf];
+}
+LandQueue* land_queue_new(int(* cmp_cb)(void * data1, void * data2)) {
+    /* Create a new queue, with the given comparison function for its elements.
+     */
+    LandQueue * self;
+    land_alloc(self);
+    self->array.data = NULL;
+    self->cmp_cb = cmp_cb;
+    return self;
+}
+void land_queue_del(LandQueue * q) {
+    /* Delete the queue. This will not touch the elements that might have been
+     * added since its creation.
+     */
+    land_free(q->array.data);
+    land_free(q);
+}
+void land_queue_destroy(LandQueue * q) {
+    land_queue_del(q);
+}
+void land_queue_add(LandQueue * q, void * data) {
+    /* Add an element to the queue.
+     */
+    int i = q->array.count;
+    land_array_add(& q->array, data);
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (q->cmp_cb(q->array.data [parent], q->array.data [i]) <= 0) {
+            break;
+        }
+        void * temp = q->array.data [parent];
+        q->array.data [parent] = q->array.data [i];
+        q->array.data [i] = temp;
+        i = parent;
+    }
+}
+void* land_queue_pop(LandQueue * q) {
+    /* Return and remove the smallest element in the queue.
+     */
+    if (q->array.count == 0) {
+        return NULL;
+    }
+    void * data = q->array.data [0];
+    q->array.data [0] = q->array.data [q->array.count - 1];
+    land_array_pop(& q->array);
+    int i = 0;
+    while (1) {
+        int child1 = i * 2 + 1;
+        int child2 = i * 2 + 2;
+        if ((child1 >= q->array.count || q->cmp_cb(q->array.data [child1], q->array.data [i]) >= 0) && (child2 >= q->array.count || q->cmp_cb(q->array.data [child2], q->array.data [i]) >= 0)) {
+            break;
+        }
+        if (child2 >= q->array.count || (child1 < q->array.count && q->cmp_cb(q->array.data [child1], q->array.data [child2]) < 0)) {
+            void * temp = q->array.data [i];
+            q->array.data [i] = q->array.data [child1];
+            q->array.data [child1] = temp;
+            i = child1;
+        }
+        else {
+            void * temp = q->array.data [i];
+            q->array.data [i] = q->array.data [child2];
+            q->array.data [child2] = temp;
+            i = child2;
+        }
+    }
+    return data;
+}
+LandArray* land_queue_sort(LandQueue * q) {
+    /* Return an array referencing the same data as the queue. The array will be
+     * sorted from smallest to largest element. The queue will be destroyed in
+     * the process. So you should set the parameter you passed to this function to
+     * None after it returns.
+     */
+    LandArray * a = land_array_new();
+    while (1) {
+        void * data = land_queue_pop(q);
+        if (! data) {
+            break;
+        }
+        land_array_add(a, data);
+    }
+    land_queue_del(q);
+    return a;
+}
+int land_queue_for_each(LandQueue * self, int(* cb)(void * item, void * data), void * data) {
+    /* Like land_array_for_each. The callback will not be called in any particular
+     * order, especially it will *not* be sorted. (The first call will be the
+     * smallest element, but the subsequent order is random.)
+     */
+    return land_array_for_each(& self->array, cb, data);
+}
+int land_queue_count(LandQueue * self) {
+    return self->array.count;
+}
+void land_queue_clear(LandQueue * self) {
+    land_array_clear(& self->array);
+}
+LandWidgetInterface * land_widget_scrollbar_vertical_interface;
+LandWidgetInterface * land_widget_scrollbar_horizontal_interface;
+static void scroll_vertical_cb(LandWidget * self, bool update_target, int * _scramble_min, int * _scramble_max, int * range, int * pos) {
+    /* If update_target is not 0, then the target window is scrolled according to the
+     * scrollbar position.
+     * If update_target is 0, then the min/max/range/pos parameters are updated.
+     */
+    LandWidgetScrollbar * bar = LAND_WIDGET_SCROLLBAR(self);
+    LandWidget * target = bar->target;
+    if (target) {
+        LandWidget * viewport = target->parent;
+        if (update_target) {
+            int ty = viewport->box.y + viewport->element->it;
+            if (target->box.y > ty) {
+                ty = target->box.y;
+            }
+            ty -= * pos;
+            land_widget_move(target, 0, ty - target->box.y);
+        }
+        else {
+            * _scramble_min = 0;
+            * _scramble_max = target->box.h - 1;
+            * range = viewport->box.h - viewport->element->it - viewport->element->ib;
+            * pos = viewport->box.y + viewport->element->it - target->box.y;
+            if (* pos < * _scramble_min) {
+                * _scramble_min = * pos;
+            }
+            if (* pos + * range - 1 > * _scramble_max) {
+                * _scramble_max = * pos + * range - 1;
+            }
+        }
+    }
+    else {
+        if (! update_target) {
+            * _scramble_min = 0;
+            * _scramble_max = 0;
+            * range = 1;
+            * pos = 0;
+        }
+    }
+}
+static void scroll_horizontal_cb(LandWidget * self, bool update_target, int * _scramble_min, int * _scramble_max, int * range, int * pos) {
+    LandWidgetScrollbar * bar = LAND_WIDGET_SCROLLBAR(self);
+    LandWidget * target = bar->target;
+    if (target) {
+        LandWidget * viewport = target->parent;
+        if (update_target) {
+            int tx = viewport->box.x + viewport->element->il;
+            if (target->box.x > tx) {
+                tx = target->box.x;
+            }
+            tx -= * pos;
+            land_widget_move(target, tx - target->box.x, 0);
+        }
+        else {
+            * _scramble_min = 0;
+            * _scramble_max = target->box.w - 1;
+            * range = viewport->box.w - viewport->element->il - viewport->element->ir;
+            * pos = viewport->box.x + viewport->element->il - target->box.x;
+            if (* pos < * _scramble_min) {
+                * _scramble_min = * pos;
+            }
+            if (* pos + * range - 1 > * _scramble_max) {
+                * _scramble_max = * pos + * range - 1;
+            }
+        }
+    }
+    else {
+        if (! update_target) {
+            * _scramble_min = 0;
+            * _scramble_max = 0;
+            * range = 1;
+            * pos = 0;
+        }
+    }
+}
+static int get_size(LandWidget * super) {
+    LandWidgetScrollbar * self = LAND_WIDGET_SCROLLBAR(super);
+    if (self->vertical) {
+        return super->box.h;
+    }
+    else {
+        return super->box.w;
+    }
+}
+void land_widget_scrollbar_update(LandWidget * handle, bool update_target) {
+    /* If update_target is set, then the target is updated from the scrollbar. Else the
+     * scrollbar adjusts to the target's scrolled position.
+     */
+    LandWidgetScrollbar * self = LAND_WIDGET_SCROLLBAR(handle);
+    int minval, maxval, val, valrange;
+    int minpos, maxpos, pos, minlen;
+    LandWidget * bar_area = handle->parent;
+    self->callback(handle, 0, & minval, & maxval, & valrange, & val);
+    if (self->vertical) {
+        minpos = bar_area->box.y + bar_area->element->it;
+        maxpos = bar_area->box.y + bar_area->box.h - bar_area->element->ib - 1;
+        pos = handle->box.y;
+        minlen = handle->element->minh;
+    }
+    else {
+        minpos = bar_area->box.x + bar_area->element->il;
+        maxpos = bar_area->box.x + bar_area->box.w - bar_area->element->ir - 1;
+        pos = handle->box.x;
+        minlen = handle->element->minw;
+    }
+    int posrange = 0;
+    if (maxval > minval) {
+        posrange = (1 + maxpos - minpos) * valrange / (1 + maxval - minval);
+    }
+    if (posrange < minlen) {
+        posrange = minlen;
+    }
+    if (update_target) {
+        maxpos -= posrange - 1;
+        maxval -= valrange - 1;
+        if (maxpos <= minpos) {
+            return ;
+        }
+        else {
+            int rounded = maxpos - minpos - 1;
+            val = (minval + (pos - minpos) * (maxval - minval) + rounded) / (maxpos - minpos);
+        }
+        self->callback(handle, 1, & minval, & maxval, & valrange, & val);
+    }
+    else {
+        maxpos -= posrange - 1;
+        maxval -= valrange - 1;
+        if (maxval == minval) {
+            pos = minpos;
+        }
+        else {
+            pos = minpos + (val - minval) * (maxpos - minpos) / (maxval - minval);
+        }
+        int dx = 0, dy = 0;
+        if (self->vertical) {
+            handle->box.w = bar_area->box.w - (bar_area->element->ir + bar_area->element->il);
+            handle->box.h = posrange;
+            dx = bar_area->box.x + bar_area->element->il - handle->box.x;
+            dy = pos - handle->box.y;
+        }
+        else {
+            handle->box.w = posrange;
+            handle->box.h = bar_area->box.h - (bar_area->element->ib + bar_area->element->it);
+            dx = pos - handle->box.x;
+            dy = bar_area->box.y + bar_area->element->it - handle->box.y;
+        }
+        handle->box.min_width = handle->box.w;
+        handle->box.min_height = handle->box.h;
+        land_widget_move(handle, dx, dy);
+    }
+}
+void land_widget_scrollbar_draw(LandWidget * self) {
+    land_widget_theme_draw(self);
+}
+void land_widget_scrollbar_mouse_tick(LandWidget * handle) {
+    LandWidgetScrollbar * self = LAND_WIDGET_SCROLLBAR(handle);
+    if (land_mouse_delta_b()) {
+        if (land_mouse_b() & 1) {
+            self->drag_x = land_mouse_x() - handle->box.x;
+            self->drag_y = land_mouse_y() - handle->box.y;
+            self->dragged = 1;
+        }
+        else {
+            self->dragged = 0;
+        }
+    }
+    LandWidget * bar_area = handle->parent;
+    if ((land_mouse_b() & 1) && self->dragged) {
+        int newx = land_mouse_x() - self->drag_x;
+        int newy = land_mouse_y() - self->drag_y;
+        int l = bar_area->box.x + bar_area->element->il;
+        int t = bar_area->box.y + bar_area->element->it;
+        int r = bar_area->box.x + bar_area->box.w - handle->box.w - bar_area->element->ir;
+        int b = bar_area->box.y + bar_area->box.h - handle->box.h - bar_area->element->ib;
+        if (newx > r) {
+            newx = r;
+        }
+        if (newy > b) {
+            newy = b;
+        }
+        if (newx < l) {
+            newx = l;
+        }
+        if (newy < t) {
+            newy = t;
+        }
+        int dx = newx - handle->box.x;
+        int dy = newy - handle->box.y;
+        land_widget_move(handle, dx, dy);
+        int old_size = get_size(handle);
+        land_widget_scrollbar_update(handle, 1);
+        land_widget_scrollbar_update(handle, 0);
+        int new_size = get_size(handle);
+        if (new_size > old_size) {
+            if (self->vertical && dy > 0) {
+                self->drag_y += new_size - old_size;
+            }
+            if (! self->vertical && dx > 0) {
+                self->drag_x += new_size - old_size;
+            }
+        }
+    }
+}
+LandWidget* land_widget_scrollbar_new(LandWidget * parent, LandWidget * target, int vertical, int x, int y, int w, int h) {
+    LandWidgetScrollbar * self;
+    land_widget_scrollbar_interface_initialize();
+    land_alloc(self);
+    LandWidget * super = & self->super;
+    land_widget_base_initialize(super, parent, x, y, w, h);
+    self->target = target;
+    self->vertical = vertical;
+    if (vertical) {
+        self->callback = scroll_vertical_cb;
+        super->vt = land_widget_scrollbar_vertical_interface;
+    }
+    else {
+        self->callback = scroll_horizontal_cb;
+        super->vt = land_widget_scrollbar_horizontal_interface;
+    }
+    land_widget_theme_initialize(super);
+    return super;
+}
+void land_widget_scrollbar_interface_initialize(void) {
+    if (! land_widget_scrollbar_vertical_interface) {
+        LandWidgetInterface * i = land_widget_copy_interface(land_widget_base_interface, "scrollbar.vertical");
+        i->id = LAND_WIDGET_ID_SCROLLBAR;
+        i->draw = land_widget_scrollbar_draw;
+        i->move = land_widget_base_move;
+        i->mouse_tick = land_widget_scrollbar_mouse_tick;
+        land_widget_scrollbar_vertical_interface = i;
+    }
+    if (! land_widget_scrollbar_horizontal_interface) {
+        LandWidgetInterface * i = land_widget_copy_interface(land_widget_base_interface, "scrollbar.horizontal");
+        i->id = LAND_WIDGET_ID_SCROLLBAR;
+        i->draw = land_widget_scrollbar_draw;
+        i->move = land_widget_base_move;
+        i->mouse_tick = land_widget_scrollbar_mouse_tick;
+        land_widget_scrollbar_horizontal_interface = i;
+    }
+}
+static LandGridInterface * land_grid_vtable_tilegrid;
+LandGrid* land_tilegrid_new(int cell_w, int cell_h, int x_cells, int y_cells) {
+    LandTileGrid * self;
+    land_alloc(self);
+    land_grid_initialize(& self->super, cell_w, cell_h, x_cells, y_cells);
+    self->super.vt = land_grid_vtable_tilegrid;
+    self->tiles = land_calloc(x_cells * y_cells * sizeof (* self->tiles));
+    return & self->super;
+}
+void land_tilegrid_del(LandGrid * self) {
+    land_free(LAND_TILE_GRID (self)->tiles);
+    land_free(self);
+}
+void land_tilegrid_place(LandGrid * super, int cell_x, int cell_y, LandImage * image) {
+    if (cell_x < 0 || cell_y < 0 || cell_x >= super->x_cells || cell_y >= super->y_cells) {
+        return ;
+    }
+    LandTileGrid * self = LAND_TILE_GRID(super);
+    self->tiles [cell_y * super->x_cells + cell_x] = image;
+}
+static void land_tilegrid_draw_cell(LandGrid * self, LandView * view, int cell_x, int cell_y, float pixel_x, float pixel_y) {
+    LandImage * image = LAND_TILE_GRID (self)->tiles [cell_y * self->x_cells + cell_x];
+    if (image) {
+        land_image_draw_scaled(image, pixel_x, pixel_y, view->scale_x, view->scale_y);
+    }
+}
+static void view_x_to_cell_and_pixel_x(LandGrid * self, float view_x, int * cell_x, float * pixel_x) {
+    if (view_x < 0) {
+        * cell_x = 0;
+        * pixel_x = - view_x;
+    }
+    else {
+        * cell_x = (unsigned int) view_x / self->cell_w;
+        * pixel_x = * cell_x * self->cell_w - view_x;
+    }
+}
+static void view_y_to_cell_and_pixel_y(LandGrid * self, float view_y, int * cell_y, float * pixel_y) {
+    if (view_y < 0) {
+        * cell_y = 0;
+        * pixel_y = - view_y;
+    }
+    else {
+        * cell_y = (unsigned int) view_y / self->cell_h;
+        * pixel_y = * cell_y * self->cell_h - view_y;
+    }
+}
+void land_grid_draw_normal(LandGrid * self, LandView * view) {
+    int cell_x, cell_y;
+    float pixel_x, pixel_y;
+    float view_x = view->scroll_x;
+    float view_y = view->scroll_y;
+    view_y_to_cell_and_pixel_y(self, view_y, & cell_y, & pixel_y);
+    pixel_y *= view->scale_y;
+    pixel_y += view->y;
+    for (; pixel_y < view->y + view->h; cell_y++, pixel_y += self->cell_h * view->scale_y) {
+        if (cell_y >= self->y_cells) {
+            break;
+        }
+        view_x_to_cell_and_pixel_x(self, view_x, & cell_x, & pixel_x);
+        pixel_x *= view->scale_x;
+        pixel_x += view->x;
+        for (; pixel_x < view->x + view->w; cell_x++, pixel_x += self->cell_w * view->scale_x) {
+            if (cell_x >= self->x_cells) {
+                break;
+            }
+            self->vt->draw_cell(self, view, cell_x, cell_y, pixel_x, pixel_y);
+        }
+    }
+}
+void land_tilemap_init(void) {
+    land_log_message("land_tilemap_init\n");
+    land_alloc(land_grid_vtable_tilegrid);
+    land_grid_vtable_tilegrid->draw = land_grid_draw_normal;
+    land_grid_vtable_tilegrid->draw_cell = land_tilegrid_draw_cell;
+    land_grid_vtable_tilegrid->del = land_tilegrid_del;
+}
+void land_tilemap_exit(void) {
+    land_log_message("land_tilemap_exit\n");
+    land_free(land_grid_vtable_tilegrid);
+}
 LandWidgetInterface * land_widget_button_interface;
 void land_widget_button_draw(LandWidget * base) {
     LandWidgetButton * self = LAND_WIDGET_BUTTON(base);
     land_widget_box_draw(base);
+    if (self->dynamic_text_cb) {
+        self->dynamic_text_cb(base);
+    }
     if (! base->dont_clip) {
         float l, t, r, b;
         land_widget_inner_extents(base, & l, & t, & r, & b);
@@ -11837,7 +15764,12 @@ void land_widget_button_draw(LandWidget * base) {
         }
         x += self->xshift;
         y += self->yshift;
-        land_image_draw(self->image, x + self->image->x, y + self->image->y);
+        if (self->scale_x > 0 && self->scale_y > 0) {
+            land_image_draw_scaled(self->image, x + self->image->x, y + self->image->y, self->scale_x, self->scale_y);
+        }
+        else {
+            land_image_draw(self->image, x + self->image->x, y + self->image->y);
+        }
     }
     if (self->animation) {
         float fps = self->animation->fps;
@@ -11954,7 +15886,7 @@ void land_widget_button_mouse_tick(LandWidget * base) {
         }
     }
 }
-void land_widget_button_initialize(LandWidget * base, LandWidget * parent, char const * text, LandImage * image, void(* clicked)(LandWidget * self), int x, int y, int w, int h) {
+void land_widget_button_initialize(LandWidget * base, LandWidget * parent, char const * text, LandImage * image, bool destroy, void(* clicked)(LandWidget * self), int x, int y, int w, int h) {
     land_widget_base_initialize(base, parent, x, y, w, h);
     land_widget_button_interface_initialize();
     base->vt = land_widget_button_interface;
@@ -11969,6 +15901,7 @@ void land_widget_button_initialize(LandWidget * base, LandWidget * parent, char 
     }
     if (image) {
         self->image = image;
+        self->want_image_destroyed = destroy;
         land_widget_theme_set_minimum_size_for_image(base, image);
     }
     self->clicked = clicked;
@@ -11980,30 +15913,36 @@ LandWidget* land_widget_button_new(LandWidget * parent, char const * text, void(
     LandWidgetButton * button;
     land_alloc(button);
     LandWidget * self = (LandWidget *) button;
-    land_widget_button_initialize(self, parent, text, NULL, clicked, x, y, w, h);
+    land_widget_button_initialize(self, parent, text, NULL, false, clicked, x, y, w, h);
     return self;
 }
-LandWidget* land_widget_button_new_with_image(LandWidget * parent, char const * text, LandImage * image, void(* clicked)(LandWidget * self), int x, int y, int w, int h) {
+LandWidget* land_widget_button_new_with_image(LandWidget * parent, char const * text, LandImage * image, bool destroy, void(* clicked)(LandWidget * self), int x, int y, int w, int h) {
     LandWidgetButton * button;
     land_alloc(button);
     LandWidget * self = (LandWidget *) button;
-    land_widget_button_initialize(self, parent, text, image, clicked, x, y, w, h);
+    land_widget_button_initialize(self, parent, text, image, destroy, clicked, x, y, w, h);
     return self;
+}
+void land_widget_button_image_scale(LandWidget * base, float xs, float ys) {
+    LandWidgetButton * button = LAND_WIDGET_BUTTON(base);
+    button->scale_x = xs;
+    button->scale_y = ys;
 }
 LandWidget* land_widget_button_new_with_animation(LandWidget * parent, char const * text, LandAnimation * animation, void(* clicked)(LandWidget * self), int x, int y, int w, int h) {
     LandWidgetButton * button;
     land_alloc(button);
     LandWidget * self = (LandWidget *) button;
-    land_widget_button_initialize(self, parent, text, NULL, clicked, x, y, w, h);
+    land_widget_button_initialize(self, parent, text, NULL, false, clicked, x, y, w, h);
     button->animation = animation;
     return self;
 }
 LandWidget* land_widget_text_initialize(LandWidget * self, LandWidget * parent, char const * text, int multiline, int x, int y, int w, int h) {
-    land_widget_button_initialize(self, parent, multiline ? NULL : text, NULL, NULL, x, y, w, h);
+    land_widget_button_initialize(self, parent, multiline ? NULL : text, NULL, false, NULL, x, y, w, h);
     self->no_decoration = 1;
+    LandWidgetButton * button = LAND_WIDGET_BUTTON(self);
+    button->multiline = multiline;
     land_widget_theme_initialize(self);
     if (multiline) {
-        land_widget_button_multiline(self, multiline);
         land_widget_button_set_text(self, text);
     }
     else {
@@ -12012,6 +15951,16 @@ LandWidget* land_widget_text_initialize(LandWidget * self, LandWidget * parent, 
     return self;
 }
 LandWidget* land_widget_text_new(LandWidget * parent, char const * text, int multiline, int x, int y, int w, int h) {
+    /* For normal text the minimum size is the rectangle to fit it into a
+     * single line. (multiline == 0)
+     * For multi-line text it is the rectangle to contain all lines of
+     * text. (multiline == 1)
+     * For multi-line text with word-wrap the initial width is taken for
+     * word-wrapping and then the rectangle to fit the word-wrapped text is
+     * used. This can be less than w if the longest line is less, or more
+     * than w if wordwrapping needs more width (i.e. the longest word is
+     * longer than w). (multiline == 2)
+     */
     LandWidgetButton * button;
     land_alloc(button);
     LandWidget * self = (LandWidget *) button;
@@ -12033,10 +15982,17 @@ void land_widget_button_replace_text(LandWidget * base, char const * text) {
     if (text) {
         button->text = land_strdup(text);
     }
+    if (button->multiline) {
+        land_widget_button_multiline(base, button->multiline);
+    }
 }
 void land_widget_button_set_text(LandWidget * base, char const * text) {
     land_widget_button_replace_text(base, text);
     land_widget_button_layout_text(base);
+}
+str land_widget_button_get_text(LandWidget * base) {
+    LandWidgetButton * button = LAND_WIDGET_BUTTON(base);
+    return button->text;
 }
 void land_widget_button_layout_text(LandWidget * base) {
     LandWidgetButton * button = LAND_WIDGET_BUTTON(base);
@@ -12083,21 +16039,32 @@ void land_widget_button_multiline(LandWidget * self, int style) {
         float x, y, w, h;
         land_widget_theme_font(self);
         land_widget_inner(self, & x, & y, & w, & h);
-        if (style == 1) {
+        if (style == 0 || style == 1) {
             button->lines = land_text_splitlines(button->text);
+            int ww = 0;
+            int wh = 0;
+            {
+                LandArrayIterator __iter0__ = LandArrayIterator_first(button->lines);
+                for (char * row = LandArrayIterator_item(button->lines, &__iter0__); LandArrayIterator_next(button->lines, &__iter0__); row = LandArrayIterator_item(button->lines, &__iter0__)) {
+                    ww = _scramble_max(ww, land_text_get_width(row));
+                    wh += land_line_height();
+                }
+            }
+            land_widget_theme_set_minimum_size_for_contents(self, ww, wh);
+            land_widget_layout(self);
         }
         else {
             button->lines = land_wordwrap_text(w, 0, button->text);
-        }
-        float ww, wh;
-        land_wordwrap_extents(& ww, & wh);
-        if (ww - w > 0.1) {
-            land_array_for_each(button->lines, _linedelcb, NULL);
-            land_array_destroy(button->lines);
-            button->lines = land_wordwrap_text(ww, 0, button->text);
+            float ww, wh;
             land_wordwrap_extents(& ww, & wh);
+            if (ww - w > 0.1) {
+                land_array_for_each(button->lines, _linedelcb, NULL);
+                land_array_destroy(button->lines);
+                button->lines = land_wordwrap_text(ww, 0, button->text);
+                land_wordwrap_extents(& ww, & wh);
+            }
+            land_widget_theme_set_minimum_size_for_contents(self, ww, wh);
         }
-        land_widget_theme_set_minimum_size_for_contents(self, ww, wh);
     }
 }
 void land_widget_button_align(LandWidget * self, int x, int y) {
@@ -12134,7 +16101,17 @@ void land_widget_button_destroy(LandWidget * base) {
         land_array_for_each(button->lines, _linedelcb, NULL);
         land_array_destroy(button->lines);
     }
+    if (button->image && button->want_image_destroyed) {
+        land_image_destroy(button->image);
+    }
     land_widget_base_destroy(base);
+}
+void land_widget_button_set_minimum_text(LandWidget * base, char const * text) {
+    land_widget_theme_set_minimum_size_for_text(base, text);
+}
+void land_widget_button_set_dynamic_text_callback(LandWidget * self, void(* cb)(LandWidget *)) {
+    LandWidgetButton * button = LAND_WIDGET_BUTTON(self);
+    button->dynamic_text_cb = cb;
 }
 void platform_display_init(void) {
     ;
@@ -12164,6 +16141,10 @@ void platform_display_desktop_size(int * w, int * h) {
 void platform_display_title(char const * title) {
     SELF;
     al_set_window_title(self->a5, title);
+}
+void platform_display_icon(LandImage * icon) {
+    SELF;
+    al_set_display_icon(self->a5, ((LandImagePlatform *) icon)->a5);
 }
 void platform_display_move(int x, int y) {
     SELF;
@@ -12197,7 +16178,7 @@ void land_a5_display_check_transform(void) {
         super->matrix_modified = 0;
     }
 }
-static void check_blending_and_transform(void) {
+void platform_check_blending_and_transform(void) {
     SELF;
     land_a5_display_check_transform();
     if (super->blend) {
@@ -12210,16 +16191,31 @@ static void check_blending_and_transform(void) {
         }
     }
 }
-static void uncheck_blending(void) {
+void platform_uncheck_blending(void) {
     SELF;
     if (super->blend) {
         al_restore_state(& self->blend_state);
     }
 }
+void check_blending_and_transform(void) {
+    platform_check_blending_and_transform();
+}
+void uncheck_blending(void) {
+    platform_uncheck_blending();
+}
 void platform_display_set(void) {
     SELF;
     int f = 0;
     if (self->a5) {
+        if (super->flags & LAND_FULLSCREEN) {
+            al_set_display_flag(self->a5, ALLEGRO_FULLSCREEN_WINDOW, 1);
+        }
+        else {
+            al_set_display_flag(self->a5, ALLEGRO_FULLSCREEN_WINDOW, 0);
+        }
+        super->w = al_get_display_width(self->a5);
+        super->h = al_get_display_height(self->a5);
+        land_resize_event(super->w, super->h);
         return ;
     }
     if (super->flags & LAND_FULLSCREEN) {
@@ -12269,11 +16265,11 @@ void platform_display_set(void) {
         super->clip_y2 = super->h;
     }
     #ifdef ANDROID
+    f |= ALLEGRO_OPENGL | ALLEGRO_PROGRAMMABLE_PIPELINE;
     #endif
     if (f) {
         al_set_new_display_flags(f);
     }
-    al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
     land_log_message("Calling al_create_display(%d, %d).\n", super->w, super->h);
     self->a5 = al_create_display(super->w, super->h);
     if (self->a5) {
@@ -12619,54 +16615,36 @@ void platform_set_default_shaders(void) {
     }
     al_use_shader(self->default_shader);
 }
+void platform_reset_projection(void) {
+    ALLEGRO_TRANSFORM trans;
+    al_identity_transform(& trans);
+    al_orthographic_transform(& trans, 0, 0, - 1.0, land_display_width(), land_display_height(), 1.0);
+    al_use_projection_transform(& trans);
+}
+void platform_projection(Land4x4Matrix m) {
+    ALLEGRO_TRANSFORM t;
+    t.m [0] [0] = m.v [0];
+    t.m [1] [0] = m.v [1];
+    t.m [2] [0] = m.v [2];
+    t.m [3] [0] = m.v [3];
+    t.m [0] [1] = m.v [4];
+    t.m [1] [1] = m.v [5];
+    t.m [2] [1] = m.v [6];
+    t.m [3] [1] = m.v [7];
+    t.m [0] [2] = m.v [8];
+    t.m [1] [2] = m.v [9];
+    t.m [2] [2] = m.v [10];
+    t.m [3] [2] = m.v [11];
+    t.m [0] [3] = m.v [12];
+    t.m [1] [3] = m.v [13];
+    t.m [2] [3] = m.v [14];
+    t.m [3] [3] = m.v [15];
+    al_use_projection_transform(& t);
+}
+int platform_get_dpi(void) {
+    return al_get_monitor_dpi(0);
+}
 #undef SELF
-static LandWidgetInterface * land_widget_mover_interface;
-void land_widget_mover_mouse_tick(LandWidget * super) {
-    LandWidgetMover * self = LAND_WIDGET_MOVER(super);
-    if ((land_mouse_delta_b())) {
-        if (land_mouse_b() & 1) {
-            self->target->send_to_top = 1;
-            self->dragged = 1;
-        }
-        else {
-            self->dragged = 0;
-        }
-    }
-    if ((land_mouse_b() & 1) && self->dragged) {
-        land_widget_move(self->target, land_mouse_delta_x(), land_mouse_delta_y());
-    }
-}
-LandWidget* land_widget_mover_new(LandWidget * parent, char const * text, int x, int y, int w, int h) {
-    /* """Create a new mover widget.
-     * By default, the widget will stretch in the horizontal and shrink in the
-     * vertical direction.
-     */
-    LandWidgetMover * self;
-    land_widget_mover_interface_initialize();
-    land_alloc(self);
-    LandWidget * base = (LandWidget *) self;
-    land_widget_button_initialize(base, parent, text, NULL, NULL, x, y, w, h);
-    base->vt = land_widget_mover_interface;
-    land_widget_layout_set_shrinking(base, 0, 1);
-    land_widget_theme_initialize(base);
-    if (parent) {
-        land_widget_layout(parent);
-    }
-    self->target = parent;
-    self->dragged = 0;
-    return base;
-}
-void land_widget_mover_set_target(LandWidget * self, LandWidget * target) {
-    LAND_WIDGET_MOVER (self)->target = target;
-}
-void land_widget_mover_interface_initialize(void) {
-    if (land_widget_mover_interface) {
-        return ;
-    }
-    land_widget_button_interface_initialize();
-    land_widget_mover_interface = land_widget_copy_interface(land_widget_button_interface, "mover");
-    land_widget_mover_interface->mouse_tick = land_widget_mover_mouse_tick;
-}
 LandWidgetInterface * land_widget_container_interface;
 void land_widget_container_destroy(LandWidget * base) {
     /* """Destroy the container and all its children."""
@@ -12734,17 +16712,26 @@ void land_widget_container_keyboard_enter(LandWidget * super) {
         }
     }
 }
+LandWidget* land_widget_container_get_keyboard_focus(LandWidget * super) {
+    LandWidgetContainer * self = LAND_WIDGET_CONTAINER(super);
+    return self->keyboard;
+}
 void land_widget_container_keyboard_leave(LandWidget * super) {
     LandWidgetContainer * self = LAND_WIDGET_CONTAINER(super);
     if (self->keyboard) {
-        self->keyboard->got_keyboard = 0;
-        land_call_method(self->keyboard, keyboard_leave, (self->keyboard));
-        if (self->keyboard->got_keyboard) {
+        LandWidget * keyboard = self->keyboard;
+        self->keyboard = NULL;
+        keyboard->got_keyboard = 0;
+        land_call_method(keyboard, keyboard_leave, (keyboard));
+        if (keyboard->got_keyboard) {
             super->got_keyboard = 1;
+            self->keyboard = keyboard;
             return ;
         }
-        land_widget_unreference(self->keyboard);
-        self->keyboard = NULL;
+        land_widget_unreference(keyboard);
+        if (super->parent) {
+            land_widget_keyboard_leave(super->parent);
+        }
     }
 }
 LandListItem* land_widget_container_child_item(LandWidget * super, LandWidget * child) {
@@ -12984,6 +16971,22 @@ LandWidget* land_widget_container_child(LandWidget * super) {
     }
     return NULL;
 }
+LandWidget* land_widget_container_child_i(LandWidget * super, int i) {
+    /* Return the child i or else None.
+     */
+    LandWidgetContainer * self = (LandWidgetContainer *) super;
+    int j = 0;
+    {
+        LandListIterator __iter0__ = LandListIterator_first(self->children);
+        for (LandWidget * w = LandListIterator_item(self->children, &__iter0__); LandListIterator_next(self->children, &__iter0__); w = LandListIterator_item(self->children, &__iter0__)) {
+            if (i == j) {
+                return w;
+            }
+            j++;
+        }
+    }
+    return NULL;
+}
 int land_widget_container_is_empty(LandWidget * super) {
     LandWidgetContainer * self = (LandWidgetContainer *) super;
     return ! self->children || self->children->count == 0;
@@ -13025,6 +17028,419 @@ void land_widget_container_interface_initialize(void) {
     land_widget_container_interface->keyboard_tick = land_widget_container_keyboard_tick;
     land_widget_container_interface->keyboard_enter = land_widget_container_keyboard_enter;
     land_widget_container_interface->keyboard_leave = land_widget_container_keyboard_leave;
+}
+static LandWidgetInterface * land_widget_mover_interface;
+void land_widget_mover_mouse_tick(LandWidget * super) {
+    LandWidgetMover * self = LAND_WIDGET_MOVER(super);
+    if ((land_mouse_delta_b())) {
+        if (land_mouse_b() & 1) {
+            self->target->send_to_top = 1;
+            self->dragged = 1;
+        }
+        else {
+            self->dragged = 0;
+        }
+    }
+    if ((land_mouse_b() & 1) && self->dragged) {
+        land_widget_move(self->target, land_mouse_delta_x(), land_mouse_delta_y());
+    }
+}
+LandWidget* land_widget_mover_new(LandWidget * parent, char const * text, int x, int y, int w, int h) {
+    /* """Create a new mover widget.
+     * By default, the widget will stretch in the horizontal and shrink in the
+     * vertical direction.
+     */
+    LandWidgetMover * self;
+    land_widget_mover_interface_initialize();
+    land_alloc(self);
+    LandWidget * base = (LandWidget *) self;
+    land_widget_button_initialize(base, parent, text, NULL, false, NULL, x, y, w, h);
+    base->vt = land_widget_mover_interface;
+    land_widget_layout_set_shrinking(base, 0, 1);
+    land_widget_theme_initialize(base);
+    if (parent) {
+        land_widget_layout(parent);
+    }
+    self->target = parent;
+    self->dragged = 0;
+    return base;
+}
+void land_widget_mover_set_target(LandWidget * self, LandWidget * target) {
+    LAND_WIDGET_MOVER (self)->target = target;
+}
+void land_widget_mover_interface_initialize(void) {
+    if (land_widget_mover_interface) {
+        return ;
+    }
+    land_widget_button_interface_initialize();
+    land_widget_mover_interface = land_widget_copy_interface(land_widget_button_interface, "mover");
+    land_widget_mover_interface->mouse_tick = land_widget_mover_mouse_tick;
+}
+static double land_widget_cursor_blink_rate = 2;
+static LandWidgetInterface * land_widget_edit_interface;
+static int get_x_offset(LandWidget * base) {
+    int x = base->box.x + base->element->il;
+    LandWidgetEdit * self = LAND_WIDGET_EDIT(base);
+    if (self->align_right) {
+        int w = land_text_get_width(self->text);
+        x = base->box.x + base->box.w - base->element->r - w - 0.5;
+    }
+    return x;
+}
+void land_widget_edit_draw(LandWidget * base) {
+    LandWidgetEdit * self = LAND_WIDGET_EDIT(base);
+    if (! base->no_decoration) {
+        land_widget_box_draw(base);
+    }
+    if (! base->dont_clip) {
+        int l = base->box.x + base->element->il;
+        int t = base->box.y + base->element->it;
+        int r = base->box.x + base->box.w - base->element->r;
+        int b = base->box.y + base->box.h - base->element->ib;
+        land_clip_push();
+        land_clip_intersect(l, t, r, b);
+    }
+    if (self->text) {
+        int x = get_x_offset(base);
+        int y = base->box.y + base->box.h - base->element->ib;
+        y -= land_font_height(land_font_current());
+        land_widget_theme_color(base);
+        land_text_pos(x - self->scroll, y);
+        land_print(self->text);
+        if (base->got_keyboard) {
+            double pos = land_get_time() * land_widget_cursor_blink_rate;
+            pos -= floor(pos);
+            if (pos < 0.5) {
+                int cx = land_text_get_char_offset(self->text, self->cursor);
+                cx -= self->scroll;
+                if (cx < 0) {
+                    self->scroll += cx;
+                }
+                if (cx > base->box.w) {
+                    self->scroll += cx - base->box.w;
+                }
+                land_line(x + cx + 0.5, y, x + cx + 0.5, base->box.y + base->box.h - base->element->ib);
+            }
+        }
+    }
+    if (! base->dont_clip) {
+        land_clip_pop();
+    }
+}
+void land_widget_edit_mouse_tick(LandWidget * base) {
+    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
+    if (land_mouse_delta_b() & 1) {
+        if (land_mouse_b() & 1) {
+            base->want_focus = 1;
+            int x = land_mouse_x() - get_x_offset(base);
+            edit->cursor = land_text_get_char_index(edit->text, x - edit->scroll);
+        }
+    }
+}
+#define M if(edit->modified) edit->modified(base)
+void land_widget_edit_keyboard_tick(LandWidget * base) {
+    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
+    while (! land_keybuffer_empty()) {
+        int k, u;
+        land_keybuffer_next(& k, & u);
+        edit->last_key = k;
+        edit->last_char = u;
+        if (u > 31 && u != 127) {
+            edit->text = land_utf8_realloc_insert(edit->text, edit->cursor, u);
+            edit->cursor++;
+            M;
+        }
+        else {
+            char * pos = edit->text;
+            int l = 0;
+            while (land_utf8_char(& pos)) {
+                l++;
+            }
+            if (k == LandKeyLeft) {
+                edit->cursor--;
+                if (edit->cursor < 0) {
+                    edit->cursor = 0;
+                }
+            }
+            else if (k == LandKeyRight) {
+                edit->cursor++;
+                if (edit->cursor > l) {
+                    edit->cursor = l;
+                }
+            }
+            else if (k == LandKeyDelete) {
+                if (edit->cursor < l) {
+                    edit->text = land_utf8_realloc_remove(edit->text, edit->cursor);
+                    M;
+                }
+            }
+            else if (k == LandKeyBackspace) {
+                if (edit->cursor > 0) {
+                    edit->cursor--;
+                    edit->text = land_utf8_realloc_remove(edit->text, edit->cursor);
+                    M;
+                }
+            }
+            else if (k == LandKeyHome) {
+                edit->cursor = 0;
+            }
+            else if (k == LandKeyEnd) {
+                edit->cursor = l;
+            }
+            else if (k == LandKeyEnter) {
+                if (base->parent) {
+                    land_widget_keyboard_leave(base->parent);
+                }
+                M;
+            }
+        }
+    }
+}
+void land_widget_edit_destroy(LandWidget * base) {
+    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
+    if (edit->text) {
+        land_free(edit->text);
+    }
+    land_widget_base_destroy(base);
+}
+void land_widget_edit_initialize(LandWidget * base, LandWidget * parent, char const * text, void(* modified)(LandWidget * self), int x, int y, int w, int h) {
+    land_widget_base_initialize(base, parent, x, y, w, h);
+    land_widget_edit_interface_initialize();
+    base->vt = land_widget_edit_interface;
+    LandWidgetEdit * self = LAND_WIDGET_EDIT(base);
+    if (text) {
+        self->text = land_strdup(text);
+        land_widget_theme_set_minimum_size_for_text(base, text);
+        if (base->box.min_width < w) {
+            base->box.min_width = w;
+        }
+    }
+    self->modified = modified;
+}
+LandWidget* land_widget_edit_new(LandWidget * parent, char const * text, void(* modified)(LandWidget * self), int x, int y, int w, int h) {
+    LandWidgetEdit * edit;
+    land_alloc(edit);
+    LandWidget * self = (LandWidget *) edit;
+    land_widget_edit_initialize(self, parent, text, modified, x, y, w, h);
+    land_widget_theme_initialize(self);
+    land_widget_layout(parent);
+    return self;
+}
+void land_widget_edit_set_text(LandWidget * base, char const * text) {
+    /* Changes the text of the edit widget to a copy of the given string. The
+     * string itself is not touched nor referenced - if you allocated it, you
+     * can immediately free it after this function returns.
+     */
+    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
+    land_free(edit->text);
+    edit->text = land_strdup(text);
+    land_widget_theme_set_minimum_size_for_text(base, text);
+    if (edit->cursor > land_utf8_count(text)) {
+        edit->cursor = land_utf8_count(text);
+    }
+}
+void land_widget_edit_align_right(LandWidget * base, bool yes) {
+    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
+    edit->align_right = yes;
+}
+char const* land_widget_edit_get_text(LandWidget * base) {
+    /* Note: Points directly to the widget's text, only valid as long
+     * as the widget is alive.
+     */
+    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
+    return edit->text;
+}
+void land_widget_edit_interface_initialize(void) {
+    if (land_widget_edit_interface) {
+        return ;
+    }
+    land_widget_edit_interface = land_widget_copy_interface(land_widget_base_interface, "edit");
+    land_widget_edit_interface->id |= LAND_WIDGET_ID_EDIT;
+    land_widget_edit_interface->destroy = land_widget_edit_destroy;
+    land_widget_edit_interface->draw = land_widget_edit_draw;
+    land_widget_edit_interface->mouse_tick = land_widget_edit_mouse_tick;
+    land_widget_edit_interface->keyboard_tick = land_widget_edit_keyboard_tick;
+}
+#undef M
+LandWidgetInterface * land_widget_panel_interface;
+void land_widget_panel_initialize(LandWidget * base, LandWidget * parent, int x, int y, int w, int h) {
+    LandWidgetPanel * self = (LandWidgetPanel *) base;
+    land_widget_panel_interface_initialize();
+    LandWidgetContainer * super = & self->super;
+    land_widget_container_initialize(& super->super, parent, x, y, w, h);
+    base->vt = land_widget_panel_interface;
+    land_widget_layout_enable(base);
+    land_widget_theme_initialize(base);
+}
+LandWidget* land_widget_panel_new(LandWidget * parent, int x, int y, int w, int h) {
+    LandWidgetPanel * self;
+    land_alloc(self);
+    land_widget_panel_initialize((LandWidget *) self, parent, x, y, w, h);
+    return LAND_WIDGET(self);
+}
+void land_widget_panel_add(LandWidget * base, LandWidget * add) {
+    land_widget_container_add(base, add);
+    int f = land_widget_layout_freeze(base);
+    land_widget_layout_set_grid_position(add, 0, 0);
+    land_widget_layout_set_grid(base, 1, 1);
+    if (f) {
+        land_widget_layout_unfreeze(base);
+    }
+    land_widget_layout(base);
+}
+void land_widget_panel_interface_initialize(void) {
+    if (land_widget_panel_interface) {
+        return ;
+    }
+    land_widget_container_interface_initialize();
+    land_widget_panel_interface = land_widget_copy_interface(land_widget_container_interface, "panel");
+    land_widget_panel_interface->id |= LAND_WIDGET_ID_PANEL;
+    land_widget_panel_interface->add = land_widget_panel_add;
+}
+LandWidgetInterface * land_widget_board_interface;
+void land_widget_board_initialize(LandWidget * base, LandWidget * parent, int x, int y, int w, int h) {
+    LandWidgetBoard * self = (LandWidgetBoard *) base;
+    land_widget_board_interface_initialize();
+    LandWidgetContainer * super = & self->super;
+    land_widget_container_initialize(& super->super, parent, x, y, w, h);
+    base->vt = land_widget_board_interface;
+    land_widget_theme_initialize(base);
+}
+LandWidget* land_widget_board_new(LandWidget * parent, int x, int y, int w, int h) {
+    LandWidgetBoard * self;
+    land_alloc(self);
+    land_widget_board_initialize((LandWidget *) self, parent, x, y, w, h);
+    return LAND_WIDGET(self);
+}
+void land_widget_board_add(LandWidget * base, LandWidget * add) {
+    land_widget_container_add(base, add);
+}
+void land_widget_board_size(LandWidget * super, float dx, float dy) {
+    ;
+}
+void land_widget_board_update(LandWidget * widget) {
+    ;
+}
+void land_widget_board_interface_initialize(void) {
+    land_widget_container_interface_initialize();
+    land_widget_board_interface = land_widget_copy_interface(land_widget_container_interface, "board");
+    land_widget_board_interface->id |= LAND_WIDGET_ID_BOARD;
+    land_widget_board_interface->add = land_widget_board_add;
+    land_widget_board_interface->size = land_widget_board_size;
+    land_widget_board_interface->update = land_widget_board_update;
+}
+LandWidgetInterface * land_widget_vbox_interface;
+void land_widget_vbox_disable_updates(LandWidget * base) {
+    /* Call this before adding *many* items to the vbox, then call
+     * land_widget_vbox_update when done. This can speed things up, since there is
+     * no need to calculate intermediate layouts for each single added item.
+     */
+    LAND_WIDGET_VBOX (base)->disable_updates = 1;
+}
+void land_widget_vbox_do_update(LandWidget * base) {
+    /* Update the vbox, after updates have previously been disabled with
+     * land_widget_vbox_disable_updates.
+     */
+    LAND_WIDGET_VBOX (base)->disable_updates = 0;
+    land_widget_layout(base);
+}
+void land_widget_vbox_update(LandWidget * base) {
+    /* This is called when a child is done adding itself. It's the earliest time
+     * we can calculate the layout.
+     * FIXME: the layout also is calculated in the add method, but that's wrong
+     */
+    land_widget_container_update(base);
+    if (! LAND_WIDGET_VBOX (base)->disable_updates) {
+        land_widget_layout(base);
+    }
+}
+static void land_widget_vbox_renumber(LandWidget * base) {
+    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(base);
+    LandWidgetVBox * vbox = LAND_WIDGET_VBOX(base);
+    if (container->children) {
+        int x = 0, y = 0;
+        LandListItem * item = container->children->first;
+        while (item) {
+            LandWidget * child = item->data;
+            land_widget_layout_set_grid_position(child, x, y);
+            x++;
+            if (x == vbox->columns) {
+                x = 0;
+                y++;
+            }
+            item = item->next;
+        }
+    }
+    if (! vbox->disable_updates) {
+        land_widget_vbox_do_update(base);
+    }
+}
+void land_widget_vbox_add(LandWidget * base, LandWidget * add) {
+    /* Add a widget to the vbox. It will be put to the end, going left to right
+     * in columns and top to bottom in rows.
+     */
+    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(base);
+    LandWidgetVBox * vbox = LAND_WIDGET_VBOX(base);
+    land_widget_container_add(base, add);
+    int n = container->children->count;
+    int rows = (n + vbox->columns - 1) / vbox->columns;
+    int row = rows - 1;
+    int column = n - row * vbox->columns - 1;
+    int layout = land_widget_layout_freeze(base);
+    land_widget_layout_set_grid_position(add, column, row);
+    land_widget_layout_set_grid(base, vbox->columns, rows);
+    if (layout) {
+        land_widget_layout_unfreeze(base);
+    }
+    if (! vbox->disable_updates) {
+        land_widget_vbox_do_update(base);
+    }
+}
+void land_widget_vbox_remove(LandWidget * base, LandWidget * rem) {
+    /* """Remove a widget from the vbox."""
+     */
+    int layout = land_widget_layout_freeze(base);
+    land_widget_container_remove(base, rem);
+    if (layout) {
+        land_widget_layout_unfreeze(base);
+    }
+    land_widget_vbox_renumber(base);
+}
+void land_widget_vbox_set_columns(LandWidget * base, int n) {
+    /* """Specify the number of columns for the vbox. By default, it is 1."""
+     */
+    LAND_WIDGET_VBOX (base)->columns = n;
+}
+void land_widget_vbox_initialize(LandWidget * base, LandWidget * parent, int x, int y, int w, int h) {
+    /* """Initialize the given vbox widget."""
+     */
+    land_widget_vbox_interface_initialize();
+    LandWidgetVBox * self = (LandWidgetVBox *) base;
+    land_widget_container_initialize(base, parent, x, y, w, h);
+    base->vt = land_widget_vbox_interface;
+    land_widget_layout_enable(base);
+    self->columns = 1;
+    land_widget_theme_initialize(base);
+}
+LandWidget* land_widget_vbox_new(LandWidget * parent, int x, int y, int w, int h) {
+    /* """Create a new vbox widget."""
+     */
+    LandWidgetVBox * self;
+    land_alloc(self);
+    LandWidget * widget = (LandWidget *) self;
+    land_widget_vbox_initialize(widget, parent, x, y, w, h);
+    return widget;
+}
+void land_widget_vbox_interface_initialize(void) {
+    if (land_widget_vbox_interface) {
+        return ;
+    }
+    land_widget_container_interface_initialize();
+    land_widget_vbox_interface = land_widget_copy_interface(land_widget_container_interface, "vbox");
+    land_widget_vbox_interface->id |= LAND_WIDGET_ID_VBOX;
+    land_widget_vbox_interface->add = land_widget_vbox_add;
+    land_widget_vbox_interface->update = land_widget_vbox_update;
+    land_widget_vbox_interface->remove = land_widget_vbox_remove;
 }
 static LandWidgetInterface * land_widget_sizer_interface [8];
 void land_widget_sizer_draw(LandWidget * widget) {
@@ -13139,458 +17555,355 @@ void land_widget_sizer_interface_initialize(void) {
         land_widget_sizer_interface [i]->mouse_tick = land_widget_sizer_mouse_tick;
     }
 }
-static double land_widget_cursor_blink_rate = 2;
-static LandWidgetInterface * land_widget_edit_interface;
-static int get_x_offset(LandWidget * base) {
-    int x = base->box.x + base->element->il;
-    LandWidgetEdit * self = LAND_WIDGET_EDIT(base);
-    if (self->align_right) {
-        int w = land_text_get_width(self->text);
-        x = base->box.x + base->box.w - base->element->r - w - 0.5;
-    }
-    return x;
+LandWidgetInterface * land_widget_scrolling_interface;
+static LandWidgetInterface * land_widget_scrolling_contents_container_interface;
+static LandWidgetInterface * land_widget_scrolling_vertical_container_interface;
+static LandWidgetInterface * land_widget_scrolling_horizontal_container_interface;
+LandWidget* land_widget_scrolling_get_container(LandWidget * base) {
+    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
+    LandWidget * w = children->first->data;
+    return w;
 }
-void land_widget_edit_draw(LandWidget * base) {
-    LandWidgetEdit * self = LAND_WIDGET_EDIT(base);
-    if (! base->no_decoration) {
-        land_widget_box_draw(base);
-    }
-    if (! base->dont_clip) {
-        int l = base->box.x + base->element->il;
-        int t = base->box.y + base->element->it;
-        int r = base->box.x + base->box.w - base->element->r;
-        int b = base->box.y + base->box.h - base->element->ib;
-        land_clip_push();
-        land_clip_intersect(l, t, r, b);
-    }
-    if (self->text) {
-        int x = get_x_offset(base);
-        int y = base->box.y + base->box.h - base->element->ib;
-        y -= land_font_height(land_font_current());
-        land_widget_theme_color(base);
-        land_text_pos(x, y);
-        land_print(self->text);
-        if (base->got_keyboard) {
-            double pos = land_get_time() * land_widget_cursor_blink_rate;
-            pos -= floor(pos);
-            if (pos < 0.5) {
-                int cx = land_text_get_char_offset(self->text, self->cursor);
-                land_line(x + cx + 0.5, y, x + cx + 0.5, base->box.y + base->box.h - base->element->ib);
-            }
-        }
-    }
-    if (! base->dont_clip) {
-        land_clip_pop();
-    }
+LandWidget* land_widget_scrolling_get_vertical(LandWidget * base) {
+    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
+    LandWidget * w = children->first->next->data;
+    return w;
 }
-void land_widget_edit_mouse_tick(LandWidget * base) {
-    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
-    if (land_mouse_delta_b() & 1) {
-        if (land_mouse_b() & 1) {
-            base->want_focus = 1;
-            int x = land_mouse_x() - get_x_offset(base);
-            edit->cursor = land_text_get_char_index(edit->text, x);
-        }
-    }
+LandWidget* land_widget_scrolling_get_horizontal(LandWidget * base) {
+    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
+    LandWidget * w = children->first->next->next->data;
+    return w;
 }
-#define M if(edit->modified) edit->modified(base)
-void land_widget_edit_keyboard_tick(LandWidget * base) {
-    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
-    while (! land_keybuffer_empty()) {
-        int k, u;
-        land_keybuffer_next(& k, & u);
-        edit->last_key = k;
-        edit->last_char = u;
-        if (u > 31 && u != 127) {
-            edit->text = land_utf8_realloc_insert(edit->text, edit->cursor, u);
-            edit->cursor++;
-            M;
-        }
-        else {
-            char * pos = edit->text;
-            int l = 0;
-            while (land_utf8_char(& pos)) {
-                l++;
-            }
-            if (k == LandKeyLeft) {
-                edit->cursor--;
-                if (edit->cursor < 0) {
-                    edit->cursor = 0;
-                }
-            }
-            else if (k == LandKeyRight) {
-                edit->cursor++;
-                if (edit->cursor > l) {
-                    edit->cursor = l;
-                }
-            }
-            else if (k == LandKeyDelete) {
-                if (edit->cursor < l) {
-                    edit->text = land_utf8_realloc_remove(edit->text, edit->cursor);
-                    M;
-                }
-            }
-            else if (k == LandKeyBackspace) {
-                if (edit->cursor > 0) {
-                    edit->cursor--;
-                    edit->text = land_utf8_realloc_remove(edit->text, edit->cursor);
-                    M;
-                }
-            }
-            else if (k == LandKeyHome) {
-                edit->cursor = 0;
-            }
-            else if (k == LandKeyEnd) {
-                edit->cursor = l;
-            }
-            else if (k == LandKeyEnter) {
-                land_widget_container_keyboard_leave(base->parent);
-            }
-        }
-    }
+LandWidget* land_widget_scrolling_get_empty(LandWidget * base) {
+    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
+    LandWidget * w = children->first->next->next->next->data;
+    return w;
 }
-void land_widget_edit_destroy(LandWidget * base) {
-    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
-    if (edit->text) {
-        land_free(edit->text);
-    }
-    land_widget_base_destroy(base);
+void land_widget_scrolling_move(LandWidget * widget, float dx, float dy) {
+    land_widget_container_move(widget, dx, dy);
 }
-void land_widget_edit_initialize(LandWidget * base, LandWidget * parent, char const * text, void(* modified)(LandWidget * self), int x, int y, int w, int h) {
-    land_widget_base_initialize(base, parent, x, y, w, h);
-    land_widget_edit_interface_initialize();
-    base->vt = land_widget_edit_interface;
-    LandWidgetEdit * self = LAND_WIDGET_EDIT(base);
-    if (text) {
-        self->text = land_strdup(text);
-        land_widget_theme_set_minimum_size_for_text(base, text);
-        if (base->box.min_width < w) {
-            base->box.min_width = w;
-        }
-    }
-    self->modified = modified;
-}
-LandWidget* land_widget_edit_new(LandWidget * parent, char const * text, void(* modified)(LandWidget * self), int x, int y, int w, int h) {
-    LandWidgetEdit * edit;
-    land_alloc(edit);
-    LandWidget * self = (LandWidget *) edit;
-    land_widget_edit_initialize(self, parent, text, modified, x, y, w, h);
-    land_widget_theme_initialize(self);
-    land_widget_layout(parent);
-    return self;
-}
-void land_widget_edit_set_text(LandWidget * base, char const * text) {
-    /* Changes the text of the edit widget to a copy of the given string. The
-     * string itself is not touched nor referenced - if you allocated it, you
-     * can immediately free it after this function returns.
+void land_widget_scrolling_autohide(LandWidget * widget, int hori, int vert, int empty) {
+    /* Set hori/vert to 1 if the horizontal/vertical scrollbar should be auto
+     * hidden. Set empty to 1 if the empty should be auto hidden, and set empty to
+     * 2 if the empty should be hidden as soon as one bar is hidden.
      */
-    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
-    land_free(edit->text);
-    edit->text = land_strdup(text);
-    land_widget_theme_set_minimum_size_for_text(base, text);
-    if (edit->cursor > land_utf8_count(text)) {
-        edit->cursor = land_utf8_count(text);
-    }
+    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(widget);
+    self->autohide = hori + 2 * vert + 4 * empty;
+    land_widget_scrolling_update(widget);
 }
-void land_widget_edit_align_right(LandWidget * base, bool yes) {
-    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
-    edit->align_right = yes;
+bool land_widget_scrolling_need_vertical_bar(LandWidget * widget) {
+    LandWidget * vbox = land_widget_scrolling_get_vertical(widget);
+    return ! vbox->hidden;
 }
-char const* land_widget_edit_get_text(LandWidget * base) {
-    /* Note: Points directly to the widget's text, only valid as long
-     * as the widget is alive.
-     */
-    LandWidgetEdit * edit = LAND_WIDGET_EDIT(base);
-    return edit->text;
+void land_widget_scrolling_update(LandWidget * widget) {
+    _scrolling_layout(widget);
 }
-void land_widget_edit_interface_initialize(void) {
-    if (land_widget_edit_interface) {
+void land_widget_scrolling_size(LandWidget * widget, float dx, float dy) {
+    if (! (dx || dy)) {
         return ;
     }
-    land_widget_edit_interface = land_widget_copy_interface(land_widget_base_interface, "edit");
-    land_widget_edit_interface->id |= LAND_WIDGET_ID_EDIT;
-    land_widget_edit_interface->destroy = land_widget_edit_destroy;
-    land_widget_edit_interface->draw = land_widget_edit_draw;
-    land_widget_edit_interface->mouse_tick = land_widget_edit_mouse_tick;
-    land_widget_edit_interface->keyboard_tick = land_widget_edit_keyboard_tick;
+    land_widget_scrolling_update(widget);
 }
-#undef M
-LandWidgetInterface * land_widget_panel_interface;
-void land_widget_panel_initialize(LandWidget * base, LandWidget * parent, int x, int y, int w, int h) {
-    LandWidgetPanel * self = (LandWidgetPanel *) base;
-    land_widget_panel_interface_initialize();
-    LandWidgetContainer * super = & self->super;
-    land_widget_container_initialize(& super->super, parent, x, y, w, h);
-    base->vt = land_widget_panel_interface;
-    land_widget_layout_enable(base);
-    land_widget_theme_initialize(base);
-}
-LandWidget* land_widget_panel_new(LandWidget * parent, int x, int y, int w, int h) {
-    LandWidgetPanel * self;
-    land_alloc(self);
-    land_widget_panel_initialize((LandWidget *) self, parent, x, y, w, h);
-    return LAND_WIDGET(self);
-}
-void land_widget_panel_add(LandWidget * base, LandWidget * add) {
-    land_widget_container_add(base, add);
-    int f = land_widget_layout_freeze(base);
-    land_widget_layout_set_grid_position(add, 0, 0);
-    land_widget_layout_set_grid(base, 1, 1);
-    if (f) {
-        land_widget_layout_unfreeze(base);
+void land_widget_scrolling_get_scroll_position(LandWidget * base, float * x, float * y) {
+    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
+    LandWidget * child = land_widget_scrolling_get_child(base);
+    if (! child) {
+        * x = 0;
+        * y = 0;
+        return ;
     }
-    land_widget_layout(base);
+    * x = child->box.x - contents->box.x - contents->element->il;
+    * y = child->box.y - contents->box.y - contents->element->it;
 }
-void land_widget_panel_interface_initialize(void) {
-    if (land_widget_panel_interface) {
+void land_widget_scrolling_get_scrollable_area(LandWidget * base, float * x, float * y) {
+    /* Determines the size of the entire scrollable area.
+     */
+    LandWidget * child = land_widget_scrolling_get_child(base);
+    if (! child) {
+        * x = * y = 0;
+        return ;
+    }
+    * x = child->box.w;
+    * y = child->box.h;
+}
+void land_widget_scrolling_get_scroll_extents(LandWidget * base, float * x, float * y) {
+    /* Determines the amount, in pixels, the contents could be scrolled.
+     */
+    LandWidget * contents = land_widget_scrolling_get_container(base);
+    LandWidget * child = land_widget_scrolling_get_child(base);
+    if (! child) {
+        * x = * y = 0;
+        return ;
+    }
+    float cw, ch;
+    land_widget_get_inner_size(contents, & cw, & ch);
+    * x = child->box.w - cw;
+    * y = child->box.h - ch;
+    if (* x < 0) {
+        * x = 0;
+    }
+    if (* y < 0) {
+        * y = 0;
+    }
+}
+void land_widget_scrolling_get_view(LandWidget * base, float * l, float * t, float * r, float * b) {
+    /* Determine pixel coordinates of the viewable area.
+     */
+    LandWidget * contents = land_widget_scrolling_get_container(base);
+    land_widget_inner_extents(contents, l, t, r, b);
+}
+void land_widget_scrolling_scrollto(LandWidget * base, float x, float y) {
+    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
+    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
+    if (! children) {
+        return ;
+    }
+    LandWidget * child = children->first->data;
+    land_widget_move(child, contents->box.x + contents->element->il + x - child->box.x, contents->box.y + contents->element->it + y - child->box.y);
+    land_widget_scrolling_update(base);
+}
+void land_widget_scrolling_scroll(LandWidget * base, float dx, float dy) {
+    float x, y;
+    land_widget_scrolling_get_scroll_position(base, & x, & y);
+    land_widget_scrolling_scrollto(base, x + dx, y + dy);
+}
+void land_widget_scrolling_limit(LandWidget * base) {
+    float x, y, w, h;
+    land_widget_scrolling_get_scroll_position(base, & x, & y);
+    land_widget_scrolling_get_scroll_extents(base, & w, & h);
+    if (y < - h) {
+        land_widget_scrolling_scrollto(base, x, - h);
+    }
+    if (y > 0) {
+        land_widget_scrolling_scrollto(base, x, 0);
+    }
+}
+void land_widget_scrolling_mouse_tick(LandWidget * base) {
+    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(base);
+    if (land_mouse_delta_z() && self->scrollwheel != 0) {
+        if (self->scrollwheel == 1) {
+            float w, h;
+            land_widget_scrolling_get_scroll_extents(base, & w, & h);
+            if (h <= 0) {
+                return ;
+            }
+        }
+        int dy = land_mouse_delta_z() * land_font_height(base->element->font);
+        land_widget_scrolling_scroll(base, 0, dy);
+        if (self->scrollwheel == 1) {
+            land_widget_scrolling_limit(base);
+        }
+    }
+    land_widget_container_mouse_tick(base);
+}
+void land_widget_scrolling_tick(LandWidget * super) {
+    ;
+}
+void land_widget_scrolling_add(LandWidget * widget, LandWidget * add) {
+    /* Add a widget to the scrolling widget. The child widget can be bigger than
+     * the parent, and scrollbars will appear to allow scrolling around.
+     */
+    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(widget);
+    LandListItem * item = container->children->first;
+    LandWidget * contents = LAND_WIDGET(item->data);
+    land_widget_container_add(contents, add);
+    add->box.x = contents->box.x + contents->element->il;
+    add->box.y = contents->box.y + contents->element->it;
+    item = item->next;
+    LandWidgetContainer * right = LAND_WIDGET_CONTAINER(item->data);
+    LandListItem * item2 = right->children->first;
+    LandWidgetScrollbar * rightbar = LAND_WIDGET_SCROLLBAR(item2->data);
+    rightbar->target = add;
+    item = item->next;
+    LandWidgetContainer * bottom = LAND_WIDGET_CONTAINER(item->data);
+    item2 = bottom->children->first;
+    LandWidgetScrollbar * bottombar = LAND_WIDGET_SCROLLBAR(item2->data);
+    bottombar->target = add;
+}
+LandWidget* land_widget_scrolling_get_child(LandWidget * base) {
+    /* Return the child window of the scrolling window. Usually, a scrolling
+     * window has exactly one child window, which is controlled by the scrollbars.
+     * That window is returned.
+     */
+    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
+    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
+    return children ? children->first->data : NULL;
+}
+void land_widget_scrolling_remove_child(LandWidget * base) {
+    /* Detach the window managed inside the scrolled window. If there are no
+     * other references to it, it will be destroyed.
+     */
+    LandList * list = LAND_WIDGET_CONTAINER (base)->children;
+    LandWidget * contents = list->first->data;
+    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
+    LandWidget * child = children ? children->first->data : NULL;
+    if (child) {
+        land_widget_container_remove(contents, child);
+    }
+    LandWidgetContainer * c;
+    c = LAND_WIDGET_CONTAINER(list->first->next->data);
+    LAND_WIDGET_SCROLLBAR (c->children->first->data)->target = NULL;
+    c = LAND_WIDGET_CONTAINER(list->first->next->next->data);
+    LAND_WIDGET_SCROLLBAR (c->children->first->data)->target = NULL;
+}
+void land_widget_scrolling_initialize(LandWidget * widget, LandWidget * parent, int x, int y, int w, int h) {
+    land_widget_scrolling_interface_initialize();
+    land_widget_container_initialize(widget, parent, x, y, w, h);
+    widget->vt = land_widget_container_interface;
+    LandWidgetScrolling * scrolling = (void *) widget;
+    scrolling->scrollwheel = 1;
+    LandWidget * contents = land_widget_container_new(widget, 0, 0, 0, 0);
+    contents->vt = land_widget_scrolling_contents_container_interface;
+    land_widget_theme_initialize(contents);
+    land_widget_layout_disable(contents);
+    contents->box.flags |= GUL_STEADFAST;
+    LandWidget * right = land_widget_container_new(widget, 0, 0, 0, 0);
+    right->vt = land_widget_scrolling_vertical_container_interface;
+    land_widget_theme_initialize(right);
+    land_widget_scrollbar_new(right, NULL, 1, right->element->il, right->element->it, 0, 0);
+    right->box.flags |= GUL_STEADFAST;
+    LandWidget * bottom = land_widget_container_new(widget, 0, 0, 0, 0);
+    bottom->vt = land_widget_scrolling_horizontal_container_interface;
+    land_widget_theme_initialize(bottom);
+    land_widget_scrollbar_new(bottom, NULL, 0, bottom->element->il, bottom->element->it, 0, 0);
+    bottom->box.flags |= GUL_STEADFAST;
+    land_widget_box_new(widget, 0, 0, 0, 0);
+    widget->vt = land_widget_scrolling_interface;
+    land_widget_theme_initialize(widget);
+    _scrolling_layout(widget);
+}
+static void _scrolling_layout(LandWidget * self) {
+    LandWidgetScrolling * scrolling = LAND_WIDGET_SCROLLING(self);
+    LandWidget * container = land_widget_scrolling_get_container(self);
+    LandWidget * horizontal = land_widget_scrolling_get_horizontal(self);
+    LandWidget * vertical = land_widget_scrolling_get_vertical(self);
+    LandWidget * empty = land_widget_scrolling_get_empty(self);
+    LandWidget * hbar = land_widget_container_child(horizontal);
+    LandWidget * vbar = land_widget_container_child(vertical);
+    LandWidgetThemeElement * element = land_widget_theme_element(self);
+    float l, t, r, b;
+    land_widget_inner_extents(self, & l, & t, & r, & b);
+    int ver_w = vbar->box.w;
+    int hor_h = hbar->box.h;
+    int hgap = element->hgap;
+    int vgap = element->vgap;
+    land_widget_theme_set_minimum_size_for_contents(horizontal, 0, hor_h);
+    land_widget_theme_set_minimum_size_for_contents(vertical, ver_w, 0);
+    hor_h = horizontal->box.min_height;
+    ver_w = vertical->box.min_width;
+    land_widget_move_to(container, l, t);
+    land_widget_move_to(horizontal, l, b - hor_h);
+    land_widget_move_to(vertical, r - ver_w, t);
+    land_widget_move_to(empty, r - ver_w, b - hor_h);
+    land_widget_set_size(container, r - l, b - t);
+    float vw, vh;
+    land_widget_get_inner_size(container, & vw, & vh);
+    float sx, sy, sw, sh;
+    land_widget_scrolling_get_scroll_position(self, & sx, & sy);
+    land_widget_scrolling_get_scrollable_area(self, & sw, & sh);
+    float su = 0, sd = 0, sl = 0, sr = 0, sr2 = 0, sd2 = 0;
+    if (sx < 0) {
+        sl = - sx;
+    }
+    if (sy < 0) {
+        su = - sy;
+    }
+    if (sx + sw > vw) {
+        sr = sx + sw - vw;
+    }
+    if (sy + sh > vh) {
+        sd = sy + sh - vh;
+    }
+    if (sx + sw > vw - hgap - ver_w) {
+        sr2 = sx + sw - vw + hgap + ver_w;
+    }
+    if (sy + sh > vh - vgap - hor_h) {
+        sd2 = sy + sh - vh + vgap + hor_h;
+    }
+    int w = r - l;
+    int h = b - t;
+    if (sl + sr == 0 && su + sd == 0) {
+        if (scrolling->autohide & 2) {
+            hor_h = 0;
+        }
+        if (scrolling->autohide & 1) {
+            ver_w = 0;
+        }
+    }
+    else if (su + sd > 0 && sl + sr2 == 0) {
+        if (scrolling->autohide & 2) {
+            hor_h = 0;
+        }
+    }
+    else if (sl + sr > 0 && su + sd2 == 0) {
+        if (scrolling->autohide & 1) {
+            ver_w = 0;
+        }
+    }
+    else {
+        ;
+    }
+    if (ver_w > 0) {
+        w -= hgap + ver_w;
+    }
+    if (hor_h > 0) {
+        h -= vgap + hor_h;
+    }
+    land_widget_set_size(container, w, h);
+    land_widget_set_size(horizontal, w, hor_h);
+    land_widget_set_size(vertical, ver_w, h);
+    land_widget_set_size(empty, ver_w, hor_h);
+    land_widget_set_hidden(horizontal, hor_h == 0);
+    land_widget_set_hidden(vertical, ver_w == 0);
+    land_widget_set_hidden(empty, hor_h == 0 || ver_w == 0);
+    land_widget_scrollbar_update(hbar, 0);
+    land_widget_scrollbar_update(vbar, 0);
+}
+void land_widget_scrolling_wheel(LandWidget * widget, int wheel) {
+    /* 0: no wheel scrolling
+     * 1: wheel scrolling [default]
+     * 2: unlimited scrolling
+     */
+    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(widget);
+    self->scrollwheel = wheel;
+}
+LandWidget* land_widget_scrolling_new(LandWidget * parent, int x, int y, int w, int h) {
+    /* Creates a new Scrolling widget. You can add a child widget to it, and it
+     * will automatically display scrollbars and translate mouse coordinates.
+     * By default, the widget will expand in all directions.
+     */
+    LandWidgetScrolling * self;
+    land_alloc(self);
+    LandWidget * widget = (LandWidget *) self;
+    land_widget_scrolling_initialize(widget, parent, x, y, w, h);
+    return widget;
+}
+void land_widget_scrolling_layout_changed(LandWidget * widget) {
+    if (widget->box.w != widget->box.ow || widget->box.h != widget->box.oh) {
+        _scrolling_layout(widget);
+    }
+}
+void land_widget_scrolling_layout_changing(LandWidget * widget) {
+    ;
+}
+void land_widget_scrolling_interface_initialize(void) {
+    if (land_widget_scrolling_interface) {
         return ;
     }
     land_widget_container_interface_initialize();
-    land_widget_panel_interface = land_widget_copy_interface(land_widget_container_interface, "panel");
-    land_widget_panel_interface->id |= LAND_WIDGET_ID_PANEL;
-    land_widget_panel_interface->add = land_widget_panel_add;
-}
-LandWidgetInterface * land_widget_scrollbar_vertical_interface;
-LandWidgetInterface * land_widget_scrollbar_horizontal_interface;
-static void scroll_vertical_cb(LandWidget * self, int set, int * _scramble_min, int * _scramble_max, int * range, int * pos) {
-    /* If set is not 0, then the target window is scrolled according to the
-     * scrollbar position.
-     * If set is 0, then the min/max/range/pos parameters are updated.
-     */
-    LandWidgetScrollbar * bar = LAND_WIDGET_SCROLLBAR(self);
-    LandWidget * target = bar->target;
-    if (target) {
-        LandWidget * viewport = target->parent;
-        if (set) {
-            int ty = viewport->box.y + viewport->element->it;
-            if (target->box.y > ty) {
-                ty = target->box.y;
-            }
-            ty -= * pos;
-            land_widget_move(target, 0, ty - target->box.y);
-        }
-        else {
-            * _scramble_min = 0;
-            * _scramble_max = target->box.h - 1;
-            * range = viewport->box.h - viewport->element->it - viewport->element->ib;
-            * pos = viewport->box.y + viewport->element->it - target->box.y;
-            if (* pos < * _scramble_min) {
-                * _scramble_min = * pos;
-            }
-            if (* pos + * range - 1 > * _scramble_max) {
-                * _scramble_max = * pos + * range - 1;
-            }
-        }
-    }
-    else {
-        if (! set) {
-            * _scramble_min = 0;
-            * _scramble_max = 0;
-            * range = 0;
-            * pos = 0;
-        }
-    }
-}
-static void scroll_horizontal_cb(LandWidget * self, int set, int * _scramble_min, int * _scramble_max, int * range, int * pos) {
-    LandWidgetScrollbar * bar = LAND_WIDGET_SCROLLBAR(self);
-    LandWidget * target = bar->target;
-    if (target) {
-        LandWidget * viewport = target->parent;
-        if (set) {
-            int tx = viewport->box.x + viewport->element->il;
-            if (target->box.x > tx) {
-                tx = target->box.x;
-            }
-            tx -= * pos;
-            land_widget_move(target, tx - target->box.x, 0);
-        }
-        else {
-            * _scramble_min = 0;
-            * _scramble_max = target->box.w - 1;
-            * range = viewport->box.w - viewport->element->il - viewport->element->ir;
-            * pos = viewport->box.x + viewport->element->il - target->box.x;
-            if (* pos < * _scramble_min) {
-                * _scramble_min = * pos;
-            }
-            if (* pos + * range - 1 > * _scramble_max) {
-                * _scramble_max = * pos + * range - 1;
-            }
-        }
-    }
-    else {
-        if (! set) {
-            * _scramble_min = 0;
-            * _scramble_max = 0;
-            * range = 0;
-            * pos = 0;
-        }
-    }
-}
-static int get_size(LandWidget * super) {
-    LandWidgetScrollbar * self = LAND_WIDGET_SCROLLBAR(super);
-    if (self->vertical) {
-        return super->box.h;
-    }
-    else {
-        return super->box.w;
-    }
-}
-void land_widget_scrollbar_update(LandWidget * super, int set) {
-    /* If set is not 0, then the target is updated from the scrollbar. Else the
-     * scrollbar adjusts to the target's scrolled position.
-     */
-    LandWidgetScrollbar * self = LAND_WIDGET_SCROLLBAR(super);
-    int minval, maxval, val, valrange;
-    int minpos, maxpos, pos, posrange, minlen;
-    self->callback(super, 0, & minval, & maxval, & valrange, & val);
-    if (self->vertical) {
-        minpos = super->parent->box.y + super->parent->element->it;
-        maxpos = super->parent->box.y + super->parent->box.h - super->parent->element->ib - 1;
-        pos = super->box.y;
-        posrange = super->box.h;
-        minlen = super->element->minh;
-    }
-    else {
-        minpos = super->parent->box.x + super->parent->element->il;
-        maxpos = super->parent->box.x + super->parent->box.w - super->parent->element->ir - 1;
-        pos = super->box.x;
-        posrange = super->box.w;
-        minlen = super->element->minw;
-    }
-    if (set) {
-        maxpos -= posrange - 1;
-        maxval -= valrange - 1;
-        if (maxpos <= minpos) {
-            return ;
-        }
-        else {
-            int rounded = maxpos - minpos - 1;
-            val = (minval + (pos - minpos) * (maxval - minval) + rounded) / (maxpos - minpos);
-        }
-        self->callback(super, 1, & minval, & maxval, & valrange, & val);
-    }
-    else {
-        if (maxval > minval) {
-            posrange = (1 + maxpos - minpos) * valrange / (1 + maxval - minval);
-        }
-        else {
-            posrange = 0;
-        }
-        if (posrange < minlen) {
-            posrange = minlen;
-        }
-        maxpos -= posrange - 1;
-        maxval -= valrange - 1;
-        if (maxval == minval) {
-            pos = minpos;
-        }
-        else {
-            pos = minpos + (val - minval) * (maxpos - minpos) / (maxval - minval);
-        }
-        int dx = 0, dy = 0, dw = 0, dh = 0;
-        if (self->vertical) {
-            dw = super->parent->box.w - (super->parent->element->ir + super->parent->element->il) - super->box.w;
-            dh = posrange - super->box.h;
-            dx = super->parent->box.x + super->parent->element->il - super->box.x;
-            dy = pos - super->box.y;
-        }
-        else {
-            dw = posrange - super->box.w;
-            dh = super->parent->box.h - (super->parent->element->ib + super->parent->element->it) - super->box.h;
-            dx = pos - super->box.x;
-            dy = super->parent->box.y + super->parent->element->it - super->box.y;
-        }
-        land_widget_move(super, dx, dy);
-        land_widget_size(super, dw, dh);
-    }
-}
-void land_widget_scrollbar_draw(LandWidget * self) {
-    land_widget_theme_draw(self);
-}
-void land_widget_scrollbar_mouse_tick(LandWidget * super) {
-    LandWidgetScrollbar * self = LAND_WIDGET_SCROLLBAR(super);
-    if (land_mouse_delta_b()) {
-        if (land_mouse_b() & 1) {
-            self->drag_x = land_mouse_x() - super->box.x;
-            self->drag_y = land_mouse_y() - super->box.y;
-            self->dragged = 1;
-        }
-        else {
-            self->dragged = 0;
-        }
-    }
-    if ((land_mouse_b() & 1) && self->dragged) {
-        int newx = land_mouse_x() - self->drag_x;
-        int newy = land_mouse_y() - self->drag_y;
-        int l = super->parent->box.x + super->parent->element->il;
-        int t = super->parent->box.y + super->parent->element->it;
-        int r = super->parent->box.x + super->parent->box.w - super->box.w - super->parent->element->ir;
-        int b = super->parent->box.y + super->parent->box.h - super->box.h - super->parent->element->ib;
-        if (newx > r) {
-            newx = r;
-        }
-        if (newy > b) {
-            newy = b;
-        }
-        if (newx < l) {
-            newx = l;
-        }
-        if (newy < t) {
-            newy = t;
-        }
-        int dx = newx - super->box.x;
-        int dy = newy - super->box.y;
-        land_widget_move(super, dx, dy);
-        int old_size = get_size(super);
-        land_widget_scrollbar_update(super, 1);
-        land_widget_scrollbar_update(super, 0);
-        int new_size = get_size(super);
-        if (new_size > old_size) {
-            if (self->vertical && dy > 0) {
-                self->drag_y += new_size - old_size;
-            }
-            if (! self->vertical && dx > 0) {
-                self->drag_x += new_size - old_size;
-            }
-        }
-    }
-}
-LandWidget* land_widget_scrollbar_new(LandWidget * parent, LandWidget * target, int vertical, int x, int y, int w, int h) {
-    LandWidgetScrollbar * self;
-    land_widget_scrollbar_interface_initialize();
-    land_alloc(self);
-    LandWidget * super = & self->super;
-    land_widget_base_initialize(super, parent, x, y, w, h);
-    self->target = target;
-    self->vertical = vertical;
-    if (vertical) {
-        self->callback = scroll_vertical_cb;
-        super->vt = land_widget_scrollbar_vertical_interface;
-    }
-    else {
-        self->callback = scroll_horizontal_cb;
-        super->vt = land_widget_scrollbar_horizontal_interface;
-    }
-    land_widget_theme_initialize(super);
-    return super;
-}
-void land_widget_scrollbar_interface_initialize(void) {
-    if (! land_widget_scrollbar_vertical_interface) {
-        LandWidgetInterface * i = land_widget_copy_interface(land_widget_base_interface, "scrollbar.vertical");
-        i->id = LAND_WIDGET_ID_SCROLLBAR;
-        i->draw = land_widget_scrollbar_draw;
-        i->move = land_widget_base_move;
-        i->mouse_tick = land_widget_scrollbar_mouse_tick;
-        land_widget_scrollbar_vertical_interface = i;
-    }
-    if (! land_widget_scrollbar_horizontal_interface) {
-        LandWidgetInterface * i = land_widget_copy_interface(land_widget_base_interface, "scrollbar.horizontal");
-        i->id = LAND_WIDGET_ID_SCROLLBAR;
-        i->draw = land_widget_scrollbar_draw;
-        i->move = land_widget_base_move;
-        i->mouse_tick = land_widget_scrollbar_mouse_tick;
-        land_widget_scrollbar_horizontal_interface = i;
-    }
+    land_widget_scrolling_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling");
+    land_widget_scrolling_interface->id |= LAND_WIDGET_ID_SCROLLING;
+    land_widget_scrolling_interface->tick = land_widget_scrolling_tick;
+    land_widget_scrolling_interface->add = land_widget_scrolling_add;
+    land_widget_scrolling_interface->update = land_widget_scrolling_update;
+    land_widget_scrolling_interface->move = land_widget_scrolling_move;
+    land_widget_scrolling_interface->size = land_widget_scrolling_size;
+    land_widget_scrolling_interface->layout_changed = land_widget_scrolling_layout_changed;
+    land_widget_scrolling_interface->layout_changing = land_widget_scrolling_layout_changing;
+    land_widget_scrolling_interface->mouse_tick = land_widget_scrolling_mouse_tick;
+    land_widget_scrolling_contents_container_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling.contents.container");
+    land_widget_scrolling_vertical_container_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling.vertical.container");
+    land_widget_scrolling_horizontal_container_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling.horizontal.container");
 }
 static LandWidgetInterface * land_widget_book_interface;
 static LandWidgetInterface * land_widget_tab_interface;
@@ -13818,726 +18131,6 @@ void land_widget_book_show_nth(LandWidget * self, int n) {
         land_widget_book_show_page(self, page);
     }
 }
-struct LandFontPlatform {
-    LandFont super;
-    ALLEGRO_FONT * a5;
-};
-void platform_font_init(void) {
-    al_init_font_addon();
-    al_init_ttf_addon();
-}
-void platform_font_exit(void) {
-    ;
-}
-LandFont* platform_font_load(char const * filename, float size) {
-    land_log_message("Loading font %s..", filename);
-    LandFontPlatform * self;
-    land_alloc(self);
-    self->a5 = al_load_font(filename, size, 0);
-    land_log_message_nostamp("%s.\n", self->a5 ? "success" : "failure");
-    LandFont * super = (void *) self;
-    if (self->a5) {
-        super->size = al_get_font_line_height(self->a5);
-    }
-    super->xscaling = 1.0;
-    super->yscaling = 1.0;
-    return super;
-}
-LandFont* platform_font_from_image(LandImage * image, int n_ranges, int * ranges) {
-    LandFontPlatform * self;
-    LandImagePlatform * i = (void *) image;
-    land_alloc(self);
-    self->a5 = al_grab_font_from_bitmap(i->a5, n_ranges, ranges);
-    LandFont * super = (void *) self;
-    if (self->a5) {
-        super->size = al_get_font_line_height(self->a5);
-    }
-    super->xscaling = 1.0;
-    super->yscaling = 1.0;
-    return super;
-}
-void platform_font_print(LandFontState * lfs, char const * str, int alignment) {
-    LandFont * super = lfs->font;
-    LandFontPlatform * self = (void *) super;
-    if (! self->a5) {
-        return ;
-    }
-    double xscaling = super->xscaling;
-    double yscaling = super->yscaling;
-    float x = lfs->x = lfs->x_pos;
-    float y = lfs->y = lfs->y_pos;
-    lfs->w = al_get_text_width(self->a5, str) * xscaling;
-    lfs->h = al_get_font_line_height(self->a5) * yscaling;
-    if (lfs->off) {
-        return ;
-    }
-    if (xscaling != 1 || yscaling != 1) {
-        land_push_transform();
-        land_translate(x, y);
-        land_scale(xscaling, yscaling);
-        land_translate(- x, - y);
-    }
-    ALLEGRO_STATE state;
-    al_store_state(& state, ALLEGRO_STATE_BLENDER);
-    LandDisplay * d = _land_active_display;
-    al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_INVERSE_ALPHA);
-    land_a5_display_check_transform();
-    ALLEGRO_COLOR c = al_map_rgba_f(d->color_r, d->color_g, d->color_b, d->color_a);
-    int a = ALLEGRO_ALIGN_INTEGER;
-    if (alignment == LandAlignAdjust) {
-        al_draw_justified_text(self->a5, c, x, x + lfs->adjust_width, y, lfs->adjust_width * 0.5, a | ALLEGRO_ALIGN_CENTRE, str);
-    }
-    else if (alignment == LandAlignCenter) {
-        al_draw_text(self->a5, c, x, y, a | ALLEGRO_ALIGN_CENTRE, str);
-    }
-    else if (alignment == LandAlignRight) {
-        al_draw_text(self->a5, c, x, y, a | ALLEGRO_ALIGN_RIGHT, str);
-        lfs->x -= lfs->w;
-    }
-    else {
-        al_draw_text(self->a5, c, x, y, a, str);
-    }
-    al_restore_state(& state);
-    if (xscaling != 1 || yscaling != 1) {
-        land_pop_transform();
-    }
-}
-LandFont* platform_font_new(void) {
-    return NULL;
-}
-void platform_font_destroy(LandFont * super) {
-    LandFontPlatform * self = (void *) super;
-    al_destroy_font(self->a5);
-    land_free(self);
-}
-LandWidgetInterface * land_widget_board_interface;
-void land_widget_board_initialize(LandWidget * base, LandWidget * parent, int x, int y, int w, int h) {
-    LandWidgetBoard * self = (LandWidgetBoard *) base;
-    land_widget_board_interface_initialize();
-    LandWidgetContainer * super = & self->super;
-    land_widget_container_initialize(& super->super, parent, x, y, w, h);
-    base->vt = land_widget_board_interface;
-    land_widget_theme_initialize(base);
-}
-LandWidget* land_widget_board_new(LandWidget * parent, int x, int y, int w, int h) {
-    LandWidgetBoard * self;
-    land_alloc(self);
-    land_widget_board_initialize((LandWidget *) self, parent, x, y, w, h);
-    return LAND_WIDGET(self);
-}
-void land_widget_board_add(LandWidget * base, LandWidget * add) {
-    land_widget_container_add(base, add);
-}
-void land_widget_board_interface_initialize(void) {
-    land_widget_container_interface_initialize();
-    land_widget_board_interface = land_widget_copy_interface(land_widget_container_interface, "board");
-    land_widget_board_interface->id |= LAND_WIDGET_ID_BOARD;
-    land_widget_board_interface->add = land_widget_board_add;
-}
-LandWidgetInterface * land_widget_vbox_interface;
-void land_widget_vbox_disable_updates(LandWidget * base) {
-    /* Call this before adding *many* items to the vbox, then call
-     * land_widget_vbox_update when done. This can speed things up, since there is
-     * no need to calculate intermediate layouts for each single added item.
-     */
-    LAND_WIDGET_VBOX (base)->disable_updates = 1;
-}
-void land_widget_vbox_do_update(LandWidget * base) {
-    /* Update the vbox, after updates have previously been disabled with
-     * land_widget_vbox_disable_updates.
-     */
-    LAND_WIDGET_VBOX (base)->disable_updates = 0;
-    land_widget_layout(base);
-}
-void land_widget_vbox_update(LandWidget * base) {
-    /* This is called when a child is done adding itself. It's the earliest time
-     * we can calculate the layout.
-     * FIXME: the layout also is calculated in the add method, but that's wrong
-     */
-    land_widget_container_update(base);
-    if (! LAND_WIDGET_VBOX (base)->disable_updates) {
-        land_widget_layout(base);
-    }
-}
-static void land_widget_vbox_renumber(LandWidget * base) {
-    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(base);
-    LandWidgetVBox * vbox = LAND_WIDGET_VBOX(base);
-    if (container->children) {
-        int x = 0, y = 0;
-        LandListItem * item = container->children->first;
-        while (item) {
-            LandWidget * child = item->data;
-            land_widget_layout_set_grid_position(child, x, y);
-            x++;
-            if (x == vbox->columns) {
-                x = 0;
-                y++;
-            }
-            item = item->next;
-        }
-    }
-    if (! vbox->disable_updates) {
-        land_widget_vbox_do_update(base);
-    }
-}
-void land_widget_vbox_add(LandWidget * base, LandWidget * add) {
-    /* Add a widget to the vbox. It will be put to the end, going left to right
-     * in columns and top to bottom in rows.
-     */
-    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(base);
-    LandWidgetVBox * vbox = LAND_WIDGET_VBOX(base);
-    land_widget_container_add(base, add);
-    int n = container->children->count;
-    int rows = (n + vbox->columns - 1) / vbox->columns;
-    int row = rows - 1;
-    int column = n - row * vbox->columns - 1;
-    int layout = land_widget_layout_freeze(base);
-    land_widget_layout_set_grid_position(add, column, row);
-    land_widget_layout_set_grid(base, vbox->columns, rows);
-    if (layout) {
-        land_widget_layout_unfreeze(base);
-    }
-    if (! vbox->disable_updates) {
-        land_widget_vbox_do_update(base);
-    }
-}
-void land_widget_vbox_remove(LandWidget * base, LandWidget * rem) {
-    /* """Remove a widget from the vbox."""
-     */
-    int layout = land_widget_layout_freeze(base);
-    land_widget_container_remove(base, rem);
-    if (layout) {
-        land_widget_layout_unfreeze(base);
-    }
-    land_widget_vbox_renumber(base);
-}
-void land_widget_vbox_set_columns(LandWidget * base, int n) {
-    /* """Specify the number of columns for the vbox. By default, it is 1."""
-     */
-    LAND_WIDGET_VBOX (base)->columns = n;
-}
-void land_widget_vbox_initialize(LandWidget * base, LandWidget * parent, int x, int y, int w, int h) {
-    /* """Initialize the given vbox widget."""
-     */
-    land_widget_vbox_interface_initialize();
-    LandWidgetVBox * self = (LandWidgetVBox *) base;
-    land_widget_container_initialize(base, parent, x, y, w, h);
-    base->vt = land_widget_vbox_interface;
-    land_widget_layout_enable(base);
-    self->columns = 1;
-    land_widget_theme_initialize(base);
-}
-LandWidget* land_widget_vbox_new(LandWidget * parent, int x, int y, int w, int h) {
-    /* """Create a new vbox widget."""
-     */
-    LandWidgetVBox * self;
-    land_alloc(self);
-    LandWidget * widget = (LandWidget *) self;
-    land_widget_vbox_initialize(widget, parent, x, y, w, h);
-    return widget;
-}
-void land_widget_vbox_interface_initialize(void) {
-    if (land_widget_vbox_interface) {
-        return ;
-    }
-    land_widget_container_interface_initialize();
-    land_widget_vbox_interface = land_widget_copy_interface(land_widget_container_interface, "vbox");
-    land_widget_vbox_interface->id |= LAND_WIDGET_ID_VBOX;
-    land_widget_vbox_interface->add = land_widget_vbox_add;
-    land_widget_vbox_interface->update = land_widget_vbox_update;
-    land_widget_vbox_interface->remove = land_widget_vbox_remove;
-}
-LandWidgetInterface * land_widget_scrolling_interface;
-static LandWidgetInterface * land_widget_scrolling_contents_container_interface;
-static LandWidgetInterface * land_widget_scrolling_vertical_container_interface;
-static LandWidgetInterface * land_widget_scrolling_horizontal_container_interface;
-LandWidget* land_widget_scrolling_get_container(LandWidget * base) {
-    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
-    LandWidget * w = children->first->data;
-    return w;
-}
-LandWidget* land_widget_scrolling_get_vertical(LandWidget * base) {
-    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
-    LandWidget * w = children->first->next->data;
-    return w;
-}
-LandWidget* land_widget_scrolling_get_horizontal(LandWidget * base) {
-    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
-    LandWidget * w = children->first->next->next->data;
-    return w;
-}
-LandWidget* land_widget_scrolling_get_empty(LandWidget * base) {
-    LandList * children = LAND_WIDGET_CONTAINER (base)->children;
-    LandWidget * w = children->first->next->next->next->data;
-    return w;
-}
-void land_widget_scrolling_move(LandWidget * widget, float dx, float dy) {
-    land_widget_container_move(widget, dx, dy);
-}
-void land_widget_scrolling_autohide(LandWidget * widget, int hori, int vert, int empty) {
-    /* Set hori/vert to 1 if the horizontal/vertical scrollbar should be auto
-     * hidden. Set empty to 1 if the empty should be auto hidden, and set empty to
-     * 2 if the empty should be hidden as soon as one bar is hidden.
-     */
-    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(widget);
-    self->autohide = hori + 2 * vert + 4 * empty;
-    land_widget_scrolling_update(widget);
-}
-int land_widget_scrolling_autobars(LandWidget * widget) {
-    /* Returns 0 if nothing changed or 1 if something changed.
-     */
-    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(widget);
-    if ((self->autohide & 3) == 0) {
-        return 0;
-    }
-    LandWidget * container = land_widget_scrolling_get_container(widget);
-    LandWidget * empty = land_widget_scrolling_get_empty(widget);
-    LandWidget * vbox = land_widget_scrolling_get_vertical(widget);
-    LandWidget * hbox = land_widget_scrolling_get_horizontal(widget);
-    int f = land_widget_layout_freeze(widget);
-    int before = 0;
-    if (! vbox->hidden || ! hbox->hidden || ! empty->hidden) {
-        if (! vbox->hidden) {
-            before += 1;
-            land_widget_hide(vbox);
-        }
-        if (! hbox->hidden) {
-            before += 2;
-            land_widget_hide(hbox);
-        }
-        if (! empty->hidden) {
-            before += 4;
-            land_widget_hide(empty);
-        }
-        land_widget_layout_set_grid_extra(container, 1, 1);
-        land_widget_layout_set_grid_extra(hbox, 0, 0);
-        land_widget_layout_set_grid_extra(vbox, 0, 0);
-        if (f) {
-            land_widget_layout_unfreeze(widget);
-        }
-        land_widget_layout(widget);
-        f = land_widget_layout_freeze(widget);
-    }
-    LandWidget * vslider = land_widget_container_child(vbox);
-    LandWidget * hslider = land_widget_container_child(hbox);
-    int xa, xb, xr, xp;
-    int ya, yb, yr, yp;
-    LAND_WIDGET_SCROLLBAR (hslider)->callback(hslider, 0, & xa, & xb, & xr, & xp);
-    LAND_WIDGET_SCROLLBAR (vslider)->callback(vslider, 0, & ya, & yb, & yr, & yp);
-    int needh = self->autohide & 1 ? 0 : 1, needv = self->autohide & 2 ? 0 : 1;
-    if (xp > xa || 1 + xb - xa > xr) {
-        needh = 1;
-    }
-    if (yp > ya || 1 + yb - ya > yr) {
-        needv = 1;
-    }
-    int neede = 1;
-    if (self->autohide & 4) {
-        if (! needh && ! needv) {
-            neede = 0;
-        }
-    }
-    if (self->autohide & 8) {
-        if (! needh || ! needv) {
-            neede = 0;
-        }
-    }
-    if (! needh && ! needv && ! neede) {
-        goto done;
-    }
-    if (! needh && ! needv) {
-        land_widget_unhide(empty);
-        land_widget_layout_set_grid_extra(container, 0, 0);
-        goto done;
-    }
-    if (needh && needv) {
-        land_widget_unhide(hbox);
-        land_widget_unhide(vbox);
-        land_widget_unhide(empty);
-        land_widget_layout_set_grid_extra(container, 0, 0);
-        goto done;
-    }
-    if (needh) {
-        land_widget_unhide(hbox);
-        if (neede) {
-            land_widget_unhide(empty);
-        }
-        else {
-            land_widget_layout_set_grid_extra(hbox, 1, 0);
-        }
-        land_widget_layout_set_grid_extra(container, 1, 0);
-        if (f) {
-            land_widget_layout_unfreeze(widget);
-        }
-        land_widget_layout(widget);
-        LAND_WIDGET_SCROLLBAR (vslider)->callback(vslider, 0, & ya, & yb, & yr, & yp);
-        needv = yp > ya || 1 + yb - ya > yr;
-        f = land_widget_layout_freeze(widget);
-        if (needv) {
-            land_widget_unhide(vbox);
-            land_widget_unhide(empty);
-            land_widget_layout_set_grid_extra(hbox, 0, 0);
-            land_widget_layout_set_grid_extra(container, 0, 0);
-        }
-        else {
-            goto done;
-        }
-    }
-    else {
-        land_widget_unhide(vbox);
-        if (neede) {
-            land_widget_unhide(empty);
-        }
-        else {
-            land_widget_layout_set_grid_extra(vbox, 0, 1);
-        }
-        land_widget_layout_set_grid_extra(container, 0, 1);
-        if (f) {
-            land_widget_layout_unfreeze(widget);
-        }
-        land_widget_layout(widget);
-        LAND_WIDGET_SCROLLBAR (hslider)->callback(hslider, 0, & xa, & xb, & xr, & xp);
-        needh = xp > xa || 1 + xb - xa > xr;
-        f = land_widget_layout_freeze(widget);
-        if (needh) {
-            land_widget_unhide(hbox);
-            land_widget_unhide(empty);
-            land_widget_layout_set_grid_extra(vbox, 0, 0);
-            land_widget_layout_set_grid_extra(container, 0, 0);
-        }
-        else {
-            goto done;
-        }
-    }
-    done:;
-    if (f) {
-        land_widget_layout_unfreeze(widget);
-    }
-    land_widget_layout(widget);
-    int after = 0;
-    if (! vbox->hidden) {
-        after += 1;
-    }
-    if (! hbox->hidden) {
-        after += 2;
-    }
-    if (! empty->hidden) {
-        after += 4;
-    }
-    if (after == before) {
-        return 0;
-    }
-    return 1;
-}
-static int scrolling_update_layout(LandWidget * widget) {
-    /* Update the scrolling window after it was resized or scrolled. Returns 1
-     * if any bars were hidden or unhidden.
-     */
-    int r = land_widget_scrolling_autobars(widget);
-    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(widget);
-    LandListItem * item = container->children->first;
-    item = item->next;
-    LandWidget * right = LAND_WIDGET(item->data);
-    LandListItem * item2 = LAND_WIDGET_CONTAINER (right)->children->first;
-    LandWidgetScrollbar * rightbar = LAND_WIDGET_SCROLLBAR(item2->data);
-    land_widget_scrollbar_update(LAND_WIDGET(rightbar), 0);
-    item = item->next;
-    LandWidget * bottom = LAND_WIDGET(item->data);
-    LandListItem * item3 = LAND_WIDGET_CONTAINER (bottom)->children->first;
-    LandWidgetScrollbar * bottombar = LAND_WIDGET_SCROLLBAR(item3->data);
-    land_widget_scrollbar_update(LAND_WIDGET(bottombar), 0);
-    return r;
-}
-void land_widget_scrolling_update(LandWidget * widget) {
-    scrolling_update_layout(widget);
-}
-void land_widget_scrolling_size(LandWidget * widget, float dx, float dy) {
-    if (! (dx || dy)) {
-        return ;
-    }
-    land_widget_scrolling_update(widget);
-}
-void land_widget_scrolling_get_scroll_position(LandWidget * base, float * x, float * y) {
-    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
-    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
-    if (! children) {
-        * x = 0;
-        * y = 0;
-        return ;
-    }
-    LandWidget * child = children->first->data;
-    * x = child->box.x - contents->box.x - contents->element->il;
-    * y = child->box.y - contents->box.y - contents->element->it;
-}
-void land_widget_scrolling_get_scroll_extents(LandWidget * base, float * x, float * y) {
-    /* Determines the "scrollable area", that is how much overlap there is in
-     * horizontal and vertical direction.
-     */
-    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
-    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
-    if (! children) {
-        * x = 0;
-        * y = 0;
-        return ;
-    }
-    LandWidget * child = children->first->data;
-    * x = child->box.w - contents->box.w + contents->element->il + contents->element->ir;
-    * y = child->box.h - contents->box.h + contents->element->it + contents->element->ib;
-    if (* x < 0) {
-        * x = 0;
-    }
-    if (* y < 0) {
-        * y = 0;
-    }
-}
-void land_widget_scrolling_get_view(LandWidget * base, float * l, float * t, float * r, float * b) {
-    /* Determine pixel coordinates of the viewable area.
-     */
-    LandWidget * contents = land_widget_scrolling_get_container(base);
-    land_widget_inner_extents(contents, l, t, r, b);
-}
-void land_widget_scrolling_scrollto(LandWidget * base, float x, float y) {
-    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
-    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
-    if (! children) {
-        return ;
-    }
-    LandWidget * child = children->first->data;
-    land_widget_move(child, contents->box.x + contents->element->il + x - child->box.x, contents->box.y + contents->element->it + y - child->box.y);
-    land_widget_scrolling_update(base);
-}
-void land_widget_scrolling_scroll(LandWidget * base, float dx, float dy) {
-    float x, y;
-    land_widget_scrolling_get_scroll_position(base, & x, & y);
-    land_widget_scrolling_scrollto(base, x + dx, y + dy);
-}
-void land_widget_scrolling_limit(LandWidget * base) {
-    float x, y, w, h;
-    land_widget_scrolling_get_scroll_position(base, & x, & y);
-    land_widget_scrolling_get_scroll_extents(base, & w, & h);
-    if (y < - h) {
-        land_widget_scrolling_scrollto(base, x, - h);
-    }
-    if (y > 0) {
-        land_widget_scrolling_scrollto(base, x, 0);
-    }
-}
-void land_widget_scrolling_mouse_tick(LandWidget * base) {
-    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(base);
-    if (land_mouse_delta_z() && self->scrollwheel) {
-        if (! (self->scrollwheel & 2)) {
-            float w, h;
-            land_widget_scrolling_get_scroll_extents(base, & w, & h);
-            if (h <= 0) {
-                return ;
-            }
-        }
-        int dy = land_mouse_delta_z() * land_font_height(base->element->font);
-        land_widget_scrolling_scroll(base, 0, dy);
-        if (! (self->scrollwheel & 2)) {
-            land_widget_scrolling_limit(base);
-        }
-    }
-    land_widget_container_mouse_tick(base);
-}
-void land_widget_scrolling_tick(LandWidget * super) {
-    ;
-}
-void land_widget_scrolling_add(LandWidget * widget, LandWidget * add) {
-    /* Add a widget to the scrolling widget. The child widget can be bigger than
-     * the parent, and scrollbars will appear to allow scrolling around.
-     */
-    LandWidgetContainer * container = LAND_WIDGET_CONTAINER(widget);
-    LandListItem * item = container->children->first;
-    LandWidget * contents = LAND_WIDGET(item->data);
-    land_widget_container_add(contents, add);
-    add->box.x = contents->box.x + contents->element->il;
-    add->box.y = contents->box.y + contents->element->it;
-    item = item->next;
-    LandWidgetContainer * right = LAND_WIDGET_CONTAINER(item->data);
-    LandListItem * item2 = right->children->first;
-    LandWidgetScrollbar * rightbar = LAND_WIDGET_SCROLLBAR(item2->data);
-    rightbar->target = add;
-    item = item->next;
-    LandWidgetContainer * bottom = LAND_WIDGET_CONTAINER(item->data);
-    item2 = bottom->children->first;
-    LandWidgetScrollbar * bottombar = LAND_WIDGET_SCROLLBAR(item2->data);
-    bottombar->target = add;
-}
-LandWidget* land_widget_scrolling_get_child(LandWidget * base) {
-    /* Return the child window of the scrolling window. Usually, a scrolling
-     * window has exactly one child window, which is controlled by the scrollbars.
-     * That window is returned.
-     */
-    LandWidget * contents = LAND_WIDGET_CONTAINER (base)->children->first->data;
-    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
-    return children ? children->first->data : NULL;
-}
-void land_widget_scrolling_remove_child(LandWidget * base) {
-    /* Detach the window managed inside the scrolled window. If there are no
-     * other references to it, it will be destroyed.
-     */
-    LandList * list = LAND_WIDGET_CONTAINER (base)->children;
-    LandWidget * contents = list->first->data;
-    LandList * children = LAND_WIDGET_CONTAINER (contents)->children;
-    LandWidget * child = children ? children->first->data : NULL;
-    if (child) {
-        land_widget_container_remove(contents, child);
-    }
-    LandWidgetContainer * c;
-    c = LAND_WIDGET_CONTAINER(list->first->next->data);
-    LAND_WIDGET_SCROLLBAR (c->children->first->data)->target = NULL;
-    c = LAND_WIDGET_CONTAINER(list->first->next->next->data);
-    LAND_WIDGET_SCROLLBAR (c->children->first->data)->target = NULL;
-}
-void land_widget_scrolling_initialize(LandWidget * widget, LandWidget * parent, int x, int y, int w, int h) {
-    land_widget_scrolling_interface_initialize();
-    land_widget_container_initialize(widget, parent, x, y, w, h);
-    land_widget_layout_enable(widget);
-    widget->vt = land_widget_container_interface;
-    LandWidgetScrolling * scrolling = (void *) widget;
-    scrolling->scrollwheel = 1;
-    LandWidget * contents = land_widget_container_new(widget, 0, 0, 0, 0);
-    contents->vt = land_widget_scrolling_contents_container_interface;
-    land_widget_theme_initialize(contents);
-    LandWidget * right = land_widget_container_new(widget, 0, 0, 0, 0);
-    right->vt = land_widget_scrolling_vertical_container_interface;
-    land_widget_theme_initialize(right);
-    land_widget_scrollbar_new(right, NULL, 1, right->element->il, right->element->it, 0, 0);
-    LandWidget * bottom = land_widget_container_new(widget, 0, 0, 0, 0);
-    bottom->vt = land_widget_scrolling_horizontal_container_interface;
-    land_widget_theme_initialize(bottom);
-    land_widget_scrollbar_new(bottom, NULL, 0, bottom->element->il, bottom->element->it, 0, 0);
-    land_widget_layout_set_grid(widget, 2, 2);
-    land_widget_layout_set_grid_position(contents, 0, 0);
-    land_widget_layout_set_grid_position(right, 1, 0);
-    land_widget_layout_set_shrinking(right, 1, 0);
-    land_widget_layout_set_grid_position(bottom, 0, 1);
-    land_widget_layout_set_shrinking(bottom, 0, 1);
-    LandWidget * empty = land_widget_vbox_new(widget, 0, 0, 0, 0);
-    land_widget_layout_set_grid_position(empty, 1, 1);
-    land_widget_layout_set_shrinking(empty, 1, 1);
-    widget->vt = land_widget_scrolling_interface;
-    land_widget_theme_initialize(widget);
-    land_widget_layout(widget);
-}
-void land_widget_scrolling_wheel(LandWidget * widget, int wheel) {
-    /* 0: no wheel scrolling
-     * 1: wheel scrolling [default]
-     * 2: unlimited scrolling
-     */
-    LandWidgetScrolling * self = LAND_WIDGET_SCROLLING(widget);
-    self->scrollwheel = wheel;
-}
-LandWidget* land_widget_scrolling_new(LandWidget * parent, int x, int y, int w, int h) {
-    /* Creates a new Scrolling widget. You can add a child widget to it, and it
-     * will automatically display scrollbars and translate mouse coordinates.
-     * By default, the widget will expand in all directions.
-     */
-    LandWidgetScrolling * self;
-    land_alloc(self);
-    LandWidget * widget = (LandWidget *) self;
-    land_widget_scrolling_initialize(widget, parent, x, y, w, h);
-    return widget;
-}
-void land_widget_scrolling_layout_changed(LandWidget * widget) {
-    if (widget->box.w != widget->box.ow || widget->box.h != widget->box.oh) {
-        int r = scrolling_update_layout(widget);
-        if (r) {
-            _land_gul_layout_updated_during_layout(widget);
-            widget->layout_hack = 1;
-        }
-    }
-}
-void land_widget_scrolling_layout_changing(LandWidget * widget) {
-    ;
-}
-void land_widget_scrolling_interface_initialize(void) {
-    if (land_widget_scrolling_interface) {
-        return ;
-    }
-    land_widget_container_interface_initialize();
-    land_widget_scrolling_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling");
-    land_widget_scrolling_interface->id |= LAND_WIDGET_ID_SCROLLING;
-    land_widget_scrolling_interface->tick = land_widget_scrolling_tick;
-    land_widget_scrolling_interface->add = land_widget_scrolling_add;
-    land_widget_scrolling_interface->update = land_widget_scrolling_update;
-    land_widget_scrolling_interface->move = land_widget_scrolling_move;
-    land_widget_scrolling_interface->size = land_widget_scrolling_size;
-    land_widget_scrolling_interface->layout_changed = land_widget_scrolling_layout_changed;
-    land_widget_scrolling_interface->layout_changing = land_widget_scrolling_layout_changing;
-    land_widget_scrolling_interface->mouse_tick = land_widget_scrolling_mouse_tick;
-    land_widget_scrolling_contents_container_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling.contents.container");
-    land_widget_scrolling_vertical_container_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling.vertical.container");
-    land_widget_scrolling_horizontal_container_interface = land_widget_copy_interface(land_widget_container_interface, "scrolling.horizontal.container");
-}
-LandWidgetInterface * land_widget_checkbox_interface;
-LandWidgetInterface * land_widget_checkbox_button_interface;
-LandWidgetInterface * land_widget_checkbox_description_interface;
-static void cb_clicked(LandWidget * widget) {
-    LandWidgetCheckBox * cb = LAND_WIDGET_CHECKBOX(widget->parent);
-    if (widget->selected) {
-        widget->selected = 0;
-        land_widget_button_replace_text(widget, cb->checkbox_unselected);
-    }
-    else {
-        widget->selected = 1;
-        land_widget_button_replace_text(widget, cb->checkbox_selected);
-    }
-}
-void land_widget_checkbox_initialize(LandWidget * base, LandWidget * parent, char const * checkbox_selected, char const * checkbox_unselected, char const * text, int x, int y, int w, int h) {
-    LandWidgetCheckBox * self = (void *) base;
-    self->checkbox_selected = land_strdup(checkbox_selected);
-    self->checkbox_unselected = land_strdup(checkbox_unselected);
-    land_widget_checkbox_interface_initialize();
-    land_widget_container_initialize(base, parent, x, y, w, h);
-    base->vt = land_widget_checkbox_interface;
-    LandWidget * checkbox = land_widget_button_new(base, checkbox_selected, cb_clicked, 0, 0, 8, 8);
-    checkbox->vt = land_widget_checkbox_button_interface;
-    land_widget_theme_initialize(checkbox);
-    land_widget_layout_set_shrinking(checkbox, 1, 0);
-    LandWidget * description = land_widget_text_new(base, text, 0, 0, 0, 8, 8);
-    description->vt = land_widget_checkbox_description_interface;
-    land_widget_theme_initialize(description);
-    land_widget_layout_set_grid(base, 2, 1);
-    land_widget_layout_set_grid_position(checkbox, 0, 0);
-    land_widget_layout_set_grid_position(description, 1, 0);
-    land_widget_theme_initialize(base);
-    land_widget_layout_enable(base);
-    land_widget_layout(base);
-    land_widget_button_replace_text(checkbox, checkbox_unselected);
-}
-LandWidget* land_widget_checkbox_new(LandWidget * parent, char const * checkbox_selected, char const * checkbox_unselected, char const * text, int x, int y, int w, int h) {
-    LandWidgetCheckBox * self;
-    land_alloc(self);
-    land_widget_checkbox_initialize((LandWidget *) self, parent, checkbox_selected, checkbox_unselected, text, x, y, w, h);
-    return (LandWidget *) self;
-}
-bool land_widget_checkbox_is_checked(LandWidget * self) {
-    return land_widget_container_child (self)->selected;
-}
-void land_widget_checkbox_interface_initialize(void) {
-    if (land_widget_checkbox_interface) {
-        return ;
-    }
-    land_widget_container_interface_initialize();
-    land_widget_checkbox_interface = land_widget_copy_interface(land_widget_container_interface, "checkbox");
-    land_widget_checkbox_interface->id |= LAND_WIDGET_ID_CHECKBOX;
-    land_widget_checkbox_interface->destroy = land_widget_checkbox_destroy;
-    land_widget_button_interface_initialize();
-    land_widget_checkbox_button_interface = land_widget_copy_interface(land_widget_button_interface, "checkbox.box");
-    land_widget_checkbox_description_interface = land_widget_copy_interface(land_widget_button_interface, "checkbox.description");
-}
-void land_widget_checkbox_destroy(LandWidget * base) {
-    LandWidgetCheckBox * self = LAND_WIDGET_CHECKBOX(base);
-    if (self->checkbox_selected) {
-        land_free(self->checkbox_selected);
-    }
-    if (self->checkbox_unselected) {
-        land_free(self->checkbox_unselected);
-    }
-    land_widget_container_destroy(base);
-}
 static LandWidgetInterface * land_widget_slider_interface;
 static LandWidgetInterface * land_widget_handle_horizontal_interface;
 LandWidget* land_widget_handle_new(LandWidget * parent, float minval, float maxval, bool vertical, void(* update)(LandWidget *), int x, int y, int w, int h) {
@@ -14677,6 +18270,45 @@ void land_widget_handle_interface_initialize(void) {
     land_widget_handle_horizontal_interface->id |= LAND_WIDGET_ID_HANDLE;
     land_widget_handle_horizontal_interface->draw = land_widget_handle_draw;
     land_widget_handle_horizontal_interface->mouse_tick = land_widget_handle_mouse_tick;
+}
+LandWidgetInterface * land_widget_scrolling_text_interface;
+void land_widget_scrolling_text_initialize(LandWidget * base, LandWidget * parent, char const * text, int wordwrap, int x, int y, int w, int h) {
+    land_widget_scrolling_initialize(base, parent, x, y, w, h);
+    land_widget_scrolling_text_interface_initialize();
+    base->vt = land_widget_scrolling_text_interface;
+    land_widget_theme_initialize(base);
+    LandWidget * container = land_widget_scrolling_get_container(base);
+    float cx, cy, cw, ch;
+    land_widget_inner(container, & cx, & cy, & cw, & ch);
+    land_widget_text_new(base, text, wordwrap, cx, cy, cw, ch);
+}
+LandWidget* land_widget_scrolling_text_new(LandWidget * parent, char const * text, int wordwrap, int x, int y, int w, int h) {
+    LandWidgetScrollingText * self;
+    land_alloc(self);
+    LandWidget * widget = (LandWidget *) self;
+    land_widget_scrolling_text_initialize(widget, parent, text, wordwrap, x, y, w, h);
+    return widget;
+}
+void land_widget_scrolling_text_size(LandWidget * widget, float dx, float dy) {
+    if (! (dx || dy)) {
+        return ;
+    }
+    LandWidget * container = land_widget_scrolling_get_container(widget);
+    float cx, cy, cw, ch;
+    land_widget_layout(widget);
+    land_widget_inner(container, & cx, & cy, & cw, & ch);
+    LandWidget * button = land_widget_container_child(container);
+    land_widget_size(button, cw - button->box.w, ch - button->box.h);
+    land_widget_scrolling_size(widget, dx, dy);
+}
+void land_widget_scrolling_text_interface_initialize(void) {
+    if (land_widget_scrolling_text_interface) {
+        return ;
+    }
+    land_widget_scrolling_interface_initialize();
+    land_widget_scrolling_text_interface = land_widget_copy_interface(land_widget_scrolling_interface, "scrolling");
+    land_widget_scrolling_text_interface->id |= LAND_WIDGET_ID_SCROLLING_TEXT;
+    land_widget_scrolling_text_interface->size = land_widget_scrolling_text_size;
 }
 LandWidgetInterface * land_widget_hbox_interface;
 void land_widget_hbox_disable_updates(LandWidget * base) {
@@ -14878,7 +18510,7 @@ LandWidget* land_widget_menubutton_new(LandWidget * parent, char const * name, L
         self->below = 1;
     }
     LandWidget * base = (void *) self;
-    land_widget_button_initialize(base, parent, name, NULL, menubutton_clicked, x, y, w, h);
+    land_widget_button_initialize(base, parent, name, NULL, false, menubutton_clicked, x, y, w, h);
     LAND_WIDGET_MENU (submenu)->menubutton = base;
     base->vt = land_widget_menubutton_interface;
     land_widget_theme_initialize(base);
@@ -14924,7 +18556,7 @@ LandWidget* land_widget_menuitem_new(LandWidget * parent, char const * name, voi
     land_widget_menubutton_interface_initialize();
     menuitem->menu = parent;
     menuitem->callback = callback;
-    land_widget_button_initialize((LandWidget *) menuitem, parent, name, NULL, menuitem_clicked, 0, 0, 10, 10);
+    land_widget_button_initialize((LandWidget *) menuitem, parent, name, NULL, false, menuitem_clicked, 0, 0, 10, 10);
     LandWidget * self = LAND_WIDGET(menuitem);
     self->vt = land_widget_menuitem_interface;
     land_widget_theme_initialize(self);
@@ -15086,6 +18718,96 @@ void land_widget_menubutton_interface_initialize(void) {
     land_widget_menuitem_interface = land_widget_copy_interface(land_widget_button_interface, "menuitem");
     land_widget_menuitem_interface->id |= LAND_WIDGET_ID_MENUITEM;
 }
+LandWidgetInterface * land_widget_checkbox_interface;
+LandWidgetInterface * land_widget_checkbox_button_interface;
+LandWidgetInterface * land_widget_checkbox_description_interface;
+static void _cb_clicked(LandWidget * widget) {
+    LandWidgetCheckBox * cb = LAND_WIDGET_CHECKBOX(widget->parent);
+    if (widget->selected) {
+        widget->selected = 0;
+        land_widget_button_replace_text(widget, cb->checkbox_unselected);
+    }
+    else {
+        widget->selected = 1;
+        land_widget_button_replace_text(widget, cb->checkbox_selected);
+    }
+    if (cb->value) {
+        * cb->value = widget->selected;
+    }
+}
+void land_widget_checkbox_initialize(LandWidget * base, LandWidget * parent, char const * checkbox_selected, char const * checkbox_unselected, char const * text, bool * b, int x, int y, int w, int h) {
+    LandWidgetCheckBox * self = (void *) base;
+    self->checkbox_selected = land_strdup(checkbox_selected);
+    self->checkbox_unselected = land_strdup(checkbox_unselected);
+    self->value = b;
+    land_widget_checkbox_interface_initialize();
+    land_widget_container_initialize(base, parent, x, y, w, h);
+    base->vt = land_widget_checkbox_interface;
+    LandWidget * checkbox = land_widget_button_new(base, checkbox_selected, _cb_clicked, 0, 0, 8, 8);
+    checkbox->vt = land_widget_checkbox_button_interface;
+    land_widget_theme_initialize(checkbox);
+    land_widget_layout_set_shrinking(checkbox, 1, 0);
+    LandWidget * description = land_widget_text_new(base, text, 0, 0, 0, 8, 8);
+    description->vt = land_widget_checkbox_description_interface;
+    land_widget_theme_initialize(description);
+    land_widget_layout_set_grid(base, 2, 1);
+    land_widget_layout_set_grid_position(checkbox, 0, 0);
+    land_widget_layout_set_grid_position(description, 1, 0);
+    land_widget_theme_initialize(base);
+    land_widget_layout_enable(base);
+    land_widget_layout(base);
+    if (b && * b) {
+        land_widget_button_replace_text(checkbox, checkbox_selected);
+        checkbox->selected = 1;
+    }
+    else {
+        land_widget_button_replace_text(checkbox, checkbox_unselected);
+    }
+}
+LandWidget* land_widget_checkbox_new(LandWidget * parent, char const * checkbox_selected, char const * checkbox_unselected, char const * text, int x, int y, int w, int h) {
+    LandWidgetCheckBox * self;
+    land_alloc(self);
+    land_widget_checkbox_initialize((LandWidget *) self, parent, checkbox_selected, checkbox_unselected, text, NULL, x, y, w, h);
+    return (LandWidget *) self;
+}
+LandWidget* land_widget_checkbox_new_boolean(LandWidget * parent, char const * checkbox_selected, char const * checkbox_unselected, char const * text, bool * b, int x, int y, int w, int h) {
+    LandWidgetCheckBox * self;
+    land_alloc(self);
+    land_widget_checkbox_initialize((LandWidget *) self, parent, checkbox_selected, checkbox_unselected, text, b, x, y, w, h);
+    return (LandWidget *) self;
+}
+bool land_widget_checkbox_is_checked(LandWidget * self) {
+    return land_widget_container_child (self)->selected;
+}
+void land_widget_checkbox_set(LandWidget * base, bool checked) {
+    LandWidget * box = land_widget_container_child((void *) LAND_WIDGET_CONTAINER(base));
+    bool was = box->selected;
+    if (was != checked) {
+        _cb_clicked(box);
+    }
+}
+void land_widget_checkbox_interface_initialize(void) {
+    if (land_widget_checkbox_interface) {
+        return ;
+    }
+    land_widget_container_interface_initialize();
+    land_widget_checkbox_interface = land_widget_copy_interface(land_widget_container_interface, "checkbox");
+    land_widget_checkbox_interface->id |= LAND_WIDGET_ID_CHECKBOX;
+    land_widget_checkbox_interface->destroy = land_widget_checkbox_destroy;
+    land_widget_button_interface_initialize();
+    land_widget_checkbox_button_interface = land_widget_copy_interface(land_widget_button_interface, "checkbox.box");
+    land_widget_checkbox_description_interface = land_widget_copy_interface(land_widget_button_interface, "checkbox.description");
+}
+void land_widget_checkbox_destroy(LandWidget * base) {
+    LandWidgetCheckBox * self = LAND_WIDGET_CHECKBOX(base);
+    if (self->checkbox_selected) {
+        land_free(self->checkbox_selected);
+    }
+    if (self->checkbox_unselected) {
+        land_free(self->checkbox_unselected);
+    }
+    land_widget_container_destroy(base);
+}
 static LandWidgetInterface * land_widget_list_interface;
 static LandWidgetInterface * land_widget_listitem_interface;
 void land_widget_list_disable_updates(LandWidget * base) {
@@ -15157,45 +18879,6 @@ void land_widget_list_clear_selection(LandWidget * self) {
         }
     }
 }
-LandWidgetInterface * land_widget_scrolling_text_interface;
-void land_widget_scrolling_text_initialize(LandWidget * base, LandWidget * parent, char const * text, int wordwrap, int x, int y, int w, int h) {
-    land_widget_scrolling_initialize(base, parent, x, y, w, h);
-    land_widget_scrolling_text_interface_initialize();
-    base->vt = land_widget_scrolling_text_interface;
-    land_widget_theme_initialize(base);
-    LandWidget * container = land_widget_scrolling_get_container(base);
-    float cx, cy, cw, ch;
-    land_widget_inner(container, & cx, & cy, & cw, & ch);
-    land_widget_text_new(base, text, wordwrap, cx, cy, cw, ch);
-}
-LandWidget* land_widget_scrolling_text_new(LandWidget * parent, char const * text, int wordwrap, int x, int y, int w, int h) {
-    LandWidgetScrollingText * self;
-    land_alloc(self);
-    LandWidget * widget = (LandWidget *) self;
-    land_widget_scrolling_text_initialize(widget, parent, text, wordwrap, x, y, w, h);
-    return widget;
-}
-void land_widget_scrolling_text_size(LandWidget * widget, float dx, float dy) {
-    if (! (dx || dy)) {
-        return ;
-    }
-    LandWidget * container = land_widget_scrolling_get_container(widget);
-    float cx, cy, cw, ch;
-    land_widget_layout(widget);
-    land_widget_inner(container, & cx, & cy, & cw, & ch);
-    LandWidget * button = land_widget_container_child(container);
-    land_widget_size(button, cw - button->box.w, ch - button->box.h);
-    land_widget_scrolling_size(widget, dx, dy);
-}
-void land_widget_scrolling_text_interface_initialize(void) {
-    if (land_widget_scrolling_text_interface) {
-        return ;
-    }
-    land_widget_scrolling_interface_initialize();
-    land_widget_scrolling_text_interface = land_widget_copy_interface(land_widget_scrolling_interface, "scrolling");
-    land_widget_scrolling_text_interface->id |= LAND_WIDGET_ID_SCROLLING_TEXT;
-    land_widget_scrolling_text_interface->size = land_widget_scrolling_text_size;
-}
 static LandWidgetInterface * land_widget_spin_interface;
 static LandWidgetInterface * land_widget_spinbutton_interface;
 static LandImage * image_up;
@@ -15216,7 +18899,7 @@ LandWidget* land_widget_spinbutton_new(LandWidget * parent, LandImage * image, v
     LandWidgetSpinButton * spinbutton;
     land_alloc(spinbutton);
     LandWidget * self = (LandWidget *) spinbutton;
-    land_widget_button_initialize(self, parent, NULL, image, clicked, x, y, w, h);
+    land_widget_button_initialize(self, parent, NULL, image, false, clicked, x, y, w, h);
     land_widget_spinbutton_interface_initialize();
     self->vt = land_widget_spinbutton_interface;
     land_widget_theme_initialize(self);

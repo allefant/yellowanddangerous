@@ -12,23 +12,23 @@
 #include "test.h"
 #line 7
 extern char * main_data_path;
-#line 10
+#line 9
 void main_switch_to_game(void);
-#line 16
+#line 15
 void main_switch_to_title(int com);
-#line 21
+#line 20
 void all_init(All * self);
-#line 34
+#line 33
 void sound(LandSound * s, float vol);
-#line 38
+#line 37
 void add_time(void);
-#line 45
+#line 44
 void get_fps(double * average, double * minmax);
-#line 65
+#line 64
 void redraw(void);
-#line 111
+#line 110
 void reload_fonts(void);
-#line 142
+#line 141
 void init(void);
 #line 172
 void done(void);
