@@ -62,6 +62,8 @@ static bool finding_input
 static int finding_control
 static int finding_progress
 
+float ppx, ppy, ppw, pph;
+
 def menu_screen_new -> MenuScreen*:
     MenuScreen *self; land_alloc(self)
     self.items = land_array_new()
@@ -87,6 +89,7 @@ def menu_is(str x) -> bool:
     return land_equals(menu.name, x)
 
 def menu_item_get -> MenuScreenItem*:
+    if menu.selected >= land_array_count(menu.items): return None
     return land_array_get_nth(menu.items, menu.selected)
 
 def menu_item_is(str x) -> bool:
@@ -322,6 +325,13 @@ def title_tick:
             i = i2
             if i > 0: i--
             x = land_touch_x(ti)
+            
+            if click:
+                float y = land_touch_y(ti)
+                land_log_message("%f %f %f %f %f %f", x, y, ppx, ppy, ppw, pph)
+                if x > ppx and x < ppx + ppw and y > ppy and y < ppy + pph:
+                    open_link("http://yellowdanger.com/privacy_policy.html")
+                    return
         else:
             if controls.pressed[ControlJump]:
                 i = menu.selected
@@ -337,6 +347,7 @@ def title_tick:
             else:
                 menu_select_position(i)
                 menu_click(x)
+
 
 static int volx = 0
 static def drawvol(int v, float x, y):
@@ -564,6 +575,15 @@ def title_render:
     land_print_right("Playtime on this savegame: %02d:%02d:%02d",
         t / 3600, (t / 60) % 60, t % 60)
     land_print_right("Version %s", VERSION)
+
+    land_font_set(a.medium)
+    land_color(.3, 0.3, 1, 1)
+    land_text_pos(4, h - 4 - land_line_height())
+    land_print("Privacy Policy")
+    ppx = land_text_x() * s
+    ppy = land_text_y() * s
+    ppw = land_text_width() * s
+    pph = land_text_height() * s
 
 static def draw_title_animation:
     All *a = global_a

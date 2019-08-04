@@ -1,5 +1,7 @@
 package com.yellowdanger;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -68,6 +70,12 @@ public class BaseActivity extends AllegroActivity {
         if (parameters[0].equals("level_up")) {
             mFirebaseAnalytics.logEvent(parameters[0] + bundle.getString("level"), null);
         }
+    }
+
+    public void openUrl(String url) {
+        Log.d("YellowAndDangerous", "url: " + url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
     }
 
 }

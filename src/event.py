@@ -43,3 +43,20 @@ def show_ad_done -> bool:
     return r != 0
     ***endif
     return True
+
+def open_link(str url):
+    ***ifdef ANDROID
+    JNIEnv *env = al_android_get_jni_env()
+  
+    jclass class_id = (*env)->GetObjectClass(env, al_android_get_activity())
+    jmethodID method_id = (*env)->GetMethodID(env, class_id, "openUrl", "(Ljava/lang/String;)V")
+    
+    jstring jdata = (*env)->NewStringUTF(env, url)
+    (*env)->CallVoidMethod(env, al_android_get_activity(), method_id, jdata);
+    (*env)->DeleteLocalRef(env, jdata);
+    (*env)->DeleteLocalRef(env, class_id);
+    ***else
+    print("would open link %s", url)
+    ***endif
+    
+    return
