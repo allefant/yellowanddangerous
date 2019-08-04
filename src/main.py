@@ -5,7 +5,6 @@ import title
 import test
 
 global char *main_data_path
-type Game *game
 
 def main_switch_to_game:
     All *a = global_a
@@ -142,6 +141,7 @@ def reload_fonts:
 def init():
     All *a = global_a
     all_init(a)
+
     land_display_title("Yellow and Dangerous")
     LandImage *icon = render_load_icon()
     land_display_icon(icon)
@@ -310,7 +310,7 @@ int def my_main():
     land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH |
         LAND_LANDSCAPE)
     *** "else"
-    land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE)
+    land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE | LAND_OPENGL)
     *** "endif"
     LandRunner *game_runner = land_runner_new("Yellow and Dangerous",
         runner_init,

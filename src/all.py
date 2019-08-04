@@ -9,6 +9,7 @@ class All:
 
     # controls
     bool up, down, left, right, jump
+    float up_s, down_s, left_s, right_s
 
     int ftpos
     double frame_times[60]

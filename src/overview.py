@@ -2,8 +2,6 @@ import common
 import block
 import game
 
-type Game *game
-
 class Overview:
     LandImage *screenshot[50]
     bool update[50]

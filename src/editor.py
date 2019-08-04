@@ -2,8 +2,6 @@ import common
 import block
 import game
 
-type Game *game
-
 class Editor:
     LandFloat mx, my
     float ox, oy, oz

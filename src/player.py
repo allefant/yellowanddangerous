@@ -18,6 +18,8 @@ class Player:
     bool lever
     bool metal
 
+    int accel
+
 def player_allocate -> Block *:
     Player *self
     land_alloc(self)
@@ -111,10 +113,50 @@ def player_tick(Block *super):
 
     float x = 0
     float z = 0
-    if a->up: x -= 1; z -= 1
-    if a->down: x += 1; z += 1
-    if a->left: x -= 1; z += 1
-    if a->right: x += 1; z -= 1
+    float sx = 0
+    float sz = 0
+    int ns = 0
+    if a.up:
+        x -= 1
+        z -= 1
+        ns++
+    if a.down:
+        x += 1
+        z += 1
+        ns++
+    if a.left:
+        x -= 1
+        z += 1
+        ns++
+    if a.right:
+        x += 1
+        z -= 1
+        ns++
+    if ns > 0:
+        sx -= a.up_s
+        sz -= a.up_s
+        sx += a.down_s
+        sz += a.down_s
+        sx -= a.left_s
+        sz += a.left_s
+        sx += a.right_s
+        sz -= a.right_s
+        self.accel++
+        if self.accel > 120:
+            self.accel = 120
+    else:
+        self.accel = 0
+    if sx > 1: sx = 1
+    if sz > 1: sz = 1
+    if sx < -1: sx = -1
+    if sz < -1: sz = -1
+    if game.record->is_replaying or game.record->is_recording or game.sequence:
+        sx = 0
+        sz = 0
+        self.accel = 0
+    else:
+        x = sx
+        z = sz
 
     bool push_animation = False
 
@@ -122,11 +164,15 @@ def player_tick(Block *super):
     if not a.jump and self->super.dy > 0:
         self->super.dy *= 0.5
 
+    float s = pow(sx * sx + sz * sz, 0.5)
     float d = pow(x * x + z * z, 0.5)
     if d > 0 and not land_array_count(self->stack):
 
         x /= d
         z /= d
+        if s > 0 and s < 1:
+            x *= s
+            z *= s
         double angle = atan2(x, z) - pi / 4
         angle = angle / (2 * pi)
         angle = (int)((angle - floor(angle)) * 8 + 0.5) & 7
@@ -152,6 +198,11 @@ def player_tick(Block *super):
             elif a->jump:
                 self->super.dy += 30
                 sound(Render_uhg, 1)
+
+        if self.accel > 15:
+            float f = (self.accel - 15.0) / (120 - 15)
+            x *= 1 + f / 2
+            z *= 1 + f / 2
 
         x *= 2.8
         z *= 2.8
@@ -214,7 +265,16 @@ def player_tick(Block *super):
             self->reverse = False
 
         if px or pz:
-            player_try_pull(self, px, pz)
+            float px2 = px
+            float pz2 = pz
+            float fx = fabs(px2)
+            float fz = fabs(pz2)
+            # for gamepad, strongly prefer pulling in the cardinal directions
+            if fx < 0.5 * fz:
+                px2 = 0
+            elif fz < 0.5 * fx:
+                pz2 = 0
+            player_try_pull(self, px2, pz2)
             push_animation = True
 
     if land_array_count(self->stack):

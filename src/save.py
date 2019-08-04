@@ -34,10 +34,6 @@ import block
 import game
 import editor
 
-type Game *game
-type Editor *editor
-type All *global_a
-
 static SaveInfo g_save_info[50]
 
 def save_info:
@@ -342,6 +338,7 @@ def load_level(bool editing, bool at_entrance):
         if not editing and self.pristine:
             game.sequence = 1
             game.sequence_ticks = 0
+            global_a.show_map = False
 
     land_unpause()
 
@@ -418,6 +415,7 @@ def save_new:
     game.key = False
     for int i in range(8):
         game.flower[i] = False
+        game.test_tube[i] = False
     global_a->time = 0
     save_info()
 

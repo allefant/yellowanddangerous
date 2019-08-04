@@ -1,6 +1,4 @@
 import main
-type Game *game
-type Editor *editor
 
 class Menu:
     int menu[3]

@@ -12,9 +12,6 @@ import menu
 import map
 import conveyor
 
-type Game *game
-type Editor *editor
-
 class Render:
     bool was_setup
     LandColor background_color
@@ -22,6 +19,8 @@ class Render:
     char *path
     int song
     LandIniFile *offsets
+
+    LandShader *shader
 
 Render r
 global LandImage *Render_Smoke
@@ -234,7 +233,9 @@ def render_setup():
 
     land_render_state(LAND_ALPHA_TEST, True)
     land_render_state(LAND_ALPHA_FUNCTION, LAND_GREATER)
-    land_render_state(LAND_ALPHA_VALUE, 0)
+    land_render_state(LAND_ALPHA_VALUE, 0.0)
+
+    render_set_shaders()
 
     r.background_color = (LandColor){1, 1, 1, 1}
 
@@ -761,3 +762,50 @@ def render_blocks(Blocks *blocks, Viewport *viewport):
 
     blocks->rebuild_static_cache = False
     blocks->rebuild_dynamic_cache = False
+
+str _vertex_shader = """
+attribute vec4 al_pos;
+attribute vec4 al_color;
+attribute vec2 al_texcoord;
+uniform mat4 al_projview_matrix;
+uniform bool al_use_tex_matrix;
+uniform mat4 al_tex_matrix;
+varying vec4 varying_color;
+varying vec2 varying_texcoord;
+void main()
+{
+  varying_color = al_color;
+  if (al_use_tex_matrix) {
+    vec4 uv = al_tex_matrix * vec4(al_texcoord, 0, 1);
+    varying_texcoord = vec2(uv.x, uv.y);
+  }
+  else
+    varying_texcoord = al_texcoord;
+  gl_Position = al_projview_matrix * al_pos;
+}
+"""
+
+str _fragment_shader = """
+#ifdef GL_ES
+precision lowp float;
+#endif
+uniform sampler2D al_tex;
+uniform bool al_use_tex;
+varying vec4 varying_color;
+varying vec2 varying_texcoord;
+void main()
+{
+  vec4 c;
+  if (al_use_tex)
+    c = varying_color * texture2D(al_tex, varying_texcoord);
+  else
+    c = varying_color;
+  if (c.a < 0.01) discard;
+  else gl_FragColor = c;
+}
+"""
+
+def render_set_shaders:
+    if r.shader:
+        return
+    r.shader = land_shader_new("shader", _vertex_shader, _fragment_shader)

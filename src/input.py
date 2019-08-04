@@ -3,9 +3,6 @@ import main
 import menu
 import editor
 
-type Game *game
-type Editor *editor
-
 static def check_pause_button(LandFloat mx, my) -> bool:
     All *a = global_a
     double rr = land_display_width() / 8 * 0.8
@@ -176,12 +173,16 @@ def input_tick:
             int i = ang * 8 / pi
             if i <= 3 or i >= 0xd:
                 a.right = True
+                a.right_s = 1 # fixme
             if i >= 1 and i <= 7:
                 a.down = True
+                a.down_s = 1 # fixme
             if i >= 5 and i <= 0xb:
                 a.left = True
+                a.left_s = 1 # fixme
             if i >= 9:
                 a.up = True
+                a.up_s = 1 # fixme
             a.swipet = land_get_time()
 
         # jump control

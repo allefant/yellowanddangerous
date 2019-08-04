@@ -1,8 +1,8 @@
 import common
 
-global char const *VERSION = "1.25"
+global char const *VERSION = "1.26"
 global bool global_can_enable_editor = False
-global bool global_use_touch_input = False
+global bool global_use_touch_input = True
 
 enum:
     FoundNothing
@@ -21,8 +21,9 @@ enum:
     ControlCount
 
 class Controls:
-    int c[ControlCount][3]
+    int c[ControlCount][3] # key alt-key alt-key-2
     int down[ControlCount]
+    float strength[ControlCount]
     int pressed[ControlCount]
     int axis[ControlCount][3] # number, threshold (+/-)
     float detection[LandJoystickAxesCount]
@@ -46,7 +47,7 @@ def config_controls_read():
 
     int an = land_joystick_axis_count()
     for int ai in range(1, an):
-        str axis = land_joystick_axis_name(an)
+        str axis = land_joystick_axis_name(ai)
         if land_equals("Stick 1 X", axis) or\
                 land_equals("Left Thumbstick X", axis):
             controls.axis[ControlLeft][0] = ai
@@ -61,7 +62,7 @@ def config_controls_read():
             controls.axis[ControlDown][1] = 25
     int bn = land_joystick_button_count()
     for int bi in range(1, bn):
-        str button = land_joystick_button_name(bn)
+        str button = land_joystick_button_name(bi)
         if land_equals("B1", button):
             controls.button[ControlJump] = bi
         if land_equals("B4", button):
@@ -75,13 +76,18 @@ def config_check_controls(All *a):
     for int j in range(ControlCount):
         controls.pressed[j] = not controls.down[j]
         controls.down[j] = False
+        controls.strength[j] = 0
         for int i in range(3):
-            if land_key(controls.c[j][i]): controls.down[j] = True
+            if land_key(controls.c[j][i]):
+                controls.down[j] = True
+                controls.strength[j] = 1
         float threshold = controls.axis[j][1] / 100.0
         if land_joystick_axis(controls.axis[j][0]) * threshold > threshold * threshold:
             controls.down[j] = True
+            controls.strength[j] = fabs(land_joystick_axis(controls.axis[j][0]))
         if land_joystick_button(controls.button[j]):
             controls.down[j] = True
+            controls.strength[j] = 1
         if not controls.down[j]:
             controls.pressed[j] = False
     a.left = controls.down[ControlLeft]
@@ -89,6 +95,10 @@ def config_check_controls(All *a):
     a.up = controls.down[ControlUp]
     a.down = controls.down[ControlDown]
     a.jump = controls.down[ControlJump]
+    a.left_s = controls.strength[ControlLeft]
+    a.right_s = controls.strength[ControlRight]
+    a.up_s = controls.strength[ControlUp]
+    a.down_s = controls.strength[ControlDown]
 
 def config_joystick_control(int control, int progress) -> int:
     int an = land_joystick_axis_count()
