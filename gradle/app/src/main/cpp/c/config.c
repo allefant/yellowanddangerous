@@ -2,7 +2,7 @@
 #line 1 "src/config.py"
 #include "config.h"
 #line 3
-char const * VERSION = "1.26";
+char const * VERSION = "1.28";
 bool global_can_enable_editor = 0;
 bool global_use_touch_input = 1;
 #line 32

@@ -397,7 +397,7 @@ int my_main(void) {
 #line 309
     #ifdef ANDROID
 #line 311
-    land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH | LAND_LANDSCAPE);
+    land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH | LAND_LANDSCAPE | LAND_FRAMELESS);
 #line 311
     #else
 #line 313

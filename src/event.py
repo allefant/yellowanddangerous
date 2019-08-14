@@ -60,3 +60,12 @@ def open_link(str url):
     ***endif
     
     return
+
+def make_frameless(bool on):
+    ***ifdef ANDROID
+    JNIEnv *env = al_android_get_jni_env()
+    jclass class_id = (*env)->GetObjectClass(env, al_android_get_activity())
+    jmethodID method_id = (*env)->GetMethodID(env, class_id, "makeFrameless", "(Z)V")
+    (*env)->CallVoidMethod(env, al_android_get_activity(), method_id, on);
+    (*env)->DeleteLocalRef(env, class_id);
+    ***endif

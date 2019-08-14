@@ -193,8 +193,13 @@ def menu_click(float x):
             sound_volume(volget(x))
     elif menu_is("Video"):
         if menu_item_is("Fullscreen"):
+            *** "ifdef" ANDROID
+            a.fullscreen = not a.fullscreen
+            make_frameless(a.fullscreen)
+            *** "else"
             land_display_toggle_fullscreen()
             a.fullscreen = (land_display_flags() & LAND_FULLSCREEN) != 0
+            *** "endif"
             item.choice = a.fullscreen ? 1 : 0
     elif menu_is("New Game"):
         if menu_item_is("Delete savegame!"):
@@ -558,7 +563,7 @@ def title_render:
     a.tint.a = 0
 
     land_font_set(a.font)
-    land_text_pos(w / s, h - land_line_height() * 6)
+    land_text_pos(960 - 20, h - land_line_height() * 6)
     int t = a.time / 60
     int f = 0
     for int i in range(8):
@@ -578,7 +583,7 @@ def title_render:
 
     land_font_set(a.medium)
     land_color(.3, 0.3, 1, 1)
-    land_text_pos(4, h - 4 - land_line_height())
+    land_text_pos(20, h - 4 - land_line_height())
     land_print("Privacy Policy")
     ppx = land_text_x() * s
     ppy = land_text_y() * s

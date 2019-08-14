@@ -308,7 +308,7 @@ int def my_main():
     #land_set_display_parameters(w, h, LAND_OPENGL)
     *** "ifdef" ANDROID
     land_set_display_parameters(0, 0, LAND_FULLSCREEN | LAND_DEPTH |
-        LAND_LANDSCAPE)
+        LAND_LANDSCAPE | LAND_FRAMELESS)
     *** "else"
     land_set_display_parameters(w, h, LAND_DEPTH | LAND_RESIZE | LAND_OPENGL)
     *** "endif"

@@ -15,6 +15,7 @@ android {
         minSdkVersion 17
         compileSdkVersion 28
         versionCode = getYellowDangerVersionCode()
+        versionName = getYellowDangerVersionName()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -53,6 +54,10 @@ android {
     aaptOptions {
         noCompress ""
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 
 }
 
@@ -62,7 +67,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.13-beta-3'
-    implementation 'org.liballeg:allegro5-release:5.2.6.0B'
+    implementation(name:'allegro5-release-release',ext:"aar")
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.google.firebase:firebase-crash:16.2.1'

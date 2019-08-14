@@ -1,6 +1,6 @@
 import common
 
-global char const *VERSION = "1.26"
+global char const *VERSION = "1.28"
 global bool global_can_enable_editor = False
 global bool global_use_touch_input = True
 

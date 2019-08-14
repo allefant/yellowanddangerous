@@ -309,26 +309,35 @@ void menu_click(float x) {
 #line 194
     else if (menu_is("Video")) {
         if (menu_item_is("Fullscreen")) {
+            #ifdef ANDROID
+            a->fullscreen = ! a->fullscreen;
+            make_frameless(a->fullscreen);
+#line 198
+            #else
+#line 200
             land_display_toggle_fullscreen();
             a->fullscreen = (land_display_flags() & LAND_FULLSCREEN) != 0;
+#line 201
+            #endif
+#line 203
             item->choice = a->fullscreen ? 1 : 0;
         }
     }
-#line 199
+#line 204
     else if (menu_is("New Game")) {
         if (menu_item_is("Delete savegame!")) {
             // start new game
             save_new();
             main_switch_to_game();
         }
-#line 204
+#line 209
         else if (menu_item_is("Continue Playing")) {
             main_switch_to_game();
         }
     }
-#line 206
+#line 211
     else if (menu_is("Controls")) {
-#line 206
+#line 211
         ;
     }
     else if (menu_is("Main")) {
@@ -337,15 +346,15 @@ void menu_click(float x) {
                 a->editor_enabled = 1;
                 a->editor = 1;
             }
-#line 212
+#line 217
             else {
-#line 214
+#line 219
                 a->editor_enabled = 0;
             }
             // load saved game
             main_switch_to_game();
         }
-#line 218
+#line 223
         else if (menu_item_is("Reset Room")) {
             // reset the current room
             save_reset_room(game->level);
@@ -355,18 +364,18 @@ void menu_click(float x) {
             }
         }
     }
-#line 225
+#line 230
     if (menu_item_is("Back")) {
         menu_screen_back();
     }
 }
-#line 228
+#line 233
 static int _indentation(str x) {
     int i = 0;
     while (x [i] == ' ') {
         i++;
     }
-#line 232
+#line 237
     return i;
 }
 void title_init(void) {
@@ -378,9 +387,9 @@ void title_init(void) {
     MenuScreenItem * prev_item = NULL;
     MenuScreen * prev_menu = NULL;
     {
-#line 242
+#line 247
         LandArrayIterator __iter0__ = LandArrayIterator_first(rows);
-#line 242
+#line 247
         for (str row_raw = LandArrayIterator_item(rows, &__iter0__); LandArrayIterator_next(rows, &__iter0__); row_raw = LandArrayIterator_item(rows, &__iter0__)) {
             int nested = _indentation(row_raw);
             if (nested > prev_nested) {
@@ -389,25 +398,25 @@ void title_init(void) {
                 if (! land_equals(prev_item->text, "Touch")) {
                     prev_item->target = menus [nested];
                 }
-#line 249
+#line 254
                 menus [nested]->parent = prev_menu;
             }
-#line 250
+#line 255
             prev_nested = nested;
             prev_menu = menus [nested];
             char * row = land_strdup(row_raw);
             land_strip(& row);
             if (! row [0]) {
-#line 254
+#line 259
                 continue;
             }
-#line 255
+#line 260
             prev_item = menu_screen_add(menus [nested], row);
         }
     }
-#line 257
+#line 262
     land_array_destroy_with_strings(rows);
-#line 259
+#line 264
     menu = menu_main;
 }
 int get_line(float y) {
@@ -415,12 +424,12 @@ int get_line(float y) {
     float h = land_display_height();
     double s = w / 960;
     h /= s;
-#line 267
+#line 272
     float by = (h - 64 * 5) / 2;
     y /= s;
     y -= by;
     y /= 64;
-#line 272
+#line 277
     return y;
 }
 // 0 = main, 1 = settings
@@ -428,47 +437,47 @@ void title_com(int com) {
     if (com == 1) {
         menu_goto("Settings");
     }
-#line 277
+#line 282
     else {
-#line 279
+#line 284
         menu_goto("Main");
     }
 }
-#line 281
+#line 286
 void title_tick(void) {
     float w = land_display_width();
     float h = land_display_height();
     double s = w / 960;
     h /= s;
-#line 287
+#line 292
     All * a = global_a;
-#line 289
+#line 294
     if (finding_input) {
         int status = config_joystick_control(finding_control, finding_progress);
         if (status == FoundButton) {
             finding_input = 0;
         }
-#line 293
+#line 298
         if (status == FoundAxis) {
             finding_progress++;
         }
-#line 295
+#line 300
         if (status == FoundNothing) {
             // wait until they stop using the input
-#line 296
+#line 301
             if (finding_progress >= 10) {
                 finding_input = 0;
             }
         }
-#line 298
+#line 303
         if (! finding_input) {
             menu_select_next(1);
             menu_click(0) /* either next control or done */;
         }
-#line 300
+#line 305
         return ;
     }
-#line 303
+#line 308
     if (land_key_pressed(LandKeyBack) || controls.pressed [ControlMenu]) {
         menu_screen_back();
     }
@@ -477,12 +486,12 @@ void title_tick(void) {
             selected_blocking = 0;
         }
     }
-#line 309
+#line 314
     else if (a->up || a->down) {
         menu_select_next(a->up ? - 1 : 1);
         selected_blocking = 1;
     }
-#line 312
+#line 317
     else if (a->left || a->right) {
         menu_sideways(a->left ? - 1 : 1);
         selected_blocking = 1;
@@ -496,35 +505,35 @@ void title_tick(void) {
             if (land_touch_down(ti) && land_touch_delta(ti)) {
                 click = 1;
             }
-#line 324
+#line 329
             i2 = get_line(land_touch_y(ti));
             i = i2;
             if (i > 0) {
-#line 326
+#line 331
                 i--;
             }
-#line 327
+#line 332
             x = land_touch_x(ti);
-#line 329
+#line 334
             if (click) {
                 float y = land_touch_y(ti);
                 land_log_message("%f %f %f %f %f %f", x, y, ppx, ppy, ppw, pph);
                 if (x > ppx && x < ppx + ppw && y > ppy && y < ppy + pph) {
                     open_link("http://yellowdanger.com/privacy_policy.html");
-#line 333
+#line 338
                     return ;
                 }
             }
         }
-#line 333
+#line 338
         else {
-#line 336
+#line 341
             if (controls.pressed [ControlJump]) {
                 i = menu->selected;
                 click = 1;
             }
         }
-#line 340
+#line 345
         if (click) {
             if (i2 == 1) {
                 if (menu_is("New Game")) {
@@ -535,16 +544,16 @@ void title_tick(void) {
                     }
                 }
             }
-#line 346
+#line 351
             else {
-#line 348
+#line 353
                 menu_select_position(i);
                 menu_click(x);
             }
         }
     }
 }
-#line 352
+#line 357
 static int volx = 0;
 static void drawvol(int v, float x, float y) {
     LandColor c = land_color_get();
@@ -558,18 +567,18 @@ static void drawvol(int v, float x, float y) {
             if (v == 0) {
                 land_color(0, 0, 0, 1);
             }
-#line 364
+#line 369
             land_filled_rectangle(ix, iy, ix + s * 0.8, iy + s);
         }
-#line 364
+#line 369
         else {
-#line 366
+#line 371
             float cx = ix + s * 0.4;
             float cy = iy + s * 0.5;
             land_filled_circle(cx - 4, cy - 4, cx + 4, cy + 4);
         }
     }
-#line 369
+#line 374
     land_color_set(c);
 }
 void menu_screen_draw(void) {
@@ -583,18 +592,18 @@ void menu_screen_draw(void) {
     float yw = land_text_get_width("Yellow ");
     land_color(.9, .9, 0.7, 1);
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2;
-#line 383
+#line 388
     int it = 0;
     {
-#line 384
+#line 389
         LandArrayIterator __iter0__ = LandArrayIterator_first(menu->items);
-#line 384
+#line 389
         for (MenuScreenItem * item = LandArrayIterator_item(menu->items, &__iter0__); LandArrayIterator_next(menu->items, &__iter0__); item = LandArrayIterator_item(menu->items, &__iter0__)) {
             int it2 = it;
             if (it2 > 0) {
                 it2++;
             }
-#line 388
+#line 393
             float y = (h - 64 * 5) / 2 + it2 * 64 + (32 - th) / 2;
             float x = tx;
             bool draw = 1;
@@ -608,89 +617,89 @@ void menu_screen_draw(void) {
                     }
                 }
             }
-#line 397
+#line 402
             else {
-#line 399
+#line 404
                 land_color(0.5, 0, 0, 1);
             }
             if (menu_is("Settings")) {
                 if (it == 0) {
                     if (global_use_touch_input) {
                         if (a->dpad == 0) {
-#line 404
+#line 409
                             land_print("DPad left");
                         }
-#line 405
+#line 410
                         if (a->dpad == 1) {
-#line 405
+#line 410
                             land_print("DPad right");
                         }
-#line 406
+#line 411
                         if (a->dpad == 2) {
-#line 406
+#line 411
                             land_print("DPad left big");
                         }
-#line 407
+#line 412
                         if (a->dpad == 3) {
-#line 407
+#line 412
                             land_print("DPad right big");
                         }
-#line 408
+#line 413
                         if (a->dpad == 4) {
-#line 408
+#line 413
                             land_print("double click swipe");
                         }
-#line 409
+#line 414
                         if (a->dpad == 5) {
-#line 409
+#line 414
                             land_print("two finger swipe");
                         }
-#line 410
+#line 415
                         draw = 0;
                     }
                 }
             }
-#line 411
+#line 416
             else if (menu_is("Audio")) {
                 if (it == 1) {
                     drawvol(a->music, volx, y);
                 }
-#line 414
+#line 419
                 else if (it == 2) {
                     drawvol(a->sound, volx, y);
                 }
             }
-#line 416
+#line 421
             else if (menu_is("New Game")) {
                 if (it == 0) {
                     land_color(1, 0.75, 0.75, 1);
                 }
-#line 419
+#line 424
                 else if (it == 2) {
                     if (it == menu->selected) {
                         land_color(1, 0.4, 0.4, 1);
                     }
                 }
-#line 422
+#line 427
                 else if (it == 3) {
                     if (it == menu->selected) {
                         land_color(0, 0.5, 0, 1);
                     }
                 }
             }
-#line 426
+#line 431
             if (draw) {
                 if (item->alternates) {
-#line 429
+#line 434
                     land_print(land_array_get_nth(item->alternates, item->choice));
                 }
-#line 429
+#line 434
                 else {
-#line 431
+#line 436
                     land_print(item->text);
                 }
             }
-#line 433
+#line 438
             if (menu_is("Main")) {
                 if (it == 0) {
                     if (global_can_enable_editor) {
@@ -699,61 +708,61 @@ void menu_screen_draw(void) {
                     }
                 }
             }
-#line 439
+#line 444
             int control = ControlNone;
             if (menu_is("Left/Right")) {
                 if (it == 1) {
-#line 441
+#line 446
                     control = ControlLeft;
                 }
-#line 442
+#line 447
                 if (it == 2) {
-#line 442
+#line 447
                     control = ControlRight;
                 }
             }
-#line 443
+#line 448
             if (menu_is("Up/Down")) {
                 if (it == 1) {
-#line 444
+#line 449
                     control = ControlUp;
                 }
-#line 445
+#line 450
                 if (it == 2) {
-#line 445
+#line 450
                     control = ControlDown;
                 }
             }
-#line 446
+#line 451
             if (menu_is("Jump/Pull")) {
                 if (it == 1) {
-#line 447
+#line 452
                     control = ControlJump;
                 }
-#line 448
+#line 453
                 if (it == 2) {
-#line 448
+#line 453
                     control = ControlMenu;
                 }
             }
-#line 449
+#line 454
             if (menu_is("Controls")) {
                 if (it == 1) {
-#line 450
+#line 455
                     control = ControlLeft;
                 }
-#line 451
+#line 456
                 if (it == 2) {
-#line 451
+#line 456
                     control = ControlUp;
                 }
-#line 452
+#line 457
                 if (it == 3) {
-#line 452
+#line 457
                     control = ControlJump;
                 }
             }
-#line 454
+#line 459
             if (control) {
                 land_font_set(a->medium);
                 land_text_pos(volx + 68, y);
@@ -765,7 +774,7 @@ void menu_screen_draw(void) {
         }
     }
 }
-#line 463
+#line 468
 static int volget(float mx) {
     float w = land_display_width();
     double s = w / 960;
@@ -776,29 +785,29 @@ static int volget(float mx) {
 }
 static void music_volume(int i) {
     if (i < 0) {
-#line 472
+#line 477
         i = 0;
     }
-#line 473
+#line 478
     if (i > 6) {
-#line 473
+#line 478
         i = 6;
     }
-#line 474
+#line 479
     global_a->music = i;
     song_volume();
 }
 static void sound_volume(int i) {
     if (i < 0) {
-#line 478
+#line 483
         i = 0;
     }
-#line 479
+#line 484
     if (i > 6) {
-#line 479
+#line 484
         i = 6;
     }
-#line 480
+#line 485
     global_a->sound = i;
     sound(Render_on, 1);
 }
@@ -812,18 +821,18 @@ void title_render(void) {
     double s = w / 960;
     h /= s;
     land_clear(1, 1, 1, 1);
-#line 494
+#line 499
     land_reset_transform();
     land_scale(s, s);
-#line 497
+#line 502
     land_font_set(a->big);
     float th = land_line_height();
     float yw = land_text_get_width("Yellow ");
-#line 501
+#line 506
     land_color(.9, .9, 0.7, 1);
     float tx = (960 - land_text_get_width("Yellow and Dangerous")) / 2;
     land_filled_rectangle(tx + yw, 0, 960, h);
-#line 505
+#line 510
     if (menu_is("Settings")) {
         land_font_set(a->medium);
         land_color(0.5, 0, 0, 1);
@@ -836,29 +845,29 @@ void title_render(void) {
                 land_print("Jump: touch second finger");
                 land_print("Pull/Lift: two finger swipe");
             }
-#line 516
+#line 521
             else if (a->dpad == 4) {
                 land_print("Jump: Move then double tap");
                 land_print("Pull/Lift: Double tap then move");
             }
-#line 518
+#line 523
             else {
-#line 520
+#line 525
                 land_print("Jump: Hold move then jump");
                 land_print("Pull/Lift: Hold jump then move");
             }
         }
-#line 521
+#line 526
         else {
-#line 523
+#line 528
             land_print("Jump: Press button while moving");
             land_print("Pull/Lift: Press button first then move");
         }
-#line 525
+#line 530
         land_font_set(a->big);
     }
     volx = tx + yw + 6 * 32;
-#line 529
+#line 534
     if (1) {
         int i = 1;
         float y = (h - 64 * 5) / 2 + i * 64 + (32 - th) / 2;
@@ -872,18 +881,18 @@ void title_render(void) {
                 land_color(1, 1, 0, 1);
             }
         }
-#line 540
+#line 545
         land_print("and Dangerous");
     }
     menu_screen_draw();
-#line 544
+#line 549
     land_font_set(a->font);
     land_color(0, 0, 0, 1);
-#line 547
+#line 552
     if (! block1) {
         block1 = block_new(game->blocks, 120, 0, 720, Render_Gremlin);
     }
-#line 549
+#line 554
     if (! block2) {
         block2 = block_new(game->blocks, - 660, 0, - 60, Render_Allefant);
     }
@@ -894,9 +903,9 @@ void title_render(void) {
         draw_title_animation();
     }
     a->tint.a = 0;
-#line 560
+#line 565
     land_font_set(a->font);
-    land_text_pos(w / s, h - land_line_height() * 6);
+    land_text_pos(960 - 20, h - land_line_height() * 6);
     int t = a->time / 60;
     int f = 0;
     for (int i = 0; i < 8; i += 1) {
@@ -904,25 +913,25 @@ void title_render(void) {
             f++;
         }
     }
-#line 567
+#line 572
     int tt = 0;
     for (int i = 0; i < 8; i += 1) {
         if (game->test_tube [i]) {
             tt++;
         }
     }
-#line 571
+#line 576
     land_print_right("Flowers picked: %d/7", f);
     land_print_right("Test tubes: %d/7", tt);
     land_print_right("Car keys found: %s", game->key ? "yes" : "no");
     land_print_right("Died %d time%s.", game->deaths, game->deaths != 1 ? "s" : "");
-#line 576
+#line 581
     land_print_right("Playtime on this savegame: %02d:%02d:%02d", t / 3600, (t / 60) % 60, t % 60);
     land_print_right("Version %s", VERSION);
-#line 579
+#line 584
     land_font_set(a->medium);
     land_color(.3, 0.3, 1, 1);
-    land_text_pos(4, h - 4 - land_line_height());
+    land_text_pos(20, h - 4 - land_line_height());
     land_print("Privacy Policy");
     ppx = land_text_x() * s;
     ppy = land_text_y() * s;
@@ -945,19 +954,19 @@ static void draw_title_animation(void) {
             a->tint.g *= a->tint.a;
             a->tint.b *= a->tint.a;
         }
-#line 602
+#line 607
         else {
-#line 604
+#line 609
             a->tint = land_color_premul(1, 1, 1, .2);
         }
-#line 605
+#line 610
         if (! blocktype_preload(block1->block_type)) {
             render_block(block1, game->viewport);
         }
     }
-#line 608
+#line 613
     a->tint = land_color_premul(1, 1, 1, .2);
-#line 610
+#line 615
     block2->frame = 8 + ((16 * land_get_ticks() / 60) % 8);
     if (! blocktype_preload(block2->block_type)) {
         render_block(block2, game->viewport);

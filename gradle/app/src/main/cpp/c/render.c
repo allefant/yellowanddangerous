@@ -1065,7 +1065,7 @@ void render(Game * g, float w, float h) {
 #line 493
     if (a->overview) {
         land_color(0, 0, 0, 1);
-        land_text_pos(0, 0);
+        land_text_pos(20, 0);
         land_print("%d", g->overview->selected);
     }
     if (a->show_map) {
@@ -1087,7 +1087,7 @@ void render(Game * g, float w, float h) {
             land_polygon(4, v);
         }
         land_color(0, 0, 0, 1);
-        land_text_pos(0, 0);
+        land_text_pos(20, 0);
         land_print("%s", g->title);
         if (a->editor) {
             land_print("%d", g->level);
@@ -1100,7 +1100,7 @@ void render(Game * g, float w, float h) {
         }
         if (! a->show_map && (g->ticks > 600 || a->editor)) {
             float y = h / (w / 960) - 3 * fh;
-            land_text_pos(0, y);
+            land_text_pos(20, y);
             land_print_wordwrap(w, h, "%s", g->hint);
         }
         if (g->record->is_recording) {

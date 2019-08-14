@@ -2,8 +2,11 @@ package com.yellowdanger;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -76,6 +79,18 @@ public class BaseActivity extends AllegroActivity {
         Log.d("YellowAndDangerous", "url: " + url);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
+    }
+
+    public void makeFrameless(boolean on) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            new Handler(getMainLooper()).postDelayed(() -> {
+                    View view = this.getWindow().getDecorView();
+                    int flags = view.getSystemUiVisibility();
+                    int bits = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                    if (on) flags |= bits; else flags &= ~bits;
+                    view.setSystemUiVisibility(flags);
+                }, 0);
+        }
     }
 
 }

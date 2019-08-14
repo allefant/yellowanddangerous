@@ -492,7 +492,7 @@ def render(Game *g, float w, h):
 
     if a.overview:
         land_color(0, 0, 0, 1)
-        land_text_pos(0, 0)
+        land_text_pos(20, 0)
         land_print("%d", g->overview->selected)
 
     if a.show_map:
@@ -514,7 +514,7 @@ def render(Game *g, float w, h):
             land_polygon(4, v)
         
         land_color(0, 0, 0, 1)
-        land_text_pos(0, 0)
+        land_text_pos(20, 0)
         land_print("%s", g->title)
         if a.editor:
             land_print("%d", g->level)
@@ -527,7 +527,7 @@ def render(Game *g, float w, h):
 
         if not a.show_map and (g->ticks > 600 or a.editor):
             float y = h / (w / 960) - 3 * fh
-            land_text_pos(0, y)
+            land_text_pos(20, y)
             land_print_wordwrap(w, h, "%s", g->hint)
 
         if g.record->is_recording:
